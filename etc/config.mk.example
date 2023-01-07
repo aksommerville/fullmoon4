@@ -1,0 +1,11 @@
+# config.mk
+# Local configuration for Full Moon builds.
+# You shouldn't need to change Makefile for per-host things, change them here instead.
+
+# https://github.com/WebAssembly/wasi-sdk
+WASI_SDK:=/home/andy/proj/thirdparty/wasi-sdk-16.0
+
+# npm install -g http-server
+HTTP_SERVER_CMD:=http-server -a localhost -p 8080 -c-1
+
+NODE:=node
