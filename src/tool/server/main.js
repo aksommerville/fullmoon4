@@ -84,6 +84,22 @@ function makeErrorAsJson(error) {
   return JSON.stringify(error);
 }
 
+/* Set statusCode and statusMessage on a response, according to some exception.
+ */
+ 
+function setStatusForError(rsp, e) {
+  try {
+    if (e.code === "ENOENT") {
+      rsp.statusCode = 404;
+      rsp.statusMessage = "Not found";
+      return;
+    }
+  } catch (ee) {
+    rsp.statusCode = 500;
+    rsp.statusMessage = "Internal server error";
+  }
+}
+
 /* Create the server.
  */
  
@@ -122,10 +138,11 @@ const server = http.createServer((req, rsp) => {
   } catch (e) {
     console.error(`Error serving ${req.method} ${req.url}`);
     console.error(e);
-    rsp.statusCode = 500;
-    rsp.statusMessage = "Internal server error";
+    setStatusForError(rsp, e);
+    //rsp.statusCode = 500;
+    //rsp.statusMessage = "Internal server error";
     rsp.end();
-    console.log(`500 ${req.method} ${req.url}`);
+    console.log(`${rsp.statusCode} ${req.method} ${req.url}`);
   }
 });
 

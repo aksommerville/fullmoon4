@@ -23,6 +23,9 @@ int rand();
 #define FMN_COLC 20
 #define FMN_ROWC 12
 
+#define FMN_PLANT_LIMIT 16
+#define FMN_SKETCH_LIMIT 16
+
 #define FMN_INPUT_LEFT     0x01
 #define FMN_INPUT_RIGHT    0x02
 #define FMN_INPUT_UP       0x04
@@ -39,6 +42,46 @@ int rand();
 #define FMN_TRANSITION_DOOR       6
 #define FMN_TRANSITION_WARP       7
 
+#define FMN_PLANT_STATE_NONE     0 /* Slot not in use. */
+#define FMN_PLANT_STATE_SEED     1 /* Planted but not watered. */
+#define FMN_PLANT_STATE_GROW     2 /* Watered, growing. */
+#define FMN_PLANT_STATE_FLOWER   3 /* Bearing fruit. */
+#define FMN_PLANT_STATE_DEAD     4 /* Withered, candidate for replacement. */
+
+// PLANT_FRUIT corresponds to PITCHER_CONTENT, what you get by watering a plant with the given liquid.
+#define FMN_PLANT_FRUIT_NONE    0
+#define FMN_PLANT_FRUIT_SEED    1
+#define FMN_PLANT_FRUIT_NITRO   2
+#define FMN_PLANT_FRUIT_MATCH   3
+#define FMN_PLANT_FRUIT_CORN    4
+#define FMN_PLANT_FRUIT_COIN    5
+
+#define FMN_PITCHER_CONTENT_EMPTY 0
+#define FMN_PITCHER_CONTENT_WATER 1
+#define FMN_PITCHER_CONTENT_MILK  2
+#define FMN_PITCHER_CONTENT_HONEY 3
+#define FMN_PITCHER_CONTENT_SAP   4
+#define FMN_PITCHER_CONTENT_BLOOD 5
+
+// Items with a qualifier are listed first.
+#define FMN_ITEM_NONE            0
+#define FMN_ITEM_CORN            1
+#define FMN_ITEM_PITCHER         2
+#define FMN_ITEM_SEED            3
+#define FMN_ITEM_COIN            4
+#define FMN_ITEM_MATCH           5
+#define FMN_ITEM_QUALIFIER_COUNT 6
+#define FMN_ITEM_BROOM           6
+#define FMN_ITEM_WAND            7
+#define FMN_ITEM_UMBRELLA        8
+#define FMN_ITEM_FEATHER         9
+#define FMN_ITEM_SHOVEL         10
+#define FMN_ITEM_COMPASS        11
+#define FMN_ITEM_VIOLIN         12
+#define FMN_ITEM_CHALK          13
+#define FMN_ITEM_BELL           14
+#define FMN_ITEM_COUNT          15
+
 struct fmn_sprite {
   float x,y; // midpoint in grid space
   uint8_t imageid;
@@ -46,7 +89,38 @@ struct fmn_sprite {
   uint8_t xform;
 };
 
-struct fmn_scene {
+struct fmn_plant {
+  uint16_t x;
+  uint16_t y;
+  uint32_t flower_time;
+  uint8_t state;
+  uint8_t fruit;
+  uint8_t pad1[2];
+};
+
+struct fmn_sketch {
+  uint16_t x;
+  uint16_t y;
+  uint32_t bits;
+  uint32_t time; /* Timestamp of last touch, so we can overwrite in chronological order. */
+};
+
+/* App must define this.
+ * The JS side will read it straight out of memory.
+ * It is important that you not change the order or type of members, without updating the JS app!
+ */
+extern struct fmn_global {
+
+  /* Sprites in render order.
+   * Game can modify these on the fly.
+   * Each sprite must begin with the (struct fmn_sprite) header.
+   */
+  struct fmn_sprite **spritev;
+  uint32_t spritec;
+
+  /* Map content, loaded by platform.
+   * You are allowed to change map tiles but must notify the platform. Changes won't persist.
+   */
   uint8_t map[FMN_COLC*FMN_ROWC];
   uint8_t maptsid;
   uint8_t songid;
@@ -55,28 +129,84 @@ struct fmn_scene {
   uint16_t neighborn;
   uint16_t neighbors;
   uint16_t pad1;
-  struct fmn_sprite **spritev; // in render order
-  int spritec;
-};
-
-/* App must define this.
- * The JS side will read it straight out of memory.
- * It is important that you not change the order or type of members, without updating the JS app!
- */
-extern struct fmn_app_model {
-  int TODO;
-} fmn_app_model;
+  
+  /* Current plants and sketches, loaded by platform.
+   * You can modify these and the changes will persist, but you must not add or remove anything.
+   */
+  struct fmn_plant plantv[FMN_PLANT_LIMIT];
+  uint32_t plantc;
+  struct fmn_sketch sketchv[FMN_SKETCH_LIMIT];
+  uint32_t sketchc;
+  
+  /* (selected_item) is the one chosen by user from a menu. Should be read-only to the app.
+   * (active_item) is typically zero when idle, or same as (selected_item) while the button is held.
+   * They are allowed to go out of sync though. Some items self-terminate and some linger (eg releasing broom over water).
+   */
+  uint8_t selected_item;
+  uint8_t active_item;
+  uint8_t pad2[2];
+  uint8_t itemv[16]; // nonzero if possessed
+  uint8_t itemqv[16]; // qualifier eg count or enum
+  
+} fmn_global;
 
 /* App must implement these hooks for platform to call.
- */
+ **********************************************/
+ 
+// Called once, during startup. <0 to abort.
 int fmn_init();
-void fmn_update(int timems,int input);
 
-/* Platform implements these.
+/* Called often, when the game is running without any modal platform-managed interaction.
+ * (ie normal play cases).
+ * (timems) is an absolute timestamp counting active time only, since game start.
+ * It includes time from prior sessions, and overflows every 1200 hours or so.
  */
+void fmn_update(uint32_t timems,uint8_t input);
+
+/* Platform implements the rest.
+ *************************************************/
+
+// For debugging. Logs to JS console.
 void fmn_log(const char *fmt,...);
+
+// Hard stop. No further app calls will be made, and user will see an unfriendly error.
+void fmn_abort();
+
+/* Push a modal menu on the stack.
+ * Game will not update while a menu is in play.
+ * Variadic arguments are any number of (int prompt_stringid,void (*cb)()), followed by a null.
+ */
 void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*cbN)()*/);
 #define fmn_begin_menu(...) _fmn_begin_menu(__VA_ARGS__,0)
-void fmn_set_scene(struct fmn_scene *scene,int transition);
+
+/* Prepare a transition while in the "from" state, and declare what style you will want.
+ * Then make your changes, and either commit or cancel it.
+ * Platform decides whether to update during a transition, I'm thinking no.
+ * If you prepare and then finish the frame without commit or cancel, it implicitly cancels.
+ * Two prepares in one frame, the second cancels the first.
+ */
+void fmn_prepare_transition(int transition);
+void fmn_commit_transition();
+void fmn_cancel_transition();
+
+/* Replace the global map section from the platform-owned data archive.
+ * Also updates (plantv,sketchv) with plants and sketches in the current view.
+ * Returns >0 if loaded, 0 if not found, <0 for real errors.
+ * We call (cb_spawn) synchronously with all of the new sprites -- hero not included.
+ */
+int8_t fmn_load_map(
+  uint16_t mapid,
+  void (*cb_spawn)(int8_t x,int8_t y,uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3)
+);
+
+// Call if you change map tiles. You don't need to track which ones.
+void fmn_map_dirty();
+
+/* Plant a seed or begin editing a sketch.
+ * Both return <0 to reject, eg no space available.
+ * Sketch editing is modal; you will stop receiving updates while it runs.
+ */
+int8_t fmn_add_plant(uint16_t x,uint16_t y);
+int8_t fmn_begin_sketch(uint16_t x,uint16_t y);
 
 #endif

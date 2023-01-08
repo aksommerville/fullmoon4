@@ -1,12 +1,75 @@
 body {
   background-color: #000;
   color: #fff;
+  font-family: sans-serif;
   margin: 0;
   padding: 0;
 }
 
+a {
+  color: #48f;
+}
+
 .hidden {
   display: none;
+}
+
+input.toggle {
+  display: none;
+}
+input.toggle + label {
+  border-top: 2px solid #ccc;
+  border-left: 2px solid #ccc;
+  border-bottom: 2px solid #444;
+  border-right: 2px solid #444;
+  background-color: #888;
+}
+input.toggle:checked + label {
+  border-top: 2px solid #444;
+  border-left: 2px solid #444;
+  border-bottom: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+  background-color: #666;
+}
+input.toggle:checked + label > * {
+  transform: translate(1px, 1px);
+}
+
+/* Generic modals.
+ *********************************************************/
+
+.modalBlotter {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+  background-color: #000;
+  opacity: 0.8;
+}
+
+.modalStack {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 101;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalStack .modalFrame {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 1em;
+  box-shadow: #000 0 0 2em 0.5em;
+  padding: 1em;
+  position: absolute;
+  max-width: 90vw;
 }
 
 /* RootUi
@@ -18,16 +81,66 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-}
- 
-.RootUi .errorMessage {
-  font-family: monospace;
+  justify-content: stretch;
+  align-items: stretch;
 }
 
-.RootUi .gameView {/*TODO deserves its own controller i think */
-  background-color: #000;
-  width: 1280px;
-  height: 768px;
-  image-rendering: pixelated;
+/**
+.RootUi > .GameUi {
+  flex: 1;
+}
+/**/
+
+/* HeaderUi
+ ******************************************/
+ 
+.HeaderUi {
+  border-bottom: 1px solid #888;
+  height: 5vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* FooterUi
+ **********************************************/
+ 
+.FooterUi {
+  border-top: 1px solid #888;
+  height: 5vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.FooterUi > * {
+  margin: 0 1em;
+}
+
+/* GameUi
+ *****************************************/
+ 
+.GameUi {
+  height: 90vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+ 
+.GameUi > .gameView {
+  image-rendering: pixelated; /* TODO linear interpolation when less than 3x or 4x of the framebuffer size. */
+  object-fit: contain;
+  width: 100%;
+}
+
+/* ErrorModal
+ ******************************************/
+ 
+.ErrorModal .error {
+  white-space: pre;
+  min-width: 50vw;
+  min-height: 50vh;
+  max-height: 90vh;
+  overflow: scroll;
+  font-family: monospace;
 }

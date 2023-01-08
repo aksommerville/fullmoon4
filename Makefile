@@ -41,6 +41,11 @@ HTDOCS_DST:=$(patsubst src/www/%,$(OUTDIR)/%,$(HTDOCS_SRC))
 all:$(HTDOCS_DST)
 $(OUTDIR)/%:src/www/%;$(PRECMD) cp $< $@
 
+MAPS_DATA:=$(OUTDIR)/maps.data
+all:$(MAPS_DATA)
+MAPS_INPUT:=$(filter src/data/map/%,$(SRCFILES))
+$(MAPS_DATA):$(MAPS_INPUT);$(PRECMD) $(NODE) src/tool/mkmaps/main.js -o$@ $^
+
 # "make run-final" to pack the web app and serve it statically.
 ifeq (,$(strip $(HTTP_SERVER_CMD)))
   run-final:;echo "Please set HTTP_SERVER_CMD in etc/config.mk" ; exit 1
@@ -51,6 +56,6 @@ endif
 # "make run" for a dynamic server preferred for dev work.
 # Static files serve straight off the source. If you change any Javascript, just refresh.
 # The Wasm file, we rerun make before serving, and if it fails, we send the make output instead with a 555 status.
-run:$(WASM_EXE);$(NODE) src/tool/server/main.js --htdocs=src/www --makeable=$(WASM_EXE)
+run:$(WASM_EXE);$(NODE) src/tool/server/main.js --htdocs=src/www --makeable=$(WASM_EXE) --makeable=$(MAPS_DATA)
 
 endif

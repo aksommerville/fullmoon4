@@ -69,6 +69,13 @@ export class Dom {
     return element;
   }
   
+  /* Same as spawn, but doesn't attach to a parent.
+   * Please avoid document.createElement() on your own; we want a single point of contact if possible.
+   */
+  createElement(tagName, ...args) {
+    return this.spawn({ appendChild: () => {} }, tagName, ...args);
+  }
+  
   spawnController(parent, clazz, overrides) {
     const element = this.spawn(parent, this.tagNameForControllerClass(clazz), [clazz.name]);
     const controller = this.injector.getInstance(clazz, [...(overrides || []), element]);
