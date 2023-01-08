@@ -140,7 +140,7 @@ export class DataService {
     }
     const map = {
       cells: new Uint8Array(cellsLength),
-      bgImageId: 122,//TODO
+      bgImageId: 1,//TODO
     };
     map.cells.set(new Uint8Array(src.buffer, src.byteOffset + p, cellsLength));
     //TODO additional map content

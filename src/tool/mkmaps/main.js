@@ -36,7 +36,7 @@ function mapIdFromPath(path) {
 function decodeCell(src) {
   switch (src) {
     case ". ": return 0x00;
-    case "Xx": return 0x01;
+    case "Xx": return 0x3d;
     //TODO more aliases, user-defined aliases, neighbor joining
   }
   const v = parseInt(src, 16);

@@ -44,7 +44,7 @@ $(OUTDIR)/%:src/www/%;$(PRECMD) cp $< $@
 MAPS_DATA:=$(OUTDIR)/maps.data
 all:$(MAPS_DATA)
 MAPS_INPUT:=$(filter src/data/map/%,$(SRCFILES))
-$(MAPS_DATA):$(MAPS_INPUT);$(PRECMD) $(NODE) src/tool/mkmaps/main.js -o$@ $^
+$(MAPS_DATA):$(MAPS_INPUT) src/tool/mkmaps/main.js;$(PRECMD) $(NODE) src/tool/mkmaps/main.js -o$@ $(MAPS_INPUT)
 
 # "make run-final" to pack the web app and serve it statically.
 ifeq (,$(strip $(HTTP_SERVER_CMD)))

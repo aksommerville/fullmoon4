@@ -19,3 +19,4 @@ There will be a "platform" layer in Javascript, and an "app" layer in C compiled
 - [ ] UI for saved game management.
 - [ ] Data editor.
 - [ ] Can we reduce the wasm exports? There's only like 3 symbols that actually need exported.
+- [ ] Graphics should live in src/data, not src/www. Punting for now because that complicates the dev server.

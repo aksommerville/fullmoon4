@@ -26,12 +26,26 @@ int rand();
 #define FMN_PLANT_LIMIT 16
 #define FMN_SKETCH_LIMIT 16
 
+#define FMN_XFORM_XREV 1
+#define FMN_XFORM_YREV 2
+#define FMN_XFORM_SWAP 4
+
 #define FMN_INPUT_LEFT     0x01
 #define FMN_INPUT_RIGHT    0x02
 #define FMN_INPUT_UP       0x04
 #define FMN_INPUT_DOWN     0x08
 #define FMN_INPUT_USE      0x10
 #define FMN_INPUT_MENU     0x20
+
+#define FMN_DIR_NW   0x80
+#define FMN_DIR_N    0x40
+#define FMN_DIR_NE   0x20
+#define FMN_DIR_W    0x10
+#define FMN_DIR_MID  0x00
+#define FMN_DIR_E    0x08
+#define FMN_DIR_SW   0x04
+#define FMN_DIR_S    0x02
+#define FMN_DIR_SE   0x01
 
 #define FMN_TRANSITION_CUT        0
 #define FMN_TRANSITION_PAN_LEFT   1
@@ -147,6 +161,10 @@ extern struct fmn_global {
   uint8_t pad2[2];
   uint8_t itemv[16]; // nonzero if possessed
   uint8_t itemqv[16]; // qualifier eg count or enum
+  
+  /* More hero stuff for renderer.
+   */
+  uint8_t facedir; // FMN_DIR_*, cardinals only.
   
 } fmn_global;
 

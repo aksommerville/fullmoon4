@@ -33,12 +33,14 @@ int fmn_init() {
   //TEMP sprites
   my_sprite.x=5.0f;
   my_sprite.y=2.0f;
-  my_sprite.imageid=122;
+  my_sprite.imageid=2;
   my_sprite.tileid=0x02;
   my_sprite.xform=0;
   my_sprite_list=&my_sprite;
   fmn_global.spritev=&my_sprite_list;
   fmn_global.spritec=1;
+  
+  fmn_global.facedir=FMN_DIR_S;
   
   return 0;
 }
@@ -61,12 +63,12 @@ void fmn_update(uint32_t timems,uint8_t input) {
   //TODO update game
   
   //TEMP move my sprite around.
-  switch (input&(FMN_INPUT_LEFT|FMN_INPUT_RIGHT)) {
-    case FMN_INPUT_LEFT: my_sprite.x-=WALK_SPEED*elapsed; break;
-    case FMN_INPUT_RIGHT: my_sprite.x+=WALK_SPEED*elapsed; break;
-  }
   switch (input&(FMN_INPUT_UP|FMN_INPUT_DOWN)) {
-    case FMN_INPUT_UP: my_sprite.y-=WALK_SPEED*elapsed; break;
-    case FMN_INPUT_DOWN: my_sprite.y+=WALK_SPEED*elapsed; break;
+    case FMN_INPUT_UP: my_sprite.y-=WALK_SPEED*elapsed; fmn_global.facedir=FMN_DIR_N; break;
+    case FMN_INPUT_DOWN: my_sprite.y+=WALK_SPEED*elapsed; fmn_global.facedir=FMN_DIR_S; break;
+  }
+  switch (input&(FMN_INPUT_LEFT|FMN_INPUT_RIGHT)) {
+    case FMN_INPUT_LEFT: my_sprite.x-=WALK_SPEED*elapsed; fmn_global.facedir=FMN_DIR_W; break;
+    case FMN_INPUT_RIGHT: my_sprite.x+=WALK_SPEED*elapsed; fmn_global.facedir=FMN_DIR_E; break;
   }
 }

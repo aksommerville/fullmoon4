@@ -76,25 +76,63 @@ export class Renderer {
       const halftile = tilesize >> 1;
       let spritepp = this.wasmLoader.memU32[globalp >> 2] >> 2;
       for (; spritei-->0; spritepp++) {
+      
+        // Read sprite header.
         let spritep = this.wasmLoader.memU32[spritepp];
         const midx = this.wasmLoader.memF32[spritep >> 2]; spritep += 4;
         const midy = this.wasmLoader.memF32[spritep >> 2]; spritep += 4;
         const imageId = this.wasmLoader.memU8[spritep++];
         const tileId = this.wasmLoader.memU8[spritep++];
         const xform = this.wasmLoader.memU8[spritep++];
-        //TODO Special sprites that aren't just a tile. (eg hero)
+        
+        // Ensure image loaded. NB This is for all sprite render types, not just the generic.
         if (imageId !== srcImageId) {
           srcImage = this.dataService.loadImageSync(imageId);
           srcImageId = imageId;
         }
         if (!srcImage) continue;
-        const srcx = (tileId & 0x0f) * tilesize;
-        const srcy = (tileId >> 4) * tilesize;
-        const dstx = ~~(midx * tilesize - halftile);
-        const dsty = ~~(midy * tilesize - halftile);
-        ctx.drawImage(srcImage, srcx, srcy, tilesize, tilesize, dstx, dsty, tilesize, tilesize);
+        
+        if (true) { // TODO if hero...
+          this.renderHero(ctx, srcImage, midx, midy, globalp);
+        
+        } else { // generic single-tile sprites
+          this.renderTile(ctx, srcImage, midx, midy, tileId, xform);
+        }
       }
     }
+  }
+  
+  renderHero(ctx, srcImage, midx, midy, globalp) {
+    const tilesize = this.constants.TILESIZE;
+    const halftile = tilesize >> 1;
+    const left = ~~(midx * tilesize - halftile);
+    let memp = globalp // at (selected_item). TODO maybe don't depend so hard on struct layout...
+      + 8 
+      + this.constants.COLC * this.constants.ROWC + 12
+      + this.constants.PLANT_LIMIT * this.constants.PLANT_SIZE
+      + this.constants.SKETCH_LIMIT * this.constants.SKETCH_SIZE
+      + 8;
+    const selectedItem = this.wasmLoader.memU8[memp];
+    const activeItem = this.wasmLoader.memU8[memp + 1];
+    memp += 36; // skip to Hero section
+    const facedir = this.wasmLoader.memU8[memp];
+    
+    // The most common tiles are arranged in the first three columns: DOWN, UP, LEFT.
+    let col = 0, xform = 0;
+    switch (facedir) {
+      case this.constants.DIR_N: col = 1; break;
+      case this.constants.DIR_W: col = 2; break;
+      case this.constants.DIR_E: col = 2; xform = this.constants.XFORM_XREV; break;
+    }
+    
+    // Body, centered on (mid).
+    this.renderTile(ctx, midx * tilesize, midy * tilesize, srcImage, 0x20 + col, xform);
+      
+    // Head.
+    this.renderTile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, 0x10 + col, xform);
+      
+    // Hat.
+    this.renderTile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
   }
   
   renderMap(globalp) {
@@ -111,17 +149,37 @@ export class Renderer {
       return;
     }
     const tilesize = this.constants.TILESIZE;
-    for (let dsty=0, yi=this.constants.ROWC; yi-->0; dsty+=tilesize) {
-      for (let dstx=0, xi=this.constants.COLC; xi-->0; dstx+=tilesize, cellp++) {
-        const tileId = this.wasmLoader.memU8[cellp];
-        const srcx = (tileId & 0x0f) * tilesize;
-        const srcy = (tileId >> 4) * tilesize;
-        // Tile zero gets drawn behind every cell.
-        ctx.drawImage(tilesheet, 0, 0, tilesize, tilesize, dstx, dsty, tilesize, tilesize);
-        if (tileId) {
-          ctx.drawImage(tilesheet, srcx, srcy, tilesize, tilesize, dstx, dsty, tilesize, tilesize);
+    for (let dsty=tilesize>>1, yi=this.constants.ROWC; yi-->0; dsty+=tilesize) {
+      for (let dstx=tilesize>>1, xi=this.constants.COLC; xi-->0; dstx+=tilesize, cellp++) {
+        this.renderTile(ctx, dstx, dsty, tilesheet, 0);
+        if (this.wasmLoader.memU8[cellp]) {
+          this.renderTile(ctx, dstx, dsty, tilesheet, this.wasmLoader.memU8[cellp], 0);
         }
       }
+    }
+  }
+  
+  renderTile(ctx, midx, midy, srcImage, tileid, xform) {
+    const tilesize = this.constants.TILESIZE;
+    if (!xform) {
+      ctx.drawImage(srcImage,
+        (tileid & 0x0f) * tilesize, (tileid >> 4) * tilesize, tilesize, tilesize,
+        ~~(midx - (tilesize >> 1)), ~~(midy - (tilesize >> 1)), tilesize, tilesize
+      );
+    } else {
+      ctx.save();
+      ctx.translate(~~midx, ~~midy);
+      switch (xform & (this.constants.XFORM_XREV | this.constants.XFORM_YREV)) {
+        case this.constants.XFORM_XREV: ctx.scale(-1, 1); break;
+        case this.constants.XFORM_YREV: ctx.scale(1, -1); break;
+        case this.constants.XFORM_XREV | this.constants.XFORM_YREV: ctx.scale(-1, -1); break;
+      }
+      //TODO XFORM_SWAP
+      ctx.drawImage(srcImage,
+        (tileid & 0x0f) * tilesize, (tileid >> 4) * tilesize, tilesize, tilesize,
+        -(tilesize >> 1), -(tilesize >> 1), tilesize, tilesize
+      );
+      ctx.restore();
     }
   }
 }
