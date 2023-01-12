@@ -3,10 +3,14 @@ Xx. . . . . . . . . . . . . . . . . . Xx
 Xx. . . . . . . . . . . . . . . . . . Xx
 Xx. . . . . . . . . . . . . . . . . . Xx
 Xx. . . . . . . . . . . . . . . . . . Xx
-Xx. . . . . . . . . . . . . . XxXx. . Xx
-Xx. . . . . . . . . . . . . . . . Xx. Xx
-Xx. . . . . . . . . . . . . . . Xx. . Xx
-Xx. . . . . . . . . . . . . . Xx. . . Xx
-Xx. . . . . . . . . . . . . . XxXxXx. Xx
+Xx. . . . . . . . . . . . . . 3333. . Xx
+Xx. . . . . . . . . . . . . . . . 33. Xx
+Xx. . . . . . . . . . . . . . . 33. . Xx
+Xx. . . . . . . . . . . . . . 33. . . Xx
+Xx. . . . . . . . . . . . . . 333333. Xx
 Xx. . . . . . . . . . . . . . . . . . Xx
 XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx
+
+tilesheet 1
+neighborn 1
+neighborw 3

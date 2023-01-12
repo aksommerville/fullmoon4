@@ -10,24 +10,24 @@ const child_process = require("child_process");
 let host = "localhost";
 let port = 8080;
 let htdocs = "";
-let images = "";
+let dataPath = "";
 let makeable = [];
 
 for (const arg of process.argv.slice(2)) {
   if (arg.startsWith("--host=")) host = arg.substr(7);
   else if (arg.startsWith("--port=")) port = +arg.substr(7);
   else if (arg.startsWith("--htdocs=")) htdocs = arg.substr(9);
-  else if (arg.startsWith("--images=")) images = arg.substr(9);
+  else if (arg.startsWith("--data=")) dataPath = arg.substr(7);
   else if (arg.startsWith("--makeable=")) makeable.push(arg.substr(11));
   else {
     console.log(`Unexpected argument '${arg}'`);
-    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH --images=PATH [--makeable=PATH...]`);
+    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH --data=PATH [--makeable=PATH...]`);
     process.exit(1);
   }
 }
 
-if (!htdocs || !images) {
-  console.log(`--htdocs and --images required`);
+if (!htdocs || !dataPath) {
+  console.log(`--htdocs and --data required`);
   process.exit(1);
 }
 
@@ -55,12 +55,41 @@ function guessContentType(path, content) {
 /* Serve a regular file.
  */
  
-function serveFile(rsp, path) {
-  const content = fs.readFileSync(path);
-  rsp.statusCode = 200;
-  rsp.statusMessage = "OK";
-  rsp.setHeader("Content-Type", guessContentType(path, content));
-  rsp.end(content);
+function serveFile(rsp, method, path, body) {
+  switch (method) {
+    case "GET": {
+        let content = "";
+        try {
+          content = fs.readFileSync(path);
+          rsp.setHeader("Content-Type", guessContentType(path, content));
+        } catch (e) {
+          if (e.code === "EISDIR") {
+            content = JSON.stringify(fs.readdirSync(path));
+            rsp.setHeader("Content-Type", "application/json");
+          } else throw e;
+        }
+        rsp.statusCode = 200;
+        rsp.statusMessage = "OK";
+        rsp.end(content);
+      } break;
+    case "PUT": {
+        fs.writeFileSync(path, body);
+        rsp.statusCode = 200;
+        rsp.statusMessage = "OK";
+        rsp.end();
+      } break;
+    case "DELETE": {
+        fs.unlinkSync(path);
+        rsp.statusCode = 200;
+        rsp.statusMessage = "OK";
+        rsp.end();
+      } break;
+    default: {
+        rsp.statusCode = 405;
+        rsp.statusMessage = `Method ${method} not supported`;
+        rsp.end();
+      }
+  }
 }
 
 /* Invoke 'make' to freshen a file, resolve if it succeeds.
@@ -103,11 +132,21 @@ function setStatusForError(rsp, e) {
   }
 }
 
-/* Create the server.
+/* Serve request.
  */
  
-const server = http.createServer((req, rsp) => {
+function serve(req, rsp) {
   try {
+    let path = req.url.split('?')[0];
+    if (path === "/") path = "/index.html";
+    if (!path.startsWith("/")) throw new Error("Invalid path");
+    
+    if (path.startsWith("/data/")) {
+      serveFile(rsp, req.method, `${dataPath}${path.substr(5)}`, req.body);
+      console.log(`200 ${req.method} ${req.url}`);
+      return;
+    }
+    
     if (req.method !== "GET") {
       rsp.statusCode = 405;
       rsp.statusMessage = "Method not allowed";
@@ -115,37 +154,7 @@ const server = http.createServer((req, rsp) => {
       console.log(`405 ${req.method} ${req.url}`);
       return;
     }
-    let path = req.url.split('?')[0];
-    if (path === "/") path = "/index.html";
-    if (!path.startsWith("/")) throw new Error("Invalid path");
-    
-    // Images don't live in htdocs because they belong to the game, as opposed to the platform.
-    // Doesn't really matter. They don't get processed during build (not yet anyway). We can serve them just like other static files.
-    if (images && path.startsWith("/img/")) {
-      serveFile(rsp, `${images}${path.substr(4)}`);
-      console.log(`200 GET ${req.url}`);
-      return;
-    }
-    
-    // Things that get processed at build time have to be declared with "--makeable".
-    // We invoke `make` every time somebody requests one.
-    const localPath = makeable.find(m => m.endsWith(path));
-    if (localPath) {
-      freshenMakeableFile(localPath).then(() => {
-        serveFile(rsp, localPath);
-        console.log(`200 GET ${req.url}`);
-      }).catch(e => {
-        console.log(`Failure from make for ${localPath}`);
-        console.log(`555 GET ${req.url}`);
-        rsp.statusCode = 555;
-        rsp.statusMessage = "Make failure";
-        rsp.setHeader("Content-Type", "application/json");
-        rsp.end(makeErrorAsJson(e));
-      });
-      return;
-    }
-    
-    serveFile(rsp, `${htdocs}${path}`);
+    serveFile(rsp, "GET", `${htdocs}${path}`, null);
     console.log(`200 GET ${req.url}`);
     
   } catch (e) {
@@ -155,6 +164,15 @@ const server = http.createServer((req, rsp) => {
     rsp.end();
     console.log(`${rsp.statusCode} ${req.method} ${req.url}`);
   }
+}
+
+/* Create the server.
+ */
+ 
+const server = http.createServer((req, rsp) => {
+  rsp.body = "";
+  req.on("data", d => rsp.body += d);
+  req.on("end", () => serve(req, rsp));
 });
 
 server.listen(port, host, (error) => {

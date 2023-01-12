@@ -56,6 +56,8 @@ endif
 # "make run" for a dynamic server preferred for dev work.
 # Static files serve straight off the source. If you change any Javascript, just refresh.
 # The Wasm file, we rerun make before serving, and if it fails, we send the make output instead with a 555 status.
-run:$(WASM_EXE);$(NODE) src/tool/server/main.js --htdocs=src/www --makeable=$(WASM_EXE) --makeable=$(MAPS_DATA)
+run:$(WASM_EXE);$(NODE) src/tool/server/main.js --htdocs=src/www --images=src/data/image --makeable=$(WASM_EXE) --makeable=$(MAPS_DATA)
+
+edit:;$(NODE) src/tool/editor/main.js --htdocs=src/tool/editor/www --data=src/data
 
 endif
