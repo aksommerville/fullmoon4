@@ -11,9 +11,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### January
 
-- [ ] Data editor.
 - [ ] Hero physics and animation.
-- [x] Graphics should live in src/data, not src/www. Punting for now because that complicates the dev server.
 
 ### February
 
@@ -45,3 +43,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Automation against headless native build.
 - [ ] Maps for full game.
 - [ ] Translation.
+- [ ] Data editor improvements.
+- - [ ] Home page
+- - [ ] MapAllUi: Point out neighbor mismatches.
+- - [ ] MapAllUi: Populate tattle.
+- - [ ] Delete maps (and resources in general)

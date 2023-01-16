@@ -170,8 +170,8 @@ function serve(req, rsp) {
  */
  
 const server = http.createServer((req, rsp) => {
-  rsp.body = "";
-  req.on("data", d => rsp.body += d);
+  req.body = "";
+  req.on("data", d => req.body += d);
   req.on("end", () => serve(req, rsp));
 });
 

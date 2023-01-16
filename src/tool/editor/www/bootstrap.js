@@ -16,6 +16,7 @@ window.addEventListener("load", () => {
   resService.whenLoaded().then(() => {
     const root = dom.spawnController(document.body, RootUi);
   }).catch(error => {
+    console.error(error);
     if ((error instanceof Error) && error.message) error = error.message;
     document.body.innerText = `Error loading resources\n${JSON.stringify(error)}`;
   });

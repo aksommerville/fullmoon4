@@ -6,6 +6,7 @@ import { ResService } from "/js/util/ResService.js";
 import { ToolbarUi } from "/js/ui/ToolbarUi.js";
 import { MapUi } from "/js/map/MapUi.js";
 import { MapAllUi } from "/js/map/MapAllUi.js";
+import { ImageUi } from "/js/image/ImageUi.js";
 
 export class RootUi {
   static getDependencies() {
@@ -44,6 +45,8 @@ export class RootUi {
     const content = this.element.querySelector(".content");
     content.innerHTML = "";
     this.contentController = null;
+    this.toolbar.setTattleText("");
+    this.toolbar.setMapToolsVisible(false);
     return content;
   }
   
@@ -52,10 +55,14 @@ export class RootUi {
    
   navigateToHash(hash) {
     const words = hash.split("/").filter(v => v);
-    switch (words[0]) {
+    switch (words[0] || "") {
+      case "": this.navigateHome(); break;
       case "map": this.navigateMap(words.slice(1)); break;
-      //TODO "image" => tileprops
-      default: this.navigateHome(); break;
+      case "image": this.navigateImage(words.slice(1)); break;
+      default: {
+          console.error(`Unexpected hash ${JSON.stringify(hash)}. Routing to Home instead.`);
+          this.navigateHome();
+        }
     }
   }
   
@@ -79,11 +86,23 @@ export class RootUi {
     if (isNaN(id)) return this.navigationError(`Invalid map id`);
     const content = this.clearContent();
     this.contentController = this.dom.spawnController(content, MapUi);
+    this.contentController.setTattleText = (text) => this.toolbar.setTattleText(text);
     this.contentController.setup(id, args);
+    this.toolbar.setMapToolsVisible(true);
   }
   
   navigateMapAll(args) {
     const content = this.clearContent();
     this.contentController = this.dom.spawnController(content, MapAllUi);
+  }
+  
+  navigateImage(args) {
+    const id = +args[0];
+    if (isNaN(id)) return this.navigationError(`Invalid image id`);
+    args = args.slice(1);
+    const content = this.clearContent();
+    this.contentController = this.dom.spawnController(content, ImageUi);
+    this.contentController.setTattleText = (text) => this.toolbar.setTattleText(text);
+    this.contentController.setup(id, args);
   }
 }

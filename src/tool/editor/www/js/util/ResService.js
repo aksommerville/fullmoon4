@@ -3,17 +3,23 @@
  */
  
 import { MapService } from "/js/map/MapService.js";
+import { ImageService } from "/js/image/ImageService.js";
  
 export class ResService {
   static getDependencies() {
-    return [Window, MapService];
+    return [Window, MapService, ImageService];
   }
-  constructor(window, mapService) {
+  constructor(window, mapService, imageService) {
     this.window = window;
     this.mapService = mapService;
+    this.imageService = imageService;
     
-    this.types = ["image", "map", "song", "string"];
+    this.DIRTY_DEBOUNCE_TIME = 5000;
+    
+    this.types = ["image", "tileprops", "map", "song", "string"];
     this.toc = []; // {type, id, name, q, lang, path, serial, object}
+    this.dirties = []; // {type, id} The named TOC entries should have a fresh (object) and no (serial).
+    this.dirtyDebounce = null;
     
     this.reloadAll();
     
@@ -36,6 +42,22 @@ export class ResService {
     });
   }
   
+  /* cb is called with {
+   *   type: "loaded"
+   * } or {
+   *   type: "loadError"
+   *   error: any
+   * } or {
+   *   type: "dirty"
+   * } or {
+   *   type: "saving"
+   * } or {
+   *   type: "saveError"
+   *   error: any
+   * } or {
+   *   type: "saved"
+   * }
+   */
   listen(cb) {
     const id = this.nextListenerId++;
     this.listeners.push({ id, cb });
@@ -93,6 +115,7 @@ export class ResService {
     let load;
     switch (type) {
       case "image": return this.loadImage(base);
+      case "tileprops": return this.loadText(type, base, (src, id) => this.imageService.decodeTileprops(src, id));
       case "string": return this.loadStrings(base);
       case "map": return this.loadText(type, base, (src, id) => this.mapService.decode(src, id));
       case "song": return this.loadTocOnly(type, base);
@@ -231,9 +254,101 @@ export class ResService {
   
   /* Save.
    *********************************************************/
+   
+  generatePathForNewResource(type, id) {
+    return `/data/${type}/${id}`;
+  }
+   
+  dirty(type, id, object) {
+    // TODO Can we use this same function for deleting? Maybe with (object===null)?
+    let res = this.toc.find(r => r.type === type && r.id === id);
+    if (!res) {
+      res = {
+        type, id,
+        path: this.generatePathForNewResource(type, id),
+      };
+      this.toc.push(res);
+    }
+    res.serial = null;
+    res.object = object;
+    if (!this.dirties.find(d => d.type === type && d.id === id)) {
+      this.dirties.push({ type, id });
+    }
+    if (!this.dirtyDebounce) {
+      this.broadcast({ type: "dirty" });
+      this.dirtyDebounce = this.window.setTimeout(() => {
+        this.dirtyDebounce = null;
+        this.saveAll().then(() => {
+        }).catch(() => {
+          // We don't need to 'dirty' it again, but we do need to trigger this setTimeout again.
+          this.dirty(type, id, object);
+        });
+      }, this.DIRTY_DEBOUNCE_TIME);
+    }
+  }
   
   saveAll() {
-    return Promise.resolve();//TODO dirty debounce
+    if (!this.dirties.length) return Promise.resolve();
+    const dirties = this.dirties;
+    this.dirties = [];
+    const promises = [];
+    
+    for (let i=dirties.length; i-->0; ) {
+      const { type, id } = dirties[i];
+      promises.push(new Promise((resolve, reject) => {
+        const res = this.toc.find(r => r.type === type && r.id === id);
+        if (!res) return reject(`Resource ${type}:${id} disappeared from TOC between dirty and save.`);
+        if (!res.serial) {
+          if (!res.object) return reject(`Resource ${type}:${id} has no object in TOC.`);
+          if (!res.object.encode) return reject(`Unable to encode resource ${type}:${id}.`);
+          if (!(res.serial = res.object.encode())) return reject(`Failed to encode resource ${type}:${id}`);
+        }
+        this.window.fetch(res.path, { method: "PUT", body: res.serial })
+          .then(rsp => { if (!rsp.ok) throw rsp; return rsp.text(); })
+          .then((rsp) => {
+            const p = dirties.findIndex(d => d.type === type && d.id === id);
+            if (p >= 0) dirties.splice(p, 1);
+            resolve();
+          })
+          .catch(reject);
+      }));
+    }
+    
+    return Promise.all(promises)
+      .then(() => {
+        // We could, and often do, collect new dirties during the save.
+        // That's fine. But don't report "saved", since that's not really our state now.
+        if (!this.dirties.length) this.broadcast({ type: "saved" });
+      })
+      .catch((e) => {
+        this.broadcast({ type: "saveError", error: e });
+        // Anything we haven't saved yet, put it back in the dirty queue.
+        for (const { type, id } of dirties) {
+          const res = this.toc.find(r => r.type === type && r.id === id);
+          const object = res ? res.object : null;
+          this.dirty(type, id, object);
+        }
+        throw e;
+      });
+  }
+  
+  /* Odds, ends.
+   ***************************************************/
+   
+  unusedId(type) {
+    const used = [];
+    let hi = 0;
+    for (const res of this.toc) {
+      if (res.type !== type) continue;
+      used.push(res.id);
+      if (res.id > hi) hi = res.id;
+    }
+    if (used.length < 1) return 1;
+    if (hi === used.length) return hi + 1; // they are contiguous from 1; return the next.
+    // find the gap...
+    for (let id=1; ; id++) {
+      if (used.indexOf(id) < 0) return id;
+    }
   }
 }
 

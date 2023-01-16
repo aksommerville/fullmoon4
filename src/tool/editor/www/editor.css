@@ -7,6 +7,47 @@ body {
   height: 100vh;
 }
 
+.hidden {
+  display: none !important;
+}
+
+/* Generic modals.
+ *********************************************************/
+
+.modalBlotter {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+  background-color: #000;
+  opacity: 0.8;
+}
+
+.modalStack {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 101;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalStack .modalFrame {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 1em;
+  box-shadow: #000 0 0 2em 0.5em;
+  padding: 1em;
+  position: absolute;
+  max-width: 90vw;
+}
+
 /* RootUi
  *****************************************/
  
@@ -39,6 +80,54 @@ body {
   border-bottom: 1px solid #000;
 }
 
+.ToolbarUi > .spacer {
+  flex: 1;
+}
+
+.ToolbarUi > .tattle {
+  background-color: #000;
+  color: #fff;
+  min-width: 10em;
+  padding: 0.5em;
+  font-family: monospace;
+}
+
+.ToolbarUi .mapTools {
+  display: flex;
+  flex-direction: row;
+}
+
+.ToolbarUi .mapTools img {
+  border: 1px solid rgba(0,0,0,0); /* make it apportion space for the border always */
+}
+.ToolbarUi .mapTools img.selected {
+  background-color: #f80;
+  border: 1px solid #000;
+}
+
+.ToolbarUi .mapPalette {
+  width: 16px;
+  height: 16px;
+  padding: 1px;
+  border: 1px solid #000;
+}
+
+.ToolbarUi .saveIndicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  border: 1px solid #000;
+}
+.ToolbarUi .saveIndicator.clean {
+  background-color: #0f0;
+}
+.ToolbarUi .saveIndicator.dirty {
+  background-color: #ff0;
+}
+.ToolbarUi .saveIndicator.error {
+  background-color: #f00;
+}
+
 /* MapAllUi.
  *********************************************/
  
@@ -62,4 +151,144 @@ body {
   height: 100%;
   overflow-x: scroll;
   overflow-y: scroll;
+}
+
+/* MapUi.
+ ************************************************/
+
+.MapUi {
+  display: flex;
+  user-select: none;
+}
+
+.MapUi .mainView {
+  width: 100%;
+  height: 100%;
+}
+
+/* PaletteModal.
+ ****************************************/
+ 
+.PaletteModal td {
+  width: 2em;
+  height: 2em;
+  user-select: none;
+  cursor: pointer;
+  text-align: center;
+  font-family: monospace;
+  border: 1px solid #000;
+}
+
+/* ImageUi.
+ ************************************************/
+ 
+.ImageUi {
+  display: flex;
+  flex-direction: column;
+}
+
+.ImageUi .controlsRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.ImageUi .visibility {
+  display: flex;
+  flex-direction: row;
+}
+
+.ImageUi .visibility input {
+  display: none;
+}
+.ImageUi .visibility input + label {
+  cursor: pointer;
+  user-select: none;
+  margin: 1px;
+  padding: 0.125em 0.25em;
+  border-top:    1px solid #bbb;
+  border-left:   1px solid #bbb;
+  border-right:  1px solid #444;
+  border-bottom: 1px solid #444;
+  background-color: #777;
+}
+.ImageUi .visibility input:checked + label {
+  background-color: #ff0;
+  border-top:    1px solid #444;
+  border-left:   1px solid #444;
+  border-right:  1px solid #bbb;
+  border-bottom: 1px solid #bbb;
+}
+
+.ImageUi .grid {
+  flex: 1;
+}
+
+/* TilepropsModal.
+ **************************************************/
+ 
+.TilepropsModal {
+  display: flex;
+  flex-direction: column;
+}
+
+.TilepropsModal .header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dotted #000;
+}
+
+.TilepropsModal .tileid {
+  font-size: 24pt;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.TilepropsModal .thumbnail {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+  padding: 1px;
+  border: 1px solid #000;
+}
+
+.TilepropsModal .body {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.TilepropsModal .presets {
+  display: flex;
+  flex-direction: column;
+}
+
+.TilepropsModal .presets button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* MapCommandsModal.
+ ********************************************/
+ 
+.MapCommandsModal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.MapCommandsModal textarea {
+  min-width: 50vw;
+  min-height: 50vh;
+}
+
+/* NewPoiModal.
+ **********************************************/
+ 
+.NewPoiModal .transientForm {
+  min-height: 40vh; /* Make it pretty tall always, to avoid resizing the modal frame when type changes. */
+  min-width: 40vw;
 }

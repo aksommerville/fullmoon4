@@ -84,6 +84,17 @@ export class FullmoonMap {
   
   /* The three ways to make a new FullmoonMap. Privateish.
    ***************************************************************/
+   
+  decodeCommands(src) {
+    this.commands = [];
+    for (let srcp=0; srcp<src.length; ) {
+      let nlp = src.indexOf("\n", srcp);
+      if (nlp < 0) nlp = src.length;
+      const command = this.decodeCommand(src.substring(srcp, nlp));
+      if (command) this.commands.push(command);
+      srcp = nlp + 1;
+    }
+  }
   
   decode(src) {
     const piclen = (FullmoonMap.COLC * 2 + 1) * FullmoonMap.ROWC;

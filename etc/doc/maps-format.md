@@ -33,6 +33,8 @@ neighborw MAPID
 neighbore MAPID
 neighborn MAPID
 neighbors MAPID
+door X Y MAPID DSTX DSTY
+sprite X Y SPRITEID ARG0 ARG1 ARG2
 ```
 
 ## Binary Format
@@ -79,4 +81,8 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x41 (u16 mapid) NEIGHBORE
 0x42 (u16 mapid) NEIGHBORN
 0x43 (u16 mapid) NEIGHBORS
+
+0x60 (u8 cellp,u16 mapid,u8 dstxy) DOOR
+
+0x80 (u8 cellp,u16 spriteid,u8 arg0,u8 arg1,u8 arg2) SPRITE
 ```
