@@ -12,6 +12,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 ### January
 
 - [ ] Hero physics and animation.
+- [ ] If you drop the dpad during a door transition, she should stop moving. As is, you get the deceleration tail on the far end.
 
 ### February
 

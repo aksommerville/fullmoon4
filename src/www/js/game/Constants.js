@@ -34,6 +34,17 @@ export class Constants {
     this.SKETCH_SIZE = 12;
     this.DOOR_LIMIT = 16;
     this.DOOR_SIZE = 8;
+    
+    this.TRANSITION_TIME_MS = 800;
+    
+    this.TRANSITION_CUT = 0;
+    this.TRANSITION_PAN_LEFT = 1;
+    this.TRANSITION_PAN_RIGHT = 2;
+    this.TRANSITION_PAN_UP = 3;
+    this.TRANSITION_PAN_DOWN = 4;
+    this.TRANSITION_FADE_BLACK = 5;
+    this.TRANSITION_DOOR = 6;
+    this.TRANSITION_WARP = 7;
   }
 }
 

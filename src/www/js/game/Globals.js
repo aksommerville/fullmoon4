@@ -81,9 +81,10 @@ export class Globals {
     const sprite = {
       x: this.memF32[p >> 2],
       y: this.memF32[(p >> 2) + 1],
-      imageid: this.memU8[p + 8],
-      tileid: this.memU8[p + 9],
-      xform: this.memU8[p + 10],
+      style: this.memU8[p + 8],
+      imageid: this.memU8[p + 9],
+      tileid: this.memU8[p + 10],
+      xform: this.memU8[p + 11],
     };
     return sprite;
   }

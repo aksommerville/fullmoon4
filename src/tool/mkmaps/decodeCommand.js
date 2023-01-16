@@ -60,7 +60,7 @@ function decodeCommand_door(args) {
   dst[1] = y * COLC + x;
   dst[2] = mapId >> 8;
   dst[3] = mapId;
-  dst[4] = dsty * COLC + x;
+  dst[4] = dsty * COLC + dstx;
   return dst;
 }
 

@@ -98,12 +98,20 @@ int rand();
 #define FMN_ITEM_NITRO          15
 #define FMN_ITEM_COUNT          16
 
-struct fmn_sprite {
-  float x,y; // midpoint in grid space
-  uint8_t imageid;
-  uint8_t tileid;
+#define FMN_SPRITE_STYLE_HIDDEN 0 /* don't render */
+#define FMN_SPRITE_STYLE_TILE   1 /* single tile */
+#define FMN_SPRITE_STYLE_HERO   2
+
+/* fmn_sprite_header is the part visible to the platform.
+ * The app declares a more useful struct fmn_sprite with more content.
+ */
+#define FMN_SPRITE_HEADER \
+  float x,y; /* midpoint in grid space */ \
+  uint8_t style; \
+  uint8_t imageid; \
+  uint8_t tileid; \
   uint8_t xform;
-};
+struct fmn_sprite_header { FMN_SPRITE_HEADER };
 
 struct fmn_plant {
   uint16_t x;
@@ -137,10 +145,9 @@ struct fmn_door {
 extern struct fmn_global {
 
   /* Sprites in render order.
-   * Game can modify these on the fly.
-   * Each sprite must begin with the (struct fmn_sprite) header.
+   * Game can modify these on the fly; and they are read-only to platform.
    */
-  struct fmn_sprite **spritev;
+  struct fmn_sprite_header **spritev;
   uint32_t spritec;
 
   /* Map content, loaded by platform.
