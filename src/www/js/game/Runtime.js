@@ -9,12 +9,19 @@ import { Renderer } from "./Renderer.js";
 import { MenuFactory } from "./Menu.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
+import { Globals } from "./Globals.js";
  
 export class Runtime {
   static getDependencies() {
-    return [WasmLoader, DataService, InputManager, Window, Renderer, MenuFactory, Clock, Constants];
+    return [
+      WasmLoader, DataService, InputManager, Window, 
+      Renderer, MenuFactory, Clock, Constants, Globals
+    ];
   }
-  constructor(wasmLoader, dataService, inputManager, window, renderer, menuFactory, clock, constants) {
+  constructor(
+    wasmLoader, dataService, inputManager, window,
+    renderer, menuFactory, clock, constants, globals
+  ) {
     this.wasmLoader = wasmLoader;
     this.dataService = dataService;
     this.inputManager = inputManager;
@@ -23,6 +30,7 @@ export class Runtime {
     this.menuFactory = menuFactory;
     this.clock = clock;
     this.constants = constants;
+    this.globals = globals;
     
     this.running = false;
     this.animationFramePending = false;
@@ -56,6 +64,7 @@ export class Runtime {
       .then(() => this.dataService.fetchAllMaps())
       .then(() => {
         console.log(`Runtime: loaded wasm instance`, this.wasmLoader.instance);
+        this.globals.refresh();
         this.running = true;
         this.clock.runtimeLoaded();
         if (this.wasmLoader.instance.exports.fmn_init()) {
@@ -140,28 +149,12 @@ export class Runtime {
     const map = this.dataService.loadMap(mapId);
     if (!map) return 0;
     cbSpawn = this.wasmLoader.instance.exports.__indirect_function_table.get(cbSpawn);
-    console.log(`Runtime.loadMap`, { mapId, cbSpawn, map });
     this.map = map;
     this.mapId = mapId;
-    this.writeMapToAppMemory();
+    this.globals.setMap(this.map);
     this.triggerMapSetup(cbSpawn);
-    //TODO how do doors work? right now we're ignoring them
     this.renderer.mapDirty();
     return 1;
-  }
-  
-  writeMapToAppMemory() {
-    let dstp = this.wasmLoader.instance.exports.fmn_global.value;
-    dstp += 8;
-    this.wasmLoader.memU8.set(this.map.cells, dstp);
-    dstp += this.constants.COLC * this.constants.ROWC;
-    this.wasmLoader.memU8[dstp++] = this.map.bgImageId;
-    this.wasmLoader.memU8[dstp++] = this.map.songId;
-    dstp >>= 1; // remainder of fields are 16-bit
-    this.wasmLoader.memU16[dstp++] = this.map.neighborw;
-    this.wasmLoader.memU16[dstp++] = this.map.neighbore;
-    this.wasmLoader.memU16[dstp++] = this.map.neighborn;
-    this.wasmLoader.memU16[dstp++] = this.map.neighbors;
   }
   
   triggerMapSetup(cbSpawn) {

@@ -30,6 +30,13 @@ int fmn_init() {
     return -1;
   }
   
+  fmn_log("neighbors: %d,%d,%d,%d",fmn_global.neighborw,fmn_global.neighbore,fmn_global.neighborn,fmn_global.neighbors);
+  const struct fmn_door *door=fmn_global.doorv;
+  uint32_t i=fmn_global.doorc;
+  for (;i-->0;door++) {
+    fmn_log("door at (%d,%d) to %d(%d,%d)",door->x,door->y,door->mapid,door->dstx,door->dsty);
+  }
+  
   //TEMP sprites
   my_sprite.x=5.0f;
   my_sprite.y=2.0f;

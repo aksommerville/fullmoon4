@@ -25,6 +25,7 @@ int rand();
 
 #define FMN_PLANT_LIMIT 16
 #define FMN_SKETCH_LIMIT 16
+#define FMN_DOOR_LIMIT 16
 
 #define FMN_XFORM_XREV 1
 #define FMN_XFORM_YREV 2
@@ -120,6 +121,15 @@ struct fmn_sketch {
   uint32_t time; /* Timestamp of last touch, so we can overwrite in chronological order. */
 };
 
+struct fmn_door {
+  uint8_t x;
+  uint8_t y;
+  uint16_t mapid;
+  uint8_t dstx;
+  uint8_t dsty;
+  uint16_t pad;
+};
+
 /* App must define this.
  * The JS side will read it straight out of memory.
  * It is important that you not change the order or type of members, without updating the JS app!
@@ -144,6 +154,8 @@ extern struct fmn_global {
   uint16_t neighborn;
   uint16_t neighbors;
   uint16_t pad1;
+  struct fmn_door doorv[FMN_DOOR_LIMIT];
+  uint32_t doorc;
   
   /* Current plants and sketches, loaded by platform.
    * You can modify these and the changes will persist, but you must not add or remove anything.

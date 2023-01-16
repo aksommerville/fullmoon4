@@ -32,6 +32,8 @@ export class Constants {
     this.PLANT_SIZE = 12;
     this.SKETCH_LIMIT = 16;
     this.SKETCH_SIZE = 12;
+    this.DOOR_LIMIT = 16;
+    this.DOOR_SIZE = 8;
   }
 }
 

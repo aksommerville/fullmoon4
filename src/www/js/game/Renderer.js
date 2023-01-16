@@ -2,19 +2,19 @@
  */
  
 import { Dom } from "../util/Dom.js";
-import { WasmLoader } from "../util/WasmLoader.js";
 import { Constants } from "./Constants.js";
+import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
  
 export class Renderer {
   static getDependencies() {
-    return [Dom, Constants, WasmLoader, DataService];
+    return [Dom, Constants, DataService, Globals];
   }
-  constructor(dom, constants, wasmLoader, dataService) {
+  constructor(dom, constants, dataService, globals) {
     this.dom = dom;
     this.constants = constants;
-    this.wasmLoader = wasmLoader;
     this.dataService = dataService;
+    this.globals = globals;
   
     // FMN_TRANSITION_*. 0 is CUT, which is effectively no-op.
     this.transitionMode = 0;
@@ -62,9 +62,8 @@ export class Renderer {
   render() {
     if (!this.canvas) return;
     this.frameCount++;
-    const globalp = this.wasmLoader.instance.exports.fmn_global.value;
     if (this.redrawMapAtNextRender) {
-      this.renderMap(globalp);
+      this.renderMap();
       this.redrawMapAtNextRender = false;
     }
     const ctx = this.canvas.getContext("2d");
@@ -72,53 +71,38 @@ export class Renderer {
     
     let srcImage = null;
     let srcImageId = 0;
-    let spritei = this.wasmLoader.memU32[(globalp + 4) >> 2];
+    let spritei = this.globals.g_spritec[0];
     if (spritei > 0) {
       const tilesize = this.constants.TILESIZE;
       const halftile = tilesize >> 1;
-      let spritepp = this.wasmLoader.memU32[globalp >> 2] >> 2;
+      let spritepp = this.globals.g_spritev[0] >> 2;
       for (; spritei-->0; spritepp++) {
-      
-        // Read sprite header.
-        let spritep = this.wasmLoader.memU32[spritepp];
-        const midx = this.wasmLoader.memF32[spritep >> 2]; spritep += 4;
-        const midy = this.wasmLoader.memF32[spritep >> 2]; spritep += 4;
-        const imageId = this.wasmLoader.memU8[spritep++];
-        const tileId = this.wasmLoader.memU8[spritep++];
-        const xform = this.wasmLoader.memU8[spritep++];
+     
+        const sprite = this.globals.getSpriteByAddress(this.globals.memU32[spritepp]);
         
         // Ensure image loaded. NB This is for all sprite render types, not just the generic.
-        if (imageId !== srcImageId) {
-          srcImage = this.dataService.loadImageSync(imageId);
-          srcImageId = imageId;
+        if (sprite.imageid !== srcImageId) {
+          srcImage = this.dataService.loadImageSync(sprite.imageid);
+          srcImageId = sprite.imageid;
         }
         if (!srcImage) continue;
         
         if (true) { // TODO if hero...
-          this.renderHero(ctx, srcImage, midx, midy, globalp);
+          this.renderHero(ctx, srcImage, sprite.x, sprite.y);
         
         } else { // generic single-tile sprites
-          this.renderTile(ctx, srcImage, midx, midy, tileId, xform);
+          this.renderTile(ctx, srcImage, sprite.x, sprite.y, sprite.tileid, sprite.xform);
         }
       }
     }
   }
   
-  renderHero(ctx, srcImage, midx, midy, globalp) {
+  renderHero(ctx, srcImage, midx, midy) {
     const tilesize = this.constants.TILESIZE;
     const halftile = tilesize >> 1;
     const left = ~~(midx * tilesize - halftile);
-    let memp = globalp // at (selected_item). TODO maybe don't depend so hard on struct layout...
-      + 8 
-      + this.constants.COLC * this.constants.ROWC + 12
-      + this.constants.PLANT_LIMIT * this.constants.PLANT_SIZE
-      + this.constants.SKETCH_LIMIT * this.constants.SKETCH_SIZE
-      + 8;
-    const selectedItem = this.wasmLoader.memU8[memp];
-    const activeItem = this.wasmLoader.memU8[memp + 1];
-    memp += 36; // skip to Hero section
-    const facedir = this.wasmLoader.memU8[memp++];
-    const walking = this.wasmLoader.memU8[memp];
+    const facedir = this.globals.g_facedir[0];
+    const walking = this.globals.g_walking[0];
     
     // The most common tiles are arranged in the first three columns: DOWN, UP, LEFT.
     let col = 0, xform = 0;
@@ -144,8 +128,9 @@ export class Renderer {
   }
   
   renderMap(globalp) {
-    let cellp = globalp + 8;
-    const imageId = this.wasmLoader.memU8[cellp + this.constants.COLC * this.constants.ROWC];
+    const cellv = this.globals.g_map;
+    let cellp = 0;
+    const imageId = this.globals.g_maptsid[0];
     const tilesheet = this.dataService.loadImageSync(imageId);
     const ctx = this.mapCanvas.getContext("2d");
     if (!tilesheet) {
@@ -160,8 +145,8 @@ export class Renderer {
     for (let dsty=tilesize>>1, yi=this.constants.ROWC; yi-->0; dsty+=tilesize) {
       for (let dstx=tilesize>>1, xi=this.constants.COLC; xi-->0; dstx+=tilesize, cellp++) {
         this.renderTile(ctx, dstx, dsty, tilesheet, 0);
-        if (this.wasmLoader.memU8[cellp]) {
-          this.renderTile(ctx, dstx, dsty, tilesheet, this.wasmLoader.memU8[cellp], 0);
+        if (cellv[cellp]) {
+          this.renderTile(ctx, dstx, dsty, tilesheet, cellv[cellp], 0);
         }
       }
     }
