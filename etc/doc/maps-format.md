@@ -12,19 +12,13 @@ Our script `src/tool/mkmaps/main.js` compiles the binary from multiple text file
 
 File's basename must be a decimal integer in 1..65535; that becomes its Map ID.
 
-Starts with 12 lines of 40 characters each; every 2 characters are one map cell.
-Either a hexadecimal integer, or one of these aliases:
-
-- `. ` 0x00
-- `Xx` 0x01
-
-TODO Should have many more aliases. Maybe customizable without changing the compiler?
-
-TODO Should do automatic neighbor-joining too, describe that.
-
-XXX On second thought, we're not going to edit these as text realistically. Let it be just the hex dump.
+Starts with 12 lines of 40 characters each; every 2 characters are one map cell, hexadecimal.
 
 After the map picture, each non-empty line is a command.
+Order of commands is preserved.
+
+Adding new commands, you must add a clause at src/tool/mkmaps/decodeCommand.js.
+And probably want to add support in the editor too.
 
 ```
 song SONGID
@@ -82,7 +76,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x42 (u16 mapid) NEIGHBORN
 0x43 (u16 mapid) NEIGHBORS
 
-0x60 (u8 cellp,u16 mapid,u8 dstxy) DOOR
+0x60 (u8 cellp,u16 mapid,u8 dstcellp) DOOR
 
 0x80 (u8 cellp,u16 spriteid,u8 arg0,u8 arg1,u8 arg2) SPRITE
 ```

@@ -73,6 +73,18 @@ export class DataService {
   /* Maps.
    * Map loading must be synchronous because it's driven by a C hook that expects a result.
    * The asynchronous part happens up front at the initial load.
+   *
+   * map: {
+   *   cells: Uint8Array(COLC * ROWC)
+   *   bgImageId
+   *   songId
+   *   neighborw
+   *   neighbore
+   *   neighborn
+   *   neighbors
+   *   doors: {x,y,mapId,dstx,dsty}[]
+   *   sprites: {x,y,spriteId,arg0,arg1,arg2}[]
+   * }
    ***********************************************************/
    
   fetchAllMaps() {
@@ -105,7 +117,6 @@ export class DataService {
     const lastMapId = (src[4] << 8) | src[5];
     const tocLength = lastMapId * 4;
     const dataStart = 6 + tocLength;
-    console.log(`lastMapId=${lastMapId} tocLength=${tocLength} dataStart=${dataStart} src.length=${src.length}`);
     if (dataStart > src.length) {
       throw new Error(`Maps archive TOC overruns file`);
     }
@@ -140,11 +151,58 @@ export class DataService {
     }
     const map = {
       cells: new Uint8Array(cellsLength),
-      bgImageId: 1,//TODO
+      doors: [],
+      sprites: [],
     };
     map.cells.set(new Uint8Array(src.buffer, src.byteOffset + p, cellsLength));
-    //TODO additional map content
+    p += cellsLength;
+    c -= cellsLength;
+    while (c > 0) {
+      const opcode = src[p++]; c--;
+      if (!opcode) break; // Explicit commands terminator.
+      let paylen = 0;
+      switch (opcode & 0xe0) {
+        case 0x00: paylen = 0; break;
+        case 0x20: paylen = 1; break;
+        case 0x40: paylen = 2; break;
+        case 0x60: paylen = 4; break;
+        case 0x80: paylen = 6; break;
+        case 0xa0: paylen = 8; break;
+        case 0xc0: if (!c) throw new Error(`Unexpected EOF in map ${mapId}`); paylen = src[p++]; c--; break;
+        case 0xe0: throw new Error(`Unknown opcode 0x${opcode.toString(16)} in map ${mapId}`);
+      }
+      if (paylen > c) throw new Error(`Unexpected EOF in map ${mapId}`);
+      this.decodeMapCommand(map, opcode, src, p, paylen);
+      p += paylen;
+      c -= paylen;
+    }
     return map;
+  }
+  
+  decodeMapCommand(map, opcode, src, p, c) {
+    switch (opcode) {
+      case 0x20: map.songId = src[p]; break;
+      case 0x21: map.bgImageId = src[p]; break;
+      case 0x40: map.neighborw = (src[p] << 8) | src[p + 1]; break;
+      case 0x41: map.neighbore = (src[p] << 8) | src[p + 1]; break;
+      case 0x42: map.neighborn = (src[p] << 8) | src[p + 1]; break;
+      case 0x43: map.neighbors = (src[p] << 8) | src[p + 1]; break;
+      case 0x60: map.doors.push({
+          x: src[p] % this.constants.COLC,
+          y: Math.floor(src[p] / this.constants.COLC),
+          mapId: (src[p + 1] << 8) | src[p + 2],
+          dstx: src[p + 3] % this.constants.COLC,
+          dsty: Math.floor(src[p + 3] / this.constants.COLC),
+        }); break;
+      case 0x80: map.sprites.push({
+          x: src[p] % this.constants.COLC,
+          y: Math.floor(src[p] / this.constants.COLC),
+          spriteId: (src[p + 1] << 8) | src[p + 2],
+          arg0: src[p + 3],
+          arg1: src[p + 4],
+          arg2: src[p + 5],
+        }); break;
+    }
   }
   
   /* Saved game.

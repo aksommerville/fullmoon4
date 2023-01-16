@@ -145,6 +145,7 @@ export class Runtime {
     this.mapId = mapId;
     this.writeMapToAppMemory();
     this.triggerMapSetup(cbSpawn);
+    //TODO how do doors work? right now we're ignoring them
     this.renderer.mapDirty();
     return 1;
   }
@@ -155,16 +156,19 @@ export class Runtime {
     this.wasmLoader.memU8.set(this.map.cells, dstp);
     dstp += this.constants.COLC * this.constants.ROWC;
     this.wasmLoader.memU8[dstp++] = this.map.bgImageId;
-    this.wasmLoader.memU8[dstp++] = 0;//TODO songId
+    this.wasmLoader.memU8[dstp++] = this.map.songId;
     dstp >>= 1; // remainder of fields are 16-bit
-    this.wasmLoader.memU16[dstp++] = 0;//TODO neighborw
-    this.wasmLoader.memU16[dstp++] = 0;//TODO neighbore
-    this.wasmLoader.memU16[dstp++] = 0;//TODO neighborn
-    this.wasmLoader.memU16[dstp++] = 0;//TODO neighbors
+    this.wasmLoader.memU16[dstp++] = this.map.neighborw;
+    this.wasmLoader.memU16[dstp++] = this.map.neighbore;
+    this.wasmLoader.memU16[dstp++] = this.map.neighborn;
+    this.wasmLoader.memU16[dstp++] = this.map.neighbors;
   }
   
   triggerMapSetup(cbSpawn) {
-    // TODO spawn points: cbSpawn(x,y,spriteid,arg0,arg1,arg2,arg3)
+    if (!this.map.sprites) return;
+    for (const { x, y, spriteId, arg0, arg1, arg2 } of this.map.sprites) {
+      cbSpawn(x, y, spriteId, arg0, arg1, arg2, 0); // (cb) has an "arg3" which we don't have.
+    }
   }
 }
 

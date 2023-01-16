@@ -166,6 +166,7 @@ extern struct fmn_global {
   /* More hero stuff for renderer.
    */
   uint8_t facedir; // FMN_DIR_*, cardinals only.
+  uint8_t walking;
   
 } fmn_global;
 

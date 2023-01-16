@@ -21,6 +21,7 @@ export class Renderer {
     
     this.redrawMapAtNextRender = false;
     this.canvas = null;
+    this.frameCount = 0; // increments at each render
     
     this.mapCanvas = this.dom.createElement("CANVAS");
     this.mapCanvas.width = this.constants.COLC * this.constants.TILESIZE;
@@ -60,6 +61,7 @@ export class Renderer {
    
   render() {
     if (!this.canvas) return;
+    this.frameCount++;
     const globalp = this.wasmLoader.instance.exports.fmn_global.value;
     if (this.redrawMapAtNextRender) {
       this.renderMap(globalp);
@@ -115,7 +117,8 @@ export class Renderer {
     const selectedItem = this.wasmLoader.memU8[memp];
     const activeItem = this.wasmLoader.memU8[memp + 1];
     memp += 36; // skip to Hero section
-    const facedir = this.wasmLoader.memU8[memp];
+    const facedir = this.wasmLoader.memU8[memp++];
+    const walking = this.wasmLoader.memU8[memp];
     
     // The most common tiles are arranged in the first three columns: DOWN, UP, LEFT.
     let col = 0, xform = 0;
@@ -126,7 +129,12 @@ export class Renderer {
     }
     
     // Body, centered on (mid).
-    this.renderTile(ctx, midx * tilesize, midy * tilesize, srcImage, 0x20 + col, xform);
+    let bodyFrame = 0x20 + col;
+    if (walking) {
+      const bodyClock = Math.floor((this.frameCount % 36) / 2);
+      bodyFrame += 0x10 * [0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0, 3, 3, 4, 4, 4, 3, 3][bodyClock];
+    }
+    this.renderTile(ctx, midx * tilesize, midy * tilesize, srcImage, bodyFrame, xform);
       
     // Head.
     this.renderTile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, 0x10 + col, xform);

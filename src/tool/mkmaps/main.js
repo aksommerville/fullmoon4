@@ -1,4 +1,5 @@
 const fs = require("fs");
+const decodeCommand = require("./decodeCommand.js");
 
 const COLC = 20;
 const ROWC = 12;
@@ -34,11 +35,6 @@ function mapIdFromPath(path) {
 }
 
 function decodeCell(src) {
-  switch (src) {
-    case ". ": return 0x00;
-    case "Xx": return 0x3d;
-    //TODO more aliases, user-defined aliases, neighbor joining
-  }
   const v = parseInt(src, 16);
   if (isNaN(v)) throw new Error(`Illegal cell value '${src}'`);
   return v;
@@ -55,6 +51,7 @@ function compileMap(path) {
   let cellp = 0, linep = 0;
   for (let row=0; row<ROWC; row++, linep+=lineLength) {
     try {
+      if (src[linep + lineLength - 1] !== 0x0a) throw new Error("Incorrect line length.");
       for (let col=0, srcp=linep; col<COLC; col++, cellp++, srcp+=2) {
         cells[cellp] = decodeCell(src.toString("utf-8", srcp, srcp+2));
       }
@@ -63,8 +60,35 @@ function compileMap(path) {
     }
   }
   
-  const serial = cells;
-  //TODO further content. spawn points etc...
+  let serial = cells;
+  let serialc = cells.length;
+  for (let lineno=ROWC; linep<src.length; lineno++) {
+    let nlp = src.indexOf("\n", linep);
+    if (nlp < 0) nlp = src.length;
+    const line = src.toString("utf8", linep, nlp).trim();
+    linep = nlp + 1;
+    if (!line || line.startsWith("#")) continue;
+    const words = line.split(/\s+/).filter(v => v);
+    try {
+      const cmdSerial = decodeCommand(words);
+      if (!cmdSerial || !cmdSerial.length) continue;
+      if (serialc + cmdSerial.length > serial.length) {
+        const na = (serialc + cmdSerial.length + 1024) & ~1023;
+        const nserial = Buffer.alloc(na);
+        serial.copy(nserial, 0);
+        serial = nserial;
+      }
+      cmdSerial.copy(serial, serialc);
+      serialc += cmdSerial.length;
+    } catch (e) {
+      throw new Error(`${path}:${lineno}: ${e.message}`);
+    }
+  }
+  if (serialc < serial.length) {
+    const nserial = Buffer.alloc(serialc);
+    serial.copy(nserial);
+    serial = nserial;
+  }
   
   return {
     path,
