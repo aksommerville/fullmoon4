@@ -1,7 +1,5 @@
 #include "fmn_platform.h"
-#include "fmn_sprite.h"
 #include "fmn_game.h"
-#include "fmn_hero.h"
 
 #define ELAPSED_TIME_LIMIT 1000
 
@@ -11,8 +9,7 @@ static uint8_t pvinput=0;
 
 
 int fmn_init() {
-  if (fmn_game_load_map(1)<1) return -1;
-  fmn_hero_set_position(FMN_COLC*0.5f,FMN_ROWC*0.5f);
+  if (fmn_game_init()<0) return -1;
   return 0;
 }
 

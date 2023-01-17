@@ -1,5 +1,4 @@
 #include "fmn_sprite.h"
-#include "fmn_platform.h"
 
 /* Global registry.
  * This is not exposed to the platform.
@@ -98,6 +97,31 @@ int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),voi
   return 0;
 }
 
+/* Update physics.
+ * Velocity has already been decayed and applied.
+ * Check for collisions and resolve them.
+ */
+ 
+static void fmn_sprite_physics_update(float elapsed) {
+  struct fmn_sprite **ap=fmn_spritepv;
+  int ai=0; for (;ai<fmn_global.spritec;ai++,ap++) {
+    struct fmn_sprite *a=*ap;
+    if (a->physics_mode!=FMN_SPRITE_PHYSICS_FULL) continue;
+    if (a->radius<=0.0f) continue;
+    
+    //TODO Check (a) against static geometry.
+    
+    struct fmn_sprite **bp=fmn_spritepv;
+    int bi=0; for (;bi<ai;bi++,bp++) {
+      struct fmn_sprite *b=*bp;
+      if (b->physics_mode!=FMN_SPRITE_PHYSICS_FULL) continue;
+      if (b->radius<=0.0f) continue;
+      
+      //TODO Check (a) against (b).
+    }
+  }
+}
+
 /* Update all sprites.
  */
  
@@ -106,7 +130,37 @@ void fmn_sprites_update(float elapsed) {
   int i=fmn_global.spritec;
   for (;i-->0;p++) {
     struct fmn_sprite *sprite=*p;
-    if (!sprite->update) continue;
-    sprite->update(sprite,elapsed);
+    
+    if (sprite->physics_mode==FMN_SPRITE_PHYSICS_FULL) {
+      // Linear decay of velocity.
+      if (sprite->velx<0.0f) {
+        if ((sprite->velx+=sprite->veldecay*elapsed)>=0.0f) sprite->velx=0.0f;
+      } else if (sprite->velx>0.0f) {
+        if ((sprite->velx-=sprite->veldecay*elapsed)<=0.0f) sprite->velx=0.0f;
+      }
+      if (sprite->vely<0.0f) {
+        if ((sprite->vely+=sprite->veldecay*elapsed)>=0.0f) sprite->vely=0.0f;
+      } else if (sprite->vely>0.0f) {
+        if ((sprite->vely-=sprite->veldecay*elapsed)<=0.0f) sprite->vely=0.0f;
+      }
+      // Apply velocity.
+      sprite->x+=sprite->velx*elapsed;
+      sprite->y+=sprite->vely*elapsed;
+    }
+    
+    if (sprite->update) {
+      sprite->update(sprite,elapsed);
+    }
   }
+  fmn_sprite_physics_update(elapsed);
+}
+
+/* Apply force.
+ */
+ 
+void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy) {
+  if (!sprite) return;
+  if (sprite->physics_mode!=FMN_SPRITE_PHYSICS_FULL) return;
+  sprite->velx+=dx;
+  sprite->vely+=dy;
 }

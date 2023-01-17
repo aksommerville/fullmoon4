@@ -5,12 +5,15 @@
 #ifndef FMN_SPRITE_H
 #define FMN_SPRITE_H
 
-#include "fmn_platform.h"
+#include "app/fmn_platform.h"
 
 #define FMN_SPRITE_ARGV_SIZE 4
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4
 #define FMN_SPRITE_FV_SIZE 4
+
+#define FMN_SPRITE_PHYSICS_NONE 0
+#define FMN_SPRITE_PHYSICS_FULL 1
 
 struct fmn_sprite {
   FMN_SPRITE_HEADER
@@ -25,6 +28,12 @@ struct fmn_sprite {
   uint8_t bv[FMN_SPRITE_BV_SIZE];
   int16_t sv[FMN_SPRITE_SV_SIZE];
   float fv[FMN_SPRITE_FV_SIZE];
+  
+  // Generic physics.
+  uint8_t physics_mode;
+  float velx,vely;
+  float veldecay; // Linear velocity decay in m/s**2.
+  float radius;
 };
 
 // Drop all sprites cold.
@@ -42,5 +51,7 @@ struct fmn_sprite *fmn_sprite_spawn(
 int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),void *userdata);
 
 void fmn_sprites_update(float elapsed);
+
+void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy);
 
 #endif
