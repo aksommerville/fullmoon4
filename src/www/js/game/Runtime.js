@@ -60,7 +60,7 @@ export class Runtime {
   
   reset() {
     this.dropAllState();
-    return this.wasmLoader.load("/fullmoon.wasm")
+    return this.wasmLoader.load("./fullmoon.wasm")
       .then(() => this.dataService.fetchAllMaps())
       .then(() => {
         console.log(`Runtime: loaded wasm instance`, this.wasmLoader.instance);

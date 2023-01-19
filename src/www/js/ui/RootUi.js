@@ -2,7 +2,7 @@
  * Top level view controller.
  */
  
-import { Dom } from "/js/util/Dom.js";
+import { Dom } from "../util/Dom.js";
 import { HeaderUi } from "./HeaderUi.js";
 import { GameUi } from "./GameUi.js";
 import { FooterUi } from "./FooterUi.js";

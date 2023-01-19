@@ -4,8 +4,8 @@
  * Use me instead, to keep all the addresses and such straight.
  */
  
-import { WasmLoader } from "/js/util/WasmLoader.js";
-import { Constants } from "/js/game/Constants.js";
+import { WasmLoader } from "../util/WasmLoader.js";
+import { Constants } from "./Constants.js";
  
 export class Globals {
   static getDependencies() {

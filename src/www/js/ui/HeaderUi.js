@@ -2,7 +2,7 @@
  * Global header bar.
  */
  
-import { Dom } from "/js/util/Dom.js";
+import { Dom } from "../util/Dom.js";
 
 export class HeaderUi {
   static getDependencies() {

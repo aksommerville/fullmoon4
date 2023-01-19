@@ -59,7 +59,7 @@ export class DataService {
         this.images[id] = message;
         reject(error);
       };
-      image.src = `/img/${id}.png`;
+      image.src = `./img/${id}.png`;
     });
     this.images[id] = result;
     return result;
@@ -93,7 +93,7 @@ export class DataService {
   fetchAllMaps() {
     if (!this.mapLoadState) {
       this.mapLoadState = this.fetchAllTileprops()
-        .then(() => this.window.fetch("/maps.data"))
+        .then(() => this.window.fetch("./maps.data"))
         .then(rsp => {
           if (!rsp.ok) throw rsp;
           return rsp.arrayBuffer();
@@ -218,7 +218,7 @@ export class DataService {
    
   fetchAllTileprops() {
     if (!this.tilepropsLoadState) {
-      this.tilepropsLoadState = this.window.fetch("/tileprops.data")
+      this.tilepropsLoadState = this.window.fetch("./tileprops.data")
         .then(rsp => {
           if (!rsp.ok) throw rsp;
           return rsp.arrayBuffer();

@@ -2,7 +2,7 @@
  * Variable-size container for the main canvas.
  */
  
-import { Dom } from "/js/util/Dom.js";
+import { Dom } from "../util/Dom.js";
 
 export class GameUi {
   static getDependencies() {
