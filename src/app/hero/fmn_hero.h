@@ -20,5 +20,6 @@ uint8_t fmn_hero_get_quantized_position(int8_t *x,int8_t *y);
 // Direct access to sprite's position, eg for map transitions.
 void fmn_hero_get_position(float *x,float *y);
 void fmn_hero_set_position(float x,float y);
+void fmn_hero_kill_velocity();
 
 #endif

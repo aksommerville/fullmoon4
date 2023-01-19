@@ -12,8 +12,12 @@
 #define FMN_SPRITE_SV_SIZE 4
 #define FMN_SPRITE_FV_SIZE 4
 
-#define FMN_SPRITE_PHYSICS_NONE 0
-#define FMN_SPRITE_PHYSICS_FULL 1
+#define FMN_PHYSICS_MOTION  0x01 /* Automatic motion per (velx,vely,veldecay) */
+#define FMN_PHYSICS_EDGE    0x02 /* Collide against screen edges. */
+#define FMN_PHYSICS_SPRITES 0x04 /* Collide against other sprites, if they also have this flag. */
+#define FMN_PHYSICS_SOLID   0x10 /* Collide against SOLID (1) grid cells. */
+#define FMN_PHYSICS_HOLE    0x20 /* '' HOLE (2) */
+#define FMN_PHYSICS_GRID (FMN_PHYSICS_SOLID|FMN_PHYSICS_HOLE)
 
 struct fmn_sprite {
   FMN_SPRITE_HEADER
@@ -30,7 +34,7 @@ struct fmn_sprite {
   float fv[FMN_SPRITE_FV_SIZE];
   
   // Generic physics.
-  uint8_t physics_mode;
+  uint8_t physics; // Bitfields, FMN_PHYSICS_*
   float velx,vely;
   float veldecay; // Linear velocity decay in m/s**2.
   float radius;

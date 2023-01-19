@@ -30,6 +30,8 @@ export class DataService {
     this.images = []; // sparse, keyed by image id 0..255. Image, or string for error.
     this.maps = []; // sparse, keyed by map id 0..65535.
     this.mapLoadState = null; // null, Promise, Error, or this.maps
+    this.tileprops = []; // sparse, keyed by image id 0..255. Uint8Array(256) or absent.
+    this.tilepropsLoadState = null; // null, Promise, Error, or this.tileprops
     this.savedGame = null;
     this.savedGameId = null;
   }
@@ -84,21 +86,24 @@ export class DataService {
    *   neighbors
    *   doors: {x,y,mapId,dstx,dsty}[]
    *   sprites: {x,y,spriteId,arg0,arg1,arg2}[]
+   *   cellphysics: Uint8Array(256) | null
    * }
    ***********************************************************/
    
   fetchAllMaps() {
     if (!this.mapLoadState) {
-      this.mapLoadState = this.window.fetch("/maps.data").then(rsp => {
-        if (!rsp.ok) throw rsp;
-        return rsp.arrayBuffer();
-      }).then(input => {
-        this.maps = this.decodeMaps(input);
-        this.mapLoadState = this.maps;
-      }).catch(error => {
-        this.mapLoadState = error || new Error("Failed to load maps.");
-        throw this.mapLoadState;
-      });
+      this.mapLoadState = this.fetchAllTileprops()
+        .then(() => this.window.fetch("/maps.data"))
+        .then(rsp => {
+          if (!rsp.ok) throw rsp;
+          return rsp.arrayBuffer();
+        }).then(input => {
+          this.maps = this.decodeMaps(input);
+          this.mapLoadState = this.maps;
+        }).catch(error => {
+          this.mapLoadState = error || new Error("Failed to load maps.");
+          throw this.mapLoadState;
+        });
     }
     if (this.mapLoadState instanceof Promise) return this.mapLoadState;
     if (this.mapLoadState === this.maps) return Promise.resolve();
@@ -153,6 +158,7 @@ export class DataService {
       cells: new Uint8Array(cellsLength),
       doors: [],
       sprites: [],
+      cellphysics: null,
     };
     map.cells.set(new Uint8Array(src.buffer, src.byteOffset + p, cellsLength));
     p += cellsLength;
@@ -176,6 +182,7 @@ export class DataService {
       p += paylen;
       c -= paylen;
     }
+    map.cellphysics = this.loadTileprops(map.bgImageId);
     return map;
   }
   
@@ -203,6 +210,48 @@ export class DataService {
           arg2: src[p + 5],
         }); break;
     }
+  }
+  
+  /* Tileprops.
+   * Works the same way as Maps, and Maps implicitly load Tileprops first.
+   *********************************************************/
+   
+  fetchAllTileprops() {
+    if (!this.tilepropsLoadState) {
+      this.tilepropsLoadState = this.window.fetch("/tileprops.data")
+        .then(rsp => {
+          if (!rsp.ok) throw rsp;
+          return rsp.arrayBuffer();
+        }).then(input => {
+          this.tileprops = this.decodeTileprops(input);
+          this.tilepropsLoadState = this.maps;
+        }).catch(error => {
+          this.tilepropsLoadState = error || new Error("Failed to load tileprops.");
+          throw this.tilepropsLoadState;
+        });
+    }
+    if (this.tilepropsLoadState instanceof Promise) return this.tilepropsLoadState;
+    if (this.tilepropsLoadState === this.tileprops) return Promise.resolve();
+    return Promise.reject(this.tilepropsLoadState);
+  }
+   
+  loadTileprops(imageId) {
+    return this.tileprops[imageId];
+  }
+  
+  decodeTileprops(src) {
+    src = new Uint8Array(src);
+    if (src[0]) throw new Error(`Invalid leading byte ${src[0]} in tileprops archive.`);
+    const tileprops = [];
+    for (let imageId=1; imageId<256; imageId++) {
+      const tableIndex = src[imageId];
+      if (!tableIndex) continue;
+      const physics = new Uint8Array(256);
+      const srcView = new Uint8Array(src.buffer, tableIndex * 256, 256);
+      physics.set(srcView);
+      tileprops[imageId] = physics;
+    }
+    return tileprops;
   }
   
   /* Saved game.

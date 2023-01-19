@@ -171,6 +171,16 @@ export class Renderer {
       
     // Hat.
     this.renderTile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
+    
+    // Physics for debugging.
+    if (false) {
+      ctx.beginPath();
+      ctx.arc(midx * tilesize, midy * tilesize, 0.200 * tilesize, 0, Math.PI * 2);
+      ctx.fillStyle = "#f00";
+      ctx.globalAlpha = 0.5;
+      ctx.fill();
+      ctx.globalAlpha = 1.0;
+    }
   }
   
   renderMap(globalp) {

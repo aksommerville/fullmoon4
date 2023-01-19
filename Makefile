@@ -44,7 +44,12 @@ $(OUTDIR)/%:src/www/%;$(PRECMD) cp $< $@
 MAPS_DATA:=$(OUTDIR)/maps.data
 all:$(MAPS_DATA)
 MAPS_INPUT:=$(filter src/data/map/%,$(SRCFILES))
-$(MAPS_DATA):$(MAPS_INPUT) $(wildcard src/tool/mkmaps/*.js);$(PRECMD) $(NODE) src/tool/mkmaps/main.js -o$@ $(MAPS_INPUT)
+$(MAPS_DATA):$(MAPS_INPUT) $(filter src/tool/mkmaps/%.js,$(SRCFILES));$(PRECMD) $(NODE) src/tool/mkmaps/main.js -o$@ $(MAPS_INPUT)
+
+TILEPROPS_DATA:=$(OUTDIR)/tileprops.data
+all:$(TILEPROPS_DATA)
+TILEPROPS_INPUT:=$(filter src/data/tileprops/%,$(SRCFILES))
+$(TILEPROPS_DATA):$(TILEPROPS_INPUT) $(filter src/tool/mktileprops/%.js,$(SRCFILES));$(PRECMD) $(NODE) src/tool/mktileprops/main.js -o$@ $(TILEPROPS_INPUT)
 
 # "make run-final" to pack the web app and serve it statically.
 ifeq (,$(strip $(HTTP_SERVER_CMD)))
@@ -56,7 +61,7 @@ endif
 # "make run" for a dynamic server preferred for dev work.
 # Static files serve straight off the source. If you change any Javascript, just refresh.
 # The Wasm file, we rerun make before serving, and if it fails, we send the make output instead with a 555 status.
-run:$(WASM_EXE);$(NODE) src/tool/server/main.js --htdocs=src/www --images=src/data/image --makeable=$(WASM_EXE) --makeable=$(MAPS_DATA)
+run:$(WASM_EXE);$(NODE) src/tool/server/main.js --htdocs=src/www --images=src/data/image --makeable=$(WASM_EXE) --makeable=$(MAPS_DATA) --makeable=$(TILEPROPS_DATA)
 
 edit:;$(NODE) src/tool/editor/main.js --htdocs=src/tool/editor/www --data=src/data
 

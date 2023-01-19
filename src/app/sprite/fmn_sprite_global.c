@@ -1,4 +1,5 @@
 #include "fmn_sprite.h"
+#include "fmn_physics.h"
 
 /* Global registry.
  * This is not exposed to the platform.
@@ -79,6 +80,8 @@ struct fmn_sprite *fmn_sprite_spawn(
   sprite->update=XXX_update_bouncer;
   sprite->fv[0]=((rand()&0xffff)*10)/65535.0f-5.0f;
   sprite->fv[1]=((rand()&0xffff)*10)/65535.0f-5.0f;
+  sprite->physics=FMN_PHYSICS_SPRITES;
+  sprite->radius=0.4f;
   
   return sprite;
 }
@@ -102,22 +105,48 @@ int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),voi
  * Check for collisions and resolve them.
  */
  
+/* TODO Collision detection is definitely imperfect.
+ * We check one feature at a time and resolve it immediately.
+ * Where two or more collisions exist, we don't correct intelligently for the combined collision.
+ * Does it matter? Push this hard, make sure it at least behaves coherently when the situation gets weird.
+ */
+ 
 static void fmn_sprite_physics_update(float elapsed) {
+  const uint8_t any_physics=FMN_PHYSICS_EDGE|FMN_PHYSICS_SPRITES|FMN_PHYSICS_GRID;
   struct fmn_sprite **ap=fmn_spritepv;
   int ai=0; for (;ai<fmn_global.spritec;ai++,ap++) {
     struct fmn_sprite *a=*ap;
-    if (a->physics_mode!=FMN_SPRITE_PHYSICS_FULL) continue;
+    if (!(a->physics&any_physics)) continue;
     if (a->radius<=0.0f) continue;
     
-    //TODO Check (a) against static geometry.
+    float cx,cy;
+    if ((a->physics&FMN_PHYSICS_EDGE)&&fmn_physics_check_edges(&cx,&cy,a)) {
+      a->x+=cx;
+      a->y+=cy;
+    }
+    if ((a->physics&FMN_PHYSICS_GRID)&&fmn_physics_check_grid(&cx,&cy,a,a->physics)) {
+      a->x+=cx;
+      a->y+=cy;
+    }
     
-    struct fmn_sprite **bp=fmn_spritepv;
-    int bi=0; for (;bi<ai;bi++,bp++) {
-      struct fmn_sprite *b=*bp;
-      if (b->physics_mode!=FMN_SPRITE_PHYSICS_FULL) continue;
-      if (b->radius<=0.0f) continue;
+    if (a->physics&FMN_PHYSICS_SPRITES) {
+      struct fmn_sprite **bp=fmn_spritepv;
+      int bi=0; for (;bi<ai;bi++,bp++) {
+        struct fmn_sprite *b=*bp;
+        if (!(b->physics&FMN_PHYSICS_SPRITES)) continue;
+        if (b->radius<=0.0f) continue;
       
-      //TODO Check (a) against (b).
+        if (!fmn_physics_check_sprites(&cx,&cy,a,b)) continue;
+        //TODO apportion correction according to inverse mass
+        float acx=cx*0.5f;
+        float acy=cy*0.5f;
+        float bcx=acx-cx;
+        float bcy=acy-cy;
+        a->x+=acx;
+        a->y+=acy;
+        b->x+=bcx;
+        b->y+=bcy;
+      }
     }
   }
 }
@@ -131,7 +160,7 @@ void fmn_sprites_update(float elapsed) {
   for (;i-->0;p++) {
     struct fmn_sprite *sprite=*p;
     
-    if (sprite->physics_mode==FMN_SPRITE_PHYSICS_FULL) {
+    if (sprite->physics&FMN_PHYSICS_MOTION) {
       // Linear decay of velocity.
       if (sprite->velx<0.0f) {
         if ((sprite->velx+=sprite->veldecay*elapsed)>=0.0f) sprite->velx=0.0f;
@@ -160,7 +189,6 @@ void fmn_sprites_update(float elapsed) {
  
 void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy) {
   if (!sprite) return;
-  if (sprite->physics_mode!=FMN_SPRITE_PHYSICS_FULL) return;
   sprite->velx+=dx;
   sprite->vely+=dy;
 }

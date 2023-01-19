@@ -78,6 +78,10 @@ void fmn_hero_motion_input(uint8_t state) {
  
 void fmn_hero_motion_update(float elapsed) {
 
+  // We may drop (fmn_global.walking) during transitions or pauses.
+  // We're updating now, so ensure it is true.
+  if (fmn_hero.walkdx||fmn_hero.walkdy) fmn_global.walking=1;
+
   // Determine target velocity (ignoring elapsed).
   //TODO Higher target velocity when riding broom or high on nitro. And other cases?
   float tvx=fmn_hero.walkdx*FMN_HERO_WALK_SPEED_MAX;

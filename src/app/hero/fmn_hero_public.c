@@ -25,8 +25,13 @@ int fmn_hero_reset() {
     fmn_hero.sprite->style=FMN_SPRITE_STYLE_HERO;
     fmn_hero.sprite->imageid=2;
     
-    fmn_hero.sprite->physics_mode=FMN_SPRITE_PHYSICS_FULL;
-    fmn_hero.sprite->radius=0.5f;
+    fmn_hero.sprite->physics=
+      FMN_PHYSICS_MOTION|
+      FMN_PHYSICS_SPRITES|
+      FMN_PHYSICS_SOLID|
+      FMN_PHYSICS_HOLE|
+    0;
+    fmn_hero.sprite->radius=0.200f;
     fmn_hero.sprite->veldecay=0.0f; // We override velocity management completely; veldecay is irrelevant.
     fmn_hero.sprite->velx=fmn_hero.velx;
     fmn_hero.sprite->vely=fmn_hero.vely;
@@ -90,4 +95,11 @@ void fmn_hero_get_position(float *x,float *y) {
 void fmn_hero_set_position(float x,float y) {
   fmn_hero.sprite->x=x;
   fmn_hero.sprite->y=y;
+}
+
+void fmn_hero_kill_velocity() {
+  fmn_hero.walkforce=0.0f;
+  fmn_hero.sprite->velx=0.0f;
+  fmn_hero.sprite->vely=0.0f;
+  fmn_global.walking=0;
 }

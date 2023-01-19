@@ -161,6 +161,7 @@ extern struct fmn_global {
   uint16_t neighborn;
   uint16_t neighbors;
   uint16_t pad1;
+  uint8_t cellphysics[256];
   struct fmn_door doorv[FMN_DOOR_LIMIT];
   uint32_t doorc;
   

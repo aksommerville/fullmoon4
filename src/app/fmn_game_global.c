@@ -43,15 +43,6 @@ int fmn_game_load_map(int mapid) {
  
 void fmn_game_input(uint8_t bit,uint8_t value,uint8_t state) {
   fmn_hero_input(bit,value,state);
-  //XXX TEMP navigate to map neighbors on dpad, if holding MENU
-  if (state&FMN_INPUT_MENU) {
-    if (value) switch (bit) {
-      case FMN_INPUT_LEFT:  if (fmn_global.neighborw) fmn_game_load_map(fmn_global.neighborw); break;
-      case FMN_INPUT_RIGHT: if (fmn_global.neighbore) fmn_game_load_map(fmn_global.neighbore); break;
-      case FMN_INPUT_UP:    if (fmn_global.neighborn) fmn_game_load_map(fmn_global.neighborn); break;
-      case FMN_INPUT_DOWN:  if (fmn_global.neighbors) fmn_game_load_map(fmn_global.neighbors); break;
-    }
-  }
 }
 
 /* Trigger navigation.
@@ -73,6 +64,7 @@ static void fmn_game_navigate(int8_t dx,int8_t dy) {
     return;
   }
   fmn_hero_set_position(herox-dx*FMN_COLC,heroy-dy*FMN_ROWC);
+  // Preserve velocity on these neighbor transitions.
   fmn_commit_transition();
 }
 
@@ -93,9 +85,11 @@ static void fmn_game_check_doors(uint8_t x,uint8_t y) {
     
     // After placing the hero, pump its quantized position once to ignore whatever it landed on.
     // (typically, that's the other end of this door).
+    // Also kill velocity.
     fmn_hero_set_position(dstx,dsty);
     int8_t dumx,dumy;
     fmn_hero_get_quantized_position(&dumx,&dumy);
+    fmn_hero_kill_velocity();
     
     fmn_commit_transition();
     return;
