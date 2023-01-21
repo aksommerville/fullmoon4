@@ -1,0 +1,79 @@
+# Full Moon Sprite Data
+
+Same idea as maps and tilesheets:
+One input text file per sprite, and one giant binary archive for production.
+
+## Text Format
+
+Line-oriented "KEY VALUE" text.
+'#' begins a comment anywhere in the line.
+Commands that take strings can also be given the scalar integer value.
+
+You can also express a command as a bunch of integers 0..255.
+We validate the payload length generically (see binary format below).
+
+```
+image ID
+tile ID
+xform [xrev] [yrev] [swap]
+style hidden|tile|hero
+physics [motion] [edge] [sprites] [solid] [hole]
+decay (FLOAT 0..255)
+radius (FLOAT 0..255)
+invmass (0..255)
+```
+
+## Binary Format
+
+Integers are big-endian.
+
+```
+0000   4 Signature: '\xffMSp'
+0004   2 Last Sprite ID
+0006 ... TOC
+.... ... Data
+```
+
+TOC is indexed by Sprite ID starting from one.
+(So, "Last Sprite ID" is also the length of the TOC).
+Same as the Maps archive: One u32 per sprite, offset in Data. Infer length from next entry.
+TOC values include the header and the TOC itself, decoder should validate against that.
+
+The sprite resource is a stream of key-value pairs, where the leading byte indicates field ID and data size.
+You can know the payload length from the leading byte:
+
+```
+0x00..0x1f = 0 
+0x20..0x3f = 1
+0x40..0x5f = 2
+0x60..0x7f = 3
+0x80..0x9f = 4
+0xa0..0xcf = Next byte is remaining length.
+0xd0..0xff = Reserved, decoder must fail if unknown.
+```
+
+Defined fields:
+
+```
+0x00 EOF. Any remaining content should be ignored.
+
+0x20 Image ID.
+0x21 Tile ID.
+0x22 Xform.
+0x23 Style. Default 1 (FMN_SPRITE_STYLE_TILE)
+0x24 Physics. Bitfields, see below.
+0x25 Inverse mass. 0=infinite, 1=heaviest, 255=lightest
+
+0x40 Velocity decay. u8.8 linear decay in m/s**2
+0x41 Radius. u8.8 m
+```
+
+Physics:
+
+```
+0x01 MOTION
+0x02 EDGE
+0x04 SPRITES
+0x10 SOLID
+0x20 HOLE
+```

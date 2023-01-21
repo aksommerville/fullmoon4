@@ -34,6 +34,7 @@ export class Constants {
     this.SKETCH_SIZE = 12;
     this.DOOR_LIMIT = 16;
     this.DOOR_SIZE = 8;
+    this.SPRITE_STORAGE_SIZE = 64;
     
     this.TRANSITION_TIME_MS = 800;
     

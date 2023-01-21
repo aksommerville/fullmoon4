@@ -13,8 +13,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [x] Hero physics and animation.
 - [x] If you drop the dpad during a door transition, she should stop moving. As is, you get the deceleration tail on the far end.
-- [ ] Serve on the public web.
-- [ ] Sprite data format.
+- [x] Serve on the public web.
+- [x] Sprite data format.
 
 ### February
 
@@ -33,6 +33,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [ ] Graphics.
 - [ ] Maps for demo.
+- [ ] Pretty up the public web page.
 
 ### After GDEX
 
@@ -41,8 +42,23 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Input configuration.
 - [ ] Clock.js "hard" vs "soft" pause. Do we really need both?
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
-- [ ] Native platform for Linux.
+- [ ] Package web app in a native wrapper eg Electron.
+- [ ] Native platforms.
+- - [ ] Linux
+- - [ ] MacOS
+- - [ ] Windows
+- - [ ] Tiny
+- - [ ] Pippin
+- - [ ] PicoSystem
+- - [ ] Thumby
+- - [ ] 68k Mac
+- - [ ] iOS
+- - [ ] Android
+- - [ ] Modern consoles?
 - [ ] Unit tests.
+- - [ ] General-purpose test runner.
+- - [ ] C tests
+- - [ ] JS platform tests
 - [ ] Automation against headless native build.
 - [ ] Maps for full game.
 - [ ] Translation.
@@ -51,3 +67,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] MapAllUi: Point out neighbor mismatches.
 - - [ ] MapAllUi: Populate tattle.
 - - [ ] Delete maps (and resources in general)
+- - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)

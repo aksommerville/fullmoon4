@@ -4,19 +4,21 @@
  
 import { MapService } from "/js/map/MapService.js";
 import { ImageService } from "/js/image/ImageService.js";
+import { SpriteService } from "/js/sprite/SpriteService.js";
  
 export class ResService {
   static getDependencies() {
-    return [Window, MapService, ImageService];
+    return [Window, MapService, ImageService, SpriteService];
   }
-  constructor(window, mapService, imageService) {
+  constructor(window, mapService, imageService, spriteService) {
     this.window = window;
     this.mapService = mapService;
     this.imageService = imageService;
+    this.spriteService = spriteService;
     
     this.DIRTY_DEBOUNCE_TIME = 5000;
     
-    this.types = ["image", "tileprops", "map", "song", "string"];
+    this.types = ["image", "tileprops", "map", "song", "string", "sprite"];
     this.toc = []; // {type, id, name, q, lang, path, serial, object}
     this.dirties = []; // {type, id} The named TOC entries should have a fresh (object) and no (serial).
     this.dirtyDebounce = null;
@@ -103,11 +105,20 @@ export class ResService {
       }
       return Promise.all(promises);
     }).then(() => {
+      this.sortToc();
       this.broadcast({ type: "loaded" });
       return this.toc;
     }).catch((e) => {
       console.error(`failed to fetch resource toc`, e);
       this.broadcast({ type: "loadError", error: e });
+    });
+  }
+  
+  sortToc() {
+    this.toc.sort((a, b) => {
+      if (a.type < b.type) return -1;
+      if (a.type > b.type) return 1;
+      return a.id - b.id;
     });
   }
   
@@ -119,6 +130,7 @@ export class ResService {
       case "string": return this.loadStrings(base);
       case "map": return this.loadText(type, base, (src, id) => this.mapService.decode(src, id));
       case "song": return this.loadTocOnly(type, base);
+      case "sprite": return this.loadText(type, base, (src, id) => this.spriteService.decode(src, id));
       default: return this.loadUnknown(type, base);
     }
   }

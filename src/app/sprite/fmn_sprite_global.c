@@ -43,14 +43,20 @@ static struct fmn_sprite *fmn_sprites_find_available() {
   return 0;
 }
 
-//XXX
-static void XXX_update_bouncer(struct fmn_sprite *sprite,float elapsed) {
-  sprite->x+=sprite->fv[0]*elapsed;
-  sprite->y+=sprite->fv[1]*elapsed;
-  if ((sprite->x<0.0f)&&(sprite->fv[0]<0.0f)) sprite->fv[0]=-sprite->fv[0];
-  else if ((sprite->x>FMN_COLC)&&(sprite->fv[0]>0.0f)) sprite->fv[0]=-sprite->fv[0];
-  if ((sprite->y<0.0f)&&(sprite->fv[1]<0.0f)) sprite->fv[1]=-sprite->fv[1];
-  else if ((sprite->y>FMN_ROWC)&&(sprite->fv[1]>0.0f)) sprite->fv[1]=-sprite->fv[1];
+/* Apply command to new sprite.
+ */
+ 
+static void fmn_sprite_apply_command(struct fmn_sprite *sprite,uint8_t command,const uint8_t *v,uint8_t c) {
+  switch (command) {
+    case 0x20: sprite->imageid=v[0]; break;
+    case 0x21: sprite->tileid=v[0]; break;
+    case 0x22: sprite->xform=v[0]; break;
+    case 0x23: sprite->style=v[0]; break;
+    case 0x24: sprite->physics=v[0]; break;
+    case 0x25: sprite->invmass=v[0]; break;
+    case 0x40: sprite->veldecay=v[0]+v[1]/256.0f; break;
+    case 0x41: sprite->radius=v[0]+v[1]/256.0f; break;
+  }
 }
 
 /* Spawn sprite.
@@ -59,6 +65,7 @@ static void XXX_update_bouncer(struct fmn_sprite *sprite,float elapsed) {
 struct fmn_sprite *fmn_sprite_spawn(
   float x,float y,
   uint16_t spriteid,
+  const uint8_t *cmdv,uint16_t cmdc,
   const uint8_t *argv,uint8_t argc
 ) {
   if (fmn_global.spritec>=FMN_SPRITE_LIMIT) return 0;
@@ -72,16 +79,25 @@ struct fmn_sprite *fmn_sprite_spawn(
   sprite->spriteid=spriteid;
   if (argc>=FMN_SPRITE_ARGV_SIZE) memcpy(sprite->argv,argv,FMN_SPRITE_ARGV_SIZE);
   else memcpy(sprite->argv,argv,argc);
-  //TODO:
   sprite->style=FMN_SPRITE_STYLE_TILE;
-  sprite->imageid=1;
-  sprite->tileid=0x33;
-  sprite->xform=0;
-  sprite->update=XXX_update_bouncer;
-  sprite->fv[0]=((rand()&0xffff)*10)/65535.0f-5.0f;
-  sprite->fv[1]=((rand()&0xffff)*10)/65535.0f-5.0f;
-  sprite->physics=FMN_PHYSICS_SPRITES;
-  sprite->radius=0.4f;
+  
+  uint16_t cmdp=0; while (cmdp<cmdc) {
+    uint8_t lead=cmdv[cmdp++];
+    if (!lead) break; // EOF
+    int paylen=0;
+         if (lead<0x20) paylen=0;
+    else if (lead<0x40) paylen=1;
+    else if (lead<0x60) paylen=2;
+    else if (lead<0x80) paylen=3;
+    else if (lead<0xa0) paylen=4;
+    else if (lead<0xd0) {
+      if (cmdp>=cmdc) break;
+      paylen=cmdv[cmdp++];
+    } else break; // 0xd0..0xff have explicit unknown lengths; none yet defined
+    if (cmdp>cmdc-paylen) break;
+    fmn_sprite_apply_command(sprite,lead,cmdv+cmdp,paylen);
+    cmdp+=paylen;
+  }
   
   return sprite;
 }
@@ -137,9 +153,14 @@ static void fmn_sprite_physics_update(float elapsed) {
         if (b->radius<=0.0f) continue;
       
         if (!fmn_physics_check_sprites(&cx,&cy,a,b)) continue;
-        //TODO apportion correction according to inverse mass
-        float acx=cx*0.5f;
-        float acy=cy*0.5f;
+        int msum=a->invmass+b->invmass;
+        float aweight;
+        if (msum<1) aweight=0.5f; // panic, both infinite-mass! divide equally.
+        else if (!a->invmass) aweight=0.0f;
+        else if (!b->invmass) aweight=1.0f;
+        else aweight=(float)a->invmass/(float)msum;
+        float acx=cx*aweight;
+        float acy=cy*aweight;
         float bcx=acx-cx;
         float bcy=acy-cy;
         a->x+=acx;

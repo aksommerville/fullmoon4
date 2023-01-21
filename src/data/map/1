@@ -18,6 +18,6 @@ door 5 1 9 13 5
 door 3 8 5 9 5
 door 16 2 11 3 3
 neighborn 13
-sprite 2 2 1 1 2 3
-sprite 14 5 2 11 22 33
-sprite 7 8 3 0 0 0
+sprite 3 3 1 0 0 0
+sprite 14 5 1 0 0 0
+sprite 7 8 1 0 0 0

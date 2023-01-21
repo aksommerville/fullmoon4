@@ -8,13 +8,14 @@ import { MapEditor } from "/js/map/MapEditor.js";
 
 export class ToolbarUi {
   static getDependencies() {
-    return [HTMLElement, Dom, ResService, MapService];
+    return [HTMLElement, Dom, ResService, MapService, Window];
   }
-  constructor(element, dom, resService, mapService) {
+  constructor(element, dom, resService, mapService, window) {
     this.element = element;
     this.dom = dom;
     this.resService = resService;
     this.mapService = mapService;
+    this.window = window;
     
     this.mapToolsVisible = false;
     this.mapServiceListener = this.mapService.listen(e => this.onMapServiceEvent(e));
@@ -83,6 +84,13 @@ export class ToolbarUi {
     
     this.dom.spawn(this.element, "DIV", ["spacer"]);
     
+    const shortcutsMenu = this.dom.spawn(this.element, "SELECT", ["shortcuts"], { "on-change": () => this.onShortcutSelected() });
+    this.dom.spawn(shortcutsMenu, "OPTION", { value: "", disabled: "disabled" }, "Shortcuts");
+    this.dom.spawn(shortcutsMenu, "OPTION", { value: "#map/all" }, "Maps");
+    this.dom.spawn(shortcutsMenu, "OPTION", { value: "#sprite/all" }, "Sprites");
+    this.dom.spawn(shortcutsMenu, "OPTION", { value: "#image/all" }, "Images");
+    shortcutsMenu.value = "";
+    
     this.dom.spawn(this.element, "DIV", ["saveIndicator", "clean"]);
     this.dom.spawn(this.element, "DIV", ["tattle"], "\u00a0");
   }
@@ -125,8 +133,15 @@ export class ToolbarUi {
     switch (event.type) {
       case "dirty": this.setSaveIndicator("dirty"); break;
       case "saved": this.setSaveIndicator("clean"); break;
-      case "saveError": this.setSaveIndicator("error"); break;
+      case "saveError": console.error(`resService saveError`, event); this.setSaveIndicator("error"); break;
     }
+  }
+  
+  onShortcutSelected() {
+    const menu = this.element.querySelector(".shortcuts");
+    const destination = menu.value;
+    menu.value = "";
+    if (destination) this.window.location = destination;
   }
   
   /* Palette.

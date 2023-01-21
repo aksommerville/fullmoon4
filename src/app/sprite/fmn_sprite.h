@@ -38,6 +38,7 @@ struct fmn_sprite {
   float velx,vely;
   float veldecay; // Linear velocity decay in m/s**2.
   float radius;
+  uint8_t invmass; // 1/mass, 0 if infinite
 };
 
 // Drop all sprites cold.
@@ -49,7 +50,8 @@ void fmn_sprites_clear();
 struct fmn_sprite *fmn_sprite_spawn(
   float x,float y,
   uint16_t spriteid,
-  const uint8_t *argv,uint8_t argc
+  const uint8_t *cmdv,uint16_t cmdc, // from sprite definition
+  const uint8_t *argv,uint8_t argc // from spawn point
 );
 
 int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),void *userdata);

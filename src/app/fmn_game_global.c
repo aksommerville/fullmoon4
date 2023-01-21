@@ -14,10 +14,14 @@ int fmn_game_init() {
 /* Spawn sprite in new map.
  */
  
-static void cb_spawn(int8_t x,int8_t y,uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3) {
-  //fmn_log("%s (%d,%d) #%d [%d,%d,%d,%d]",__func__,x,y,spriteid,arg0,arg1,arg2,arg3);
+static void cb_spawn(
+  int8_t x,int8_t y,
+  uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3,
+  const uint8_t *cmdv,uint16_t cmdc
+) {
+  //fmn_log("%s (%d,%d) #%d [%d,%d,%d,%d] cmdv=%p cmdc=%d",__func__,x,y,spriteid,arg0,arg1,arg2,arg3,cmdv,cmdc);
   uint8_t argv[]={arg0,arg1,arg2,arg3};
-  struct fmn_sprite *sprite=fmn_sprite_spawn(x+0.5f,y+0.5f,spriteid,argv,sizeof(argv));
+  struct fmn_sprite *sprite=fmn_sprite_spawn(x+0.5f,y+0.5f,spriteid,cmdv,cmdc,argv,sizeof(argv));
   if (!sprite) {
     fmn_log(
       "Failed to spawn sprite %d at (%d,%d), argv=[%d,%d,%d,%d]",

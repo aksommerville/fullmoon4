@@ -76,7 +76,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  min-height: 2em;
+  height: 2em;
   border-bottom: 1px solid #000;
 }
 
@@ -177,6 +177,26 @@ body {
   text-align: center;
   font-family: monospace;
   border: 1px solid #000;
+}
+
+/* ImageAllUi.
+ **************************************************/
+ 
+.ImageAllUi {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.ImageAllUi .card {
+  border: 1px solid #000;
+  border-radius: 1em;
+  padding: 1em;
+  margin: 1em;
+  background-color: #fff;
+  box-shadow: #000 0 0 0.5em;
+  cursor: pointer;
 }
 
 /* ImageUi.
@@ -292,3 +312,64 @@ body {
   min-height: 40vh; /* Make it pretty tall always, to avoid resizing the modal frame when type changes. */
   min-width: 40vw;
 }
+
+/* SpriteAllUi.
+ **************************************************/
+ 
+.SpriteAllUi {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: calc(100vh - 2em);
+}
+ 
+.SpriteAllUi .mainTable {
+  width: 100%;
+}
+
+.SpriteAllUi .mainTable th {
+  text-align: left;
+}
+
+.SpriteAllUi tr.sprite:hover {
+  background-color: #ff0;
+  cursor: pointer;
+}
+
+/* SpriteUi.
+ ***************************************************/
+ 
+.SpriteUi {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: calc(100vh - 2em);
+}
+ 
+.SpriteUi .mainTable {
+  width: 100%;
+}
+
+.SpriteUi .mainTable tr:nth-child(odd) {
+  background-color: #999;
+}
+.SpriteUi .mainTable tr.field:hover {
+  background-color: #aaa;
+}
+
+.SpriteUi td.controls {
+  width: 5em;
+}
+
+.SpriteUi td.key {
+  width: 7em;
+  text-align: right;
+}
+
+.SpriteUi td.value input {
+  width: 97%; /* 100% it extends a little into the comment column. $@#! why? */
+}
+
+.SpriteUi td.comment {
+  font-size: 8pt;
+  font-style: italic;
+}
+

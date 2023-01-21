@@ -33,7 +33,6 @@ export class PoiModal {
   }
   
   setupEdit(map, poi) {
-    console.log(`PoiModal.setupEdit`, { map, poi });
     this.map = map;
     this.x = poi.x;
     this.y = poi.y;

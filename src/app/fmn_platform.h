@@ -26,6 +26,7 @@ int rand();
 #define FMN_PLANT_LIMIT 16
 #define FMN_SKETCH_LIMIT 16
 #define FMN_DOOR_LIMIT 16
+#define FMN_SPRITE_STORAGE_SIZE 64
 
 #define FMN_XFORM_XREV 1
 #define FMN_XFORM_YREV 2
@@ -162,6 +163,7 @@ extern struct fmn_global {
   uint16_t neighbors;
   uint16_t pad1;
   uint8_t cellphysics[256];
+  uint8_t sprite_storage[FMN_SPRITE_STORAGE_SIZE];
   struct fmn_door doorv[FMN_DOOR_LIMIT];
   uint32_t doorc;
   
@@ -236,7 +238,11 @@ void fmn_cancel_transition();
  */
 int8_t fmn_load_map(
   uint16_t mapid,
-  void (*cb_spawn)(int8_t x,int8_t y,uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3)
+  void (*cb_spawn)(
+    int8_t x,int8_t y,
+    uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3,
+    const uint8_t *cmdv,uint16_t cmdc
+  )
 );
 
 // Call if you change map tiles. You don't need to track which ones.

@@ -7,6 +7,9 @@ import { ToolbarUi } from "/js/ui/ToolbarUi.js";
 import { MapUi } from "/js/map/MapUi.js";
 import { MapAllUi } from "/js/map/MapAllUi.js";
 import { ImageUi } from "/js/image/ImageUi.js";
+import { ImageAllUi } from "/js/image/ImageAllUi.js";
+import { SpriteUi } from "/js/sprite/SpriteUi.js";
+import { SpriteAllUi } from "/js/sprite/SpriteAllUi.js";
 
 export class RootUi {
   static getDependencies() {
@@ -59,6 +62,7 @@ export class RootUi {
       case "": this.navigateHome(); break;
       case "map": this.navigateMap(words.slice(1)); break;
       case "image": this.navigateImage(words.slice(1)); break;
+      case "sprite": this.navigateSprite(words.slice(1)); break;
       default: {
           console.error(`Unexpected hash ${JSON.stringify(hash)}. Routing to Home instead.`);
           this.navigateHome();
@@ -97,6 +101,7 @@ export class RootUi {
   }
   
   navigateImage(args) {
+    if (args[0] === "all") return this.navigateImageAll();
     const id = +args[0];
     if (isNaN(id)) return this.navigationError(`Invalid image id`);
     args = args.slice(1);
@@ -104,5 +109,28 @@ export class RootUi {
     this.contentController = this.dom.spawnController(content, ImageUi);
     this.contentController.setTattleText = (text) => this.toolbar.setTattleText(text);
     this.contentController.setup(id, args);
+  }
+  
+  navigateImageAll() {
+    const content = this.clearContent();
+    this.contentController = this.dom.spawnController(content, ImageAllUi);
+  }
+  
+  navigateSprite(args) {
+    let id = args[0];
+    args = args.slice(1);
+    switch (id) {
+      case "all": return this.navigateSpriteAll(args);
+    }
+    id = +id;
+    if (isNaN(id)) return this.navigationError(`Invalid sprite id`);
+    const content = this.clearContent();
+    this.contentController = this.dom.spawnController(content, SpriteUi);
+    this.contentController.setup(id, args);
+  }
+  
+  navigateSpriteAll(args) {
+    const content = this.clearContent();
+    this.contentController = this.dom.spawnController(content, SpriteAllUi);
   }
 }

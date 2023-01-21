@@ -20,10 +20,6 @@ export class Globals {
     this.memU16 = null;
     this.memU32 = null;
     this.memF32 = null;
-    this.p_map_end = 0; // ie maptsid
-    this.p_plantv_end = 0;
-    this.p_sketchv_end = 0;
-    this.p_hero = 0; // starting from (facedir)
   }
   
   /* Call whenever wasmLoader reloads.
@@ -41,7 +37,9 @@ export class Globals {
     this.p_map_end = this.p_fmn_global + 8 + this.constants.COLC * this.constants.ROWC;
     this.p_cellphysics = this.p_map_end + 12;
     this.p_cellphysics_end = this.p_cellphysics + 256;
-    this.p_door_end = this.p_cellphysics_end + this.constants.DOOR_LIMIT * this.constants.DOOR_SIZE;
+    this.p_sprite_storage = this.p_cellphysics_end;
+    this.p_sprite_storage_end = this.p_sprite_storage + this.constants.SPRITE_STORAGE_SIZE;
+    this.p_door_end = this.p_sprite_storage_end + this.constants.DOOR_LIMIT * this.constants.DOOR_SIZE;
     this.p_plantv_end = this.p_door_end + 4 + this.constants.PLANT_LIMIT * this.constants.PLANT_SIZE;
     this.p_sketchv_end = this.p_plantv_end + 4 + this.constants.SKETCH_LIMIT * this.constants.SKETCH_SIZE;
     this.p_hero = this.p_sketchv_end + 40;
@@ -56,8 +54,9 @@ export class Globals {
     this.g_neighbore = new Uint16Array(this.memU8.buffer, this.p_map_end + 4, 1);
     this.g_neighborn = new Uint16Array(this.memU8.buffer, this.p_map_end + 6, 1);
     this.g_neighbors = new Uint16Array(this.memU8.buffer, this.p_map_end + 8, 1);
-    this.g_cellphysics = new Uint8Array(this.memU8.buffer, this.p_cellphysics,256);
-    this.g_doorv = new Uint8Array(this.memU8.buffer, this.p_cellphysics_end, this.constants.DOOR_SIZE * this.constants.DOOR_LIMIT);
+    this.g_cellphysics = new Uint8Array(this.memU8.buffer, this.p_cellphysics, 256);
+    this.g_sprite_storage = new Uint8Array(this.memU8.buffer, this.p_sprite_storage, this.constants.SPRITE_STORAGE_SIZE);
+    this.g_doorv = new Uint8Array(this.memU8.buffer, this.p_sprite_storage_end, this.constants.DOOR_SIZE * this.constants.DOOR_LIMIT);
     this.g_doorc = new Uint32Array(this.memU8.buffer, this.p_door_end, 1);
     this.g_plantv = new Uint8Array(this.memU8.buffer, this.p_door_end + 4, this.constants.PLANT_SIZE * this.constants.PLANT_LIMIT);
     this.g_plantc = new Uint32Array(this.memU8.buffer, this.p_plantv_end, 1);

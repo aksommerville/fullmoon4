@@ -32,6 +32,8 @@ export class DataService {
     this.mapLoadState = null; // null, Promise, Error, or this.maps
     this.tileprops = []; // sparse, keyed by image id 0..255. Uint8Array(256) or absent.
     this.tilepropsLoadState = null; // null, Promise, Error, or this.tileprops
+    this.sprites = []; // sparse, keyed by sprite id 0..65535. Uint8Array or absent.
+    this.spritesLoadState = null; // null, Promise, Error, or this.sprites
     this.savedGame = null;
     this.savedGameId = null;
   }
@@ -95,7 +97,7 @@ export class DataService {
       this.mapLoadState = this.fetchAllTileprops()
         .then(() => this.window.fetch("./maps.data"))
         .then(rsp => {
-          if (!rsp.ok) throw rsp;
+          if (!rsp.ok) return rsp.json().then(t => { throw t; });
           return rsp.arrayBuffer();
         }).then(input => {
           this.maps = this.decodeMaps(input);
@@ -220,11 +222,11 @@ export class DataService {
     if (!this.tilepropsLoadState) {
       this.tilepropsLoadState = this.window.fetch("./tileprops.data")
         .then(rsp => {
-          if (!rsp.ok) throw rsp;
+          if (!rsp.ok) return rsp.json().then(t => { throw t; });
           return rsp.arrayBuffer();
         }).then(input => {
           this.tileprops = this.decodeTileprops(input);
-          this.tilepropsLoadState = this.maps;
+          this.tilepropsLoadState = this.tileprops;
         }).catch(error => {
           this.tilepropsLoadState = error || new Error("Failed to load tileprops.");
           throw this.tilepropsLoadState;
@@ -252,6 +254,63 @@ export class DataService {
       tileprops[imageId] = physics;
     }
     return tileprops;
+  }
+  
+  /* Sprite.
+   * Works the same way as Maps and Tilesheets.
+   *********************************************************/
+   
+  fetchAllSprites() {
+    if (!this.spritesLoadState) {
+      this.spritesLoadState = this.window.fetch("./sprites.data")
+        .then(rsp => {
+          if (!rsp.ok) return rsp.json().then(t => { throw t; });
+          return rsp.arrayBuffer();
+        }).then(input => {
+          this.sprites = this.decodeSprites(input);
+          this.spritesLoadState = this.sprites;
+        }).catch(error => {
+          this.spritesLoadState = error || new Error("Failed to load sprites.");
+          throw this.spritesLoadState;
+        });
+    }
+    if (this.spritesLoadState instanceof Promise) return this.spritesLoadState;
+    if (this.spritesLoadState === this.sprites) return Promise.resolve();
+    return Promise.reject(this.spritesLoadState);
+  }
+   
+  loadSprite(spriteId) {
+    return this.sprites[spriteId];
+  }
+  
+  decodeSprites(src) {
+    src = new Uint8Array(src);
+    if (src.length < 6) throw new Error(`Invalid length ${src.length} for sprites archive.`);
+    if ((src[0] !== 0xff) || (src[1] !== 0x4d) || (src[2] !== 0x53) || (src[3] !== 0x70)) {
+      throw new Error(`Signature mismatch in sprites archive.`);
+    }
+    const sprites = [];
+    const lastSpriteId = (src[4] << 8) | src[5];
+    if (lastSpriteId > 0) {
+      const dataStart = 6 + lastSpriteId * 4;
+      let spriteId=1, tocp=6, lastId=0, lastOffset=dataStart;
+      for (; tocp<dataStart; tocp+=4, lastId=spriteId, spriteId++) {
+        const offset = (src[tocp] << 24) | (src[tocp + 1] << 16) | (src[tocp + 2] << 8) | src[tocp + 3];
+        const len = offset - lastOffset;
+        if (len < 0) throw new Error(`Invalid or missorted sprite offset around id ${spriteId} (${offset} < ${lastOffset})`);
+        if (lastId && len) {
+          const srcView = new Uint8Array(src.buffer, lastOffset, len);
+          sprites[lastId] = new Uint8Array(len);
+          sprites[lastId].set(srcView);
+        }
+      }
+      if (lastId && (lastOffset < src.length)) {
+        const srcView = new Uint8Array(src.buffer, lastOffset, src.length - lastOffset);
+        sprites[lastId] = new Uint8Array(src.length - lastOffset);
+        sprites[lastId].set(srcView);
+      }
+    }
+    return sprites;
   }
   
   /* Saved game.

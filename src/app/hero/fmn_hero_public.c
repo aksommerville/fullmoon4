@@ -20,7 +20,7 @@ int fmn_hero_reset() {
   fmn_hero.sprite=0;
   if (fmn_sprites_for_each(fmn_hero_cb_find,0)<1) {
   
-    if (!(fmn_hero.sprite=fmn_sprite_spawn(FMN_COLC*0.5f,FMN_ROWC*0.5f,0,0,0))) return -1;
+    if (!(fmn_hero.sprite=fmn_sprite_spawn(FMN_COLC*0.5f,FMN_ROWC*0.5f,0,0,0,0,0))) return -1;
     fmn_hero.sprite->update=0;
     fmn_hero.sprite->style=FMN_SPRITE_STYLE_HERO;
     fmn_hero.sprite->imageid=2;
@@ -35,6 +35,7 @@ int fmn_hero_reset() {
     fmn_hero.sprite->veldecay=0.0f; // We override velocity management completely; veldecay is irrelevant.
     fmn_hero.sprite->velx=fmn_hero.velx;
     fmn_hero.sprite->vely=fmn_hero.vely;
+    fmn_hero.sprite->invmass=0x80;
   }
   
   fmn_hero.cellx=-128;

@@ -51,6 +51,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => {};//TODO
     
     this.dataService.fetchAllMaps();
+    this.dataService.fetchAllSprites();
   }
   
   // RootUI should do this once, with the main canvas. OK to replace whenever.
@@ -62,6 +63,7 @@ export class Runtime {
     this.dropAllState();
     return this.wasmLoader.load("./fullmoon.wasm")
       .then(() => this.dataService.fetchAllMaps())
+      .then(() => this.dataService.fetchAllSprites())
       .then(() => {
         console.log(`Runtime: loaded wasm instance`, this.wasmLoader.instance);
         this.globals.refresh();
@@ -160,7 +162,14 @@ export class Runtime {
   triggerMapSetup(cbSpawn) {
     if (!this.map.sprites) return;
     for (const { x, y, spriteId, arg0, arg1, arg2 } of this.map.sprites) {
-      cbSpawn(x, y, spriteId, arg0, arg1, arg2, 0); // (cb) has an "arg3" which we don't have.
+      const sprdef = this.dataService.loadSprite(spriteId);
+      let defc = 0;
+      if (sprdef) {
+        defc = sprdef.length;
+        this.globals.g_sprite_storage.set(sprdef);
+      }
+      // (cb) has an "arg3" which we don't have, that's the '0'
+      cbSpawn(x, y, spriteId, arg0, arg1, arg2, 0, this.globals.p_sprite_storage, defc);
     }
   }
 }
