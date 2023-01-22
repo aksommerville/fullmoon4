@@ -31,6 +31,7 @@ Spells:
  - Open doors.
  - Rain.
  - Slow motion.
+ - Wind.
 
 ### Violin
 

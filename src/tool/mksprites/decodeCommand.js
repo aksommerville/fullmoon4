@@ -1,3 +1,5 @@
+const getControllerIdsByName = require("./getControllerIdsByName.js");
+
 /* Generic handlers.
  */
  
@@ -16,6 +18,17 @@ function decodeCommand_u88(src, opcode) {
   dst[0] = opcode;
   dst[1] = Math.floor(v);
   dst[2] = Math.floor((v % 1) * 256);
+  return dst;
+}
+
+function decodeCommand_u16(src, opcode) {
+  if (src.length !== 2) throw new Error(`Expected one argument for command ${JSON.stringify(src[0])}`);
+  const v = +src[1];
+  if (isNaN(v) || (v < 0) || (v >= 0xffff)) throw new Error(`Expected number in 0..65535, found ${JSON.stringify(src[1])}`);
+  const dst = Buffer.alloc(3);
+  dst[0] = opcode;
+  dst[1] = v >> 8;
+  dst[2] = v;
   return dst;
 }
 
@@ -75,6 +88,17 @@ function rewriteInput_physics(src) {
   return ["physics", physics];
 }
 
+function rewriteInput_controller(src) {
+  if (src.length !== 2) throw new Error(`Expected 1 argument after 'controller', found ${src.length - 1}`);
+  const lu = getControllerIdsByName();
+  let id = lu[src[1]];
+  if (isNaN(id)) { // NB zero is a valid controller ID.
+    id = +src[1];
+    if (isNaN(id) || (id < 0) || (id > 0xffff)) throw new Error(`Not a known sprite controller: ${JSON.stringify(src[1])}`);
+  }
+  return ["controller", id];
+}
+
 /* (src) is an array of strings, one per token.
  * Output is null or a Buffer.
  */
@@ -89,6 +113,7 @@ function decodeCommand(src) {
     case "decay": return decodeCommand_u88(src, 0x40);
     case "radius": return decodeCommand_u88(src, 0x41);
     case "invmass": return decodeCommand_u8(src, 0x25);
+    case "controller": return decodeCommand_u16(rewriteInput_controller(src), 0x42);
   }
   // Not a known token. The input can be all integers, 1 output byte each, and if it adds up, we'll use it.
   const lead = +src[0];

@@ -36,7 +36,6 @@ export class SpriteAllUi {
     this.dom.spawn(headerRow, "TH", "ID");
     this.dom.spawn(headerRow, "TH", "Name");
     this.dom.spawn(headerRow, "TH", "Controller");
-    this.dom.spawn(headerRow, "TH", "Size");
     this.dom.spawn(headerRow, "TH", "Preview");
   }
   
@@ -47,9 +46,8 @@ export class SpriteAllUi {
       if (res.type !== "sprite") continue;
       const tr = this.dom.spawn(mainTable, "TR", ["sprite"], { "data-spriteId": res.id });
       this.dom.spawn(tr, "TD", ["id"], res.id);
-      this.dom.spawn(tr, "TD", ["name"], res.name || "");
-      this.dom.spawn(tr, "TD", ["controller"], this.spriteService.getControllerNameForDisplay(res.object));
-      this.dom.spawn(tr, "TD", ["size"], res.serial ? res.serial.length : "?");
+      this.dom.spawn(tr, "TD", ["name"], res.name || "");//TODO it would be nice if sprites had names
+      this.dom.spawn(tr, "TD", ["controller"], res.object.getCommand("controller"));
       const tdPreview = this.dom.spawn(tr, "TD", ["preview"]);
       const canvasPreview = this.dom.spawn(tdPreview, "CANVAS");
       this.spriteService.generatePreview(canvasPreview, res.object, this.resService);

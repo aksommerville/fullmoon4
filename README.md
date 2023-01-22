@@ -15,6 +15,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] If you drop the dpad during a door transition, she should stop moving. As is, you get the deceleration tail on the far end.
 - [x] Serve on the public web.
 - [x] Sprite data format.
+- [x] Occasional jitter in sprite collisions, seems to happen only at specific places. Pushblocks on map 1 expose it.
+- - Push a pushblock east or south when it's in position 4 or 8. Not 12 or 16, and never west or north.
 
 ### February
 

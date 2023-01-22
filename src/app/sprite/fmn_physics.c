@@ -144,3 +144,73 @@ uint8_t fmn_physics_check_sprites(float *cx,float *cy,const struct fmn_sprite *a
 
   return 1;
 }
+
+/* Helper for our direction constants.
+ */
+ 
+uint8_t fmn_dir_from_vector(float x,float y) {
+  float ax=(x<0.0f)?-x:x;
+  float ay=(y<0.0f)?-y:y;
+  // If the minor magnitude is more than half of the major, call it diagonal.
+  // Note that (0,0) will not satisfy this. But I'm keeping the final 'if's just in case.
+  if ((ax>ay/2.0f)&&(ay>ax/2.0f)) {
+    if (x<0.0f) {
+      if (y<0.0f) return FMN_DIR_NW;
+      if (y>0.0f) return FMN_DIR_SW;
+    } else if (x>0.0f) {
+      if (y<0.0f) return FMN_DIR_NE;
+      if (y>0.0f) return FMN_DIR_SE;
+    }
+  }
+  // Cardinal...
+  if (ax>ay) {
+    if (x<0.0f) return FMN_DIR_W;
+    if (x>0.0f) return FMN_DIR_E;
+  } else {
+    if (y<0.0f) return FMN_DIR_N;
+    if (y>0.0f) return FMN_DIR_S;
+  }
+  return 0;
+}
+
+uint8_t fmn_dir_from_vector_cardinal(float x,float y) {
+  float ax=(x<0.0f)?-x:x;
+  float ay=(y<0.0f)?-y:y;
+  if (ax>ay) {
+    if (x<0.0f) return FMN_DIR_W;
+    if (x>0.0f) return FMN_DIR_E;
+  } else {
+    if (y<0.0f) return FMN_DIR_N;
+    if (y>0.0f) return FMN_DIR_S;
+  }
+  return 0;
+}
+
+uint8_t fmn_dir_reverse(uint8_t dir) {
+  switch (dir) {
+    case FMN_DIR_NW: return FMN_DIR_SE;
+    case FMN_DIR_N:  return FMN_DIR_S;
+    case FMN_DIR_NE: return FMN_DIR_SW;
+    case FMN_DIR_W:  return FMN_DIR_E;
+    case FMN_DIR_E:  return FMN_DIR_W;
+    case FMN_DIR_SW: return FMN_DIR_NE;
+    case FMN_DIR_S:  return FMN_DIR_N;
+    case FMN_DIR_SE: return FMN_DIR_NW;
+  }
+  return dir;
+}
+
+void fmn_vector_from_dir(float *x,float *y,uint8_t dir) {
+  switch (dir) {
+    case FMN_DIR_NW: *x=-1.0f; *y=-1.0f; return;
+    case FMN_DIR_N:  *x= 0.0f; *y=-1.0f; return;
+    case FMN_DIR_NE: *x= 1.0f; *y=-1.0f; return;
+    case FMN_DIR_W:  *x=-1.0f; *y= 0.0f; return;
+    case FMN_DIR_E:  *x= 1.0f; *y= 0.0f; return;
+    case FMN_DIR_SW: *x=-1.0f; *y= 1.0f; return;
+    case FMN_DIR_S:  *x= 0.0f; *y= 1.0f; return;
+    case FMN_DIR_SE: *x= 1.0f; *y= 1.0f; return;
+  }
+  *x=0.0f;
+  *y=0.0f;
+}

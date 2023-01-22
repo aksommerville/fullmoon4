@@ -14,4 +14,9 @@ uint8_t fmn_physics_check_edges(float *cx,float *cy,const struct fmn_sprite *a);
 uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,uint8_t features);
 uint8_t fmn_physics_check_sprites(float *cx,float *cy,const struct fmn_sprite *a,const struct fmn_sprite *b);
 
+uint8_t fmn_dir_from_vector(float x,float y);
+uint8_t fmn_dir_from_vector_cardinal(float x,float y);
+uint8_t fmn_dir_reverse(uint8_t dir);
+void fmn_vector_from_dir(float *x,float *y,uint8_t dir);
+
 #endif

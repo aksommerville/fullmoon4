@@ -111,7 +111,8 @@ int rand();
   uint8_t style; \
   uint8_t imageid; \
   uint8_t tileid; \
-  uint8_t xform;
+  uint8_t xform; \
+  uint16_t controller;
 struct fmn_sprite_header { FMN_SPRITE_HEADER };
 
 struct fmn_plant {

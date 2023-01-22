@@ -9,3 +9,16 @@ GET, PUT, and DELETE are permitted.
 GET a directory for a JSON array of basenames under it.
 
 Static files under `src/tool/editor/www` are served verbatim, GET only.
+
+## API Calls
+
+`GET /api/spriteControllers`
+
+Returns JSON:
+
+```
+[{
+  name: string
+  id: number
+}, ...]
+```

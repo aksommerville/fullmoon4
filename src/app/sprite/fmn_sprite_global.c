@@ -43,6 +43,26 @@ static struct fmn_sprite *fmn_sprites_find_available() {
   return 0;
 }
 
+/* After applying commands, look up the controller.
+ */
+ 
+const struct fmn_sprite_controller *fmn_sprite_controller_by_id(uint16_t id) {
+  switch (id) {
+    #define _(tag) case FMN_SPRCTL_##tag: return &fmn_sprite_controller_##tag;
+    FMN_FOR_EACH_SPRCTL
+    #undef _
+  }
+  return 0;
+}
+ 
+static void fmn_sprite_apply_controller(struct fmn_sprite *sprite) {
+  const struct fmn_sprite_controller *sprctl=fmn_sprite_controller_by_id(sprite->controller);
+  if (!sprctl) return;
+  sprite->update=sprctl->update;
+  sprite->pressure=sprctl->pressure;
+  if (sprctl->init) sprctl->init(sprite);
+}
+
 /* Apply command to new sprite.
  */
  
@@ -56,6 +76,7 @@ static void fmn_sprite_apply_command(struct fmn_sprite *sprite,uint8_t command,c
     case 0x25: sprite->invmass=v[0]; break;
     case 0x40: sprite->veldecay=v[0]+v[1]/256.0f; break;
     case 0x41: sprite->radius=v[0]+v[1]/256.0f; break;
+    case 0x42: sprite->controller=(v[0]<<8)|v[1]; break;
   }
 }
 
@@ -98,6 +119,8 @@ struct fmn_sprite *fmn_sprite_spawn(
     fmn_sprite_apply_command(sprite,lead,cmdv+cmdp,paylen);
     cmdp+=paylen;
   }
+  
+  fmn_sprite_apply_controller(sprite);
   
   return sprite;
 }
@@ -167,6 +190,35 @@ static void fmn_sprite_physics_update(float elapsed) {
         a->y+=acy;
         b->x+=bcx;
         b->y+=bcy;
+        
+        uint8_t dir=fmn_dir_from_vector_cardinal(cx,cy);
+        
+        /* Extra mitigation for some round-off error.
+         * Unfortunately, it matters. Maybe wouldn't be a problem if we used double instead of float? But not going there.
+         * Whichever sprite is lighter, clamp its position in the more significant axis to the other sprite's edge.
+         * If they weigh the same, no correction, and possibly some jitter.
+         */
+        struct fmn_sprite *lighter=0,*heavier=0;
+             if (a->invmass>b->invmass) { lighter=a; heavier=b; }
+        else if (a->invmass<b->invmass) { lighter=b; heavier=a; }
+        if (dir&&lighter) {
+          float dstx=lighter->x,dsty=lighter->y;
+          switch (dir) {
+            case FMN_DIR_N: dsty=heavier->y-heavier->radius-lighter->radius; break;
+            case FMN_DIR_S: dsty=heavier->y+heavier->radius+lighter->radius; break;
+            case FMN_DIR_W: dstx=heavier->x-heavier->radius-lighter->radius; break;
+            case FMN_DIR_E: dstx=heavier->x+heavier->radius+lighter->radius; break;
+          }
+          lighter->x=dstx;
+          lighter->y=dsty;
+        }
+
+        if (a->pressure) {
+          a->pressure(a,b,dir);
+        }
+        if (b->pressure) {
+          b->pressure(b,a,fmn_dir_reverse(dir));
+        }
       }
     }
   }

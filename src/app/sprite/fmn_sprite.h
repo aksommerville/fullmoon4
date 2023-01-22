@@ -22,7 +22,14 @@
 struct fmn_sprite {
   FMN_SPRITE_HEADER
   
+  // Called each master update, if set.
   void (*update)(struct fmn_sprite *sprite,float elapsed);
+  
+  /* Called when another sprite collides against me.
+   * (dir) is a cardinal, the direction (presser) is trying to move.
+   * This will be called after all 'update' hooks, during physics resolution.
+   */
+  void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
   
   // Reference data recorded at spawn point.
   uint16_t spriteid;
@@ -59,5 +66,34 @@ int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),voi
 void fmn_sprites_update(float elapsed);
 
 void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy);
+
+/* Sprite controllers.
+ ***************************************************************/
+
+// Be mindful of formatting here; this chunk is read by our mksprites tool.
+#define FMN_SPRCTL_dummy          0
+#define FMN_SPRCTL_hero           1
+#define FMN_SPRCTL_pushblock      2
+#define FMN_SPRCTL_alphablock     3
+#define FMN_SPRCTL_hazard         4
+
+#define FMN_FOR_EACH_SPRCTL \
+  _(dummy) \
+  _(hero) \
+  _(pushblock) \
+  _(alphablock) \
+  _(hazard)
+  
+struct fmn_sprite_controller {
+  void (*init)(struct fmn_sprite *sprite);
+  void (*update)(struct fmn_sprite *sprite,float elapsed);
+  void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
+};
+
+#define _(tag) extern const struct fmn_sprite_controller fmn_sprite_controller_##tag;
+FMN_FOR_EACH_SPRCTL
+#undef _
+
+const struct fmn_sprite_controller *fmn_sprite_controller_by_id(uint16_t id);
 
 #endif

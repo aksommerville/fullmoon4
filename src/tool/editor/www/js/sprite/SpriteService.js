@@ -5,9 +5,12 @@ import { Sprite } from "./Sprite.js";
  
 export class SpriteService {
   static getDependencies() {
-    return [];
+    return [Window];
   }
-  constructor() {
+  constructor(window) {
+    this.window = window;
+    
+    this.controllerNames = null;
   }
   
   decode(src, id) {
@@ -32,6 +35,7 @@ export class SpriteService {
     // Originally these were going to like analyze the command's payload.
     // But I think it's actually more useful to use this static help text.
     switch (command[0]) {
+      case "controller": return "FMN_SPRCTL_* from src/app/sprite/fmn_sprite.h";
       case "image": return "Image ID";
       case "tile": return "0..255";
       case "xform": return "Multi: xrev, yrev, swap";
@@ -46,6 +50,7 @@ export class SpriteService {
   
   keyIsValid(key) {
     if ([
+      "controller",
       "image",
       "tile",
       "xform",
@@ -84,6 +89,21 @@ export class SpriteService {
     const srcx = (tileId & 15) * tilesize;
     const srcy = (tileId >> 4) * tilesize;
     context.drawImage(image, srcx, srcy, tilesize, tilesize, 0, 0, tilesize, tilesize);
+  }
+  
+  // Calls (cb) with each name, not necessarily synchronously.
+  // Returns a Promise that resolves after all callbacks are complete.
+  listControllers(cb) {
+    if (this.controllerNames) {
+      for (const name of this.controllerNames) cb(name);
+      return Promise.resolve();
+    }
+    return this.window.fetch("/api/spriteControllers")
+      .then(rsp => { if (!rsp.ok) throw rsp; return rsp.json(); })
+      .then(controllers => {
+        this.controllerNames = controllers.map(c => c.name).filter(v => v);
+        for (const name of this.controllerNames) cb(name);
+      });
   }
 }
 

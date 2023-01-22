@@ -21,6 +21,7 @@ physics [motion] [edge] [sprites] [solid] [hole]
 decay (FLOAT 0..255)
 radius (FLOAT 0..255)
 invmass (0..255)
+controller (0..65535|name)
 ```
 
 ## Binary Format
@@ -66,6 +67,7 @@ Defined fields:
 
 0x40 Velocity decay. u8.8 linear decay in m/s**2
 0x41 Radius. u8.8 m
+0x42 Controller. See FMN_SPRCTL_* in src/app/sprite/fmn_sprite.h
 ```
 
 Physics:

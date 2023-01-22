@@ -92,6 +92,47 @@ function serveFile(rsp, method, path, body) {
   }
 }
 
+/* GET /api/spriteControllers
+ */
+ 
+function serveSpriteControllers(rsp) {
+  const controllers = [];
+  const src = fs.readFileSync("src/app/sprite/fmn_sprite.h");
+  for (let srcp=0, lineno=1; srcp<src.length; lineno++) {
+    let nlp = src.indexOf(0x0a, srcp);
+    if (nlp < 0) nlp = src.length;
+    const line = src.toString("utf-8", srcp, nlp).trim();
+    srcp = nlp + 1;
+    
+    const match = line.match(/^#define FMN_SPRCTL_([^\s]*)\s+([^\s]*)$/);
+    if (!match) continue;
+    const name = match[1];
+    const id = +match[2];
+    if (!name || isNaN(id) || (id < 0) || (id > 0xffff)) continue;
+    controllers.push({ name, id });
+  }
+  rsp.statusCode = 200;
+  rsp.setHeader("Content-Type", "application/json");
+  rsp.end(JSON.stringify(controllers));
+  return Promise.resolve();
+}
+
+/* Dispatch for "/api/" requests.
+ * Return a Promise.
+ */
+ 
+function serveApi(rsp, req, path) {
+  switch (req.method + path) {
+  
+    case "GET/api/spriteControllers": return serveSpriteControllers(rsp);
+  
+  }
+  rsp.statusCode = 404;
+  rsp.statusmessage = "Not found";
+  rsp.end();
+  return Promise.resolve();
+}
+
 /* Invoke 'make' to freshen a file, resolve if it succeeds.
  */
  
@@ -145,6 +186,17 @@ function serve(req, rsp) {
       serveFile(rsp, req.method, `${dataPath}${path.substr(5)}`, req.body);
       console.log(`200 ${req.method} ${req.url}`);
       return;
+    }
+    
+    if (path.startsWith("/api/")) {
+      return serveApi(rsp, req, path)
+        .catch(e => {
+          console.error(`Error serving ${req.method} ${req.url}`);
+          console.error(e);
+          setStatusForError(rsp, e);
+          rsp.end();
+        })
+        .then(() => console.log(`${rsp.statusCode} ${req.method} ${req.url}`))
     }
     
     if (req.method !== "GET") {

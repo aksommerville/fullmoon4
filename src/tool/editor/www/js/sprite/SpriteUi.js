@@ -8,19 +8,20 @@ import { SpriteService } from "./SpriteService.js";
 
 export class SpriteUi {
   static getDependencies() {
-    return [HTMLElement, Dom, ResService, SpriteService, Window];
+    return [HTMLElement, Dom, ResService, SpriteService, Window, "discriminator"];
   }
-  constructor(element, dom, resService, spriteService, window) {
+  constructor(element, dom, resService, spriteService, window, discriminator) {
     this.element = element;
     this.dom = dom;
     this.resService = resService;
     this.spriteService = spriteService;
     this.window = window;
+    this.discriminator = discriminator;
     
     /* We'll show a few fields in a predictable order, whether they're defined or not.
      * The format is new as I'm writing this, and it's small enough we might as well include all of them.
      */
-    this.fieldsAlways = ["image", "tile", "xform", "style", "physics", "decay", "radius"];
+    this.fieldsAlways = ["controller", "image", "tile", "xform", "style", "physics", "decay", "radius"];
     
     this.spriteId = 0;
     this.sprite = null;
@@ -43,6 +44,9 @@ export class SpriteUi {
     const trFooter = this.dom.spawn(table, "TR", ["footer"]);
     const tdFooter = this.dom.spawn(trFooter, "TD", { colspan: 4 });
     this.dom.spawn(tdFooter, "INPUT", ["addField"], { type: "button", value: "+", "on-click": () => this.onAddField(), disabled: "disabled" });
+    
+    const datalistControllers = this.dom.spawn(this.element, "DATALIST", { id: `SpriteUi-${this.discriminator}-controllers` });
+    this.spriteService.listControllers(ctl => this.dom.spawn(datalistControllers, "OPTION", { value: ctl }));
   }
   
   populateUi() {
@@ -93,10 +97,14 @@ export class SpriteUi {
   }
   
   populateValueCell(td, command) {
-    // It would be easy enough to do specific UI for the known fields. eg checkboxes for physics.
-    // We'll probably want at least a datalist when we get to sprite controllers.
-    // But by and large, just let it be plain text.
+    let datalistId = "";
+    switch (command[0]) {
+      // If a particular command has a datalist, or needs entirely special handling, call that out here.
+      // Most fields will be plain old text inputs.
+      case "controller": datalistId = `SpriteUi-${this.discriminator}-controllers`; break;
+    }
     const input = this.dom.spawn(td, "INPUT", ["field"], { type: "text", name: command[0], value: command.slice(1).join(" ") });
+    if (datalistId) input.setAttribute("list", datalistId);
   }
   
   rebuildModelFromUi() {

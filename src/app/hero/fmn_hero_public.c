@@ -31,7 +31,7 @@ int fmn_hero_reset() {
       FMN_PHYSICS_SOLID|
       FMN_PHYSICS_HOLE|
     0;
-    fmn_hero.sprite->radius=0.200f;
+    fmn_hero.sprite->radius=0.250f;
     fmn_hero.sprite->veldecay=0.0f; // We override velocity management completely; veldecay is irrelevant.
     fmn_hero.sprite->velx=fmn_hero.velx;
     fmn_hero.sprite->vely=fmn_hero.vely;
