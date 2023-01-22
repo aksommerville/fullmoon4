@@ -39,7 +39,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### After GDEX
 
-- [ ] Can we reduce the wasm exports? There's only like 3 symbols that actually need exported.
+- [x] Can we reduce the wasm exports? There's only like 3 symbols that actually need exported.
 - [ ] Touch input.
 - [ ] Input configuration.
 - [ ] Clock.js "hard" vs "soft" pause. Do we really need both?

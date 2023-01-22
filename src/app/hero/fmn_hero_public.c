@@ -68,7 +68,6 @@ void fmn_hero_update(float elapsed) {
   
   if (fmn_global.injury_time>0.0f) {
     if ((fmn_global.injury_time-=elapsed)<0.0f) {
-      fmn_log("end injury");
       fmn_global.injury_time=0.0f;
     }
   }

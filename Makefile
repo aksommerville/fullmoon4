@@ -14,8 +14,10 @@ SRCFILES:=$(shell find src -type f)
 MIDDIR:=mid
 OUTDIR:=out
 
-#TODO Not --export-all. Be more selective about it.
-WASM_LDOPT:=-nostdlib -Xlinker --no-entry -Xlinker --import-undefined -Xlinker --export-all
+EXPORTED_SYMBOLS:=fmn_global fmn_init fmn_update __indirect_function_table
+
+WASM_LDOPT:=-nostdlib -Xlinker --no-entry -Xlinker --import-undefined \
+   $(foreach S,$(EXPORTED_SYMBOLS),-Xlinker --export=$S)
 WASM_CCOPT:=-c -MMD -O3 -nostdlib
 WASM_CCINC:=-Isrc -I$(MIDDIR)
 WASM_CCWARN:=-Werror -Wimplicit -Wno-parentheses -Wno-comment
