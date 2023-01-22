@@ -19,6 +19,8 @@
 static struct fmn_sprite fmn_spritev[FMN_SPRITE_LIMIT]={0};
 static struct fmn_sprite *fmn_spritepv[FMN_SPRITE_LIMIT];
 
+static int8_t fmn_sprites_sortdir=1;
+
 /* Clear sprites.
  */
  
@@ -58,8 +60,11 @@ const struct fmn_sprite_controller *fmn_sprite_controller_by_id(uint16_t id) {
 static void fmn_sprite_apply_controller(struct fmn_sprite *sprite) {
   const struct fmn_sprite_controller *sprctl=fmn_sprite_controller_by_id(sprite->controller);
   if (!sprctl) return;
+  
   sprite->update=sprctl->update;
   sprite->pressure=sprctl->pressure;
+  sprite->hero_collision=sprctl->hero_collision;
+  
   if (sprctl->init) sprctl->init(sprite);
 }
 
@@ -67,6 +72,7 @@ static void fmn_sprite_apply_controller(struct fmn_sprite *sprite) {
  */
  
 static void fmn_sprite_apply_command(struct fmn_sprite *sprite,uint8_t command,const uint8_t *v,uint8_t c) {
+  //fmn_log("%s %p 0x%02x %d:[%02x,%02x,%02x]",__func__,sprite,command,c,v[0],v[1],v[2]);
   switch (command) {
     case 0x20: sprite->imageid=v[0]; break;
     case 0x21: sprite->tileid=v[0]; break;
@@ -74,6 +80,7 @@ static void fmn_sprite_apply_command(struct fmn_sprite *sprite,uint8_t command,c
     case 0x23: sprite->style=v[0]; break;
     case 0x24: sprite->physics=v[0]; break;
     case 0x25: sprite->invmass=v[0]; break;
+    case 0x26: sprite->layer=v[0]; break;
     case 0x40: sprite->veldecay=v[0]+v[1]/256.0f; break;
     case 0x41: sprite->radius=v[0]+v[1]/256.0f; break;
     case 0x42: sprite->controller=(v[0]<<8)|v[1]; break;
@@ -100,7 +107,10 @@ struct fmn_sprite *fmn_sprite_spawn(
   sprite->spriteid=spriteid;
   if (argc>=FMN_SPRITE_ARGV_SIZE) memcpy(sprite->argv,argv,FMN_SPRITE_ARGV_SIZE);
   else memcpy(sprite->argv,argv,argc);
+  
+  // A few things perhaps unexpectedly, do not default to zero.
   sprite->style=FMN_SPRITE_STYLE_TILE;
+  sprite->layer=0x80;
   
   uint16_t cmdp=0; while (cmdp<cmdc) {
     uint8_t lead=cmdv[cmdp++];
@@ -152,9 +162,11 @@ int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),voi
  
 static void fmn_sprite_physics_update(float elapsed) {
   const uint8_t any_physics=FMN_PHYSICS_EDGE|FMN_PHYSICS_SPRITES|FMN_PHYSICS_GRID;
+  struct fmn_sprite *hero=0;
   struct fmn_sprite **ap=fmn_spritepv;
   int ai=0; for (;ai<fmn_global.spritec;ai++,ap++) {
     struct fmn_sprite *a=*ap;
+    if (a->style==FMN_SPRITE_STYLE_HERO) hero=a;
     if (!(a->physics&any_physics)) continue;
     if (a->radius<=0.0f) continue;
     
@@ -199,11 +211,12 @@ static void fmn_sprite_physics_update(float elapsed) {
          * If they weigh the same, no correction, and possibly some jitter.
          */
         struct fmn_sprite *lighter=0,*heavier=0;
+        uint8_t mitigate_dir=dir;
              if (a->invmass>b->invmass) { lighter=a; heavier=b; }
-        else if (a->invmass<b->invmass) { lighter=b; heavier=a; }
+        else if (a->invmass<b->invmass) { lighter=b; heavier=a; mitigate_dir=fmn_dir_reverse(dir); }
         if (dir&&lighter) {
           float dstx=lighter->x,dsty=lighter->y;
-          switch (dir) {
+          switch (mitigate_dir) {
             case FMN_DIR_N: dsty=heavier->y-heavier->radius-lighter->radius; break;
             case FMN_DIR_S: dsty=heavier->y+heavier->radius+lighter->radius; break;
             case FMN_DIR_W: dstx=heavier->x-heavier->radius-lighter->radius; break;
@@ -220,6 +233,23 @@ static void fmn_sprite_physics_update(float elapsed) {
           b->pressure(b,a,fmn_dir_reverse(dir));
         }
       }
+    }
+  }
+  
+  // If we found a hero sprite (we should always), check again for collisions against interested parties.
+  if (hero) {
+    struct fmn_sprite **p=fmn_spritepv;
+    int i=fmn_global.spritec;
+    for (;i-->0;p++) {
+      struct fmn_sprite *hazard=*p;
+      if (!hazard->hero_collision) continue;
+      float dx=hero->x-hazard->x;
+      if (dx>=hazard->radius+hero->radius) continue;
+      if (dx<=-hazard->radius-hero->radius) continue;
+      float dy=hero->y-hazard->y;
+      if (dy>=hazard->radius+hero->radius) continue;
+      if (dy<=-hazard->radius-hero->radius) continue;
+      hazard->hero_collision(hazard,hero);
     }
   }
 }
@@ -264,4 +294,36 @@ void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy) {
   if (!sprite) return;
   sprite->velx+=dx;
   sprite->vely+=dy;
+}
+
+/* Partial sort by render order.
+ */
+ 
+static int8_t fmn_sprite_rendercmp(const struct fmn_sprite *a,const struct fmn_sprite *b) {
+  if (a->layer<b->layer) return -1;
+  if (a->layer>b->layer) return 1;
+  if (a->y<b->y) return -1;
+  if (a->y>b->y) return 1;
+  return 0;
+}
+ 
+void fmn_sprites_sort_partial() {
+  if (fmn_global.spritec<2) return;
+  int first,last,i;
+  if (fmn_sprites_sortdir==1) {
+    first=0;
+    last=fmn_global.spritec-1;
+  } else {
+    first=fmn_global.spritec-1;
+    last=0;
+  }
+  for (i=first;i!=last;i+=fmn_sprites_sortdir) {
+    struct fmn_sprite *a=fmn_spritepv[i];
+    struct fmn_sprite *b=fmn_spritepv[i+fmn_sprites_sortdir];
+    if (fmn_sprite_rendercmp(a,b)==fmn_sprites_sortdir) {
+      fmn_spritepv[i]=b;
+      fmn_spritepv[i+fmn_sprites_sortdir]=a;
+    }
+  }
+  fmn_sprites_sortdir=-fmn_sprites_sortdir;
 }

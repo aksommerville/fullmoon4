@@ -10,6 +10,7 @@ import { DataService } from "./DataService.js";
 const FMN_SPRITE_STYLE_HIDDEN = 0;
 const FMN_SPRITE_STYLE_TILE = 1;
 const FMN_SPRITE_STYLE_HERO = 2;
+const FMN_SPRITE_STYLE_FOURFRAME = 3;
  
 export class Renderer {
   static getDependencies() {
@@ -137,6 +138,10 @@ export class Renderer {
               }
               this.renderHero(ctx, srcImage, sprite.x, sprite.y);
             } break;
+          case FMN_SPRITE_STYLE_FOURFRAME: {
+              const frame = (this.frameCount >> 3) & 3;
+              this.renderTile(ctx, sprite.x * tilesize, sprite.y * tilesize, srcImage, sprite.tileid + frame, sprite.xform);
+            } break;
         }
       }
     }
@@ -149,6 +154,19 @@ export class Renderer {
     const left = ~~(midx * tilesize - halftile);
     const facedir = this.globals.g_facedir[0];
     const walking = this.globals.g_walking[0];
+    
+    // When injured, we do something entirely different, and all other state can be ignored.
+    if (this.globals.g_injury_time[0] > 0) {
+      const tileId = (this.frameCount & 4) ? 0x03 : 0x33;
+      let hatDisplacement = 0;
+      if (this.globals.g_injury_time[0] >= 0.8) ;
+      else if (this.globals.g_injury_time[0] >= 0.4) hatDisplacement = Math.floor((0.8 - this.globals.g_injury_time[0]) * 20);
+      else hatDisplacement = Math.floor(this.globals.g_injury_time[0] * 20);
+      this.renderTile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId + 0x20, 0);
+      this.renderTile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, tileId + 0x10, 0);
+      this.renderTile(ctx, midx * tilesize, midy * tilesize - 12 - hatDisplacement, srcImage, tileId, 0);
+      return;
+    }
     
     // The most common tiles are arranged in the first three columns: DOWN, UP, LEFT.
     let col = 0, xform = 0;
@@ -172,13 +190,11 @@ export class Renderer {
     // Hat.
     this.renderTile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
     
-    // Physics for debugging.
-    if (false) {
-      ctx.beginPath();
-      ctx.arc(midx * tilesize, midy * tilesize, 0.200 * tilesize, 0, Math.PI * 2);
-      ctx.fillStyle = "#f00";
+    //XXX TEMP overlay while injured
+    if (this.globals.g_injury_time[0] > 0) {
       ctx.globalAlpha = 0.5;
-      ctx.fill();
+      ctx.fillStyle = "#f00";
+      ctx.fillRect(midx * tilesize - 8, midy * tilesize - 8, 16, 16);
       ctx.globalAlpha = 1.0;
     }
   }

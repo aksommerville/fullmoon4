@@ -107,6 +107,7 @@ void fmn_game_update(float elapsed) {
 
   fmn_sprites_update(elapsed);
   fmn_hero_update(elapsed);
+  fmn_sprites_sort_partial();
 
   int8_t x,y;
   if (fmn_hero_get_quantized_position(&x,&y)) {

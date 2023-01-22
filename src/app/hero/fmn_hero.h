@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 
+struct fmn_sprite;
+
 int fmn_hero_reset();
 void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state);
 void fmn_hero_update(float elapsed);
@@ -21,5 +23,10 @@ uint8_t fmn_hero_get_quantized_position(int8_t *x,int8_t *y);
 void fmn_hero_get_position(float *x,float *y);
 void fmn_hero_set_position(float x,float y);
 void fmn_hero_kill_velocity();
+
+/* Begin an injury, focussed at (x,y), typically (assailant)'s location.
+ * (assailant) is optional and currently superfluous.
+ */
+void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant);
 
 #endif

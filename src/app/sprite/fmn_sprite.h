@@ -31,6 +31,8 @@ struct fmn_sprite {
    */
   void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
   
+  void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
+  
   // Reference data recorded at spawn point.
   uint16_t spriteid;
   uint8_t argv[FMN_SPRITE_ARGV_SIZE];
@@ -46,6 +48,9 @@ struct fmn_sprite {
   float veldecay; // Linear velocity decay in m/s**2.
   float radius;
   uint8_t invmass; // 1/mass, 0 if infinite
+  
+  // Lower layers draw first. The hero is at layer 0x80.
+  uint8_t layer;
 };
 
 // Drop all sprites cold.
@@ -66,6 +71,8 @@ int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),voi
 void fmn_sprites_update(float elapsed);
 
 void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy);
+
+void fmn_sprites_sort_partial();
 
 /* Sprite controllers.
  ***************************************************************/
@@ -88,6 +95,7 @@ struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
   void (*update)(struct fmn_sprite *sprite,float elapsed);
   void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
+  void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
 };
 
 #define _(tag) extern const struct fmn_sprite_controller fmn_sprite_controller_##tag;

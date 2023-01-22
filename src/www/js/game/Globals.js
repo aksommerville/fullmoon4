@@ -68,6 +68,7 @@ export class Globals {
     this.g_itemqv = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 24, 16);
     this.g_facedir = new Uint8Array(this.memU8.buffer, this.p_hero, 1);
     this.g_walking = new Uint8Array(this.memU8.buffer, this.p_hero + 1, 1);
+    this.g_injury_time = new Float32Array(this.memU8.buffer, this.p_hero + 4, 1);
   }
   
   /* Higher-level logical access with structured models.

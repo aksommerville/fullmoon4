@@ -103,3 +103,61 @@ void fmn_hero_motion_update(float elapsed) {
   fmn_hero.sprite->velx+=dx;
   fmn_hero.sprite->vely+=dy;
 }
+
+/* Begin injury.
+ */
+ 
+void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
+  struct fmn_sprite *hero=fmn_hero.sprite;
+  
+  // First nice and simple, apply a constant force in the opposite direction of the assailant.
+  float dx=hero->x-x;
+  float dy=hero->y-y;
+  float distance2=dx*dx+dy*dy;
+  float distance=sqrtf(distance2);
+  float nx,ny;
+  if (distance<=0.0f) {
+    // Exactly atop each other, the hero corrects upward, no particular reason.
+    nx=0.0f;
+    ny=-1.0f;
+  } else {
+    nx=dx/distance;
+    ny=dy/distance;
+  }
+  hero->velx+=nx*FMN_HERO_INJURY_VELOCITY;
+  hero->vely+=ny*FMN_HERO_INJURY_VELOCITY;
+  
+  /* If we're still pointing at the assailant, flip sign.
+   * This is unusual, and it probably means we're ping-ponging between two hazards.
+   * It is an important business requirement that the hero be forced away from any hazard, we'll use them like walls.
+   */
+  if (((hero->velx<0.0f)&&(dx>0.0f))||((hero->velx>0.0f)&&(dx<0.0f))) hero->velx=-hero->velx;
+  if (((hero->vely<0.0f)&&(dy>0.0f))||((hero->vely>0.0f)&&(dy<0.0f))) hero->vely=-hero->vely;
+  
+  /* Calculate my velocity along the line thru assailant, and clamp it to a constant minimum.
+   */
+  float nvel=hero->velx*nx+hero->vely*ny;
+  if (nvel<FMN_HERO_INJURY_MIN) {
+    //fmn_log("TOO SLOW nvel=%f",nvel);
+    float scale=FMN_HERO_INJURY_MIN/nvel;
+    hero->velx*=scale;
+    hero->vely*=scale;
+  }
+  
+  /* Finally, clamp my true velocity to a constant maximum, in whatever direction it ended up.
+   */
+  float vel2=hero->velx*hero->velx+hero->vely*hero->vely;
+  if (vel2>FMN_HERO_INJURY_MAX*FMN_HERO_INJURY_MAX) {
+    nvel=sqrtf(vel2);
+    //fmn_log("TOO FAST nvel=%f",nvel);
+    float scale=FMN_HERO_INJURY_MAX/nvel;
+    hero->velx*=scale;
+    hero->vely*=scale;
+  }
+  
+  //fmn_log("%s final velocity %f,%f = %f",__func__,hero->velx,hero->vely,sqrtf(hero->velx*hero->velx+hero->vely*hero->vely));
+  
+  fmn_global.injury_time=FMN_HERO_INJURY_TIME;
+
+  //TODO sound effect
+}

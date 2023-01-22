@@ -99,9 +99,10 @@ int rand();
 #define FMN_ITEM_NITRO          15
 #define FMN_ITEM_COUNT          16
 
-#define FMN_SPRITE_STYLE_HIDDEN 0 /* don't render */
-#define FMN_SPRITE_STYLE_TILE   1 /* single tile */
-#define FMN_SPRITE_STYLE_HERO   2
+#define FMN_SPRITE_STYLE_HIDDEN    0 /* don't render */
+#define FMN_SPRITE_STYLE_TILE      1 /* single tile */
+#define FMN_SPRITE_STYLE_HERO      2 /* special */
+#define FMN_SPRITE_STYLE_FOURFRAME 3 /* 4 tiles arranged horizontally, automatic animation */
 
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
@@ -190,6 +191,8 @@ extern struct fmn_global {
    */
   uint8_t facedir; // FMN_DIR_*, cardinals only.
   uint8_t walking;
+  uint8_t pad3[2];
+  float injury_time;
   
 } fmn_global;
 

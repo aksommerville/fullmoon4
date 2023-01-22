@@ -66,6 +66,13 @@ void fmn_hero_update(float elapsed) {
   fmn_hero_motion_update(elapsed);
   fmn_hero_item_update(elapsed);
   
+  if (fmn_global.injury_time>0.0f) {
+    if ((fmn_global.injury_time-=elapsed)<0.0f) {
+      fmn_log("end injury");
+      fmn_global.injury_time=0.0f;
+    }
+  }
+  
   fmn_hero.velx=fmn_hero.sprite->velx;
   fmn_hero.vely=fmn_hero.sprite->vely;
 }

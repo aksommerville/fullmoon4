@@ -7,6 +7,10 @@
 
 #define FMN_HERO_WALK_SPEED_MAX    8.000f
 #define FMN_HERO_ACCELERATION     40.000f
+#define FMN_HERO_INJURY_VELOCITY  16.000f
+#define FMN_HERO_INJURY_MIN       10.000f
+#define FMN_HERO_INJURY_MAX       18.000f
+#define FMN_HERO_INJURY_TIME       0.500f
 
 extern struct fmn_hero {
   struct fmn_sprite *sprite;

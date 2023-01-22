@@ -27,7 +27,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### March
 
-- [ ] Hazards.
+- [x] Hazards.
 - [ ] Spells.
 - [ ] Music. We don't need every song yet, just like 3 or so.
 
@@ -70,3 +70,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] MapAllUi: Populate tattle.
 - - [ ] Delete maps (and resources in general)
 - - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
+- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls.

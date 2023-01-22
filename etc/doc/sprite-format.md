@@ -16,12 +16,13 @@ We validate the payload length generically (see binary format below).
 image ID
 tile ID
 xform [xrev] [yrev] [swap]
-style hidden|tile|hero
+style hidden|tile|hero|fourframe
 physics [motion] [edge] [sprites] [solid] [hole]
 decay (FLOAT 0..255)
 radius (FLOAT 0..255)
 invmass (0..255)
 controller (0..65535|name)
+layer (0..255)
 ```
 
 ## Binary Format
@@ -64,6 +65,7 @@ Defined fields:
 0x23 Style. Default 1 (FMN_SPRITE_STYLE_TILE)
 0x24 Physics. Bitfields, see below.
 0x25 Inverse mass. 0=infinite, 1=heaviest, 255=lightest
+0x26 Layer.
 
 0x40 Velocity decay. u8.8 linear decay in m/s**2
 0x41 Radius. u8.8 m

@@ -303,6 +303,7 @@ export class DataService {
           sprites[lastId] = new Uint8Array(len);
           sprites[lastId].set(srcView);
         }
+        lastOffset = offset;
       }
       if (lastId && (lastOffset < src.length)) {
         const srcView = new Uint8Array(src.buffer, lastOffset, src.length - lastOffset);

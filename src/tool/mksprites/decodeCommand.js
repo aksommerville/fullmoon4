@@ -56,13 +56,14 @@ function rewriteInput_xform(src) {
 }
 
 function rewriteInput_style(src) {
-  // style hidden|hero|tile
+  // style hidden|hero|tile|fourframe
   if (src.length !== 2) throw new Error(`Expected 1 argument after 'style', found ${src.length - 1}`);
   let v = src[1];
   switch (v) {
     case "hidden": v = 0; break;
     case "tile": v = 1; break;
     case "hero": v = 2; break;
+    case "fourframe": v = 3; break;
   }
   return ["style", v];
 }

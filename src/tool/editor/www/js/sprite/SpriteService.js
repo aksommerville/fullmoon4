@@ -25,12 +25,6 @@ export class SpriteService {
     return sprite;
   }
   
-  getControllerNameForDisplay(sprite) {
-    if (!sprite) return "";
-    //TODO sprite controller name
-    return "";
-  }
-  
   getFieldCommentForDisplay(command) {
     // Originally these were going to like analyze the command's payload.
     // But I think it's actually more useful to use this static help text.
@@ -39,7 +33,7 @@ export class SpriteService {
       case "image": return "Image ID";
       case "tile": return "0..255";
       case "xform": return "Multi: xrev, yrev, swap";
-      case "style": return "One: hidden, tile, hero";
+      case "style": return "One: hidden, tile, hero, fourframe";
       case "physics": return "Multi: motion, edge, sprites, solid, hole";
       case "decay": return "0.0 <= n < 256.0";
       case "radius": return "0.0 <= n < 256.0";
