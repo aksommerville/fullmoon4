@@ -55,11 +55,15 @@ export class SpriteAllUi {
   }
   
   onNewSprite() {
-    const id = +this.window.prompt("ID:", this.resService.unusedId("sprite"));
+    const response = this.window.prompt("ID or ID-NAME:", this.resService.unusedId("sprite"));
+    if (!response) return;
+    let [id, name] = response.split("-");
+    id = +id;
+    name = name || "";
     if (!id || (id < 1) || (id > 0xffff)) return;
     const sprite = this.spriteService.generateNewSprite();
     sprite.id = id;
-    this.resService.dirty("sprite", id, sprite);
+    this.resService.dirty("sprite", id, sprite, name);
     this.window.location = `#sprite/${id}`;
   }
   

@@ -251,17 +251,43 @@ export class MapRenderer {
   renderBadges(context, bounds) {
     const tilesize = this.layout[0].bounds.tilesize + this.layout[0].bounds.spacing;
     for (const poi of this.pois) {
-      const image = this.poiImages[poi.type];
-      if (!image || !image.complete) continue;
+      let image = null;
+      let srcx = 0, srcy = 0, srcw = 0, srch = 0;
+    
+      // For sprites, use a thumbnail if possible.
+      if (poi.type === "sprite") {
+        const sprite = this.resService.getResourceObject("sprite", poi.spriteId);
+        if (sprite) {
+          const imageName = sprite.getCommand("image");
+          const tileId = +sprite.getCommand("tile");
+          // There's xform if we need it, not sure if that will matter.
+          if (imageName && !isNaN(tileId)) {
+            if (image = this.resService.getResourceObject("image", imageName)) {
+              srcw = image.naturalWidth >> 4;
+              srch = image.naturalHeight >> 4;
+              srcx = (tileId & 15) * srcw;
+              srcy = (tileId >> 4) * srch;
+            }
+          }
+        }
+      }
+    
+      // Everything else, use our canned images.
+      if (!image) {
+        image = this.poiImages[poi.type];
+        if (!image || !image.complete) continue;
+        srcw = image.naturalWidth;
+        srch = image.naturalHeight;
+      }
       
       // Badges get one corner against the center of the cell.
       // The first four POI for each cell will all be visible, then they start occluding each other.
       let x = this.layout[0].bounds.x + tilesize * poi.x + (tilesize >> 1);
-      if (!(poi.index & 1)) x -= image.naturalWidth; else x += 1;
+      if (!(poi.index & 1)) x -= srcw; else x += 1;
       let y = this.layout[0].bounds.y + tilesize * poi.y + (tilesize >> 1);
-      if (!(poi.index & 2)) y -= image.naturalHeight; else y += 1;
+      if (!(poi.index & 2)) y -= srch; else y += 1;
       
-      context.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, x, y, image.naturalWidth, image.naturalHeight);
+      context.drawImage(image, srcx, srcy, srcw, srch, x, y, srcw, srch);
     }
   }
   

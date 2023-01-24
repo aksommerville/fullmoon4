@@ -77,8 +77,13 @@ export class ResService {
     }
   }
   
-  getResourceObject(type, id) {
-    const res = this.toc.find(r => r.type === type && r.id === id);
+  getResourceObject(type, idOrName) {
+    if (typeof(idOrName) === "string") {
+      const res = this.toc.find(r => r.type === type && r.name === idOrName);
+      if (res) return res.object;
+      idOrName = +idOrName;
+    }
+    const res = this.toc.find(r => r.type === type && r.id === idOrName);
     if (res) return res.object;
     return null;
   }
@@ -223,17 +228,18 @@ export class ResService {
   }
   
   loadText(type, base, decode) {
-    const id = +base;
+    const id = +base.split("-")[0];
     if (isNaN(id) || (id < 1) || (id > 65535)) {
       throw new Error(`Invalid ${type} ID '${base}'`);
     }
+    const name = (base.match(/^\d+-([^.]*)/) || [])[1] || "";
     const path = `/data/${type}/${base}`;
     return this.window.fetch(path).then(rsp => {
       if (!rsp.ok) throw rsp;
       return rsp.text();
     }).then(serial => {
       const object = decode(serial, id);
-      return { object, serial, id, path, type };
+      return { object, serial, id, path, type, name };
     }).then(res => {
       this.toc.push(res);
     });
@@ -241,25 +247,27 @@ export class ResService {
   
   loadTocOnly(type, base) {
     const path = `/data/${type}/${base}`;
-    const id = +base.split('.')[0];
+    const id = +base.split(/[-\.]/)[0];
     if (isNaN(id) || (id < 1) || (id > 255)) {
       throw new Error(`Invalid ${type} ID '${base}'`);
     }
-    this.toc.push({ type, id, path });
+    const name = (base.match(/^\d+-([^.]*)/) || [])[1] || "";
+    this.toc.push({ type, id, path, name });
     return Promise.resolve();
   }
   
   loadUnknown(type, base) {
     const path = `/data/${type}/${base}`;
-    const id = +base.split('.')[0];
+    const id = +base.split(/[-\.]/)[0];
     if (isNaN(id) || (id < 1) || (id > 255)) {
       throw new Error(`Invalid ${type} ID '${base}'`);
     }
+    const name = (base.match(/^\d+-([^.]*)/) || [])[1] || "";
     return this.window.fetch(path).then(rsp => {
       if (!rsp.ok) throw rsp;
       return rsp.arrayBuffer();
     }).then(serial => {
-      const res = { type, id, path, serial };
+      const res = { type, id, path, serial, name };
       this.toc.push(res);
     });
   }
@@ -267,20 +275,22 @@ export class ResService {
   /* Save.
    *********************************************************/
    
-  generatePathForNewResource(type, id) {
+  generatePathForNewResource(type, id, name) {
+    if (name) return `/data/${type}/${id}-${name}`;
     return `/data/${type}/${id}`;
   }
    
-  dirty(type, id, object) {
+  dirty(type, id, object, name) {
     // TODO Can we use this same function for deleting? Maybe with (object===null)?
     let res = this.toc.find(r => r.type === type && r.id === id);
     if (!res) {
       res = {
         type, id,
-        path: this.generatePathForNewResource(type, id),
+        path: this.generatePathForNewResource(type, id, name),
       };
       this.toc.push(res);
     }
+    if (name) res.name = name;
     res.serial = null;
     res.object = object;
     if (!this.dirties.find(d => d.type === type && d.id === id)) {

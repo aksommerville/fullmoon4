@@ -2,15 +2,18 @@
  */
  
 import { Dom } from "/js/util/Dom.js";
+import { ResService } from "/js/util/ResService.js";
 import { FullmoonMap } from "/js/map/FullmoonMap.js";
 
 export class PoiModal {
   static getDependencies() {
-    return [HTMLElement, Dom];
+    return [HTMLElement, Dom, ResService, "discriminator"];
   }
-  constructor(element, dom) {
+  constructor(element, dom, resService, discriminator) {
     this.element = element;
     this.dom = dom;
+    this.resService = resService;
+    this.discriminator = discriminator;
     
     // Owner should set:
     this.onDirty = (command) => {};
@@ -66,6 +69,14 @@ export class PoiModal {
     const transientForm = this.dom.spawn(this.element, "TABLE", ["transientForm"]);
     
     this.dom.spawn(this.element, "INPUT", { type: "button", value: "OK", "on-click": () => this.onSubmit() });
+    
+    // No provision for updating after: I don't think it will be possible to add, remove, or rename sprites while the POI modal is open.
+    const spriteList = this.dom.spawn(this.element, "DATALIST", { id: `PoiModal-${this.discriminator}-spriteList` });
+    for (const res of this.resService.toc) {
+      if (res.type !== "sprite") continue;
+      if (!res.name) continue;
+      this.dom.spawn(spriteList, "OPTION", { value: res.name });
+    }
   }
   
   populateUi() {
@@ -86,10 +97,23 @@ export class PoiModal {
       if (element.type === "checkbox") {
         poi[key] = element.checked;
       } else {
-        poi[key] = +element.value;
+        //poi[key] = +element.value;
+        poi[key] = this.evalField(key, element.value);
       }
     }
     return poi;
+  }
+  
+  evalField(key, value) {
+    switch (key) {
+      case "spriteId": {
+          if (value) {
+            const res = this.resService.toc.find(r => r.type === "sprite" && r.name === value);
+            if (res) return res.id;
+          }
+        } break;
+    }
+    return +value;
   }
   
   onTypeChanged() {
@@ -111,12 +135,30 @@ export class PoiModal {
   }
   
   buildSpriteForm(table) {
-    //TODO select or datalist of sprite types.
     //TODO Sprite metadata, get meaningful labels instead of "arg0" etc.
-    this.addNumberRow(table, "spriteId", 1, 65535, this.poi ? this.poi.spriteId : 1);
+    this.addTextRow(table, "spriteId", this.poi ? this.reprSpriteId(this.poi.spriteId) : "", `PoiModal-${this.discriminator}-spriteList`);
     this.addNumberRow(table, "arg0", 0, 255, this.poi ? this.poi.argv[0] : 0);
     this.addNumberRow(table, "arg1", 0, 255, this.poi ? this.poi.argv[1] : 0);
     this.addNumberRow(table, "arg2", 0, 255, this.poi ? this.poi.argv[2] : 0);
+  }
+  
+  reprSpriteId(id) {
+    const res = this.resService.toc.find(r => r.type === "sprite" && r.id === id);
+    if (res && res.name) return res.name;
+    return id.toString();
+  }
+  
+  addTextRow(table, key, value, dataListId) {
+    const tr = this.dom.spawn(table, "TR");
+    this.dom.spawn(tr, "TD", ["key"], key);
+    const td = this.dom.spawn(tr, "TD", ["value"]);
+    const input = this.dom.spawn(td, "INPUT", {
+      type: "text",
+      name: key,
+      value,
+    });
+    if (dataListId) input.setAttribute("list", dataListId);
+    return input;
   }
   
   addNumberRow(table, key, lo, hi, value) {

@@ -26,7 +26,7 @@ if (!dstpath) {
 }
 
 function spriteIdFromPath(path) {
-  const spriteId = +path.replace(/^.*[\/\\]/, "");
+  const spriteId = +path.replace(/^.*[\/\\]/, "").split("-")[0];
   if (isNaN(spriteId) || (spriteId < 1) || (spriteId > 0xffff)) return 0;
   return ~~spriteId;
 }
