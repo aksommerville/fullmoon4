@@ -46,6 +46,9 @@ export class Constants {
     this.TRANSITION_FADE_BLACK = 5;
     this.TRANSITION_DOOR = 6;
     this.TRANSITION_WARP = 7;
+    
+    this.AUDIO_FRAME_RATE = 44100;
+    this.AUDIO_CHANNEL_COUNT = 16; // logical bus channels, not mono/stereo output
   }
 }
 

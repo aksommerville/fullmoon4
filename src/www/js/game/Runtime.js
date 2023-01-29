@@ -10,17 +10,20 @@ import { MenuFactory } from "./Menu.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
+import { Synthesizer } from "../synth/Synthesizer.js";
  
 export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
-      Renderer, MenuFactory, Clock, Constants, Globals
+      Renderer, MenuFactory, Clock, Constants, Globals,
+      Synthesizer,
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
-    renderer, menuFactory, clock, constants, globals
+    renderer, menuFactory, clock, constants, globals,
+    synthesizer
   ) {
     this.wasmLoader = wasmLoader;
     this.dataService = dataService;
@@ -31,6 +34,7 @@ export class Runtime {
     this.clock = clock;
     this.constants = constants;
     this.globals = globals;
+    this.synthesizer = synthesizer;
     
     this.running = false;
     this.animationFramePending = false;
@@ -84,12 +88,14 @@ export class Runtime {
     this.running = false;
     this.inputManager.clearState();
     this.clock.reset();
+    this.synthesizer.reset();
   }
   
   pause() {
     if (!this.running) return;
     this.running = false;
     this.clock.hardPause();
+    this.synthesizer.pause();
   }
   
   resume() {
@@ -98,6 +104,7 @@ export class Runtime {
     this.running = true;
     this.inputManager.clearState();
     this.clock.hardResume();
+    this.synthesizer.resume();
     this.scheduleUpdate();
   }
   
@@ -112,6 +119,7 @@ export class Runtime {
     if (!this.wasmLoader.instance) return;
     
     this.inputManager.update();
+    this.synthesizer.update();
     
     if (this.gameShouldUpdate()) {
       this.clock.softResume();
@@ -156,6 +164,13 @@ export class Runtime {
     this.globals.setMap(this.map);
     this.triggerMapSetup(cbSpawn);
     this.renderer.mapDirty();
+    
+    //XXX TEMP
+    console.log(`TEMP playing a sound due to Runtime.loadMap`);
+    this.synthesizer.event(0, 0xc0, 0x00);
+    this.synthesizer.event(0, 0x90, 0x40, 0x40);
+    this.synthesizer.event(0, 0x80, 0x40, 0x40);
+    
     return 1;
   }
   
