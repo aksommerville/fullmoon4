@@ -1,7 +1,6 @@
 # Full Moon Sprite Data
 
-Same idea as maps and tilesheets:
-One input text file per sprite, and one giant binary archive for production.
+One input text file per sprite.
 
 ## Text Format
 
@@ -26,20 +25,6 @@ layer (0..255)
 ```
 
 ## Binary Format
-
-Integers are big-endian.
-
-```
-0000   4 Signature: '\xffMSp'
-0004   2 Last Sprite ID
-0006 ... TOC
-.... ... Data
-```
-
-TOC is indexed by Sprite ID starting from one.
-(So, "Last Sprite ID" is also the length of the TOC).
-Same as the Maps archive: One u32 per sprite, offset in Data. Infer length from next entry.
-TOC values include the header and the TOC itself, decoder should validate against that.
 
 The sprite resource is a stream of key-value pairs, where the leading byte indicates field ID and data size.
 You can know the payload length from the leading byte:

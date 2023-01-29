@@ -54,8 +54,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_add_plant = (x, y) => {};//TODO
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => {};//TODO
     
-    this.dataService.fetchAllMaps();
-    this.dataService.fetchAllSprites();
+    this.dataService.load();
   }
   
   // RootUI should do this once, with the main canvas. OK to replace whenever.
@@ -66,8 +65,7 @@ export class Runtime {
   reset() {
     this.dropAllState();
     return this.wasmLoader.load("./fullmoon.wasm")
-      .then(() => this.dataService.fetchAllMaps())
-      .then(() => this.dataService.fetchAllSprites())
+      .then(() => this.dataService.load())
       .then(() => {
         console.log(`Runtime: loaded wasm instance`, this.wasmLoader.instance);
         this.globals.refresh();
@@ -156,7 +154,7 @@ export class Runtime {
   }
   
   loadMap(mapId, cbSpawn) {
-    const map = this.dataService.loadMap(mapId);
+    const map = this.dataService.getMap(mapId);
     if (!map) return 0;
     cbSpawn = this.wasmLoader.instance.exports.__indirect_function_table.get(cbSpawn);
     this.map = map;
@@ -177,7 +175,7 @@ export class Runtime {
   triggerMapSetup(cbSpawn) {
     if (!this.map.sprites) return;
     for (const { x, y, spriteId, arg0, arg1, arg2 } of this.map.sprites) {
-      const sprdef = this.dataService.loadSprite(spriteId);
+      const sprdef = this.dataService.getSprite(spriteId);
       let defc = 0;
       if (sprdef) {
         defc = sprdef.length;

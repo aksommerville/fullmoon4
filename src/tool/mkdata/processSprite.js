@@ -1,4 +1,6 @@
-const getControllerIdsByName = require("./getControllerIdsByName.js");
+const fs = require("fs").promises;
+const linewise = require("../common/linewise.js");
+const getControllerIdsByName = require("../common/getControllerIdsByName.js");
 
 /* Generic handlers.
  */
@@ -145,4 +147,32 @@ function decodeCommand(src) {
   return dst;
 }
 
-module.exports = decodeCommand;
+/* Main.
+ */
+
+function reencode(src, path) {
+  let dst = Buffer.alloc(256);
+  let dstc = 0;
+  linewise(src, (line, lineno) => {
+    const words = line.split(/\s+/).filter(v => v);
+    const command = decodeCommand(words);
+    if (!command || !command.length) return;
+    if (dstc + command.length > dst.length) {
+      const na = dstc + command.length + 256;
+      const nv = Buffer.alloc(na);
+      dst.copy(nv);
+      dst = nv;
+    }
+    command.copy(dst, dstc);
+    dstc += command.length;
+  });
+  if (dstc < dst.length) {
+    const nv = Buffer.alloc(dstc);
+    dst.copy(nv);
+    dst = nv;
+  }
+  return dst;
+}
+
+module.exports = path => fs.readFile(path)
+  .then(src => reencode(src, path));

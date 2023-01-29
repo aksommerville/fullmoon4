@@ -49,12 +49,7 @@ A new weights table should initialize to straight 255, not zero.
 
 ### Binary Format
 
-Like maps, we have 1:1 text files and a 1:many binary file.
-Since the ID space is limited to 256, I figure we can cut some corners...
-
-Archive begins with a 256-byte TOC, indexed by image ID.
-Value in this TOC is the table index, ie (n*256) is the offset to the cellprops for that image ID, if nonzero.
-We will only store the first 256-byte table for each image (physics).
+256 bytes per table. For now at least, only the Physics table is preserved in binary format.
  
 ### Text Format
 

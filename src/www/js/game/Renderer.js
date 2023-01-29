@@ -124,7 +124,7 @@ export class Renderer {
         
         // Ensure image loaded. NB This is for all sprite render types, not just the generic.
         if (sprite.imageid !== srcImageId) {
-          srcImage = this.dataService.loadImageSync(sprite.imageid);
+          srcImage = this.dataService.getImage(sprite.imageid);
           srcImageId = sprite.imageid;
         }
         if (!srcImage) continue;
@@ -189,26 +189,19 @@ export class Renderer {
       
     // Hat.
     this.renderTile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
-    
-    //XXX TEMP overlay while injured
-    if (this.globals.g_injury_time[0] > 0) {
-      ctx.globalAlpha = 0.5;
-      ctx.fillStyle = "#f00";
-      ctx.fillRect(midx * tilesize - 8, midy * tilesize - 8, 16, 16);
-      ctx.globalAlpha = 1.0;
-    }
   }
   
   renderMap(globalp) {
     const cellv = this.globals.g_map;
     let cellp = 0;
     const imageId = this.globals.g_maptsid[0];
-    const tilesheet = this.dataService.loadImageSync(imageId);
+    const tilesheet = this.dataService.getImage(imageId);
     const ctx = this.mapCanvas.getContext("2d");
-    if (!tilesheet) {
+    if (!tilesheet || !tilesheet.complete) {
+      // This is normal for the first render.
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-      this.dataService.loadImage(imageId).then(() => {
+      if (tilesheet) tilesheet.addEventListener("load", () => {
         this.mapDirty();
       });
       return;
@@ -267,13 +260,13 @@ export class Renderer {
           ctx.globalAlpha = p;
           ctx.drawImage(next, 0, 0);
           ctx.globalAlpha = 1.0;
-          this.renderHero(ctx, this.dataService.loadImageSync(hero.imageid), hero.x, hero.y);
+          this.renderHero(ctx, this.dataService.getImage(hero.imageid), hero.x, hero.y);
         } return;
     }
     
     // All else fails, just use the incoming image.
     ctx.drawImage(next, 0, 0);
-    this.renderHero(ctx, this.dataService.loadImageSync(hero.imageid), hero.x, hero.y);
+    this.renderHero(ctx, this.dataService.getImage(hero.imageid), hero.x, hero.y);
   }
   
   renderPan(ctx, prev, next, p, dx, dy, hero) {
@@ -285,7 +278,7 @@ export class Renderer {
     ctx.drawImage(next, dstx, dsty);
     dstx /= this.constants.TILESIZE;
     dsty /= this.constants.TILESIZE;
-    this.renderHero(ctx, this.dataService.loadImageSync(hero.imageid), hero.x + dstx, hero.y + dsty);
+    this.renderHero(ctx, this.dataService.getImage(hero.imageid), hero.x + dstx, hero.y + dsty);
   }
   
   renderTransitionDoor(ctx, prev, next, p, hero) {
@@ -294,7 +287,7 @@ export class Renderer {
   }
   renderTransitionDoor1(ctx, src, p, hero, focusx, focusy) {
     ctx.drawImage(src, 0, 0);
-    if (hero) this.renderHero(ctx, this.dataService.loadImageSync(hero.imageid), hero.x, hero.y);
+    if (hero) this.renderHero(ctx, this.dataService.getImage(hero.imageid), hero.x, hero.y);
     
     let radiusLimit;
     if (focusx < this.constants.COLC / 2) {

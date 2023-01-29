@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <limits.h>
+#include <stddef.h>
 #include <math.h> /* I'll add implementations as they become needed. See src/platform/fmn_platform_libm.c */
 void *memcpy(void *dst,const void *src,size_t c);
 void *memmove(void *dst,const void *src,size_t c);

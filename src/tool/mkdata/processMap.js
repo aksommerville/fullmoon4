@@ -1,3 +1,5 @@
+const fs = require("fs").promises;
+
 const COLC = 20;
 const ROWC = 12;
 
@@ -91,7 +93,7 @@ function decodeCommand_sprite(args) {
  */
 
 function decodeCommand(words) {
-  if (words.length < 1) return null;
+  if (words.length < 1) return [];
   switch (words[0]) {
     case "song": return decodeCommand_singleU8(0x20, words.slice(1));
     case "tilesheet": return decodeCommand_singleU8(0x21, words.slice(1));
@@ -105,4 +107,69 @@ function decodeCommand(words) {
   return null;
 }
 
-module.exports = decodeCommand;
+function decodeCell(src) {
+  const v = parseInt(src, 16);
+  if (isNaN(v)) throw new Error(`Illegal cell value '${src}'`);
+  return v;
+}
+
+function compileMap(src, path) {
+  const lineLength = COLC * 2 + 1;
+  const minimumLength = lineLength * ROWC;
+  if (src.length < minimumLength) {
+    throw new Error(`${path}: Length ${src.length} below minimum ((${COLC}*2+1)*${ROWC}==${minimumLength})`);
+  }
+  const cells = Buffer.alloc(COLC * ROWC);
+  let cellp = 0, linep = 0;
+  for (let row=0; row<ROWC; row++, linep+=lineLength) {
+    try {
+      if (src[linep + lineLength - 1] !== 0x0a) throw new Error("Incorrect line length.");
+      for (let col=0, srcp=linep; col<COLC; col++, cellp++, srcp+=2) {
+        cells[cellp] = decodeCell(src.toString("utf-8", srcp, srcp+2));
+      }
+    } catch (e) {
+      throw new Error(`${path}:${row+1}: ${e.message}`);
+    }
+  }
+  
+  let serial = cells;
+  let serialc = cells.length;
+  for (let lineno=ROWC+1; linep<src.length; lineno++) {
+    let nlp = src.indexOf("\n", linep);
+    if (nlp < 0) nlp = src.length;
+    const line = src.toString("utf8", linep, nlp).trim();
+    linep = nlp + 1;
+    if (!line || line.startsWith("#")) continue;
+    const words = line.split(/\s+/).filter(v => v);
+    try {
+      const cmdSerial = decodeCommand(words);
+      if (!cmdSerial) throw new Error(`${lineno}: Failed to decode command: ${line}`);
+      if (!cmdSerial.length) continue;
+      if (serialc + cmdSerial.length > serial.length) {
+        const na = (serialc + cmdSerial.length + 1024) & ~1023;
+        const nserial = Buffer.alloc(na);
+        serial.copy(nserial, 0);
+        serial = nserial;
+      }
+      cmdSerial.copy(serial, serialc);
+      serialc += cmdSerial.length;
+    } catch (e) {
+      throw new Error(`${path}:${lineno}: ${e.message}`);
+    }
+  }
+  if (serialc < serial.length) {
+    const nserial = Buffer.alloc(serialc);
+    serial.copy(nserial);
+    serial = nserial;
+  }
+  
+  return {
+    path,
+    cells,
+    serial,
+  };
+}
+
+module.exports = path => fs.readFile(path)
+  .then(src => compileMap(src, path))
+  .then(model => model.serial);

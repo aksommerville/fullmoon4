@@ -2,10 +2,30 @@
 # Local configuration for Full Moon builds.
 # You shouldn't need to change Makefile for per-host things, change them here instead.
 
-# https://github.com/WebAssembly/wasi-sdk
-WASI_SDK:=/home/andy/proj/thirdparty/wasi-sdk-16.0
+#------------------------------------------
+# For all targets.
+
+# Who are we building for? There must be `etc/target/{}.mk` for each.
+TARGETS:=web generic
 
 # npm install -g http-server
 HTTP_SERVER_CMD:=http-server -a localhost -p 8080 -c-1
 
-NODE:=node
+NODE:=node --unhandled-rejections=strict
+
+# Some command aliases for convenience.
+run:web-run
+deploy:web-deploy
+
+#-------------------------------------------
+# For "web" target.
+
+# https://github.com/WebAssembly/wasi-sdk
+web_WASI_SDK:=/home/andy/proj/thirdparty/wasi-sdk-16.0
+
+# Do not allow these details out to GitHub!
+# And we are never storing the password, even here.
+# If these are all set, you can `make web-deploy` to scp the web build out to the internets.
+web_DEPLOY_USER:=
+web_DEPLOY_HOST:=
+web_DEPLOY_PATH:=

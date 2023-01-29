@@ -10,24 +10,22 @@ const child_process = require("child_process");
 let host = "localhost";
 let port = 8080;
 let htdocs = "";
-let images = "";
 let makeable = [];
 
 for (const arg of process.argv.slice(2)) {
   if (arg.startsWith("--host=")) host = arg.substr(7);
   else if (arg.startsWith("--port=")) port = +arg.substr(7);
   else if (arg.startsWith("--htdocs=")) htdocs = arg.substr(9);
-  else if (arg.startsWith("--images=")) images = arg.substr(9);
   else if (arg.startsWith("--makeable=")) makeable.push(arg.substr(11));
   else {
     console.log(`Unexpected argument '${arg}'`);
-    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH --images=PATH [--makeable=PATH...]`);
+    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH [--makeable=PATH...]`);
     process.exit(1);
   }
 }
 
-if (!htdocs || !images) {
-  console.log(`--htdocs and --images required`);
+if (!htdocs) {
+  console.log(`--htdocs required`);
   process.exit(1);
 }
 
@@ -118,14 +116,6 @@ const server = http.createServer((req, rsp) => {
     let path = req.url.split('?')[0];
     if (path === "/") path = "/index.html";
     if (!path.startsWith("/")) throw new Error("Invalid path");
-    
-    // Images don't live in htdocs because they belong to the game, as opposed to the platform.
-    // Doesn't really matter. They don't get processed during build (not yet anyway). We can serve them just like other static files.
-    if (images && path.startsWith("/img/")) {
-      serveFile(rsp, `${images}${path.substr(4)}`);
-      console.log(`200 GET ${req.url}`);
-      return;
-    }
     
     // Things that get processed at build time have to be declared with "--makeable".
     // We invoke `make` every time somebody requests one.

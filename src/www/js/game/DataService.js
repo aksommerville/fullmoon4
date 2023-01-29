@@ -15,9 +15,30 @@
  *   pos: [mapid,x,y] // hero's position
  *   selectedItem: u8
  * }
+ *
+ * map: {
+ *   cells: Uint8Array(COLC * ROWC)
+ *   bgImageId
+ *   songId
+ *   neighborw
+ *   neighbore
+ *   neighborn
+ *   neighbors
+ *   doors: {x,y,mapId,dstx,dsty}[]
+ *   sprites: {x,y,spriteId,arg0,arg1,arg2}[]
+ *   cellphysics: Uint8Array(256) | null
+ * }
  */
  
 import { Constants } from "./Constants.js";
+
+const RESTYPE_IMAGE = 0x01;
+const RESTYPE_SONG = 0x02;
+const RESTYPE_MAP = 0x03;
+const RESTYPE_TILEPROPS = 0x04;
+const RESTYPE_SPRITE = 0x05;
+const RESTYPE_STRING = 0x06;
+const RESTYPE_INSTRUMENT = 0x07;
  
 export class DataService {
   static getDependencies() {
@@ -27,131 +48,134 @@ export class DataService {
     this.window = window;
     this.constants = constants;
     
-    this.images = []; // sparse, keyed by image id 0..255. Image, or string for error.
-    this.maps = []; // sparse, keyed by map id 0..65535.
-    this.mapLoadState = null; // null, Promise, Error, or this.maps
-    this.tileprops = []; // sparse, keyed by image id 0..255. Uint8Array(256) or absent.
-    this.tilepropsLoadState = null; // null, Promise, Error, or this.tileprops
-    this.sprites = []; // sparse, keyed by sprite id 0..65535. Uint8Array or absent.
-    this.spritesLoadState = null; // null, Promise, Error, or this.sprites
+    this.textDecoder = new this.window.TextDecoder("utf-8");
+    this.toc = null; // null, Array, Promise, or Error. Array: { type, id, q, ser, obj }
     this.savedGame = null;
     this.savedGameId = null;
   }
   
-  /* Images.
-   ***************************************************************/
-  
-  // Resolves to Image once loaded.
-  loadImage(id) {
-    let result = this.images[id];
-    if (result) {
-      if (result instanceof Promise) return result;
-      if (typeof(result) === "string") return Promise.reject(result);
-      return Promise.resolve(result);
-    }
-    result = new Promise((resolve, reject) => {
-      const image = new this.window.Image();
-      image.onload = () => {
-        this.images[id] = image;
-        resolve(image);
-      };
-      image.onerror = (error) => {
-        const message = `failed to load image ${id}`;
-        console.error(message, error);
-        this.images[id] = message;
-        reject(error);
-      };
-      image.src = `./img/${id}.png`;
-    });
-    this.images[id] = result;
-    return result;
-  }
-  
-  // Null if not loaded, and we kick it off in the background if needed.
-  loadImageSync(id) {
-    if (this.images[id] instanceof Image) return this.images[id];
-    if (!this.images[id]) this.loadImage(id);
-    return null;
-  }
-  
-  /* Maps.
-   * Map loading must be synchronous because it's driven by a C hook that expects a result.
-   * The asynchronous part happens up front at the initial load.
-   *
-   * map: {
-   *   cells: Uint8Array(COLC * ROWC)
-   *   bgImageId
-   *   songId
-   *   neighborw
-   *   neighbore
-   *   neighborn
-   *   neighbors
-   *   doors: {x,y,mapId,dstx,dsty}[]
-   *   sprites: {x,y,spriteId,arg0,arg1,arg2}[]
-   *   cellphysics: Uint8Array(256) | null
-   * }
-   ***********************************************************/
+  /* Access to resources.
+   * These are all synchronous.
+   * Once the service is loaded, all resources are available immediately or not at all.
+   *****************************************************************/
    
-  fetchAllMaps() {
-    if (!this.mapLoadState) {
-      this.mapLoadState = this.fetchAllTileprops()
-        .then(() => this.window.fetch("./maps.data"))
-        .then(rsp => {
-          if (!rsp.ok) return rsp.json().then(t => { throw t; });
-          return rsp.arrayBuffer();
-        }).then(input => {
-          this.maps = this.decodeMaps(input);
-          this.mapLoadState = this.maps;
-        }).catch(error => {
-          this.mapLoadState = error || new Error("Failed to load maps.");
-          throw this.mapLoadState;
-        });
-    }
-    if (this.mapLoadState instanceof Promise) return this.mapLoadState;
-    if (this.mapLoadState === this.maps) return Promise.resolve();
-    return Promise.reject(this.mapLoadState);
-  }
-   
-  loadMap(mapId) {
-    return this.maps[mapId];
+  getMap(id) { return this.getResource(RESTYPE_MAP, id); }
+  getSprite(id) { return this.getResource(RESTYPE_SPRITE, id); }
+  getImage(id) { return this.getResource(RESTYPE_IMAGE, id); } // TODO qualifier
+  getTileprops(id) { return this.getResource(RESTYPE_TILEPROPS, id); }
+  getSong(id) { return this.getResource(RESTYPE_SONG, id); }
+  getInstrument(id) { return this.getResource(RESTYPE_INSTRUMENT, id); } // TODO qualifier
+  getString(id) { return this.getResource(RESTYPE_STRING, id); } // TODO qualifier
+  
+  getResource(type, id, qualifier) {
+    if (!(this.toc instanceof Array)) return null;
+    const res = qualifier
+      ? this.toc.find(t => ((t.type === type) && (t.id === id) && (t.q === qualifier)))
+      : this.toc.find(t => ((t.type === type) && (t.id === id)));
+    if (!res) return null;
+    if (!res.obj) res.obj = this._decodeResource(res);
+    return res.obj;
   }
   
-  decodeMaps(src) {
-    src = new Uint8Array(src);
-    if ((src.length < 6) || (src[0] !== 0xff) || (src[1] !== 0x00) || (src[2] !== 0x4d) || (src[3] !== 0x50)) {
-      throw new Error(`Invalid signature or length in maps archive.`);
+  /* Load data.
+   ******************************************************************/
+   
+  load() {
+    if (!this.toc) this.toc = this._beginLoad();
+    if (this.toc instanceof Array) return Promise.resolve(this.toc);
+    if (this.toc instanceof Promise) return this.toc;
+    return Promise.reject(this.toc);
+  }
+  
+  _beginLoad() {
+    return this.window.fetch("./fullmoon.data")
+      .then(rsp => { if (!rsp.ok) return rsp.json().then(t => { throw t.log; }); return rsp.arrayBuffer(); })
+      .then(serial => this._receiveArchive(serial))
+      .then(() => this.toc)
+      .catch(e => {
+        if (!(e instanceof Error)) e = new Error(e);
+        this.toc = e;
+        throw e;
+      });
+  }
+  
+  _receiveArchive(serial) {
+    const src = new Uint8Array(serial);
+    this.toc = [];
+    if (src.length < 12) throw new Error(`Short archive ${src.length}<12`);
+    if ((src[0] !== 0xff) || (src[1] !== 0x41) || (src[2] !== 0x52) || (src[3] !== 0x00)) {
+      throw new Error(`Archive signature mismatch`);
     }
-    const lastMapId = (src[4] << 8) | src[5];
-    const tocLength = lastMapId * 4;
-    const dataStart = 6 + tocLength;
-    if (dataStart > src.length) {
-      throw new Error(`Maps archive TOC overruns file`);
-    }
-    const toc = []; // [p,c]
-    // First read the TOC verbatim, offsets only.
-    for (let mapId=1, tocp=6; mapId<=lastMapId; mapId++, tocp+=4) {
-      toc.push([(src[tocp] << 24) | (src[tocp+1] << 16) | (src[tocp+2] << 8) | src[tocp+3], 0]);
-    }
-    // Now run thru it again: Validate offsets and calculate lengths.
-    for (let i=0; i<toc.length; i++) {
-      const entry = toc[i];
-      if (entry[0] < dataStart) throw new Error(`Illegal maps archive TOC entry [${i+1}]=${entry[0]}`);
-      if (i < toc.length - 1) {
-        entry[1] = toc[i+1][0] - entry[0];
+    const entryCount = (src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7];
+    const addlLen = (src[8] << 24) | (src[9] << 16) | (src[10] << 8) | src[11];
+    const tocStart = 12 + addlLen;
+    const dataStart = tocStart + entryCount * 4;
+    
+    let nextType = 0, nextQualifier = 0, nextId = 1, prev = null;
+    for (let tocp=tocStart, i=entryCount; i-->0; tocp+=4) {
+      if (src[tocp] & 0x80) {
+        nextType = src[tocp + 1];
+        nextQualifier = (src[tocp + 2] << 8) | src[tocp + 3];
+        nextId = 1;
       } else {
-        entry[1] = src.length - entry[0];
+        if (!nextType) throw new Error(`Expected nonzero State Change in TOC around ${tocp}/${src.length}`);
+        const offset = (src[tocp] << 24) | (src[tocp + 1] << 16) | (src[tocp + 2] << 8) | src[tocp + 3];
+        if (prev) {
+          if (offset < prev.p) throw new Error(`Archive offsets out of order, ${offset}<${prev.p}`);
+          const len = offset - prev.p;
+          if (len > 0) {
+            const srcView = new Uint8Array(serial, prev.p, len);
+            prev.ser = new Uint8Array(len);
+            prev.ser.set(srcView);
+          }
+        }
+        prev = {
+          type: nextType,
+          q: nextQualifier,
+          id: nextId,
+          p: offset,
+        };
+        this.toc.push(prev);
+        nextId++;
       }
-      if (entry[1] < 0) throw new Error(`Illegal length ${entry[1]} for maps archive TOC entry ${i+1}`);
     }
-    const maps = [null]; // map zero is reserved; the TOC starts at one.
-    for (const [p, c] of toc) {
-      if (c) maps.push(this.decodeMap(src, p, c, maps.length));
-      else maps.push(null);
+    if (prev) {
+      const len = src.length - prev.p;
+      if (len > 0) {
+        const srcView = new Uint8Array(serial, prev.p, len);
+        prev.ser = new Uint8Array(len);
+        prev.ser.set(srcView);
+      }
     }
-    return maps;
   }
   
-  decodeMap(src, p, c, mapId) {
+  /* Decode one resource.
+   **************************************************************/
+   
+  _decodeResource(res) {
+    switch (res.type) {
+      case RESTYPE_IMAGE: return this._decodeImage(res.ser, res.id);
+      case RESTYPE_MAP: return this._decodeMap(res.ser, res.id);
+      case RESTYPE_SPRITE: return this._decodeSprite(res.ser, res.id);
+      case RESTYPE_SONG: return this._decodeSong(res.ser, res.id);
+      case RESTYPE_STRING: return this._decodeString(res.ser, res.id);
+      case RESTYPE_INSTRUMENT: return this._decodeInstrument(res.ser, res.id);
+      case RESTYPE_TILEPROPS: return this._decodeTileprops(res.ser, res.id);
+    }
+    throw new Error(`Unexpected resource type ${res.type}`);
+  }
+  
+  _decodeImage(src, id) {
+    const image = new Image();
+    const blob = new Blob([src], { type: "image/png" });
+    const url = URL.createObjectURL(blob);
+    // NB we never call revokeObjectURL because we have a finite set of images, which should all remain loaded.
+    image.src = url;
+    return image;
+  }
+  
+  _decodeMap(src, mapId) {
+    let p = 0, c = src.length;
     const cellsLength = this.constants.COLC * this.constants.ROWC;
     if (c < cellsLength) {
       throw new Error(`Illegal length ${c} for map ${mapId}`);
@@ -180,15 +204,15 @@ export class DataService {
         case 0xe0: throw new Error(`Unknown opcode 0x${opcode.toString(16)} in map ${mapId}`);
       }
       if (paylen > c) throw new Error(`Unexpected EOF in map ${mapId}`);
-      this.decodeMapCommand(map, opcode, src, p, paylen);
+      this._decodeMapCommand(map, opcode, src, p, paylen);
       p += paylen;
       c -= paylen;
     }
-    map.cellphysics = this.loadTileprops(map.bgImageId);
+    map.cellphysics = this.getTileprops(map.bgImageId);
     return map;
   }
   
-  decodeMapCommand(map, opcode, src, p, c) {
+  _decodeMapCommand(map, opcode, src, p, c) {
     switch (opcode) {
       case 0x20: map.songId = src[p]; break;
       case 0x21: map.bgImageId = src[p]; break;
@@ -214,104 +238,24 @@ export class DataService {
     }
   }
   
-  /* Tileprops.
-   * Works the same way as Maps, and Maps implicitly load Tileprops first.
-   *********************************************************/
-   
-  fetchAllTileprops() {
-    if (!this.tilepropsLoadState) {
-      this.tilepropsLoadState = this.window.fetch("./tileprops.data")
-        .then(rsp => {
-          if (!rsp.ok) return rsp.json().then(t => { throw t; });
-          return rsp.arrayBuffer();
-        }).then(input => {
-          this.tileprops = this.decodeTileprops(input);
-          this.tilepropsLoadState = this.tileprops;
-        }).catch(error => {
-          this.tilepropsLoadState = error || new Error("Failed to load tileprops.");
-          throw this.tilepropsLoadState;
-        });
-    }
-    if (this.tilepropsLoadState instanceof Promise) return this.tilepropsLoadState;
-    if (this.tilepropsLoadState === this.tileprops) return Promise.resolve();
-    return Promise.reject(this.tilepropsLoadState);
-  }
-   
-  loadTileprops(imageId) {
-    return this.tileprops[imageId];
+  _decodeSprite(src, id) {
+    return src;
   }
   
-  decodeTileprops(src) {
-    src = new Uint8Array(src);
-    if (src[0]) throw new Error(`Invalid leading byte ${src[0]} in tileprops archive.`);
-    const tileprops = [];
-    for (let imageId=1; imageId<256; imageId++) {
-      const tableIndex = src[imageId];
-      if (!tableIndex) continue;
-      const physics = new Uint8Array(256);
-      const srcView = new Uint8Array(src.buffer, tableIndex * 256, 256);
-      physics.set(srcView);
-      tileprops[imageId] = physics;
-    }
-    return tileprops;
+  _decodeSong(src, id) {
+    return src;//TODO Song object
   }
   
-  /* Sprite.
-   * Works the same way as Maps and Tilesheets.
-   *********************************************************/
-   
-  fetchAllSprites() {
-    if (!this.spritesLoadState) {
-      this.spritesLoadState = this.window.fetch("./sprites.data")
-        .then(rsp => {
-          if (!rsp.ok) return rsp.json().then(t => { throw t; });
-          return rsp.arrayBuffer();
-        }).then(input => {
-          this.sprites = this.decodeSprites(input);
-          this.spritesLoadState = this.sprites;
-        }).catch(error => {
-          this.spritesLoadState = error || new Error("Failed to load sprites.");
-          throw this.spritesLoadState;
-        });
-    }
-    if (this.spritesLoadState instanceof Promise) return this.spritesLoadState;
-    if (this.spritesLoadState === this.sprites) return Promise.resolve();
-    return Promise.reject(this.spritesLoadState);
-  }
-   
-  loadSprite(spriteId) {
-    return this.sprites[spriteId];
+  _decodeString(src, id) {
+    return this.textDecoder.decode(src);
   }
   
-  decodeSprites(src) {
-    src = new Uint8Array(src);
-    if (src.length < 6) throw new Error(`Invalid length ${src.length} for sprites archive.`);
-    if ((src[0] !== 0xff) || (src[1] !== 0x4d) || (src[2] !== 0x53) || (src[3] !== 0x70)) {
-      throw new Error(`Signature mismatch in sprites archive.`);
-    }
-    const sprites = [];
-    const lastSpriteId = (src[4] << 8) | src[5];
-    if (lastSpriteId > 0) {
-      const dataStart = 6 + lastSpriteId * 4;
-      let spriteId=1, tocp=6, lastId=0, lastOffset=dataStart;
-      for (; tocp<dataStart; tocp+=4, lastId=spriteId, spriteId++) {
-        const offset = (src[tocp] << 24) | (src[tocp + 1] << 16) | (src[tocp + 2] << 8) | src[tocp + 3];
-        const len = offset - lastOffset;
-        if (len < 0) throw new Error(`Invalid or missorted sprite offset around id ${spriteId} (${offset} < ${lastOffset})`);
-        if (lastId && len) {
-          const srcView = new Uint8Array(src.buffer, lastOffset, len);
-          sprites[lastId] = new Uint8Array(len);
-          sprites[lastId].set(srcView);
-        }
-        lastOffset = offset;
-      }
-      if (lastId && (lastOffset < src.length)) {
-        const srcView = new Uint8Array(src.buffer, lastOffset, src.length - lastOffset);
-        sprites[lastId] = new Uint8Array(src.length - lastOffset);
-        sprites[lastId].set(srcView);
-      }
-    }
-    return sprites;
+  _decodeInstrument(src, id) {
+    return src;//TODO Instrument object
+  }
+  
+  _decodeTileprops(src, id) {
+    return src;
   }
   
   /* Saved game.
