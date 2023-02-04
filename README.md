@@ -30,6 +30,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] Hazards.
 - [ ] Spells.
 - [ ] Music. We don't need every song yet, just like 3 or so.
+- [ ] Preprocess MIDI files, eg removing Logic's trailing delays.
+- - Maybe not a big deal? We're going to touch up with midevil in any case.
 
 ### April
 

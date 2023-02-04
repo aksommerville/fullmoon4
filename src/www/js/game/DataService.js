@@ -31,6 +31,7 @@
  */
  
 import { Constants } from "./Constants.js";
+import { Song } from "../synth/Song.js";
 
 const RESTYPE_IMAGE = 0x01;
 const RESTYPE_SONG = 0x02;
@@ -243,7 +244,7 @@ export class DataService {
   }
   
   _decodeSong(src, id) {
-    return src;//TODO Song object
+    return new Song(src);
   }
   
   _decodeString(src, id) {

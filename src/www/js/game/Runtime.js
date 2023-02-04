@@ -163,11 +163,9 @@ export class Runtime {
     this.triggerMapSetup(cbSpawn);
     this.renderer.mapDirty();
     
-    //XXX TEMP
-    console.log(`TEMP playing a sound due to Runtime.loadMap`);
-    this.synthesizer.event(0, 0xc0, 0x00);
-    this.synthesizer.event(0, 0x90, 0x40, 0x40);
-    this.synthesizer.event(0, 0x80, 0x40, 0x40);
+    //XXX TEMP. 1=tangled-vine, 2=seven-circles-of-a-witchs-soul
+    const song = this.dataService.getSong(1);
+    this.synthesizer.playSong(song);
     
     return 1;
   }

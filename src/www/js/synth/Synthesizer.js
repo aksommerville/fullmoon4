@@ -47,11 +47,13 @@ export class Synthesizer {
   
   pause() {
     if (!this.context) return;
+    if (this.songPlayer) this.songPlayer.releaseAll();
     this.context.suspend();
   }
   
   resume() {
     if (!this.context) return;
+    if (this.songPlayer) this.songPlayer.resetClock();
     this.context.resume();
   }
   
