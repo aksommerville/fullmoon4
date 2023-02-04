@@ -27,6 +27,11 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
 - - [ ] Do we need percussion? How is that going to work?
 - - [ ] Tooling to use midevil and edit instrument definitions on the fly.
+- - - [ ] midevil: Output to WebSocket
+- - - [ ] Synthesizer: Receive MIDI events via WebSocket
+- - - [ ] Alternate audio-only web app
+- - - [ ] Node WebSocket server to shovel MIDI between web apps.
+- - - - [ ] Also notice changes to instruments and recompile as needed.
 - - [ ] Change song per map header
 - [ ] Gamepad input.
 - [ ] UI for saved game management.
