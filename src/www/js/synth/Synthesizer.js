@@ -23,28 +23,32 @@ export class Synthesizer {
     this.fqpids = []; // Parallel to (channels).
     this.voices = [];
     this.songPlayer = null;
-    if (this.window.AudioContext) {
-      this.context = new this.window.AudioContext({
-        sampleRate: this.constants.AUDIO_FRAME_RATE,
-        latencyHint: "interactive",
-      });
-    } else {
-      console.warn(`AudioContext not found. Will not produce audio.`);
-    }
   }
   
   /* Entry points from Runtime.
    ********************************************************************/
   
   reset() {
-    if (!this.context) return;
+    if (!this.context) {
+      // This has to be done after the first user interaction, not during construction.
+      if (this.window.AudioContext) {
+        this.context = new this.window.AudioContext({
+          sampleRate: this.constants.AUDIO_FRAME_RATE,
+          latencyHint: "interactive",
+        });
+      } else {
+        console.warn(`AudioContext not found. Will not produce audio.`);
+        return;
+      }
+    }
     if (this.context.state === "suspended") {
       this.context.resume();
     }
     for (const voice of this.voices) voice.abort();
     for (const channel of this.channels) channel.abort();
     this.voices = [];
-    this.channels = []
+    this.channels = [];
+    this.fqpids = [];
   }
   
   pause() {
@@ -178,6 +182,11 @@ export class Synthesizer {
     for (const channel of this.channels) channel.silence();
     for (const voice of this.voices) voice.abort();
     this.voices = [];
+  }
+  
+  dropChannels() {
+    for (const channel of this.channels) channel.silence();
+    this.channels = [];
   }
 }
 

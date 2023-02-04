@@ -11,15 +11,19 @@ let host = "localhost";
 let port = 8080;
 let htdocs = "";
 let makeable = [];
+let midiBroadcast = false;
+let htalias = []; // [requestPrefix, localPath]
 
 for (const arg of process.argv.slice(2)) {
   if (arg.startsWith("--host=")) host = arg.substr(7);
   else if (arg.startsWith("--port=")) port = +arg.substr(7);
   else if (arg.startsWith("--htdocs=")) htdocs = arg.substr(9);
   else if (arg.startsWith("--makeable=")) makeable.push(arg.substr(11));
+  else if (arg === "--midi-broadcast") midiBroadcast = true;
+  else if (arg.startsWith("--htalias=")) htalias.push(arg.substr(10).split(':'));
   else {
     console.log(`Unexpected argument '${arg}'`);
-    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH [--makeable=PATH...]`);
+    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH [--makeable=PATH...] [--midi-broadcast] [--htalias=req:localpath...]`);
     process.exit(1);
   }
 }
@@ -28,6 +32,9 @@ if (!htdocs) {
   console.log(`--htdocs required`);
   process.exit(1);
 }
+
+// You have to `npm i` to prep this.
+const websocketLib = midiBroadcast ? require("websocket") : {};
 
 /* Guess MIME type from path and content.
  */
@@ -117,6 +124,16 @@ const server = http.createServer((req, rsp) => {
     if (path === "/") path = "/index.html";
     if (!path.startsWith("/")) throw new Error("Invalid path");
     
+    if (req.method === "GET") {
+      for (const [requestPrefix, localPath] of htalias) {
+        if (path.startsWith(requestPrefix)) {
+          serveFile(rsp, `${localPath}${path.substring(requestPrefix.length)}`);
+          console.log(`200 GET ${req.url}`);
+          return;
+        }
+      }
+    }
+    
     // Things that get processed at build time have to be declared with "--makeable".
     // We invoke `make` every time somebody requests one.
     const localPath = makeable.find(m => m.endsWith(path));
@@ -154,3 +171,39 @@ server.listen(port, host, (error) => {
     console.log(`Listening on ${host}:${port}`);
   }
 });
+
+if (midiBroadcast) {
+  const connections = [];
+  const wsServer = new websocketLib.server({
+    httpServer: server,
+    autoAcceptConnections: true,
+  });
+  wsServer.on("connect", connection => {
+    console.log(`WebSocket client connected.`);
+    connections.push(connection);
+    connection.on("message", (message) => {
+      if (message.type === "binary") {
+        for (const c of connections) {
+          if (c === connection) continue;
+          c.send(message.binaryData);
+        }
+      }
+    });
+  });
+  wsServer.on("close", connection => {
+    console.log(`WebSocket client disconnected.`);
+    const p = connections.findIndex(c => c === connection);
+    if (p >= 0) connections.splice(p, 1);
+  });
+  
+  /* Another thing with midiBroadcast, we need to watch the underlying source file and notify clients when it changes.
+   */
+  fs.watch("src/data/instrument", (type, name) => {
+    if (name === "WebAudio") {
+      for (const connection of connections) {
+        // A special SysEx event that our receivers will hopefully notice.
+        connection.send(Buffer.from([0xf0, 0x12, 0x34, 0xf7]));
+      }
+    }
+  });
+}

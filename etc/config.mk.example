@@ -16,6 +16,7 @@ NODE:=node --unhandled-rejections=strict
 # Some command aliases for convenience.
 run:web-run
 deploy:web-deploy
+fiddle:web-fiddle
 
 #-------------------------------------------
 # For "web" target.

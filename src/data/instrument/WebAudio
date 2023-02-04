@@ -1,10 +1,10 @@
 begin 0x01
   #wave sine
   wave 4000 0800 2000 0200 1000 0080 0800
-  env 10 ff 20 20 1000
-  modRate 2
+  env 10 80 20 20 200 .. 5 ff 25 30 500
+  modRate 1
   modRange 1
-  modEnv 00 100 ff 50 80 150 00
+  modEnv 00 100 ff 50 80 600 40
 end
 
 begin 0x02

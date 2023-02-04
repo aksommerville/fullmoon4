@@ -70,3 +70,8 @@ else
   web-deploy:;echo "Must set: web_DEPLOY_USER web_DEPLOY_HOST web_DEPLOY_PATH" ; exit 1
 endif
 
+# Special app for audio work.
+# Runs a Node server that serves a web app to play audio just like the game, and receive MIDI input via WebSocket.
+# Designed to attach to my MIDI sequencer Midevil: https://github.com/aksommerville/midevil
+web-fiddle:;$(NODE) src/tool/server/main.js \
+  --htdocs=src/tool/fiddle/www --midi-broadcast --port=43215 --htalias=/js/:src/www/js/ --makeable=$(web_HTPROD_DATA)

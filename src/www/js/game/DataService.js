@@ -82,6 +82,11 @@ export class DataService {
   /* Load data.
    ******************************************************************/
    
+  refresh() {
+    this.toc = null;
+    return this.load();
+  }
+   
   load() {
     if (!this.toc) this.toc = this._beginLoad();
     if (this.toc instanceof Array) return Promise.resolve(this.toc);

@@ -5,3 +5,4 @@ out
 /scratch
 .DS_Store
 /etc/config.mk
+node_modules
