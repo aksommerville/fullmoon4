@@ -50,10 +50,11 @@ endef
 
 define SINGLE_DATA_ARCHIVE
 
+MKDATA_SOURCES:=$(filter src/tool/mkdata/% src/tool/common/%,$(SRCFILES))
 $1_DATA_IN:=$(filter src/data/%,$(SRCFILES))
 $1_DATA_MID:=$$(patsubst src/data/%,$($1_MIDDIR)/data/%,$$($1_DATA_IN))
 
-$2:$$($1_DATA_MID);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --archive -o$$@ $$^
-$($1_MIDDIR)/data/%:src/data/%;$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
+$2:$$($1_DATA_MID) $$(MKDATA_SOURCES);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --archive -o$$@ $$($1_DATA_MID)
+$($1_MIDDIR)/data/%:src/data/% $$(MKDATA_SOURCES);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
 
 endef

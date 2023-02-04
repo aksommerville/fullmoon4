@@ -1,4 +1,5 @@
 const fs = require("fs").promises;
+const readInstruments = require("./readInstruments.js");
 
 // => { type, id, qualifier, name }
 function parsePath(path) {
@@ -9,9 +10,10 @@ function parsePath(path) {
   const type = components[components.length - 2];
   const base = components[components.length - 1];
   
-  // "string" resources are a little different.
+  // "string" and "instrument" resources are a little different.
   // Multiple resources per input file, and the entire basename is "qualifier".
   if (type === "string") return { type, id: 0, qualifier: base, name: "" };
+  if (type === "instrument") return { type, id: 0, qualifier: base, name: "" };
   
   // All other resources are 1:1 with input files.
   // Names are: ID[-NAME][.QUALIFIER][.FORMAT]
@@ -31,7 +33,7 @@ function parsePath(path) {
   return { type, id, qualifier, name };
 }
 
-function readStrings(src, path, cb) {
+function readStrings(src, path, qualifier, cb) {
   for (let srcp=0, lineno=1; srcp<src.length; lineno++) {
     let nlp = src.indexOf(0x0a, srcp);
     if (nlp < 0) nlp = src.length;
@@ -74,8 +76,11 @@ function encodeQualifier(type, qualifier) {
         return 0;
       }
     case "instrument": {
-        //TODO instrument qualifiers
-        return 0;
+        if (!qualifier) return 0;
+        if (qualifier === "WebAudio") return 1;
+        const n = +qualifier;
+        if (!isNaN(n) && (n >= 0) && (n <= 0xffff)) return n;
+        throw new Error(`Unexpected instruments qualifier ${JSON.stringify(qualifier)}`);
       }
   }
   return 0;
@@ -91,19 +96,28 @@ function encode(files) {
     file.qualifier = qualifier;
   }
   
-  // Remove "string" resources, split them up, and add the individual strings.
+  //TODO Allow an option to filter resources out based on qualifier.
+  // No sense including hi-res graphics if we're building for a low-res-only platform, eg.
+  
+  // "string" and "instrument" arrive as packed sub-archives. Decode and split them up.
   for (let i=files.length; i-->0; ) {
     const file = files[i];
-    if (file.type !== "string") continue;
-    files.splice(i, 1);
-    readStrings(file.serial, file.path, (id, serial) => {
-      files.push({
-        type: file.type,
-        path: file.path,
-        qualifier: file.qualifier,
-        id, serial,
+    let unpack = null;
+    switch (file.type) {
+      case "string": unpack = readStrings; break;
+      case "instrument": unpack = readInstruments; break;
+    }
+    if (unpack) {
+      files.splice(i, 1);
+      unpack(file.serial, file.path, file.qualifier, (id, serial) => {
+        files.push({
+          type: file.type,
+          path: file.path,
+          qualifier: file.qualifier,
+          id, serial,
+        });
       });
-    });
+    }
   }
   
   // Sort by (type,qualifier,id) and abort on duplicates.
@@ -178,7 +192,10 @@ function encode(files) {
   // For each file, add to TOC and data.
   //console.log(`encoding archive...`);
   for (const file of files) {
-    //console.log(`  ${file.type}:${file.qualifier}:${file.id}: ${file.serial.length} bytes`);
+  
+    //if (file.id) console.log(`  ${file.type}:${file.qualifier}:${file.id}: ${file.serial.length} bytes`);
+    //else console.log(`  BEGIN ${file.type}:${file.qualifier}`);
+  
     if (file.id) { // Resource
       dst[dstp++] = datap >> 24;
       dst[dstp++] = datap >> 16;

@@ -9,6 +9,7 @@ export class AudioVoice {
     this.chid = chid;
     this.noteId = -1;
     this.velocity = 0;
+    this.instrument = null;
     this.finishTime = null;
     this.oscillator = null;
     this.node = null;
@@ -18,79 +19,80 @@ export class AudioVoice {
     this.modulatorReleaseLevel = 0;
   }
   
-  /* (noteId) is MIDI 0..0x7f.
-   * (wave) is an OscillatorNode type string, or a PeriodicWave.
-   * (modulation): null or {
-   *   absoluteRate: hz, overrides (rate)
-   *   rate: multiplier
-   *   range: low positive number, 1 is sensible
-   *   env: Envelope for range
-   *   rangeLfoRate: hz
-   * }
-   */
-  setupOscillator(noteId, velocity, wave, modulation) {
+  setup(instrument, noteId, velocity) {
+    if (this.node) throw new Error(`Multiple calls to AudioVoice.setup`);
+    this.instrument = instrument;
     this.noteId = noteId;
     const frequency = 440 * 2 ** ((this.noteId - 0x45) / 12);
     const ctx = this.synthesizer.context;
-
+    this._initOscillator(ctx, instrument, frequency);
+    if (instrument.modRange) {
+      this._initFm(ctx, instrument, frequency, velocity);
+    }
+    this._initEnvelope(ctx, instrument, velocity);
+  }
+  
+  _initOscillator(ctx, ins, frequency) {
     const oscillatorOptions = { frequency };
-    if (typeof(wave) === "string") {
-      oscillatorOptions.type = wave;
-    } else if (wave instanceof PeriodicWave) {
+    if (typeof(ins.wave) === "string") {
+      oscillatorOptions.type = ins.wave;
+    } else if (ins.wave instanceof Array) {
       oscillatorOptions.type = "custom";
-      oscillatorOptions.periodicWave = wave;
+      oscillatorOptions.periodicWave = new PeriodicWave(ctx, {
+        real: new Float32Array(ins.wave),
+      });
     } else {
       oscillatorOptions.type = "sine";
     }
     this.oscillator = new OscillatorNode(ctx, oscillatorOptions);
-    
-    if (modulation) {
-      const modOscillator = new OscillatorNode(ctx, {
-        frequency: modulation.absoluteRate || (frequency * modulation.rate),
-        type: "sine",
-      });
-      const modGain = new GainNode(ctx);
-      const r = frequency * modulation.range;
-      if (modulation.env) {
-        const { startLevel, attackLevel, sustainLevel, attackTime, decayTime, releaseTime, endLevel } = modulation.env.apply(velocity / 0x7f);
-        this.modulatorReleaseTime = releaseTime;
-        this.modulatorReleaseLevel = r * endLevel;
-        modGain.gain.setValueAtTime(r * startLevel, ctx.currentTime);
-        modGain.gain.linearRampToValueAtTime(r * attackLevel, ctx.currentTime + attackTime);
-        modGain.gain.linearRampToValueAtTime(r * sustainLevel, ctx.currentTime + attackTime + decayTime);
-      } else {
-        modGain.gain.setValueAtTime(r, ctx.currentTime);
-      }
-      if (modulation.rangeLfoRate) {
-        const modLfoOscillator = new OscillatorNode(ctx, {
-          frequency: modulation.rangeLfoRate,
-          type: "sine",
-        });
-        const modLfoScaleUp = new GainNode(ctx);
-        modLfoScaleUp.gain.value = r;
-        modLfoOscillator.connect(modLfoScaleUp);
-        modLfoScaleUp.connect(modGain.gain);
-        modLfoOscillator.start();
-      }
-      modOscillator.connect(modGain);
-      modOscillator.start();
-      modGain.connect(this.oscillator.frequency);
-      this.modulator = modGain;
-    }
-
     this.oscillator.start();
   }
   
-  setupEnvelope(velocity, env) {
-    if (!this.oscillator) throw new Error(`Set oscillator before envelope`);
-    const { attackLevel, sustainLevel, attackTime, decayTime, releaseTime } = env.apply(velocity / 0x7f);
+  _initFm(ctx, ins, frequency, velocity) {
+    const modOscillator = new OscillatorNode(ctx, {
+      frequency: ins.modAbsoluteRate || (frequency * ins.modRate),
+      type: "sine", // TODO Do we want non-sine modulation oscillators?
+    });
+    const modGain = new GainNode(ctx);
+    const r = frequency * ins.modRange;
+    if (ins.modEnv) {
+      const { startLevel, attackLevel, sustainLevel, attackTime, decayTime, releaseTime, endLevel } = ins.modEnv.apply(velocity / 0x7f);
+      this.modulatorReleaseTime = releaseTime;
+      this.modulatorReleaseLevel = r * endLevel;
+      modGain.gain.setValueAtTime(r * startLevel, ctx.currentTime);
+      modGain.gain.linearRampToValueAtTime(r * attackLevel, ctx.currentTime + attackTime);
+      modGain.gain.linearRampToValueAtTime(r * sustainLevel, ctx.currentTime + attackTime + decayTime);
+    } else {
+      modGain.gain.setValueAtTime(r, ctx.currentTime);
+    }
+    if (ins.modRangeLfoRate) {
+      const modLfoOscillator = new OscillatorNode(ctx, {
+        frequency: ins.modRangeLfoRate,
+        type: "sine",
+      });
+      const modLfoScaleUp = new GainNode(ctx);
+      modLfoScaleUp.gain.value = r;
+      modLfoOscillator.connect(modLfoScaleUp);
+      modLfoScaleUp.connect(modGain.gain);
+      modLfoOscillator.start();
+    }
+    modOscillator.connect(modGain);
+    modOscillator.start();
+    modGain.connect(this.oscillator.frequency);
+    this.modulator = modGain;
+  }
+  
+  _initEnvelope(ctx, ins, velocity) {
+    let { attackLevel, sustainLevel, attackTime, decayTime, releaseTime } = ins.env.apply(velocity / 0x7f);
+    attackLevel *= this.channel.volume;
+    sustainLevel *= this.channel.volume;
     this.releaseTime = releaseTime;
-    this.node = new GainNode(this.synthesizer.context);
-    this.node.gain.setValueAtTime(0, this.synthesizer.context.currentTime);
-    this.node.gain.linearRampToValueAtTime(attackLevel, this.synthesizer.context.currentTime + attackTime);
-    this.node.gain.linearRampToValueAtTime(sustainLevel, this.synthesizer.context.currentTime + attackTime + decayTime);
+    this.node = new GainNode(ctx);
+    this.node.gain.setValueAtTime(0, ctx.currentTime);
+    this.node.gain.linearRampToValueAtTime(attackLevel, ctx.currentTime + attackTime);
+    this.node.gain.linearRampToValueAtTime(sustainLevel, ctx.currentTime + attackTime + decayTime);
     this.oscillator.connect(this.node);
-    this.node.connect(this.synthesizer.context.destination);
+    this.node.connect(ctx.destination);
   }
 
   abort() {

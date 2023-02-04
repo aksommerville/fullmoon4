@@ -50,6 +50,7 @@ function guessOperationName(dst, src) {
     case "map": return "./processMap.js";
     case "sprite": return "./processSprite.js";
     case "string": return "./copyVerbatim.js"; // will always be verbatim; processed at packing
+    case "instrument": return "./copyVerbatim.js"; // ''
   }
   return "./copyVerbatim.js";
 }

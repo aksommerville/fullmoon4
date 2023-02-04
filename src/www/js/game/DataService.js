@@ -32,6 +32,7 @@
  
 import { Constants } from "./Constants.js";
 import { Song } from "../synth/Song.js";
+import { Instrument } from "../synth/Instrument.js";
 
 const RESTYPE_IMAGE = 0x01;
 const RESTYPE_SONG = 0x02;
@@ -65,7 +66,7 @@ export class DataService {
   getImage(id) { return this.getResource(RESTYPE_IMAGE, id); } // TODO qualifier
   getTileprops(id) { return this.getResource(RESTYPE_TILEPROPS, id); }
   getSong(id) { return this.getResource(RESTYPE_SONG, id); }
-  getInstrument(id) { return this.getResource(RESTYPE_INSTRUMENT, id); } // TODO qualifier
+  getInstrument(id) { return this.getResource(RESTYPE_INSTRUMENT, id); }
   getString(id) { return this.getResource(RESTYPE_STRING, id); } // TODO qualifier
   
   getResource(type, id, qualifier) {
@@ -112,12 +113,14 @@ export class DataService {
     const tocStart = 12 + addlLen;
     const dataStart = tocStart + entryCount * 4;
     
+    let qualified = true;
     let nextType = 0, nextQualifier = 0, nextId = 1, prev = null;
     for (let tocp=tocStart, i=entryCount; i-->0; tocp+=4) {
       if (src[tocp] & 0x80) {
         nextType = src[tocp + 1];
         nextQualifier = (src[tocp + 2] << 8) | src[tocp + 3];
         nextId = 1;
+        qualified = this.shouldRetainResources(nextType, nextQualifier);
       } else {
         if (!nextType) throw new Error(`Expected nonzero State Change in TOC around ${tocp}/${src.length}`);
         const offset = (src[tocp] << 24) | (src[tocp + 1] << 16) | (src[tocp + 2] << 8) | src[tocp + 3];
@@ -130,13 +133,17 @@ export class DataService {
             prev.ser.set(srcView);
           }
         }
-        prev = {
-          type: nextType,
-          q: nextQualifier,
-          id: nextId,
-          p: offset,
-        };
-        this.toc.push(prev);
+        if (qualified) {
+          prev = {
+            type: nextType,
+            q: nextQualifier,
+            id: nextId,
+            p: offset,
+          };
+          this.toc.push(prev);
+        } else {
+          prev = null;
+        }
         nextId++;
       }
     }
@@ -150,7 +157,22 @@ export class DataService {
     }
   }
   
+  /* Opportunity to filter early based on type and qualifier.
+   * We do retain qualifier in the live TOC, so we can filter on it on the fly too.
+   * This pass is only for resources we definitely will never need. (TODO: Well, don't put them in the archive then, brainiac)
+   */
+  shouldRetainResources(type, qualifier) {
+    switch (type) {
+      case RESTYPE_INSTRUMENT: switch (qualifier) {
+          case 1: return true; // WebAudio
+          default: return false;
+        }
+    }
+    return true;
+  }
+  
   /* Decode one resource.
+   * This happens lazy, the first time somebody requests the specific resource.
    **************************************************************/
    
   _decodeResource(res) {
@@ -175,6 +197,7 @@ export class DataService {
     return image;
   }
   
+  //TODO Maps deserve a proper class.
   _decodeMap(src, mapId) {
     let p = 0, c = src.length;
     const cellsLength = this.constants.COLC * this.constants.ROWC;
@@ -252,7 +275,7 @@ export class DataService {
   }
   
   _decodeInstrument(src, id) {
-    return src;//TODO Instrument object
+    return new Instrument(src, id);
   }
   
   _decodeTileprops(src, id) {

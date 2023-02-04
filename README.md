@@ -22,6 +22,12 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [ ] Items.
 - [ ] Synthesizer.
+- - [x] Channel volume
+- - [ ] Pitch wheel
+- - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
+- - [ ] Do we need percussion? How is that going to work?
+- - [ ] Tooling to use midevil and edit instrument definitions on the fly.
+- - [ ] Change song per map header
 - [ ] Gamepad input.
 - [ ] UI for saved game management.
 
@@ -73,3 +79,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Delete maps (and resources in general)
 - - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls.
+- [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js

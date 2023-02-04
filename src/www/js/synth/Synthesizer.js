@@ -3,18 +3,20 @@
  
 import { Globals } from "../game/Globals.js";
 import { Constants } from "../game/Constants.js";
+import { DataService } from "../game/DataService.js";
 import { AudioChannel } from "./AudioChannel.js";
 import { AudioVoice } from "./AudioVoice.js";
 import { SongPlayer } from "./SongPlayer.js";
  
 export class Synthesizer {
   static getDependencies() {
-    return [Window, Globals, Constants];
+    return [Window, Globals, Constants, DataService];
   }
-  constructor(window, globals, constants) {
+  constructor(window, globals, constants, dataService) {
     this.window = window;
     this.globals = globals;
     this.constants = constants;
+    this.dataService = dataService;
     
     this.context = null;
     this.channels = []; // Channels don't exist until configured.
@@ -150,7 +152,17 @@ export class Synthesizer {
   }
   
   instantiateChannel(chid, pid) {
-    const channel = new AudioChannel(this, chid, pid);
+    let res = this.dataService.getInstrument(pid);
+    if (!res) {
+      res = this.dataService.getInstrument(1);
+      if (!res) {
+        console.log(`instrument:${pid} not found, and no fallback either. Using unconfigured default channel.`);
+        return new AudioChannel(this, chid, pid, null);
+      } else {
+        console.log(`instrument:${pid} not found, substituting 1`);
+      }
+    }
+    const channel = new AudioChannel(this, chid, pid, res);
     return channel;
   }
   

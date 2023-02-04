@@ -33,16 +33,16 @@ All Offset must be sequential.
 Each Offset can be used to determine the length of the preceding entry.
 (The final entry runs to EOF).
 
-| Type | Name | Qualifier |
-|------|------|-----------|
-| 0x00 | Illegal | |
-| 0x01 | Image | Size and colorspace (TODO) |
-| 0x02 | Song | |
-| 0x03 | Map | |
-| 0x04 | Tileprops | |
-| 0x05 | Sprite | |
-| 0x06 | String | Language |
-| 0x07 | Instrument | Synthesizer (TODO) |
+| Type | Name       | Qualifier |
+|------|------------|-----------|
+| 0x00 | Illegal    | |
+| 0x01 | Image      | Size and colorspace (TODO) |
+| 0x02 | Song       | |
+| 0x03 | Map        | |
+| 0x04 | Tileprops  | |
+| 0x05 | Sprite     | |
+| 0x06 | String     | Language |
+| 0x07 | Instrument | Synthesizer, see instrument-format.md |
 
 Within a (type, qualifier) pair, resources are in order starting from ID 1.
 TOC may contain zero-length resources if the set is discontiguous.

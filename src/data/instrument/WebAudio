@@ -1,0 +1,29 @@
+begin 0x01
+  #wave sine
+  wave 4000 0800 2000 0200 1000 0080 0800
+  env 10 ff 20 20 1000
+  modRate 2
+  modRange 1
+  modEnv 00 100 ff 50 80 150 00
+end
+
+begin 0x02
+  wave 4000 0800 2000 0200 1000 0080 0800
+  env 60 c0 40 a0 800
+end
+
+begin 0x03
+  wave triangle
+  env 20 ff 20 a0 150
+end
+
+begin 0x04
+  wave cccc 5555 1111
+  env 5 ff 10 30 100
+#  modAbsoluteRate 1.0
+  modRate 2
+  modRange 0.4
+  modEnv ff 20 00 40 80 100 00
+  modRangeLfoRate 1.1
+  wheelRange 200
+end
