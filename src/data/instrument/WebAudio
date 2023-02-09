@@ -15,7 +15,8 @@ begin 0x04
   wave sine
   env 30 80 40 40 200 .. 20 ff 25 80 300
   modRate 0.5
-  modRange 1
+  modRange 1.5
+  modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
 end
 
 begin 0x14 # plain tight beep

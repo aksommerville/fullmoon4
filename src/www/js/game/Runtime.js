@@ -163,8 +163,8 @@ export class Runtime {
     this.triggerMapSetup(cbSpawn);
     this.renderer.mapDirty();
     
-    //XXX TEMP. 1=tangled-vine, 2=seven-circles-of-a-witchs-soul
-    const song = this.dataService.getSong(2);
+    //XXX TEMP. 1=tangled-vine, 2=seven-circles-of-a-witchs-soul, 3=toil-and-trouble
+    const song = this.dataService.getSong(3);
     this.synthesizer.playSong(song);
     
     return 1;

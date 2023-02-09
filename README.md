@@ -85,3 +85,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls.
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
+- [x] 20230208: Running fiddle long time, Chrome crashed with SIGILL. Memory leak in the synthesizer?
+- - confirmed. memory keeps increasing during play. Reaches about 2.5% after the first song repeat.
+- - ...need to .stop() every oscillator eventually.

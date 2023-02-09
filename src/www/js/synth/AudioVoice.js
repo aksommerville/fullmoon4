@@ -17,6 +17,7 @@ export class AudioVoice {
     this.releaseTime = 0;
     this.modulatorReleaseTime = 0;
     this.modulatorReleaseLevel = 0;
+    this.oscillators = [];
   }
   
   setup(instrument, noteId, velocity) {
@@ -46,6 +47,7 @@ export class AudioVoice {
     }
     this.oscillator = new OscillatorNode(ctx, oscillatorOptions);
     this.oscillator.start();
+    this.oscillators.push(this.oscillator);
   }
   
   _initFm(ctx, ins, frequency, velocity) {
@@ -75,9 +77,11 @@ export class AudioVoice {
       modLfoOscillator.connect(modLfoScaleUp);
       modLfoScaleUp.connect(modGain.gain);
       modLfoOscillator.start();
+      this.oscillators.push(modLfoOscillator);
     }
     modOscillator.connect(modGain);
     modOscillator.start();
+    this.oscillators.push(modOscillator);
     modGain.connect(this.oscillator.frequency);
     this.modulator = modGain;
   }
@@ -96,7 +100,14 @@ export class AudioVoice {
   }
 
   abort() {
-    if (this.node) this.node.disconnect();
+    if (this.node) {
+      this.node.disconnect();
+    }
+    this.oscillator = null;
+    this.node = null;
+    this.modulator = null;
+    for (const o of this.oscillators) o.stop();
+    this.oscillators = [];
   }
   
   isFinished() {

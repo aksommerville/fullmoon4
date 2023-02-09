@@ -38,6 +38,7 @@ export class AudioChannel {
     switch (opcode) {
       // 0x80 Note Off are not delivered to channels; Synthesizer delivers straight to the appropriate AudioVoice.
       case 0x90: {
+          if (!this.synthesizer.context) return;
           const voice = new AudioVoice(this.synthesizer, this, this.chid);
           voice.setup(this.instrument, a, b);
           this.synthesizer.voices.push(voice);
