@@ -8,7 +8,7 @@ ifeq ($(MAKECMDGOALS),clean)
 else
 
 include etc/config.mk
-etc/config.mk:|etc/config.mk.example;$(PRECMD) cp $< $@
+etc/config.mk:|etc/config.mk.example;$(PRECMD) cp etc/config.mk.example $@
   
 SRCFILES:=$(shell find src -type f)
 

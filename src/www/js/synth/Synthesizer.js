@@ -45,7 +45,7 @@ export class Synthesizer {
       this.context.resume();
     }
     for (const voice of this.voices) voice.abort();
-    for (const channel of this.channels) channel.abort();
+    for (const channel of this.channels) if (channel) channel.abort();
     this.voices = [];
     this.channels = [];
     this.fqpids = [];
@@ -97,6 +97,7 @@ export class Synthesizer {
   }
    
   event(chid, opcode, a, b) {
+    //console.log(`Synthesizer event chid=${chid} opcode=${opcode} a=${a} b=${b}`);
   
     // Some events, eg All Sound Off, do not target a channel.
     if ((chid < 0) || (chid >= this.constants.AUDIO_CHANNEL_COUNT)) {
@@ -144,6 +145,7 @@ export class Synthesizer {
     let fqpid = this.fqpids[chid] || 0;
     fqpid &= ~(0x7f << shift);
     fqpid |= v << shift;
+    this.fqpids[chid] = fqpid;
   }
   
   requireChannel(chid) {
@@ -179,13 +181,13 @@ export class Synthesizer {
   }
   
   silenceAll() {
-    for (const channel of this.channels) channel.silence();
+    for (const channel of this.channels) if (channel) channel.silence();
     for (const voice of this.voices) voice.abort();
     this.voices = [];
   }
   
   dropChannels() {
-    for (const channel of this.channels) channel.silence();
+    for (const channel of this.channels) if (channel) channel.silence();
     this.channels = [];
   }
 }

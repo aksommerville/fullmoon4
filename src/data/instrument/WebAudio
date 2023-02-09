@@ -1,29 +1,50 @@
-begin 0x01
-  #wave sine
-  wave 4000 0800 2000 0200 1000 0080 0800
-  env 10 80 20 20 200 .. 5 ff 25 30 500
+begin 0x02 # Thick siney organ.
+  wave sine
+  env 20 40 20 10 200 .. 5 ff 25 40 500
   modRate 1
-  modRange 1
-  modEnv 00 100 ff 50 80 600 40
+  modRange 2
+  modEnv 40 50 40 150 40 200 20 .. 00 30 ff 100 80 200 20
 end
 
-begin 0x02
+begin 0x03 # in-your-face pipe organ
   wave 4000 0800 2000 0200 1000 0080 0800
-  env 60 c0 40 a0 800
-end
-
-begin 0x03
-  wave triangle
-  env 20 ff 20 a0 150
+  env 70 60 40 40 500 .. 60 c0 40 a0 800
 end
 
 begin 0x04
-  wave cccc 5555 1111
-  env 5 ff 10 30 100
-#  modAbsoluteRate 1.0
+  wave sine
+  env 30 80 40 40 200 .. 20 ff 25 80 300
+  modRate 0.5
+  modRange 1
+end
+
+begin 0x14 # plain tight beep
+  wave triangle
+  env 30 80 30 60 150 .. 20 ff 20 a0 150
+end
+
+begin 0x01 # gentle organ
+  wave 0000 ffff 2888 4111 0000 0111
+  env 20 80 20 20 300 .. 10 ff 20 50 600
   modRate 2
   modRange 0.4
-  modEnv ff 20 00 40 80 100 00
+  modEnv ff 20 00 40 c0 100 80
   modRangeLfoRate 1.1
   wheelRange 200
+end
+
+begin 0x05 # wicked space guitar
+  wave square
+  env 10 40 20 40 200 .. 5 ff 20 80 300
+  modRate 0.5
+  modRange 5
+  modEnv 00 50 00 400 00 200 00 .. 80 50 c0 400 80 200 00
+end
+
+begin 0x06
+  wave 0000 cccc 0000 6666 0000 2222 0000 0888
+  env 15 ff 30 06 300
+  modRate 12
+  modRange 5
+  modEnv ff 10 c0 30 ff 200 60
 end
