@@ -47,6 +47,11 @@ export class Constants {
     this.TRANSITION_DOOR = 6;
     this.TRANSITION_WARP = 7;
     
+    this.SPRITE_STYLE_HIDDEN = 0;
+    this.SPRITE_STYLE_TILE = 1;
+    this.SPRITE_STYLE_HERO = 2;
+    this.SPRITE_STYLE_FOURFRAME = 3;
+    
     this.AUDIO_FRAME_RATE = 44100;
     this.AUDIO_CHANNEL_COUNT = 16; // logical bus channels, not mono/stereo output
   }

@@ -92,6 +92,17 @@ export class Globals {
     return sprite;
   }
   
+  getHeroSprite() {
+    let spritei = this.g_spritec[0];
+    let spritepp = this.g_spritev[0] >> 2;
+    for (; spritei-->0; spritepp++) {
+      const spritep = this.memU32[spritepp];
+      const style = this.memU8[spritep + 8];
+      if (style === this.constants.SPRITE_STYLE_HERO) return this.getSpriteByAddress(spritep);
+    }
+    return null;
+  }
+  
   setMap(map) {
     this.g_map.set(map.cells);
     this.g_maptsid[0] = map.bgImageId;

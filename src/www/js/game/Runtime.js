@@ -127,7 +127,7 @@ export class Runtime {
       this.clock.softPause();
     }
     
-    this.renderer.render();
+    this.renderer.render(this.menus);
     
     this.scheduleUpdate();
   }
@@ -135,22 +135,23 @@ export class Runtime {
   gameShouldUpdate() {
     if (!this.running) return false;
     if (this.menus.length) return false;
-    if (this.renderer.transitionMode) return false;
+    if (this.renderer.getTransitionMode()) return false;
     return true;
   }
   
   beginMenu(prompt, varargs) {
     const options = [];
     for (;;) {
-      const stringId = this.wasmLoader.memU32(varargs);
+      const stringId = this.wasmLoader.memU32[varargs >> 2];
       if (!stringId) break;
       varargs += 4;
-      const cbid = this.wasmLoader.memU32(varargs);
+      const cbid = this.wasmLoader.memU32[varargs >> 2];
       const cb = this.wasmLoader.instance.exports.__indirect_function_table.get(cbid);
       if (!cb) break;
       options.push([stringId, cb]);
     }
     this.menus.push(this.menuFactory.newMenu(prompt, options));
+    console.log(`Runtime.beginMenu`, { prompt, options, menus: this.menus });
   }
   
   loadMap(mapId, cbSpawn) {

@@ -14,6 +14,9 @@ export class MenuFactory {
   /* (options) is [[stringId, callback], ...]
    */
   newMenu(promptId, options) {
+    if (promptId < 0) switch (promptId) {
+      case Menu.PAUSE: return new PauseMenu();
+    }
     const resolvedOptions = [];
     for (let i=0; i<options.length; i+=2) {
       resolvedOptions.push({
@@ -49,3 +52,16 @@ export class Menu {
     return false;
   }
 }
+
+export class PauseMenu {
+  constructor() {
+  }
+  
+  input(btnid,value) {
+    //TODO
+    return false;
+  }
+}
+
+// Special prompt IDs.
+Menu.PAUSE = -1;
