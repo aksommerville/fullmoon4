@@ -33,7 +33,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - - [x] Node WebSocket server to shovel MIDI between web apps.
 - - - - [x] Also notice changes to instruments and recompile as needed.
 - - [ ] Change song per map header
-- [ ] Gamepad input.
+- - [ ] Defer song start until first interaction.
+- [x] Gamepad input.
 - [ ] UI for saved game management.
 
 ### March
@@ -41,7 +42,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] Hazards.
 - [ ] Spells.
 - [ ] Music. We don't need every song yet, just like 3 or so.
-- [ ] Preprocess MIDI files, eg removing Logic's trailing delays.
+- xxx Preprocess MIDI files, eg removing Logic's trailing delays.
 - - Maybe not a big deal? We're going to touch up with midevil in any case.
 
 ### April
@@ -49,12 +50,18 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Graphics.
 - [ ] Maps for demo.
 - [ ] Pretty up the public web page.
+- [ ] Coloring book, violin pic: Make the hat less dicky.
+- [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 
 ### After GDEX
 
 - [x] Can we reduce the wasm exports? There's only like 3 symbols that actually need exported.
 - [ ] Touch input.
 - [ ] Input configuration.
+- - [ ] Generalize mapping, see src/www/js/game/InputManager.js
+- - [ ] Persist gamepad and keyboard mapping.
+- - [ ] UI for mapping.
+- [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
 - [ ] Clock.js "hard" vs "soft" pause. Do we really need both?
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
 - [ ] Package web app in a native wrapper eg Electron.

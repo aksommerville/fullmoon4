@@ -54,6 +54,8 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
     fmn_hero_motion_event(bit,value);
   } else if (bit==FMN_INPUT_USE) {
     fmn_hero_item_event(value);
+  } else if (bit==FMN_INPUT_MENU) {
+    if (value) fmn_log("TODO menu %s:%d",__FILE__,__LINE__);
   }
   
   fmn_hero_motion_input(state);
