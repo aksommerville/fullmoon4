@@ -58,6 +58,9 @@ $(web_HTPROD_ARCHIVE):$(web_HTPROD_FILES);$(call PRECMD,web) tar -C$(web_OUTDIR)
 # This is what you want during development. You can edit JS and data files, and just refresh the browser to pick up the changes.
 web-run:$(web_EXE) $(web_HTPROD_DATA);$(NODE) src/tool/server/main.js \
   --htdocs=src/www --makeable=$(web_HTPROD_DATA) --makeable=$(web_EXE)
+
+# Run our maps editor.
+web-edit:;$(NODE) src/tool/editor/main.js --htdocs=src/tool/editor/www --data=src/data
   
 # Serve locally as if it's prod, ie pack everything. Not much need for this, after you've seen it work once.
 web-run-prod:$(web_HTPROD_FILES);$(NODE) src/tool/server/main.js --htdocs=$(web_HTPROD_DIR)

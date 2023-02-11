@@ -20,7 +20,25 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [ ] Items.
+- [ ] Items, first pass. Just getting the carry appearance and counting, maybe stubbing out actuation.
+- - [x] Bell
+- - [x] Corn
+- - [x] Seed
+- - [x] Coin
+- - [x] Cheese
+- - [x] Feather
+- - [x] Pitcher
+- - [x] Match
+- - [x] Compass
+- - [x] Umbrella
+- - [ ] Shovel
+- - [ ] Broom
+- - [ ] Wand
+- - [ ] Violin
+- - [ ] Chalk
+- [ ] Item possession and quantity
+- [ ] Injury must end the active item, and don't begin while injured.
+- [ ] Suppress movement during certain item actions (eg pitcher)
 - [ ] Synthesizer.
 - - [x] Channel volume
 - - [ ] Pitch wheel
@@ -36,6 +54,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Defer song start until first interaction.
 - [x] Gamepad input.
 - [ ] UI for saved game management.
+- [ ] (A) to dismiss menu -- zap input state on resuming game.
 
 ### March
 
@@ -44,6 +63,16 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Music. We don't need every song yet, just like 3 or so.
 - xxx Preprocess MIDI files, eg removing Logic's trailing delays.
 - - Maybe not a big deal? We're going to touch up with midevil in any case.
+- [ ] Refine items.
+- - [ ] Corn, seed: Decide whether these are the same thing. Sprite on actuation, and summon the bird or create a plant.
+- - [ ] Cheese: Visual feedback. Maybe a second sound effect when it ends?
+- - [ ] Feather: Actuate blocks and ...whatever else a feather does.
+- - [ ] Coin: throw
+- - [ ] Pitcher: pickup from environment
+- - [ ] Pitcher: advance plants when poured. And put out fires. and what else?
+- - [ ] Pitcher: visual feedback on pickup
+- - [ ] Match: Use global illumination_time for something. Darkened caves etc.
+- - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 
 ### April
 

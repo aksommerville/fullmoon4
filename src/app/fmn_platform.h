@@ -80,14 +80,12 @@ int rand();
 #define FMN_PITCHER_CONTENT_SAP   4
 #define FMN_PITCHER_CONTENT_BLOOD 5
 
-// Items with a qualifier are listed first.
 #define FMN_ITEM_NONE            0
 #define FMN_ITEM_CORN            1
 #define FMN_ITEM_PITCHER         2
 #define FMN_ITEM_SEED            3
 #define FMN_ITEM_COIN            4
 #define FMN_ITEM_MATCH           5
-#define FMN_ITEM_QUALIFIER_COUNT 6
 #define FMN_ITEM_BROOM           6
 #define FMN_ITEM_WAND            7
 #define FMN_ITEM_UMBRELLA        8
@@ -99,6 +97,16 @@ int rand();
 #define FMN_ITEM_BELL           14
 #define FMN_ITEM_CHEESE         15
 #define FMN_ITEM_COUNT          16
+
+// Sound effects.
+#define FMN_SFX_BELL 1
+#define FMN_SFX_REJECT_ITEM 2
+#define FMN_SFX_CHEESE 3
+#define FMN_SFX_HURT 4
+#define FMN_SFX_PITCHER_NO_PICKUP 5
+#define FMN_SFX_PITCHER_PICKUP 6
+#define FMN_SFX_PITCHER_POUR 7
+#define FMN_SFX_MATCH 8
 
 #define FMN_SPRITE_STYLE_HIDDEN    0 /* don't render */
 #define FMN_SPRITE_STYLE_TILE      1 /* single tile */
@@ -194,6 +202,12 @@ extern struct fmn_global {
   uint8_t walking;
   uint8_t pad3[2];
   float injury_time;
+  float illumination_time;
+  
+  // Relative position of the secret the compass should point to.
+  // (0,0) is special, it means "nothing".
+  int16_t compassx;
+  int16_t compassy;
   
 } fmn_global;
 
@@ -261,5 +275,7 @@ void fmn_map_dirty();
  */
 int8_t fmn_add_plant(uint16_t x,uint16_t y);
 int8_t fmn_begin_sketch(uint16_t x,uint16_t y);
+
+void fmn_sound_effect(uint16_t sfxid);
 
 #endif

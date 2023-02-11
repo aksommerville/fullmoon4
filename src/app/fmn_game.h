@@ -12,4 +12,9 @@ int fmn_game_load_map(int mapid);
 void fmn_game_input(uint8_t bit,uint8_t value,uint8_t state);
 void fmn_game_update(float elapsed);
 
+/* Rebuild the secrets in response to a newly loaded map.
+ * fmn_global.(compassx,compassy)
+ */
+void fmn_secrets_refresh_for_map();
+
 #endif

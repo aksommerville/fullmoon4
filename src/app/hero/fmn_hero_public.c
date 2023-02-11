@@ -41,6 +41,8 @@ int fmn_hero_reset() {
   fmn_hero.cellx=-128;
   fmn_hero.celly=-128;
   
+  if (!fmn_global.facedir) fmn_global.facedir=FMN_DIR_S;
+  
   return 0;
 }
 

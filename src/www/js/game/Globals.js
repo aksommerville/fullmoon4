@@ -69,6 +69,8 @@ export class Globals {
     this.g_facedir = new Uint8Array(this.memU8.buffer, this.p_hero, 1);
     this.g_walking = new Uint8Array(this.memU8.buffer, this.p_hero + 1, 1);
     this.g_injury_time = new Float32Array(this.memU8.buffer, this.p_hero + 4, 1);
+    this.g_illumination_time = new Float32Array(this.memU8.buffer, this.p_hero + 8, 1);
+    this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 12, 2); // [x,y]
   }
   
   /* Higher-level logical access with structured models.

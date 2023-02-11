@@ -53,6 +53,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_map_dirty = () => this.renderer.mapDirty();
     this.wasmLoader.env.fmn_add_plant = (x, y) => {};//TODO
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => {};//TODO
+    this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffect(sfxid);
     
     this.dataService.load();
   }
@@ -193,6 +194,32 @@ export class Runtime {
       }
       // (cb) has an "arg3" which we don't have, that's the '0'
       cbSpawn(x, y, spriteId, arg0, arg1, arg2, 0, this.globals.p_sprite_storage, defc);
+    }
+  }
+  
+  soundEffect(sfxid) {
+    //TODO definitions of sound effects, where should those live? not here, certainly
+    switch (sfxid) {
+      case this.constants.SFX_PITCHER_POUR:
+      case this.constants.SFX_BELL: {
+          this.synthesizer.event(0x0f, 0x90, 0x60, 0x7f);
+          this.synthesizer.event(0x0f, 0x80, 0x60, 0x40);
+        } break;
+      case this.constants.SFX_PITCHER_NO_PICKUP:
+      case this.constants.SFX_REJECT_ITEM: {
+          this.synthesizer.event(0x0f, 0x90, 0x30, 0x7f);
+          this.synthesizer.event(0x0f, 0x80, 0x30, 0x40);
+        } break;
+      case this.constants.SFX_MATCH:
+      case this.constants.SFX_PITCHER_PICKUP:
+      case this.constants.SFX_CHEESE: {
+          this.synthesizer.event(0x0f, 0x90, 0x50, 0x7f);
+          this.synthesizer.event(0x0f, 0x80, 0x50, 0x40);
+        } break;
+      case this.constants.SFX_HURT: {
+          this.synthesizer.event(0x0f, 0x90, 0x36, 0x7f);
+          this.synthesizer.event(0x0f, 0x80, 0x36, 0x40);
+        } break;
     }
   }
 }

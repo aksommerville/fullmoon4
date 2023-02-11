@@ -11,6 +11,9 @@
 #define FMN_HERO_INJURY_MIN       10.000f
 #define FMN_HERO_INJURY_MAX       18.000f
 #define FMN_HERO_INJURY_TIME       0.500f
+#define FMN_HERO_CHEESE_TIME       4.000f
+#define FMN_HERO_CHEESE_ADJUST     2.000f
+#define FMN_HERO_MATCH_ILLUMINATION_TIME 5.0f
 
 extern struct fmn_hero {
   struct fmn_sprite *sprite;
@@ -22,6 +25,10 @@ extern struct fmn_hero {
   
   float walkforce;
   float velx,vely; // to cache across sprite rebuilds
+  float cheesetime;
+  
+  float item_active_time;
+  uint8_t bell_count;
 } fmn_hero;
 
 void fmn_hero_motion_event(uint8_t bit,uint8_t value); // dpad changes

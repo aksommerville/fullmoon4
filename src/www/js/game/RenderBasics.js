@@ -22,12 +22,14 @@ export class RenderBasics {
     } else {
       ctx.save();
       ctx.translate(~~midx, ~~midy);
+      if (xform & this.constants.XFORM_SWAP) {
+        ctx.transform(0, 1, 1, 0, 0, 0);
+      }
       switch (xform & (this.constants.XFORM_XREV | this.constants.XFORM_YREV)) {
         case this.constants.XFORM_XREV: ctx.scale(-1, 1); break;
         case this.constants.XFORM_YREV: ctx.scale(1, -1); break;
         case this.constants.XFORM_XREV | this.constants.XFORM_YREV: ctx.scale(-1, -1); break;
       }
-      //TODO XFORM_SWAP
       ctx.drawImage(srcImage,
         (tileid & 0x0f) * tilesize, (tileid >> 4) * tilesize, tilesize, tilesize,
         -(tilesize >> 1), -(tilesize >> 1), tilesize, tilesize

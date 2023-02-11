@@ -34,6 +34,9 @@ static void fmn_hero_walk_end() {
  */
  
 void fmn_hero_motion_event(uint8_t bit,uint8_t value) {
+
+  if (fmn_global.active_item==FMN_ITEM_UMBRELLA) return;
+  
   if (value) switch (bit) {
     case FMN_INPUT_LEFT:  fmn_global.facedir=FMN_DIR_W; break;
     case FMN_INPUT_RIGHT: fmn_global.facedir=FMN_DIR_E; break;
@@ -83,9 +86,14 @@ void fmn_hero_motion_update(float elapsed) {
   if (fmn_hero.walkdx||fmn_hero.walkdy) fmn_global.walking=1;
 
   // Determine target velocity (ignoring elapsed).
-  //TODO Higher target velocity when riding broom or high on nitro. And other cases?
+  //TODO Higher target velocity when riding broom. And other cases?
   float tvx=fmn_hero.walkdx*FMN_HERO_WALK_SPEED_MAX;
   float tvy=fmn_hero.walkdy*FMN_HERO_WALK_SPEED_MAX;
+  if (fmn_hero.cheesetime>0.0f) {
+    fmn_hero.cheesetime-=elapsed;
+    tvx*=FMN_HERO_CHEESE_ADJUST;
+    tvy*=FMN_HERO_CHEESE_ADJUST;
+  }
   if (fmn_hero.walkdx&&fmn_hero.walkdy) {
     const float halfroot2=M_SQRT2/2.0f;
     tvx*=halfroot2;
@@ -159,5 +167,5 @@ void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
 
-  //TODO sound effect
+  fmn_sound_effect(FMN_SFX_HURT);
 }

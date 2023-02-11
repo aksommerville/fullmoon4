@@ -7,17 +7,19 @@ import { Constants } from "./Constants.js";
 import { RenderTransitions } from "./RenderTransitions.js";
 import { RenderMap } from "./RenderMap.js";
 import { RenderSprites } from "./RenderSprites.js";
+import { RenderHero } from "./RenderHero.js";
 import { RenderMenu } from "./RenderMenu.js";
  
 export class Renderer {
   static getDependencies() {
-    return [Constants, RenderTransitions, RenderMap, RenderSprites, RenderMenu];
+    return [Constants, RenderTransitions, RenderMap, RenderSprites, RenderHero, RenderMenu];
   }
-  constructor(constants, renderTransitions, renderMap, renderSprites, renderMenu) {
+  constructor(constants, renderTransitions, renderMap, renderSprites, renderHero, renderMenu) {
     this.constants = constants;
     this.renderTransitions = renderTransitions;
     this.renderMap = renderMap;
     this.renderSprites = renderSprites;
+    this.renderHero = renderHero;
     this.renderMenu = renderMenu;
     
     this.canvas = null;
@@ -62,7 +64,7 @@ export class Renderer {
     if (!this.canvas) return;
     this.frameCount++;
     if (!this.renderTransitions.render(this.canvas)) {
-      this._renderScene(this.canvas);
+      this._renderScene(this.canvas, true);
     }
     this.renderMenu.render(this.canvas, menus);
   }
@@ -70,11 +72,12 @@ export class Renderer {
   /* Private.
    **********************************************************/
    
-  _renderScene(canvas) {
+  _renderScene(canvas, withOverlay) {
     const ctx = canvas.getContext("2d");
     const bg = this.renderMap.update();
     ctx.drawImage(bg, 0, 0);
     this.renderSprites.render(canvas, ctx);
+    if (withOverlay) this.renderHero.renderOverlay(canvas, ctx);
   }
 }
 

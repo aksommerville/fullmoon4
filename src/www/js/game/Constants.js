@@ -36,6 +36,25 @@ export class Constants {
     this.DOOR_SIZE = 8;
     this.SPRITE_STORAGE_SIZE = 64;
     
+    this.ITEM_NONE = 0;
+    this.ITEM_CORN = 1;
+    this.ITEM_PITCHER = 2;
+    this.ITEM_SEED = 3;
+    this.ITEM_COIN = 4;
+    this.ITEM_MATCH = 5;
+    this.ITEM_QUALIFIER_COUNT = 6;
+    this.ITEM_BROOM = 6;
+    this.ITEM_WAND = 7;
+    this.ITEM_UMBRELLA = 8;
+    this.ITEM_FEATHER = 9;
+    this.ITEM_SHOVEL = 10;
+    this.ITEM_COMPASS = 11;
+    this.ITEM_VIOLIN = 12;
+    this.ITEM_CHALK = 13;
+    this.ITEM_BELL = 14;
+    this.ITEM_CHEESE = 15;
+    this.ITEM_COUNT = 16;
+    
     this.TRANSITION_TIME_MS = 800;
     
     this.TRANSITION_CUT = 0;
@@ -46,6 +65,15 @@ export class Constants {
     this.TRANSITION_FADE_BLACK = 5;
     this.TRANSITION_DOOR = 6;
     this.TRANSITION_WARP = 7;
+    
+    this.SFX_BELL = 1;
+    this.SFX_REJECT_ITEM = 2;
+    this.SFX_CHEESE = 3;
+    this.SFX_HURT = 4;
+    this.SFX_PITCHER_NO_PICKUP = 5;
+    this.SFX_PITCHER_PICKUP = 6;
+    this.SFX_PITCHER_POUR = 7;
+    this.SFX_MATCH = 8;
     
     this.SPRITE_STYLE_HIDDEN = 0;
     this.SPRITE_STYLE_TILE = 1;
