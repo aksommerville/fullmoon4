@@ -97,7 +97,7 @@ int rand();
 #define FMN_ITEM_VIOLIN         12
 #define FMN_ITEM_CHALK          13
 #define FMN_ITEM_BELL           14
-#define FMN_ITEM_NITRO          15
+#define FMN_ITEM_CHEESE         15
 #define FMN_ITEM_COUNT          16
 
 #define FMN_SPRITE_STYLE_HIDDEN    0 /* don't render */

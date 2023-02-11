@@ -125,6 +125,10 @@ export class Runtime {
       this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
     } else {
       this.clock.softPause();
+      if (this.menus.length > 0) {
+        const menu = this.menus[this.menus.length - 1];
+        menu.update(this.inputManager.state);
+      }
     }
     
     this.renderer.render(this.menus);
@@ -150,8 +154,15 @@ export class Runtime {
       if (!cb) break;
       options.push([stringId, cb]);
     }
-    this.menus.push(this.menuFactory.newMenu(prompt, options));
+    for (const menu of this.menus) menu.update(0xff);
+    this.menus.push(this.menuFactory.newMenu(prompt, options, menu => this.dismissMenu(menu)));
     console.log(`Runtime.beginMenu`, { prompt, options, menus: this.menus });
+  }
+  
+  dismissMenu(menu) {
+    const p = this.menus.indexOf(menu);
+    if (p < 0) return;
+    this.menus.splice(p, 1);
   }
   
   loadMap(mapId, cbSpawn) {
