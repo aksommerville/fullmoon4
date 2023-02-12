@@ -107,6 +107,8 @@ int rand();
 #define FMN_SFX_PITCHER_PICKUP 6
 #define FMN_SFX_PITCHER_POUR 7
 #define FMN_SFX_MATCH 8
+#define FMN_SFX_DIG 9
+#define FMN_SFX_REJECT_DIG 10
 
 #define FMN_SPRITE_STYLE_HIDDEN    0 /* don't render */
 #define FMN_SPRITE_STYLE_TILE      1 /* single tile */
@@ -126,17 +128,17 @@ int rand();
 struct fmn_sprite_header { FMN_SPRITE_HEADER };
 
 struct fmn_plant {
-  uint16_t x;
-  uint16_t y;
-  uint32_t flower_time;
+  uint8_t x;
+  uint8_t y;
   uint8_t state;
   uint8_t fruit;
-  uint8_t pad1[2];
+  uint32_t flower_time;
 };
 
 struct fmn_sketch {
-  uint16_t x;
-  uint16_t y;
+  uint8_t x;
+  uint8_t y;
+  uint16_t pad;
   uint32_t bits;
   uint32_t time; /* Timestamp of last touch, so we can overwrite in chronological order. */
 };
@@ -180,6 +182,7 @@ extern struct fmn_global {
   
   /* Current plants and sketches, loaded by platform.
    * You can modify these and the changes will persist, but you must not add or remove anything.
+   * NB Only plants and sketches on the current map are accessible.
    */
   struct fmn_plant plantv[FMN_PLANT_LIMIT];
   uint32_t plantc;
@@ -200,7 +203,8 @@ extern struct fmn_global {
    */
   uint8_t facedir; // FMN_DIR_*, cardinals only.
   uint8_t walking;
-  uint8_t pad3[2];
+  uint8_t last_horz_dir; // FMN_DIR_W or FMN_DIR_E
+  uint8_t wand_dir; // current direction while encoding on wand or violin
   float injury_time;
   float illumination_time;
   
@@ -208,6 +212,10 @@ extern struct fmn_global {
   // (0,0) is special, it means "nothing".
   int16_t compassx;
   int16_t compassy;
+  
+  // Current cell focussed for shovel.
+  int8_t shovelx;
+  int8_t shovely;
   
 } fmn_global;
 
@@ -241,6 +249,7 @@ void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*
 #define fmn_begin_menu(...) _fmn_begin_menu(__VA_ARGS__,0)
 // Negative prompt IDs are special:
 #define FMN_MENU_PAUSE -1
+#define FMN_MENU_CHALK -2
 
 /* Prepare a transition while in the "from" state, and declare what style you will want.
  * Then make your changes, and either commit or cancel it.

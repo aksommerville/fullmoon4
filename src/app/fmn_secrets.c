@@ -14,3 +14,12 @@ void fmn_secrets_refresh_for_map() {
   fmn_global.compassx=FMN_COLC>>1;
   fmn_global.compassy=-(FMN_ROWC>>1);
 }
+
+/* Decode spell.
+ */
+ 
+uint8_t fmn_spell_eval(const uint8_t *v,uint8_t c) {
+  //TODO spells
+  if ((c==5)&&(v[0]==FMN_DIR_W)&&(v[1]==FMN_DIR_E)&&(v[2]==FMN_DIR_W)&&(v[3]==FMN_DIR_N)&&(v[4]==FMN_DIR_N)) return 1;
+  return 0;
+}

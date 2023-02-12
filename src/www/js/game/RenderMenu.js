@@ -5,16 +5,18 @@
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
-import { Menu, PauseMenu } from "./Menu.js";
+import { Menu, PauseMenu, ChalkMenu } from "./Menu.js";
+import { RenderBasics } from "./RenderBasics.js";
  
 export class RenderMenu {
   static getDependencies() {
-    return [Constants, Globals, DataService];
+    return [Constants, Globals, DataService, RenderBasics];
   }
-  constructor(constants, globals, dataService) {
+  constructor(constants, globals, dataService, renderBasics) {
     this.constants = constants;
     this.globals = globals;
     this.dataService = dataService;
+    this.renderBasics = renderBasics;
     
     this.itemsWithQuantity = [
       this.constants.ITEM_CORN,
@@ -51,12 +53,19 @@ export class RenderMenu {
   _renderMenu(dst, ctx, menu) {
     if (menu instanceof PauseMenu) this._renderPauseMenu(dst, ctx, menu);
     else if (menu instanceof Menu) this._renderOptionsMenu(dst, ctx, menu);
+    else if (menu instanceof ChalkMenu) this._renderChalkMenu(dst, ctx, menu);
     else throw new Error(`Unexpected object provided to RenderMenu._renderMenu`);
   }
+  
+  /* General prompt-and-options menu.
+   ***************************************************************/
   
   _renderOptionsMenu(dst, ctx, menu) {
     //TODO
   }
+  
+  /* The pause menu, where you select an item.
+   ***********************************************************/
   
   _renderPauseMenu(dst, ctx, menu) {
     const cellPaddingX = 4;
@@ -135,6 +144,51 @@ export class RenderMenu {
       ctx.drawImage(srcImage, bgbase + 2, 224, 4, 7, x, dsty, 4, 7);
       ctx.drawImage(srcImage, digit * 3, 224, 3, 5, x, dsty + 1, 3, 5);
     }
+  }
+  
+  /* Chalk menus, for drawing with chalk.
+   ****************************************************/
+   
+  _renderChalkMenu(dst, ctx, menu) {
+    const dotSpacing = ~~(Math.min(dst.width, dst.height) / 3);
+    const fieldw = dotSpacing * 2;
+    const fieldx = (dst.width >> 1) - (fieldw >> 1);
+    const fieldy = (dst.height >> 1) - (fieldw >> 1);
+    const tilesize = this.constants.TILESIZE;
+    const srcImage = this.dataService.getImage(2);
+    if (!srcImage) return;
+    
+    for (let col=0; col<3; col++) {
+      for (let row=0; row<3; row++) {
+        this.renderBasics.tile(ctx, fieldx + col * dotSpacing, fieldy + row * dotSpacing, srcImage, 0xc2, 0);
+      }
+    }
+    
+    const connect = (ax, ay, bx, by) => {
+      ctx.moveTo(fieldx + ax * dotSpacing, fieldy + ay * dotSpacing);
+      ctx.lineTo(fieldx + bx * dotSpacing, fieldy + by * dotSpacing);
+    };
+    ctx.lineWidth = 2;
+    if (menu.sketch) {
+      ctx.beginPath();
+      for (let mask=0x80000; mask; mask>>=1) {
+        if (!(menu.sketch & mask)) continue;
+        const [ax, ay, bx, by] = ChalkMenu.pointsFromBit(mask);
+        connect(ax, ay, bx, by);
+      }
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+    }
+    if (menu.pendingLine) {
+      ctx.beginPath();
+      const [ax, ay, bx, by] = ChalkMenu.pointsFromBit(menu.pendingLine);
+      connect(ax, ay, bx, by);
+      ctx.strokeStyle = "#ff0";
+      ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+    
+    this.renderBasics.tile(ctx, fieldx + menu.selx * dotSpacing + (tilesize >> 1), fieldy + menu.sely * dotSpacing + (tilesize >> 1), srcImage, 0xc3, 0);
   }
 }
 

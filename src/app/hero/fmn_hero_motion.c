@@ -48,6 +48,8 @@ void fmn_hero_motion_event(uint8_t bit,uint8_t value) {
     case FMN_INPUT_UP:    if (fmn_hero.walkdx<0) fmn_global.facedir=FMN_DIR_W; else if (fmn_hero.walkdx>0) fmn_global.facedir=FMN_DIR_E; break;
     case FMN_INPUT_DOWN:  if (fmn_hero.walkdx<0) fmn_global.facedir=FMN_DIR_W; else if (fmn_hero.walkdx>0) fmn_global.facedir=FMN_DIR_E; break;
   }
+  
+  if (fmn_global.facedir&(FMN_DIR_E|FMN_DIR_W)) fmn_global.last_horz_dir=fmn_global.facedir;
 }
 
 /* Input state changed.
@@ -76,6 +78,19 @@ void fmn_hero_motion_input(uint8_t state) {
   }
 }
 
+/* Is motion suppressed due to item or something?
+ */
+ 
+static uint8_t fmn_hero_should_suppress_motion() {
+  switch (fmn_global.active_item) {
+    case FMN_ITEM_SHOVEL: return 1;
+    case FMN_ITEM_WAND: return 1;
+    case FMN_ITEM_PITCHER: return 1;
+    case FMN_ITEM_VIOLIN: return 1;
+  }
+  return 0;
+}
+
 /* Update.
  */
  
@@ -86,18 +101,22 @@ void fmn_hero_motion_update(float elapsed) {
   if (fmn_hero.walkdx||fmn_hero.walkdy) fmn_global.walking=1;
 
   // Determine target velocity (ignoring elapsed).
-  //TODO Higher target velocity when riding broom. And other cases?
-  float tvx=fmn_hero.walkdx*FMN_HERO_WALK_SPEED_MAX;
-  float tvy=fmn_hero.walkdy*FMN_HERO_WALK_SPEED_MAX;
-  if (fmn_hero.cheesetime>0.0f) {
-    fmn_hero.cheesetime-=elapsed;
-    tvx*=FMN_HERO_CHEESE_ADJUST;
-    tvy*=FMN_HERO_CHEESE_ADJUST;
-  }
-  if (fmn_hero.walkdx&&fmn_hero.walkdy) {
-    const float halfroot2=M_SQRT2/2.0f;
-    tvx*=halfroot2;
-    tvy*=halfroot2;
+  float max=(fmn_global.active_item==FMN_ITEM_BROOM)?FMN_HERO_FLY_SPEED_MAX:FMN_HERO_WALK_SPEED_MAX;
+  float tvx=fmn_hero.walkdx*max;
+  float tvy=fmn_hero.walkdy*max;
+  if (fmn_hero_should_suppress_motion()) {
+    tvx=tvy=0.0f;
+  } else {
+    if (fmn_hero.cheesetime>0.0f) {
+      fmn_hero.cheesetime-=elapsed;
+      tvx*=FMN_HERO_CHEESE_ADJUST;
+      tvy*=FMN_HERO_CHEESE_ADJUST;
+    }
+    if (fmn_hero.walkdx&&fmn_hero.walkdy) {
+      const float halfroot2=M_SQRT2/2.0f;
+      tvx*=halfroot2;
+      tvy*=halfroot2;
+    }
   }
   
   // Accelerate toward the target with a maximum rate per axis.

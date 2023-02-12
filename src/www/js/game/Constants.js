@@ -29,7 +29,7 @@ export class Constants {
     this.DIR_SE   = 0x01;
     
     this.PLANT_LIMIT = 16;
-    this.PLANT_SIZE = 12;
+    this.PLANT_SIZE = 8;
     this.SKETCH_LIMIT = 16;
     this.SKETCH_SIZE = 12;
     this.DOOR_LIMIT = 16;
@@ -74,6 +74,8 @@ export class Constants {
     this.SFX_PITCHER_PICKUP = 6;
     this.SFX_PITCHER_POUR = 7;
     this.SFX_MATCH = 8;
+    this.SFX_DIG = 9;
+    this.SFX_REJECT_DIG = 10;
     
     this.SPRITE_STYLE_HIDDEN = 0;
     this.SPRITE_STYLE_TILE = 1;

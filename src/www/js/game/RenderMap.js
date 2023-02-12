@@ -7,6 +7,7 @@ import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
 import { RenderBasics } from "./RenderBasics.js";
+import { ChalkMenu } from "./Menu.js";
  
 export class RenderMap {
   static getDependencies() {
@@ -75,6 +76,27 @@ export class RenderMap {
         }
       }
     }
+    
+    this.globals.forEachSketch(sketch => {
+      if (sketch.bits) {
+        let outx = sketch.x * tilesize;
+        let outy = sketch.y * tilesize;
+        const colw = Math.floor(tilesize / 3);
+        const margin = ((tilesize - colw * 2) >> 1) + 0.5;
+        outx += margin;
+        outy += margin;
+        ctx.beginPath();
+        for (let mask=0x80000; mask; mask>>=1) {
+          if (sketch.bits & mask) {
+            const [ax, ay, bx, by] = ChalkMenu.pointsFromBit(mask);
+            ctx.moveTo(outx + ax * colw, outy + ay * colw);
+            ctx.lineTo(outx + bx * colw, outy + by * colw);
+          }
+        }
+        ctx.strokeStyle = "#fff";
+        ctx.stroke();
+      }
+    });
   }
 }
 

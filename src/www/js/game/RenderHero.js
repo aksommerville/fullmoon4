@@ -30,14 +30,14 @@ export class RenderHero {
       /* SEED     */ [0x34, -5, -3, null, null, () => (this.globals.g_itemqv[this.constants.ITEM_SEED] ? this.itemCarryLayout[this.constants.ITEM_SEED] : null)],
       /* COIN     */ [0x44, -5, -3, null, null, () => (this.globals.g_itemqv[this.constants.ITEM_COIN] ? this.itemCarryLayout[this.constants.ITEM_COIN] : null)],
       /* MATCH    */ [0x06, -5, -3, null, null, () => this._animateMatch()],
-      /* BROOM    */ null,
-      /* WAND     */ null,
+      /* BROOM    */ [0x66, -5, -3, null, null, null], // active broom is a whole different deal
+      /* WAND     */ [0x08, -5, -3, null, null, null], // '' wand
       /* UMBRELLA */ [0x46, -5, -8, null, () => this._animateUmbrella(), null],
       /* FEATHER  */ [0x05, -5, -3, null, () => this._animateFeather(), null],
-      /* SHOVEL   */ null,
+      /* SHOVEL   */ [0x07, -5, -3, null, () => this._animateShovel(), null],
       /* COMPASS  */ [0x64, -5, -3, null, null, null],
-      /* VIOLIN   */ null,
-      /* CHALK    */ null,
+      /* VIOLIN   */ [0x18, -5, 0, null, null, null], // active violin is a whole different deal
+      /* CHALK    */ [0x58, -5, -3, null, null, null],
       /* BELL     */ [0x04, -5, -3, null, () => [(this.carryActiveTime & 16) ? 0x14 : 0x24, -5, -3, null], null],
       /* CHEESE   */ [0x54, -5, -3, null, null, () => (this.globals.g_itemqv[this.constants.ITEM_CHEESE] ? this.itemCarryLayout[this.constants.ITEM_CHEESE] : null)],
     ];
@@ -72,6 +72,24 @@ export class RenderHero {
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId + 0x20, 0);
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, tileId + 0x10, 0);
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12 - hatDisplacement, srcImage, tileId, 0);
+      return;
+    }
+    
+    // Riding the broom is different enough to get its own top-level handler here.
+    if (this.globals.g_active_item[0] === this.constants.ITEM_BROOM) {
+      this._renderBroom(ctx, midx, midy, facedir, srcImage);
+      return;
+    }
+    
+    // Ditto encoding the wand.
+    if (this.globals.g_active_item[0] === this.constants.ITEM_WAND) {
+      this._renderWand(ctx, midx, midy, facedir, srcImage);
+      return;
+    }
+    
+    // Ditto fiddling on the violin.
+    if (this.globals.g_active_item[0] === this.constants.ITEM_VIOLIN) {
+      this._renderViolin(ctx, midx, midy, facedir, srcImage);
       return;
     }
     
@@ -120,6 +138,48 @@ export class RenderHero {
   _renderHat(ctx, midx, midy, facedir, srcImage, col, xform) {
     const tilesize = this.constants.TILESIZE;
     this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
+  }
+  
+  _renderBroom(ctx, midx, midy, facedir, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    let xform = 0;
+    if (this.globals.g_last_horz_dir[0] === this.constants.DIR_E) xform = this.constants.XFORM_XREV;
+    const dy = (this.frameCount & 32) ? -1 : 0;
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 3 + dy, srcImage, 0x57, xform);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 9 + dy, srcImage, 0x12, xform);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 14 + dy, srcImage, 0x02, xform);
+  }
+  
+  _renderWand(ctx, midx, midy, facedir, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 3, srcImage, 0x09, 0);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00, 0);
+    let armsTileId = 0x19, armsDx = 0, armsDy = -3;
+    switch (this.globals.g_wand_dir[0]) {
+      case this.constants.DIR_W: armsTileId = 0x29; armsDx = -3; armsDy = -3; break;
+      case this.constants.DIR_E: armsTileId = 0x39; armsDx = 3; armsDy = -3; break;
+      case this.constants.DIR_S: armsTileId = 0x49; armsDx = 0; armsDy = -2; break;
+      case this.constants.DIR_N: armsTileId = 0x59; armsDx = 0; armsDy = -8; break;
+    }
+    this.renderBasics.tile(ctx, midx * tilesize + armsDx, midy * tilesize + armsDy, srcImage, armsTileId, 0);
+  }
+  
+  _renderViolin(ctx, midx, midy, facedir, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    this.renderBasics.tile(ctx, midx * tilesize + 2, midy * tilesize - 3, srcImage, 0x28, 0);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00, 0);
+    if (this.globals.g_wand_dir[0]) { // "wand_dir" is also the violin
+      const xrange = 5;
+      const yrange = -2;
+      const phaseFrames = 60;
+      const phase = this.frameCount % phaseFrames;
+      const displacement = ((phase >= phaseFrames >> 1) ? (phaseFrames - phase) : phase) / (phaseFrames >> 1);
+      const dx = Math.round(displacement * xrange);
+      const dy = Math.round(displacement * yrange);
+      this.renderBasics.tile(ctx, midx * tilesize + dx, midy * tilesize - 4 + dy, srcImage, 0x48, 0);
+    } else {
+      this.renderBasics.tile(ctx, midx * tilesize + 2, midy * tilesize - 3, srcImage, 0x38, 0);
+    }
   }
   
   _renderItem(ctx, midx, midy, facedir, srcImage) {
@@ -208,6 +268,18 @@ export class RenderHero {
     }
   }
   
+  _animateShovel() {
+    let xform = 0, dx = 0, dy = -3;
+    switch (this.globals.g_facedir[0]) {
+      case this.constants.DIR_N: dy = -10; break;
+      case this.constants.DIR_S: break;
+      case this.constants.DIR_W: dx = -2; xform = this.constants.XFORM_XREV; break;
+      case this.constants.DIR_E: dx = 2; break;
+    }
+    if (this.carryActiveTime < 15) return [0x37, dx, dy, xform];
+    return [0x47, dx, dy, xform];
+  }
+  
   /* Overlay: Rendered after all sprites.
    **********************************************************/
    
@@ -264,6 +336,39 @@ export class RenderHero {
       -(this.constants.TILESIZE >> 1), -(this.constants.TILESIZE >> 1), this.constants.TILESIZE, this.constants.TILESIZE
     );
     ctx.restore();
+  }
+  
+  /* Underlay: Rendered before all sprites.
+   **********************************************************/
+   
+  renderUnderlay(dst, ctx) {
+    switch (this.globals.g_selected_item[0]) {
+      case this.constants.ITEM_SHOVEL: this._renderShovelUnderlay(dst, ctx); return;
+    }
+    switch (this.globals.g_active_item[0]) {
+      case this.constants.ITEM_BROOM: this._renderBroomUnderlay(dst, ctx); return;
+    }
+  }
+  
+  _renderShovelUnderlay(dst, ctx) {
+    const [x, y] = this.globals.g_shovel;
+    if ((x < 0) || (y < 0) || (x >= this.constants.COLC) || (y >= this.constants.ROWC)) return;
+    const srcImage = this.dataService.getImage(2);
+    if (!srcImage) return;
+    this.renderBasics.tile(ctx, (x + 0.5) * this.constants.TILESIZE, (y + 0.5) * this.constants.TILESIZE, srcImage, (this.frameCount & 0x10) ? 0x17 : 0x27, 0);
+  }
+  
+  _renderBroomUnderlay(dst, ctx) {
+    if (this.frameCount & 1) return;
+    const sprite = this.globals.getHeroSprite();
+    if (!sprite) return;
+    const srcImage = this.dataService.getImage(sprite.imageid);
+    if (!srcImage) return;
+    this.renderBasics.tile(ctx,
+      (sprite.x) * this.constants.TILESIZE,
+      (sprite.y + 0.3) * this.constants.TILESIZE,
+      srcImage, (this.frameCount & 32) ? 0x67 : 0x77, 0
+    );
   }
 }
 

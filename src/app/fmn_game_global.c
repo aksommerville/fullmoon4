@@ -124,3 +124,10 @@ void fmn_game_update(float elapsed) {
     else fmn_game_check_doors(x,y);
   }
 }
+
+/* Cast spell.
+ */
+ 
+void fmn_spell_cast(uint8_t spellid) {
+  fmn_log("TODO %s %d",__func__,spellid);
+}

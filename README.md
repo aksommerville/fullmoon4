@@ -31,11 +31,11 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Match
 - - [x] Compass
 - - [x] Umbrella
-- - [ ] Shovel
-- - [ ] Broom
-- - [ ] Wand
-- - [ ] Violin
-- - [ ] Chalk
+- - [x] Shovel
+- - [x] Broom
+- - [x] Wand
+- - [x] Violin
+- - [x] Chalk
 - [ ] Item possession and quantity
 - [ ] Injury must end the active item, and don't begin while injured.
 - [ ] Suppress movement during certain item actions (eg pitcher)
@@ -73,6 +73,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Pitcher: visual feedback on pickup
 - - [ ] Match: Use global illumination_time for something. Darkened caves etc.
 - - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
+- - [ ] Violin: Chart UI
+- - [ ] Violin: Encode song
 
 ### April
 
@@ -81,6 +83,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Pretty up the public web page.
 - [ ] Coloring book, violin pic: Make the hat less dicky.
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
+- [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
+- [ ] Persist plants and sketches across map loads.
 
 ### After GDEX
 

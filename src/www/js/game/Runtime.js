@@ -6,7 +6,7 @@ import { WasmLoader } from "../util/WasmLoader.js";
 import { DataService } from "./DataService.js";
 import { InputManager } from "./InputManager.js";
 import { Renderer } from "./Renderer.js";
-import { MenuFactory } from "./Menu.js";
+import { MenuFactory, ChalkMenu } from "./Menu.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
@@ -52,7 +52,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_load_map = (mapId, cbSpawn) => this.loadMap(mapId, cbSpawn);
     this.wasmLoader.env.fmn_map_dirty = () => this.renderer.mapDirty();
     this.wasmLoader.env.fmn_add_plant = (x, y) => {};//TODO
-    this.wasmLoader.env.fmn_begin_sketch = (x, y) => {};//TODO
+    this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffect(sfxid);
     
     this.dataService.load();
@@ -146,7 +146,7 @@ export class Runtime {
   
   beginMenu(prompt, varargs) {
     const options = [];
-    for (;;) {
+    if (varargs) for (;;) {
       const stringId = this.wasmLoader.memU32[varargs >> 2];
       if (!stringId) break;
       varargs += 4;
@@ -156,14 +156,16 @@ export class Runtime {
       options.push([stringId, cb]);
     }
     for (const menu of this.menus) menu.update(0xff);
-    this.menus.push(this.menuFactory.newMenu(prompt, options, menu => this.dismissMenu(menu)));
-    console.log(`Runtime.beginMenu`, { prompt, options, menus: this.menus });
+    const menu = this.menuFactory.newMenu(prompt, options, menu => this.dismissMenu(menu));
+    this.menus.push(menu);
+    return menu;
   }
   
   dismissMenu(menu) {
     const p = this.menus.indexOf(menu);
     if (p < 0) return;
     this.menus.splice(p, 1);
+    if (menu instanceof ChalkMenu) this.renderer.mapDirty();
   }
   
   loadMap(mapId, cbSpawn) {
@@ -197,6 +199,15 @@ export class Runtime {
     }
   }
   
+  beginSketch(x, y) {
+    const sketch = this.globals.getSketch(x, y, true);
+    if (!sketch) return -1;
+    const menu = this.beginMenu(-2, null);
+    if (menu instanceof ChalkMenu) {
+      menu.setup(sketch);
+    }
+  }
+  
   soundEffect(sfxid) {
     //TODO definitions of sound effects, where should those live? not here, certainly
     switch (sfxid) {
@@ -205,11 +216,13 @@ export class Runtime {
           this.synthesizer.event(0x0f, 0x90, 0x60, 0x7f);
           this.synthesizer.event(0x0f, 0x80, 0x60, 0x40);
         } break;
+      case this.constants.SFX_REJECT_DIG:
       case this.constants.SFX_PITCHER_NO_PICKUP:
       case this.constants.SFX_REJECT_ITEM: {
           this.synthesizer.event(0x0f, 0x90, 0x30, 0x7f);
           this.synthesizer.event(0x0f, 0x80, 0x30, 0x40);
         } break;
+      case this.constants.SFX_DIG:
       case this.constants.SFX_MATCH:
       case this.constants.SFX_PITCHER_PICKUP:
       case this.constants.SFX_CHEESE: {

@@ -17,4 +17,7 @@ void fmn_game_update(float elapsed);
  */
 void fmn_secrets_refresh_for_map();
 
+uint8_t fmn_spell_eval(const uint8_t *v,uint8_t c);
+void fmn_spell_cast(uint8_t spellid);
+
 #endif

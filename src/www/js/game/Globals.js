@@ -68,9 +68,12 @@ export class Globals {
     this.g_itemqv = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 24, 16);
     this.g_facedir = new Uint8Array(this.memU8.buffer, this.p_hero, 1);
     this.g_walking = new Uint8Array(this.memU8.buffer, this.p_hero + 1, 1);
+    this.g_last_horz_dir = new Uint8Array(this.memU8.buffer, this.p_hero + 2, 1);
+    this.g_wand_dir = new Uint8Array(this.memU8.buffer, this.p_hero + 3, 1);
     this.g_injury_time = new Float32Array(this.memU8.buffer, this.p_hero + 4, 1);
     this.g_illumination_time = new Float32Array(this.memU8.buffer, this.p_hero + 8, 1);
     this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 12, 2); // [x,y]
+    this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 16, 2); // [x,y]
   }
   
   /* Higher-level logical access with structured models.
@@ -134,6 +137,79 @@ export class Globals {
     } else {
       for (let i=0; i<256; i++) this.g_cellphysics[i] = 0;
     }
+    this.g_sketchc[0] = 0;
+    this.g_plantc[0] = 0;
+    //TODO fetch sketches and plants?
+  }
+  
+  getSketch(x, y, create) {
+    if ((x < 0) || (y < 0) || (x >= this.constants.COLC) || (y >= this.constants.ROWC)) return null;
+    const count = this.g_sketchc[0];
+    for (let i=0, p=0; i<count; i++, p+=this.constants.SKETCH_SIZE) {
+      if ((this.g_sketchv[p] === x) && (this.g_sketchv[p+1] === y)) return this.getSketchByIndex(i);
+    }
+    if (create && (count < this.constants.SKETCH_LIMIT)) {
+      this.g_sketchc[0] = count + 1;
+      for (let i=this.constants.SKETCH_SIZE, p=count*this.constants.SKETCH_SIZE; i-->0; p++) {
+        this.g_sketchv[p] = 0;
+      }
+      let p = count * this.constants.SKETCH_SIZE;
+      this.g_sketchv[p++] = x;
+      this.g_sketchv[p++] = y;
+      return this.getSketchByIndex(count);
+    }
+    return null;
+  }
+  
+  getSketchByIndex(p) {
+    if ((p < 0) || (p >= this.g_sketchc[0])) return null;
+    p *= this.constants.SKETCH_SIZE;
+    return {
+      x: this.g_sketchv[p],
+      y: this.g_sketchv[p + 1],
+      bits: this.g_sketchv[p+4] | (this.g_sketchv[p+5] << 8) | (this.g_sketchv[p+6] << 16) | (this.g_sketchv[p+7] << 24),
+      time: this.g_sketchv[p+8] | (this.g_sketchv[p+9] << 8) | (this.g_sketchv[p+10] << 16) | (this.g_sketchv[p+11] << 24),
+    };
+  }
+  
+  setSketch(sketch) {
+    if ((sketch.x < 0) || (sketch.y < 0) || (sketch.x >= this.constants.COLC) || (sketch.y >= this.constants.ROWC)) return;
+    const count = this.g_sketchc[0];
+    for (let i=0, p=0; i<count; i++, p+=this.constants.SKETCH_SIZE) {
+      if ((this.g_sketchv[p] === sketch.x) && (this.g_sketchv[p+1] === sketch.y)) {
+        this.g_sketchv[p+4] = sketch.bits;
+        this.g_sketchv[p+5] = sketch.bits >> 8;
+        this.g_sketchv[p+6] = sketch.bits >> 16;
+        this.g_sketchv[p+7] = sketch.bits >> 24;
+        this.g_sketchv[p+8] = sketch.time;
+        this.g_sketchv[p+9] = sketch.time >> 8;
+        this.g_sketchv[p+10] = sketch.time >> 16;
+        this.g_sketchv[p+11] = sketch.time >> 24;
+        return;
+      }
+    }
+    if (count >= this.constants.SKETCH_LIMIT) return;
+    this.g_sketchc[0] = count + 1;
+    for (let i=this.constants.SKETCH_SIZE, p=count*this.constants.SKETCH_SIZE; i-->0; ) {
+      this.g_sketchv[p] = 0;
+    }
+    let p = count * this.constants.SKETCH_SIZE;
+    this.g_sketchv[p++] = sketch.x;
+    this.g_sketchv[p++] = sketch.y;
+    p += 2;
+    this.g_sketchv[p++] = sketch.bits;
+    this.g_sketchv[p++] = sketch.bits >> 8;
+    this.g_sketchv[p++] = sketch.bits >> 16;
+    this.g_sketchv[p++] = sketch.bits >> 24;
+    this.g_sketchv[p++] = sketch.time;
+    this.g_sketchv[p++] = sketch.time >> 8;
+    this.g_sketchv[p++] = sketch.time >> 16;
+    this.g_sketchv[p++] = sketch.time >> 24;
+  }
+  
+  forEachSketch(cb) {
+    const count = this.g_sketchc[0];
+    for (let i=0; i<count; i++) cb(this.getSketchByIndex(i));
   }
 }
 

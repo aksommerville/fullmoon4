@@ -29,7 +29,7 @@ int fmn_hero_reset() {
       FMN_PHYSICS_MOTION|
       FMN_PHYSICS_SPRITES|
       FMN_PHYSICS_SOLID|
-      FMN_PHYSICS_HOLE|
+      ((fmn_global.active_item==FMN_ITEM_BROOM)?0:FMN_PHYSICS_HOLE)|
     0;
     fmn_hero.sprite->radius=0.250f;
     fmn_hero.sprite->veldecay=0.0f; // We override velocity management completely; veldecay is irrelevant.
@@ -51,14 +51,14 @@ int fmn_hero_reset() {
  
 void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
   
-  //TODO Some items (wand, violin...) need to intercept the dpad. Should that patch in right here?
   if (bit&(FMN_INPUT_LEFT|FMN_INPUT_RIGHT|FMN_INPUT_UP|FMN_INPUT_DOWN)) {
-    fmn_hero_motion_event(bit,value);
+    if (!fmn_hero_item_motion(bit,value)) {
+      fmn_hero_motion_event(bit,value);
+    }
   } else if (bit==FMN_INPUT_USE) {
     fmn_hero_item_event(value);
   } else if (bit==FMN_INPUT_MENU) {
     if (value) {
-      fmn_log("TODO menu %s:%d",__FILE__,__LINE__);
       fmn_begin_menu(FMN_MENU_PAUSE);
     }
   }
@@ -81,6 +81,19 @@ void fmn_hero_update(float elapsed) {
   
   fmn_hero.velx=fmn_hero.sprite->velx;
   fmn_hero.vely=fmn_hero.sprite->vely;
+  
+  if (fmn_global.selected_item==FMN_ITEM_SHOVEL) {
+    float x=fmn_hero.sprite->x;
+    float y=fmn_hero.sprite->y;
+    switch (fmn_global.facedir) {
+      case FMN_DIR_W: x-=0.5f; break;
+      case FMN_DIR_E: x+=0.5f; break;
+      case FMN_DIR_N: y-=0.5f; break;
+      case FMN_DIR_S: y+=0.5f; break;
+    }
+    fmn_global.shovelx=x; if (x<0.0f) fmn_global.shovelx--;
+    fmn_global.shovely=y; if (y<0.0f) fmn_global.shovely--;
+  }
 }
 
 /* Quantize position.
