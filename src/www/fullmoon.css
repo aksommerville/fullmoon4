@@ -85,12 +85,6 @@ input.toggle:checked + label > * {
   align-items: stretch;
 }
 
-/**
-.RootUi > .GameUi {
-  flex: 1;
-}
-/**/
-
 /* HeaderUi
  ******************************************/
  
@@ -100,6 +94,10 @@ input.toggle:checked + label > * {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.HeaderUi > .spacer {
+  flex: 1;
 }
 
 /* FooterUi

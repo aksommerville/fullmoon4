@@ -12,8 +12,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 ### February
 
 - [x] Item possession and quantity
-- [ ] Injury must end the active item, and don't begin while injured.
-- [ ] Suppress movement during certain item actions (eg pitcher)
+- [x] Injury must end the active item, and don't begin while injured.
+- [x] Suppress movement during certain item actions (eg pitcher)
 - [ ] Synthesizer.
 - - [ ] Pitch wheel
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
@@ -23,6 +23,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Prevent rapid-fire sound effects, eg bouncing between two hazards.
 - [ ] UI for saved game management.
 - [ ] (A) to dismiss menu -- zap input state on resuming game.
+- [x] Hit a fire from directly above at high velocity, sprites get all mixed up.
+- - Map 1, enter at the eastmost tree door, go straight down into the fire on broom or becheezled.
 
 ### March
 

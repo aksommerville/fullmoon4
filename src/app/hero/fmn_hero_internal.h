@@ -45,4 +45,9 @@ uint8_t fmn_hero_item_motion(uint8_t bit,uint8_t value); // => nonzero if consum
 void fmn_hero_item_event(uint8_t value);
 void fmn_hero_item_update(float elapsed);
 
+void fmn_hero_item_end();
+
+uint8_t fmn_hero_facedir_agrees();
+void fmn_hero_reset_facedir();
+
 #endif

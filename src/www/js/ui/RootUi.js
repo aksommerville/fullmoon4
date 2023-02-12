@@ -47,6 +47,8 @@ export class RootUi {
     this.header.onFullscreen = () => this.game.enterFullscreen();
     this.header.onPause = () => this.runtime.pause();
     this.header.onResume = () => this.runtime.resume();
+    this.header.onDebugPause = () => this.runtime.debugPauseToggle();
+    this.header.onDebugStep = () => this.runtime.debugStep();
     if (this.ready) this.header.setReady(true);
     
     this.runtime.setRenderTarget(this.game.getCanvas());

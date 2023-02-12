@@ -86,6 +86,12 @@ export class Clock {
    */
   update() {
     if (this.pausedHard || this.pausedSoft) return this.gameTime;
+    if (this.debugging) {
+      const debugInterval = 16;
+      this.gameTime += debugInterval;
+      this.debugStartTime += debugInterval;
+      return this.gameTime;
+    }
     const now = this.window.Date.now();
     let nextGameTime = now - this.sessionStartTime - this.forgottenTime + this.sessionPriorTime;
     if (nextGameTime < this.gameTime) { // oops
@@ -93,6 +99,21 @@ export class Clock {
     }
     this.gameTime = nextGameTime;
     return this.gameTime;
+  }
+  
+  /* In "debug" mode, we suspend time and each update advances it by a fixed interval regardless of real time.
+   */
+  debug() {
+    if (this.debugging) return;
+    this.debugging = true;
+    this.debugStartTime = this.window.Date.now();
+  }
+  undebug() {
+    if (!this.debugging) return;
+    this.debugging = false;
+    const now = this.window.Date.now();
+    this.forgottenTime += now - this.debugStartTime;
+    this.nextGameTime = this.gameTime;
   }
 }
 

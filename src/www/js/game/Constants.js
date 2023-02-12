@@ -55,7 +55,7 @@ export class Constants {
     this.ITEM_CHEESE = 15;
     this.ITEM_COUNT = 16;
     
-    this.TRANSITION_TIME_MS = 800;
+    this.TRANSITION_TIME_MS = 600;
     
     this.TRANSITION_CUT = 0;
     this.TRANSITION_PAN_LEFT = 1;

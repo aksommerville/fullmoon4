@@ -38,6 +38,7 @@ export class Runtime {
     this.synthesizer = synthesizer;
     this.soundEffects = soundEffects;
     
+    this.debugging = false; // when true, updates only happen explicitly via debugStep()
     this.running = false;
     this.animationFramePending = false;
     this.menus = []; // last one is active
@@ -105,7 +106,7 @@ export class Runtime {
     this.running = true;
     this.inputManager.clearState();
     this.clock.hardResume();
-    this.synthesizer.resume();
+    if (!this.debugging) this.synthesizer.resume();
     this.scheduleUpdate();
   }
   
@@ -115,12 +116,13 @@ export class Runtime {
     this.window.requestAnimationFrame(() => this.update());
   }
   
-  update() {
+  update(viaExplicitDebugger) {
     if (!this.running) return;
     if (!this.wasmLoader.instance) return;
+    if (this.debugging && !viaExplicitDebugger) return;
     
     this.inputManager.update();
-    this.synthesizer.update();
+    if (!this.debugging) this.synthesizer.update();
     
     if (this.gameShouldUpdate()) {
       this.clock.softResume();
@@ -136,7 +138,7 @@ export class Runtime {
     
     this.renderer.render(this.menus);
     
-    this.scheduleUpdate();
+    if (!this.debugging) this.scheduleUpdate();
   }
   
   gameShouldUpdate() {
@@ -207,6 +209,26 @@ export class Runtime {
     if (menu instanceof ChalkMenu) {
       menu.setup(sketch);
     }
+  }
+  
+  debugPauseToggle() {
+    if (this.debugging) {
+      this.debugging = false;
+      this.clock.undebug();
+      if (this.running) {
+        this.synthesizer.resume();
+        this.scheduleUpdate();
+      }
+    } else {
+      this.clock.debug();
+      this.debugging = true;
+      this.synthesizer.pause();
+    }
+  }
+  
+  debugStep() {
+    if (!this.debugging) return;
+    this.update(true);
   }
 }
 

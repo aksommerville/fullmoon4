@@ -124,28 +124,6 @@ static void fmn_hero_match_begin() {
   fmn_sound_effect(FMN_SFX_MATCH);
 }
 
-/* Umbrella.
- * Doesn't take much; the umbrella is mostly a matter of state and not impulse actions.
- * But when we release it, we must re-examine facedir.
- */
- 
-static void fmn_hero_umbrella_end() {
-  // If current facedir agrees with current motion, keep it.
-  switch (fmn_global.facedir) {
-    case FMN_DIR_W: if (fmn_hero.walkdx<0) return; break;
-    case FMN_DIR_E: if (fmn_hero.walkdx>0) return; break;
-    case FMN_DIR_N: if (fmn_hero.walkdy<0) return; break;
-    case FMN_DIR_S: if (fmn_hero.walkdy>0) return; break;
-  }
-  // Clear this flag early; fmn_hero_motion_event will noop if it's set.
-  fmn_global.active_item=0;
-  // Simulate input according to walking directions. Horizontal wins ties.
-       if (fmn_hero.walkdx<0) fmn_hero_motion_event(FMN_INPUT_LEFT,1);
-  else if (fmn_hero.walkdx>0) fmn_hero_motion_event(FMN_INPUT_RIGHT,1);
-  else if (fmn_hero.walkdy<0) fmn_hero_motion_event(FMN_INPUT_UP,1);
-  else if (fmn_hero.walkdy>0) fmn_hero_motion_event(FMN_INPUT_DOWN,1);
-}
-
 /* Shovel.
  */
  
@@ -155,10 +133,19 @@ static void fmn_hero_shovel_begin() {
     uint8_t pvtile=fmn_global.map[tilep];
     uint8_t pvphysics=fmn_global.cellphysics[pvtile];
     if ((pvphysics==0x00)&&(pvtile!=0x0f)) {
+    
       fmn_global.map[tilep]=0x0f;
       fmn_map_dirty();
       fmn_sound_effect(FMN_SFX_DIG);
       //TODO find buried treasure?
+      
+      // Hard-stop motion. It's disconcerting if she starts digging while walking, then slides to the next tile.
+      fmn_hero.walkdx=0;
+      fmn_hero.walkdy=0;
+      fmn_hero.walkspeed=0.0f;
+      fmn_hero.sprite->velx=0.0f;
+      fmn_hero.sprite->vely=0.0f;
+    
       return;
     }
   }
@@ -338,19 +325,11 @@ static void fmn_hero_chalk_begin() {
  
 void fmn_hero_item_begin() {
 
-  /*XXX highly temporary: Give us the full set of items when you try to use FMN_ITEM_NONE
-  if (fmn_global.selected_item==FMN_ITEM_NONE) {
-    fmn_log("*** giving all items a sensible quantity ***");
-    memset(fmn_global.itemv,1,sizeof(fmn_global.itemv));
-    fmn_global.itemqv[FMN_ITEM_CORN]=20;
-    fmn_global.itemqv[FMN_ITEM_SEED]=20;
-    fmn_global.itemqv[FMN_ITEM_MATCH]=3;
-    fmn_global.itemqv[FMN_ITEM_CHEESE]=20;
-    fmn_global.itemqv[FMN_ITEM_COIN]=20;
-    fmn_global.itemqv[FMN_ITEM_PITCHER]=FMN_PITCHER_CONTENT_MILK;
+  // No actions while injured, that's a firm rule, it's part of the injury penalty.
+  if (fmn_global.injury_time>0.0f) {
+    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
-  /**/
   
   // We do allow unpossessed items to be selected. Must verify first that we actually have it.
   if ((fmn_global.selected_item>=FMN_ITEM_COUNT)||!fmn_global.itemv[fmn_global.selected_item]) {
@@ -378,13 +357,16 @@ void fmn_hero_item_begin() {
 
 void fmn_hero_item_end() {
   switch (fmn_global.active_item) {
-    case FMN_ITEM_UMBRELLA: fmn_hero_umbrella_end(); break;
     case FMN_ITEM_SHOVEL: fmn_hero_shovel_end(); return;
     case FMN_ITEM_BROOM: fmn_hero_broom_end(); return;
     case FMN_ITEM_WAND: fmn_hero_wand_end(); break;
     case FMN_ITEM_VIOLIN: fmn_hero_violin_end(); break;
   }
   fmn_global.active_item=0;
+  // The active item might have suppressed facedir changes. Bump it:
+  if (!fmn_hero_facedir_agrees()) {
+    fmn_hero_reset_facedir();
+  }
 }
 
 void fmn_hero_item_update(float elapsed) {

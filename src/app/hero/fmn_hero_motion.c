@@ -52,6 +52,26 @@ void fmn_hero_motion_event(uint8_t bit,uint8_t value) {
   if (fmn_global.facedir&(FMN_DIR_E|FMN_DIR_W)) fmn_global.last_horz_dir=fmn_global.facedir;
 }
 
+/* Extra helpers around facedir.
+ */
+ 
+uint8_t fmn_hero_facedir_agrees() {
+  switch (fmn_global.facedir) {
+    case FMN_DIR_W: if (fmn_hero.walkdx<0) return 1; break;
+    case FMN_DIR_E: if (fmn_hero.walkdx>0) return 1; break;
+    case FMN_DIR_N: if (fmn_hero.walkdy<0) return 1; break;
+    case FMN_DIR_S: if (fmn_hero.walkdy>0) return 1; break;
+  }
+  return 0;
+}
+
+void fmn_hero_reset_facedir() {
+       if (fmn_hero.walkdx<0) fmn_hero_motion_event(FMN_INPUT_LEFT,1);
+  else if (fmn_hero.walkdx>0) fmn_hero_motion_event(FMN_INPUT_RIGHT,1);
+  else if (fmn_hero.walkdy<0) fmn_hero_motion_event(FMN_INPUT_UP,1);
+  else if (fmn_hero.walkdy>0) fmn_hero_motion_event(FMN_INPUT_DOWN,1);
+}
+
 /* Input state changed.
  */
  
@@ -137,6 +157,10 @@ void fmn_hero_motion_update(float elapsed) {
 void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   struct fmn_sprite *hero=fmn_hero.sprite;
   
+  // Getting injured implicitly ends any action in flight (broom, in particular).
+  // Player won't be able to restart it until the injury exposure is complete.
+  fmn_hero_item_end();
+  
   // First nice and simple, apply a constant force in the opposite direction of the assailant.
   float dx=hero->x-x;
   float dy=hero->y-y;
@@ -165,10 +189,16 @@ void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
    */
   float nvel=hero->velx*nx+hero->vely*ny;
   if (nvel<FMN_HERO_INJURY_MIN) {
-    //fmn_log("TOO SLOW nvel=%f",nvel);
-    float scale=FMN_HERO_INJURY_MIN/nvel;
-    hero->velx*=scale;
-    hero->vely*=scale;
+    if (nvel<=0.0f) {
+           if (dx<0.0f) { hero->velx=-FMN_HERO_INJURY_MIN; hero->vely=0.0f; }
+      else if (dx>0.0f) { hero->velx= FMN_HERO_INJURY_MIN; hero->vely=0.0f; }
+      else if (dy<0.0f) { hero->vely=-FMN_HERO_INJURY_MIN; hero->velx=0.0f; }
+      else              { hero->vely= FMN_HERO_INJURY_MIN; hero->velx=0.0f; }
+    } else {
+      float scale=FMN_HERO_INJURY_MIN/nvel;
+      hero->velx*=scale;
+      hero->vely*=scale;
+    }
   }
   
   /* Finally, clamp my true velocity to a constant maximum, in whatever direction it ended up.
@@ -176,13 +206,10 @@ void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   float vel2=hero->velx*hero->velx+hero->vely*hero->vely;
   if (vel2>FMN_HERO_INJURY_MAX*FMN_HERO_INJURY_MAX) {
     nvel=sqrtf(vel2);
-    //fmn_log("TOO FAST nvel=%f",nvel);
     float scale=FMN_HERO_INJURY_MAX/nvel;
     hero->velx*=scale;
     hero->vely*=scale;
   }
-  
-  //fmn_log("%s final velocity %f,%f = %f",__func__,hero->velx,hero->vely,sqrtf(hero->velx*hero->velx+hero->vely*hero->vely));
   
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
 
