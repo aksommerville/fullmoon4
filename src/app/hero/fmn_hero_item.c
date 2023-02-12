@@ -180,12 +180,36 @@ static void fmn_hero_shovel_update(float elapsed) {
  
 static void fmn_hero_broom_begin() {
   fmn_hero.sprite->physics&=~FMN_PHYSICS_HOLE;
+  fmn_hero.landing_pending=0;
 }
 
 static void fmn_hero_broom_end() {
-  //TODO Prevent ending over a hole
+  if ((fmn_hero.cellx>=0)&&(fmn_hero.celly>=0)&&(fmn_hero.cellx<FMN_COLC)&&(fmn_hero.celly<FMN_ROWC)) {
+    uint8_t tilep=fmn_hero.celly*FMN_COLC+fmn_hero.cellx;
+    uint8_t tile=fmn_global.map[tilep];
+    uint8_t physics=fmn_global.cellphysics[tile];
+    if (physics&0x02) {
+      fmn_hero.landing_pending=1;
+      return;
+    }
+  }
   fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
   fmn_global.active_item=0;
+}
+
+static void fmn_hero_broom_update(float elapsed) {
+  if (fmn_hero.landing_pending) {
+    if ((fmn_hero.cellx>=0)&&(fmn_hero.celly>=0)&&(fmn_hero.cellx<FMN_COLC)&&(fmn_hero.celly<FMN_ROWC)) {
+      uint8_t tilep=fmn_hero.celly*FMN_COLC+fmn_hero.cellx;
+      uint8_t tile=fmn_global.map[tilep];
+      uint8_t physics=fmn_global.cellphysics[tile];
+      if (!(physics&0x02)) {
+        fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
+        fmn_global.active_item=0;
+        return;
+      }
+    }
+  }
 }
 
 /* Wand.
@@ -367,6 +391,7 @@ void fmn_hero_item_update(float elapsed) {
   switch (fmn_global.active_item) {
     case FMN_ITEM_BELL: fmn_hero_bell_update(elapsed); break;
     case FMN_ITEM_SHOVEL: fmn_hero_shovel_update(elapsed); break;
+    case FMN_ITEM_BROOM: fmn_hero_broom_update(elapsed); break;
     case FMN_ITEM_VIOLIN: fmn_hero_violin_update(elapsed); break;
   }
 }

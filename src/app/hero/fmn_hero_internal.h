@@ -34,6 +34,7 @@ extern struct fmn_hero {
   uint8_t bell_count;
   uint8_t spellv[FMN_HERO_SPELL_LIMIT];
   uint8_t spellc; // may exceed limit
+  uint8_t landing_pending; // broom flight ended over a hole, will end when clear
 } fmn_hero;
 
 void fmn_hero_motion_event(uint8_t bit,uint8_t value); // dpad changes

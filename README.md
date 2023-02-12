@@ -20,7 +20,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [ ] Items, first pass. Just getting the carry appearance and counting, maybe stubbing out actuation.
+- [x] Items, first pass. Just getting the carry appearance and counting, maybe stubbing out actuation.
 - - [x] Bell
 - - [x] Corn
 - - [x] Seed
@@ -52,6 +52,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - - - [x] Also notice changes to instruments and recompile as needed.
 - - [ ] Change song per map header
 - - [ ] Defer song start until first interaction.
+- - [ ] Prevent rapid-fire sound effects, eg bouncing between two hazards.
 - [x] Gamepad input.
 - [ ] UI for saved game management.
 - [ ] (A) to dismiss menu -- zap input state on resuming game.
