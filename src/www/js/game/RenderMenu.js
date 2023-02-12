@@ -5,7 +5,7 @@
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
-import { Menu, PauseMenu, ChalkMenu } from "./Menu.js";
+import { Menu, PauseMenu, ChalkMenu, TreasureMenu } from "./Menu.js";
 import { RenderBasics } from "./RenderBasics.js";
  
 export class RenderMenu {
@@ -25,14 +25,18 @@ export class RenderMenu {
       this.constants.ITEM_MATCH,
       this.constants.ITEM_CHEESE,
     ];
+    
+    this.frameCount = 0;
   }
   
   /* Caller should render the scene and transition first.
    * We render menus and blotter on top of that, according to (menus).
    */
   render(dst, menus) {
+    this.frameCount++;
     if (menus.length < 1) return;
     const ctx = dst.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
     let blotterDelay = menus.length;
     for (const menu of menus) {
       if (!--blotterDelay) this._renderBlotter(dst, ctx);
@@ -54,6 +58,7 @@ export class RenderMenu {
     if (menu instanceof PauseMenu) this._renderPauseMenu(dst, ctx, menu);
     else if (menu instanceof Menu) this._renderOptionsMenu(dst, ctx, menu);
     else if (menu instanceof ChalkMenu) this._renderChalkMenu(dst, ctx, menu);
+    else if (menu instanceof TreasureMenu) this._renderTreasureMenu(dst, ctx, menu);
     else throw new Error(`Unexpected object provided to RenderMenu._renderMenu`);
   }
   
@@ -189,6 +194,84 @@ export class RenderMenu {
     ctx.lineWidth = 1;
     
     this.renderBasics.tile(ctx, fieldx + menu.selx * dotSpacing + (tilesize >> 1), fieldy + menu.sely * dotSpacing + (tilesize >> 1), srcImage, 0xc3, 0);
+  }
+  
+  /* TreasureMenu, show off a new item.
+   **********************************************************/
+   
+  _renderTreasureMenu(dst, ctx, menu) {
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, dst.width, dst.height);
+    const srcImage = this.dataService.getImage(4);
+    if (!srcImage || !srcImage.complete) return;
+    
+    const tilesize = this.constants.TILESIZE;
+    const halfw = dst.width >> 1;
+    
+    /* The item pic is centered* in output, and source from a 4x4 grid of 48x48 images originned at 48,32.
+     * [*] Actually let's push it down by 16, we have 32 pixels of bunting above.
+     */
+    const focusx = halfw;
+    const focusy = (dst.height >> 1) + 16;
+    {
+      const col = (menu.itemId & 3);
+      const row = ((menu.itemId >> 2) & 3);
+      const dstx = focusx - 24;
+      const dsty = focusy - 24;
+      ctx.drawImage(srcImage, 48 + col * 48, 32 + row * 48, 48, 48, dstx, dsty, 48, 48);
+    }
+    
+    // Experimental. Circle of charms.
+    {
+      const charmTilesize = tilesize - 2; // Getting edge artifacts due to rotation -- source images must be inset with a 1-pixel border
+      const charmRotationPeriod = 200;
+      const charmWobblePeriod = 50;
+      const charmWobbleRange = 1.000;
+      const charmCount = 12;
+      const radius = 48 + Math.sin(((this.frameCount % 150) * Math.PI * 2) / 150) * 12;
+      const wobble = Math.sin(((this.frameCount % charmWobblePeriod) * Math.PI * 2) / charmWobblePeriod) * charmWobbleRange;
+      let t = ((this.frameCount % charmRotationPeriod) * Math.PI * 2) / charmRotationPeriod;
+      const dt = (Math.PI * 2) / charmCount;
+      const sourcev = [[209, 1], [225, 1], [241, 1], [209, 17], [225, 17], [241, 17]];
+      for (let i=0; i<charmCount; i++, t+=dt) {
+        ctx.save();
+        ctx.translate(focusx + radius * Math.cos(t), focusy + radius * Math.sin(t));
+        ctx.rotate(wobble);
+        const [srcx, srcy] = sourcev[i % sourcev.length];
+        ctx.drawImage(srcImage, srcx, srcy, charmTilesize, charmTilesize, -(charmTilesize >> 1), -(charmTilesize >> 1), charmTilesize, charmTilesize);
+        ctx.restore();
+      }
+    }
+    
+    /* Curtains are symmetric.
+     * Sourced from (0,0,48,192), and the 32 left pixels can repeat.
+     * Slides from center to edge, leaving 16 pixels exposed, according to menu.curtainOpenness.
+     * Actually a little beyond center, let them overlap initially.
+     */
+    const curtainRange = halfw - 16; // per side
+    const curtainGapPixels = ~~(curtainRange * menu.curtainOpenness) - 12; // per side
+    ctx.drawImage(srcImage, 0, 0, 48, 192, halfw - curtainGapPixels - 48, 0, 48, 192);
+    for (let x=halfw-curtainGapPixels-48; x>0; x-=32) {
+      ctx.drawImage(srcImage, 0, 0, 32, 192, x-32, 0, 32, 192);
+    }
+    ctx.save();
+    ctx.translate(dst.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(srcImage, 0, 0, 48, 192, halfw - curtainGapPixels - 48, 0, 48, 192);
+    for (let x=halfw-curtainGapPixels-48; x>0; x-=32) {
+      ctx.drawImage(srcImage, 0, 0, 32, 192, x-32, 0, 32, 192);
+    }
+    ctx.restore();
+    
+    /* Upper bunting, similar to curtains but it never moves.
+     * Source (48,0,160,32).
+     */
+    ctx.drawImage(srcImage, 48, 0, 160, 32, 0, 0, 160, 32);
+    ctx.save();
+    ctx.translate(dst.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(srcImage, 48, 0, 160, 32, 0, 0, 160, 32);
+    ctx.restore();
   }
 }
 

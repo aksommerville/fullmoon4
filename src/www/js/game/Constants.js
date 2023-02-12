@@ -84,6 +84,10 @@ export class Constants {
     
     this.AUDIO_FRAME_RATE = 44100;
     this.AUDIO_CHANNEL_COUNT = 16; // logical bus channels, not mono/stereo output
+    
+    this.MENU_PAUSE = -1;
+    this.MENU_CHALK = -2;
+    this.MENU_TREASURE = -3;
   }
 }
 

@@ -285,7 +285,20 @@ export class RenderHero {
    
   renderOverlay(dst, ctx) {
     switch (this.globals.g_selected_item[0]) {
-      case this.constants.ITEM_COMPASS: this._renderCompassOverlay(dst, ctx); return;
+      case this.constants.ITEM_COMPASS: this._renderCompassOverlay(dst, ctx); break;
+    }
+    if (this.globals.g_show_off_item_time[0]) {
+      if (this.frameCount & 3) { // skip 1/4 frames
+        const sprite = this.globals.getHeroSprite();
+        if (!sprite) return;
+        const srcImage = this.dataService.getImage(sprite.imageid);
+        if (!srcImage) return;
+        this.renderBasics.tile(ctx,
+          sprite.x * this.constants.TILESIZE,
+          sprite.y * this.constants.TILESIZE - this.constants.TILESIZE * 1.5,
+          srcImage, 0xf0 + this.globals.g_show_off_item[0], 0
+        );
+      }
     }
   }
   

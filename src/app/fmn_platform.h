@@ -195,7 +195,8 @@ extern struct fmn_global {
    */
   uint8_t selected_item;
   uint8_t active_item;
-  uint8_t pad2[2];
+  uint8_t show_off_item; // Item ID to display as "just collected"
+  uint8_t show_off_item_time; // Counts down from 0xff, not necessarily contiguous
   uint8_t itemv[16]; // nonzero if possessed
   uint8_t itemqv[16]; // qualifier eg count or enum
   
@@ -249,7 +250,8 @@ void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*
 #define fmn_begin_menu(...) _fmn_begin_menu(__VA_ARGS__,0)
 // Negative prompt IDs are special:
 #define FMN_MENU_PAUSE -1
-#define FMN_MENU_CHALK -2
+#define FMN_MENU_CHALK -2 /* XXX use fmn_begin_sketch() */
+#define FMN_MENU_TREASURE -3 /* opt1=itemid, cb1=required */
 
 /* Prepare a transition while in the "from" state, and declare what style you will want.
  * Then make your changes, and either commit or cancel it.

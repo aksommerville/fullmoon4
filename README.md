@@ -11,7 +11,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [ ] Item possession and quantity
+- [x] Item possession and quantity
 - [ ] Injury must end the active item, and don't begin while injured.
 - [ ] Suppress movement during certain item actions (eg pitcher)
 - [ ] Synthesizer.
@@ -94,3 +94,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Move Map decoding out of DataService into a class of its own.
+- [ ] Can we pack CSS and favicon into index.html? Just to eliminate the initial HTTP calls.

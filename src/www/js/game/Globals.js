@@ -64,6 +64,8 @@ export class Globals {
     this.g_sketchc = new Uint32Array(this.memU8.buffer, this.p_sketchv_end, 1);
     this.g_selected_item = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 4, 1);
     this.g_active_item = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 5, 1);
+    this.g_show_off_item = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 6, 1);
+    this.g_show_off_item_time = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 7, 1);
     this.g_itemv = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 8, 16);
     this.g_itemqv = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 24, 16);
     this.g_facedir = new Uint8Array(this.memU8.buffer, this.p_hero, 1);

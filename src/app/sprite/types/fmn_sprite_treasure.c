@@ -18,16 +18,20 @@ static void _treasure_init(struct fmn_sprite *sprite) {
   }
 }
 
+static void cb_modal() {
+}
+
 static void _treasure_hero_collision(struct fmn_sprite *sprite,struct fmn_sprite *hero) {
   if (!fmn_global.itemv[itemid]) {
     // If we didn't already have this, begin some fanfare and select it.
     fmn_global.itemv[itemid]=1;
     fmn_global.selected_item=itemid;
-    //TODO Enter a modal to show off the new thing.
+    fmn_begin_menu(FMN_MENU_TREASURE,itemid,cb_modal);
   } else {
-    // Collected more of something we already have, presumably?
-    // We should still do some fanfare, but nothing modal.
-    //TODO
+    // Something we already have, so do the passive "show_off_item" instead of the modal.
+    // Do not auto-select it.
+    fmn_global.show_off_item=itemid;
+    fmn_global.show_off_item_time=0xff;
   }
   uint8_t q=fmn_initial_qualifier_per_itemid[itemid];
   if (q) {

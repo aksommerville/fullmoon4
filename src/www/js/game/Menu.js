@@ -19,8 +19,9 @@ export class MenuFactory {
    */
   newMenu(promptId, options, cbDismiss) {
     if (promptId < 0) switch (promptId) {
-      case Menu.PAUSE: return new PauseMenu(cbDismiss, this.globals, this.constants);
-      case Menu.CHALK: return new ChalkMenu(cbDismiss, this.globals, this.constants);
+      case this.constants.MENU_PAUSE: return new PauseMenu(cbDismiss, this.globals, this.constants);
+      case this.constants.MENU_CHALK: return new ChalkMenu(cbDismiss, this.globals, this.constants);
+      case this.constants.MENU_TREASURE: return new TreasureMenu(cbDismiss, this.globals, this.constants, options);
     }
     const resolvedOptions = [];
     for (let i=0; i<options.length; i+=2) {
@@ -41,6 +42,9 @@ export class MenuFactory {
 }
 
 MenuFactory.singleton = true;
+
+/* Menu: the generic prompt-and-options one
+ ************************************************************************/
 
 export class Menu {
   constructor(prompt, options, cbDismiss) {
@@ -72,6 +76,9 @@ export class Menu {
     this.previousInput = state;
   }
 }
+
+/* PauseMenu
+ ***********************************************************/
 
 export class PauseMenu {
   constructor(cbDismiss, globals, constants) {
@@ -108,6 +115,9 @@ export class PauseMenu {
     this.cbDismiss(this);
   }
 }
+
+/* ChalkMenu
+ **********************************************************/
 
 export class ChalkMenu {
   constructor(cbDismiss, globals, constants) {
@@ -240,6 +250,46 @@ export class ChalkMenu {
   }
 }
 
-// Special prompt IDs.
-Menu.PAUSE = -1;
-Menu.CHALK = -2;
+/* TreasureMenu
+ * Not interactive. Just shows off a new treasure and waits for acknowledgement.
+ **********************************************************/
+
+export class TreasureMenu {
+  constructor(cbDismiss, globals, constants, options) {
+    this.cbDismiss = cbDismiss || (() => {});
+    this.globals = globals;
+    this.constants = constants;
+    
+    if (options.length !== 1) throw new Error(`TreasureMenu requires 1 option, got ${options.length}`);
+    this.itemId = options[0][0];
+    this.nativeCallback = options[0][1];
+    
+    this.SUSPENSE_TIME = 500;
+    this.OPEN_TIME = 1000;
+    
+    this.previousState = 0xff;
+    this.startTime = Date.now();
+    this.curtainOpenness = 0; // 0..1
+  }
+  
+  update(state) {
+  
+    if (this.curtainOpenness < 1) {
+      const now = Date.now();
+      const elapsed = now - this.startTime;
+      if (elapsed < this.SUSPENSE_TIME) {
+        this.curtainOpenness = 0;
+      } else {
+        this.curtainOpenness = Math.max(0, Math.min(1, (elapsed - this.SUSPENSE_TIME) / this.OPEN_TIME));
+      }
+    }
+  
+    if (state === this.previousState) return;
+    const pressed = state & ~this.previousState;
+    if (pressed & 0x30) {
+      this.cbDismiss(this);
+      this.nativeCallback();
+    }
+    this.previousState = state;
+  }
+}
