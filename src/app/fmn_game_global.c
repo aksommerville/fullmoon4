@@ -6,6 +6,7 @@
  */
  
 int fmn_game_init() {
+  fmn_global.itemv[FMN_ITEM_NONE]=1; // let it show an icon in the inventory, so it doesn't look like an item not found yet
   if (fmn_game_load_map(1)<1) return -1;
   fmn_hero_set_position(FMN_COLC*0.5f,FMN_ROWC*0.5f);
   return 0;
@@ -23,10 +24,12 @@ static void cb_spawn(
   uint8_t argv[]={arg0,arg1,arg2,arg3};
   struct fmn_sprite *sprite=fmn_sprite_spawn(x+0.5f,y+0.5f,spriteid,cmdv,cmdc,argv,sizeof(argv));
   if (!sprite) {
+    /* This is actually normal; a sprite controller can decide it's not needed, eg treasure chest.
     fmn_log(
       "Failed to spawn sprite %d at (%d,%d), argv=[%d,%d,%d,%d]",
       spriteid,x,y,arg0,arg1,arg2,arg3
     );
+    /**/
     return;
   }
 }

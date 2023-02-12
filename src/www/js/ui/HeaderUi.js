@@ -18,15 +18,25 @@ export class HeaderUi {
     this.onPause = () => {};
     this.onResume = () => {};
     
+    this.ready = false;
+    
     this.buildUi();
+  }
+  
+  setReady(ready) {
+    if (!!ready === !!this.ready) return;
+    this.ready = !!ready;
+    for (const element of this.element.querySelectorAll("input")) {
+      element.disabled = !this.ready;
+    }
   }
   
   buildUi() {
     this.element.innerHTML = "";
-    this.dom.spawn(this.element, "INPUT", { type: "button", value: "Reset", "on-click": () => this.onReset() });
-    this.dom.spawn(this.element, "INPUT", { type: "button", value: "Fullscreen", "on-click": () => this.onFullscreen() });
+    this.dom.spawn(this.element, "INPUT", { type: "button", value: "Reset", disabled: "disabled", "on-click": () => this.onReset() });
+    this.dom.spawn(this.element, "INPUT", { type: "button", value: "Fullscreen", disabled: "disabled", "on-click": () => this.onFullscreen() });
     const pauseId = `HeaderUi-${this.discriminator}-pause`;
-    this.dom.spawn(this.element, "INPUT", ["toggle", "pause"], { type: "checkbox", id: pauseId, "on-change": () => this.onPauseToggled() });
+    this.dom.spawn(this.element, "INPUT", ["toggle", "pause"], { type: "checkbox", id: pauseId, disabled: "disabled", "on-change": () => this.onPauseToggled() });
     this.dom.spawn(this.dom.spawn(this.element, "LABEL", { for: pauseId }), "DIV", "Pause");
   }
   

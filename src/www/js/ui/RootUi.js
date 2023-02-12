@@ -8,24 +8,32 @@ import { GameUi } from "./GameUi.js";
 import { FooterUi } from "./FooterUi.js";
 import { ErrorModal } from "./ErrorModal.js";
 import { Runtime } from "../game/Runtime.js";
+import { DataService } from "../game/DataService.js";
 
 export class RootUi {
   static getDependencies() {
-    return [HTMLElement, Dom, Window, Runtime];
+    return [HTMLElement, Dom, Window, Runtime, DataService];
   }
-  constructor(element, dom, window, runtime) {
+  constructor(element, dom, window, runtime, dataService) {
     this.element = element;
     this.dom = dom;
     this.window = window;
     this.runtime = runtime;
+    this.dataService = dataService;
     
     this.header = null;
     this.footer = null;
     this.game = null;
+    this.ready = false;
     
     this.buildUi();
     
-    this.reset();
+    /* We don't really interact with DataService, but we do create an initial delay, waiting for user input.
+     * It's crazy to not load all the data during that delay.
+     */
+    this.dataService.load()
+      .then(() => this.dataLoaded())
+      .catch(e => this.onError(e));
   }
   
   buildUi() {
@@ -39,6 +47,7 @@ export class RootUi {
     this.header.onFullscreen = () => this.game.enterFullscreen();
     this.header.onPause = () => this.runtime.pause();
     this.header.onResume = () => this.runtime.resume();
+    if (this.ready) this.header.setReady(true);
     
     this.runtime.setRenderTarget(this.game.getCanvas());
   }
@@ -57,5 +66,10 @@ export class RootUi {
     console.log(`RootUi.onError`, e);
     const modal = this.dom.spawnModal(ErrorModal);
     modal.setup(e);
+  }
+  
+  dataLoaded() {
+    this.ready = true;
+    this.header.setReady(true);
   }
 }

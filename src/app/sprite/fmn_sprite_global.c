@@ -45,6 +45,23 @@ static struct fmn_sprite *fmn_sprites_find_available() {
   return 0;
 }
 
+/* Remove sprite.
+ */
+ 
+void fmn_sprite_kill(struct fmn_sprite *sprite) {
+  if (!sprite) return;
+  sprite->style=0;
+  struct fmn_sprite **p=fmn_spritepv;
+  int i=0;
+  for (;i<fmn_global.spritec;i++,p++) {
+    if (*p==sprite) {
+      fmn_global.spritec--;
+      memmove(p,p+1,sizeof(void*)*(fmn_global.spritec-i));
+      return;
+    }
+  }
+}
+
 /* After applying commands, look up the controller.
  */
  
@@ -131,6 +148,7 @@ struct fmn_sprite *fmn_sprite_spawn(
   }
   
   fmn_sprite_apply_controller(sprite);
+  if (!sprite->style) return 0; // in case controller init killed it
   
   return sprite;
 }

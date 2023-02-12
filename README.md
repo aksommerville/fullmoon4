@@ -9,61 +9,25 @@ There will be a "platform" layer in Javascript, and an "app" layer in C compiled
 
 I want this thing ready to show off at GDEX 2023. Anything not necessary for demoing there can wait.
 
-### January
-
-- [x] Hero physics and animation.
-- [x] If you drop the dpad during a door transition, she should stop moving. As is, you get the deceleration tail on the far end.
-- [x] Serve on the public web.
-- [x] Sprite data format.
-- [x] Occasional jitter in sprite collisions, seems to happen only at specific places. Pushblocks on map 1 expose it.
-- - Push a pushblock east or south when it's in position 4 or 8. Not 12 or 16, and never west or north.
-
 ### February
 
-- [x] Items, first pass. Just getting the carry appearance and counting, maybe stubbing out actuation.
-- - [x] Bell
-- - [x] Corn
-- - [x] Seed
-- - [x] Coin
-- - [x] Cheese
-- - [x] Feather
-- - [x] Pitcher
-- - [x] Match
-- - [x] Compass
-- - [x] Umbrella
-- - [x] Shovel
-- - [x] Broom
-- - [x] Wand
-- - [x] Violin
-- - [x] Chalk
 - [ ] Item possession and quantity
 - [ ] Injury must end the active item, and don't begin while injured.
 - [ ] Suppress movement during certain item actions (eg pitcher)
 - [ ] Synthesizer.
-- - [x] Channel volume
 - - [ ] Pitch wheel
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
 - - [ ] Do we need percussion? How is that going to work?
-- - [x] Tooling to use midevil and edit instrument definitions on the fly.
-- - - [x] midevil: Output to WebSocket
-- - - [x] Synthesizer: Receive MIDI events via WebSocket
-- - - [x] Alternate audio-only web app
-- - - [x] Node WebSocket server to shovel MIDI between web apps.
-- - - - [x] Also notice changes to instruments and recompile as needed.
 - - [ ] Change song per map header
-- - [ ] Defer song start until first interaction.
+- - [x] Defer song start until first interaction. ...forcing to click Reset first, i'm ok with that.
 - - [ ] Prevent rapid-fire sound effects, eg bouncing between two hazards.
-- [x] Gamepad input.
 - [ ] UI for saved game management.
 - [ ] (A) to dismiss menu -- zap input state on resuming game.
 
 ### March
 
-- [x] Hazards.
 - [ ] Spells.
 - [ ] Music. We don't need every song yet, just like 3 or so.
-- xxx Preprocess MIDI files, eg removing Logic's trailing delays.
-- - Maybe not a big deal? We're going to touch up with midevil in any case.
 - [ ] Refine items.
 - - [ ] Corn, seed: Decide whether these are the same thing. Sprite on actuation, and summon the bird or create a plant.
 - - [ ] Cheese: Visual feedback. Maybe a second sound effect when it ends?
@@ -76,6 +40,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - - [ ] Violin: Chart UI
 - - [ ] Violin: Encode song
+- - [ ] Shovel: Needs a new face tile, show some effort.
 
 ### April
 
@@ -89,7 +54,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### After GDEX
 
-- [x] Can we reduce the wasm exports? There's only like 3 symbols that actually need exported.
 - [ ] Touch input.
 - [ ] Input configuration.
 - - [ ] Generalize mapping, see src/www/js/game/InputManager.js
@@ -111,6 +75,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] iOS
 - - [ ] Android
 - - [ ] Modern consoles?
+- - [ ] SNES? I know it won't happen but you got to try
 - [ ] Unit tests.
 - - [ ] General-purpose test runner.
 - - [ ] C tests
@@ -126,6 +91,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls.
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
-- [x] 20230208: Running fiddle long time, Chrome crashed with SIGILL. Memory leak in the synthesizer?
-- - confirmed. memory keeps increasing during play. Reaches about 2.5% after the first song repeat.
-- - ...need to .stop() every oscillator eventually.
+- [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.

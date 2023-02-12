@@ -338,7 +338,7 @@ static void fmn_hero_chalk_begin() {
  
 void fmn_hero_item_begin() {
 
-  //XXX highly temporary: Give us the full set of items when you try to use FMN_ITEM_NONE
+  /*XXX highly temporary: Give us the full set of items when you try to use FMN_ITEM_NONE
   if (fmn_global.selected_item==FMN_ITEM_NONE) {
     fmn_log("*** giving all items a sensible quantity ***");
     memset(fmn_global.itemv,1,sizeof(fmn_global.itemv));
@@ -350,6 +350,7 @@ void fmn_hero_item_begin() {
     fmn_global.itemqv[FMN_ITEM_PITCHER]=FMN_PITCHER_CONTENT_MILK;
     return;
   }
+  /**/
   
   // We do allow unpossessed items to be selected. Must verify first that we actually have it.
   if ((fmn_global.selected_item>=FMN_ITEM_COUNT)||!fmn_global.itemv[fmn_global.selected_item]) {

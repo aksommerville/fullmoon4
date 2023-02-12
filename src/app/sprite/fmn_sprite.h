@@ -74,6 +74,8 @@ void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy);
 
 void fmn_sprites_sort_partial();
 
+void fmn_sprite_kill(struct fmn_sprite *sprite);
+
 /* Sprite controllers.
  ***************************************************************/
 
@@ -83,13 +85,15 @@ void fmn_sprites_sort_partial();
 #define FMN_SPRCTL_pushblock      2
 #define FMN_SPRCTL_alphablock     3
 #define FMN_SPRCTL_hazard         4
+#define FMN_SPRCTL_treasure       5
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
   _(hero) \
   _(pushblock) \
   _(alphablock) \
-  _(hazard)
+  _(hazard) \
+  _(treasure)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

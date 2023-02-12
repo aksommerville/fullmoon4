@@ -1,0 +1,6 @@
+controller treasure
+image 3
+tile 0x30
+xform 0
+style tile
+radius 0.5
