@@ -1,13 +1,14 @@
 const fs = require("fs").promises;
 const linewise = require("../common/linewise.js");
 const getControllerIdsByName = require("../common/getControllerIdsByName.js");
+const getResourceIdByName = require("../common/getResourceIdByName.js");
 
 /* Generic handlers.
  */
  
-function decodeCommand_u8(src, opcode) {
+function decodeCommand_u8(src, opcode, resType) {
   if (src.length !== 2) throw new Error(`Expected one argument for command ${JSON.stringify(src[0])}`);
-  const v = +src[1];
+  const v = getResourceIdByName(resType, src[1]);
   if (isNaN(v) || (v < 0) || (v > 0xff)) throw new Error(`Expected integer in 0..255, found ${JSON.stringify(src[1])}`);
   return Buffer.from([opcode, v]);
 }
@@ -23,9 +24,9 @@ function decodeCommand_u88(src, opcode) {
   return dst;
 }
 
-function decodeCommand_u16(src, opcode) {
+function decodeCommand_u16(src, opcode, resType) {
   if (src.length !== 2) throw new Error(`Expected one argument for command ${JSON.stringify(src[0])}`);
-  const v = +src[1];
+  const v = getResourceIdByName(resType, src[1]);
   if (isNaN(v) || (v < 0) || (v >= 0xffff)) throw new Error(`Expected number in 0..65535, found ${JSON.stringify(src[1])}`);
   const dst = Buffer.alloc(3);
   dst[0] = opcode;
@@ -108,7 +109,7 @@ function rewriteInput_controller(src) {
 function decodeCommand(src) {
   if (src.length < 1) return null;
   switch (src[0]) {
-    case "image": return decodeCommand_u8(src, 0x20);
+    case "image": return decodeCommand_u8(src, 0x20, "image");
     case "tile": return decodeCommand_u8(src, 0x21);
     case "xform": return decodeCommand_u8(rewriteInput_xform(src), 0x22);
     case "style": return decodeCommand_u8(rewriteInput_style(src), 0x23);

@@ -163,7 +163,7 @@ A certain number of sketches will persist. 20 bits each, plus whatever we need f
 
 Chalk tricks:
  - A word pre-written on the wall that you must change to some other word to make an obstacle move.
- - Complete that pattern. eg card suits, sequential letters or numbers, one is initially missing.
+ - Complete the pattern. eg card suits, sequential letters or numbers, one is initially missing.
  - Encode answer to counting challenges. "How many ghosts in the dungeon?"
  - Summon a ghost or demon. (TODO to what end?)
  - A sentinel somehow expresses he wants something, say a lollipop. Draw one on the wall and he's drawn to it.

@@ -11,28 +11,19 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [x] Item possession and quantity
-- [x] Injury must end the active item, and don't begin while injured.
-- [x] Suppress movement during certain item actions (eg pitcher)
 - [ ] Synthesizer.
 - - [ ] Pitch wheel
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
 - - [ ] Do we need percussion? How is that going to work?
-- - [x] Change song per map header
-- - [x] Defer song start until first interaction. ...forcing to click Reset first, i'm ok with that.
-- - [x] Prevent rapid-fire sound effects, eg bouncing between two hazards.
-- [ ] UI for saved game management.
-- [x] (A) to dismiss menu -- zap input state on resuming game.
-- [x] Hit a fire from directly above at high velocity, sprites get all mixed up.
-- - Map 1, enter at the eastmost tree door, go straight down into the fire on broom or becheezled.
-- [x] Shovel and compass overlay/underlay appear even if we don't have the item
+- [ ] Can the umbrella shield against hazards you walk into, in addition to missiles? That would be preferable.
 
 ### March
 
 - [ ] Spells.
 - [ ] Music. We don't need every song yet, just like 3 or so.
 - [ ] Refine items.
-- - [ ] Corn, seed: Decide whether these are the same thing. Sprite on actuation, and summon the bird or create a plant.
+- - [ ] Corn: Eliminate. Same thing as Seed.
+- - [ ] Seed: Sprite on actuation, and summon the bird or create a plant.
 - - [ ] Cheese: Visual feedback. Maybe a second sound effect when it ends?
 - - [ ] Feather: Actuate blocks and ...whatever else a feather does.
 - - [ ] Coin: throw
@@ -44,6 +35,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Violin: Chart UI
 - - [ ] Violin: Encode song
 - - [ ] Shovel: Needs a new face tile, show some effort.
+- [ ] Make up a new item to take Corn's place.
 
 ### April
 
@@ -54,6 +46,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [ ] Persist plants and sketches across map loads.
+- [ ] UI for saved game management.
 
 ### After GDEX
 

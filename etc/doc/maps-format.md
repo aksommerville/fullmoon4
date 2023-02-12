@@ -3,15 +3,10 @@
 There's a text format for files under `src/data/map/`, intended to be both man- and machine-intelligible.
 One file per map.
 
-`XXX DEPRECATED`
-Then there's a packed binary format as used in `out/maps.data`, for production use.
-One file, multiple maps.
-
-Our script `src/tool/mkmaps/main.js` compiles the binary from multiple text files.
-
 ## Text Format
 
 File's basename must be a decimal integer in 1..65535; that becomes its Map ID.
+May also contain a name. "ID-NAME"
 
 Starts with 12 lines of 40 characters each; every 2 characters are one map cell, hexadecimal.
 
@@ -31,6 +26,8 @@ neighbors MAPID
 door X Y MAPID DSTX DSTY
 sprite X Y SPRITEID ARG0 ARG1 ARG2
 ```
+
+Resource IDs may be name or number.
 
 ## Binary Format
 
