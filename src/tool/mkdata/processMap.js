@@ -1,10 +1,11 @@
 const fs = require("fs").promises;
+const getResourceIdByName = require("../common/getResourceIdByName.js");
 
 const COLC = 20;
 const ROWC = 12;
 
 /* Return an array of integer arguments after validating args.
- * (schema) are [name, lo, hi], one per expected argument.
+ * (schema) are [name, lo, hi, resType], one per expected argument.
  */
  
 function assertIntArgs(args, ...schema) {
@@ -13,9 +14,16 @@ function assertIntArgs(args, ...schema) {
   }
   const dst = [];
   for (let i=0; i<args.length; i++) {
-    const v = +args[i];
-    if (isNaN(v) || (v < schema[i][1]) || (v > schema[i][2])) {
-      throw new Error(`Unexpected value '${args[i]}' for '${schema[i][0]}', must be integer in ${schema[i][1]}..${schema[i][2]}`);
+    let v;
+    try {
+      const resType = schema[i][3];
+      v = getResourceIdByName(resType, args[i]);
+      if ((v < schema[i][1]) || (v > schema[i][2])) {
+        throw new Error(`Value '${args[i]}' must be integer in ${schema[i][1]}..${schema[i][2]}`);
+      }
+    } catch (e) {
+      e.message = `Failed to evaluate '${schema[i][0]}': ${e.message}`;
+      throw e;
     }
     dst.push(v);
   }
@@ -25,20 +33,20 @@ function assertIntArgs(args, ...schema) {
 /* Generic single-argument commands.
  */
  
-function decodeCommand_singleU8(opcode, args) {
+function decodeCommand_singleU8(opcode, args, resType) {
   if (args.length !== 1) throw new Error(`Expected single argument in 0..255`);
-  const v = +args[0];
-  if (isNaN(v) || (v < 0) || (v > 255)) throw new Error(`Expected single argument in 0..255`);
+  const v = getResourceIdByName(resType, args[0]);
+  if ((v < 0) || (v > 0xff)) throw new Error(`Expected single argument in 0..255, found ${v}`);
   const dst = Buffer.alloc(2);
   dst[0] = opcode;
   dst[1] = v;
   return dst;
 }
 
-function decodeCommand_singleU16(opcode, args) {
+function decodeCommand_singleU16(opcode, args, resType) {
   if (args.length !== 1) throw new Error(`Expected single argument in 0..65535`);
-  const v = +args[0];
-  if (isNaN(v) || (v < 0) || (v > 255)) throw new Error(`Expected single argument in 0..65535`);
+  const v = getResourceIdByName(resType, args[0]);
+  if ((v < 0) || (v > 0xffff)) throw new Error(`Expected single argument in 0..65535, found ${v}`);
   const dst = Buffer.alloc(3);
   dst[0] = opcode;
   dst[1] = v >> 8;
@@ -53,7 +61,7 @@ function decodeCommand_door(args) {
   const [x, y, mapId, dstx, dsty] = assertIntArgs(args,
     ["x", 0, COLC - 1],
     ["y", 0, ROWC - 1],
-    ["mapId", 1, 0xffff],
+    ["mapId", 1, 0xffff, "map"],
     ["dstx", 0, COLC - 1],
     ["dsty", 0, ROWC - 1],
   );
@@ -73,7 +81,7 @@ function decodeCommand_sprite(args) {
   const [x, y, spriteId, arg0, arg1, arg2] = assertIntArgs(args,
     ["x", 0, COLC - 1],
     ["y", 0, ROWC - 1],
-    ["spriteId", 1, 0xffff],
+    ["spriteId", 1, 0xffff, "sprite"],
     ["arg0", 0, 0xff],
     ["arg1", 0, 0xff],
     ["arg2", 0, 0xff],
@@ -95,12 +103,12 @@ function decodeCommand_sprite(args) {
 function decodeCommand(words) {
   if (words.length < 1) return [];
   switch (words[0]) {
-    case "song": return decodeCommand_singleU8(0x20, words.slice(1));
-    case "tilesheet": return decodeCommand_singleU8(0x21, words.slice(1));
-    case "neighborw": return decodeCommand_singleU16(0x40, words.slice(1));
-    case "neighbore": return decodeCommand_singleU16(0x41, words.slice(1));
-    case "neighborn": return decodeCommand_singleU16(0x42, words.slice(1));
-    case "neighbors": return decodeCommand_singleU16(0x43, words.slice(1));
+    case "song": return decodeCommand_singleU8(0x20, words.slice(1), "song");
+    case "tilesheet": return decodeCommand_singleU8(0x21, words.slice(1), "image");
+    case "neighborw": return decodeCommand_singleU16(0x40, words.slice(1), "map");
+    case "neighbore": return decodeCommand_singleU16(0x41, words.slice(1), "map");
+    case "neighborn": return decodeCommand_singleU16(0x42, words.slice(1), "map");
+    case "neighbors": return decodeCommand_singleU16(0x43, words.slice(1), "map");
     case "door": return decodeCommand_door(words.slice(1));
     case "sprite": return decodeCommand_sprite(words.slice(1));
   }
@@ -154,7 +162,9 @@ function compileMap(src, path) {
       cmdSerial.copy(serial, serialc);
       serialc += cmdSerial.length;
     } catch (e) {
-      throw new Error(`${path}:${lineno}: ${e.message}`);
+      //throw new Error(`${path}:${lineno}: ${e.message}`);
+      e.mesage = `${path}:${lineno}: ${e.message}`;
+      throw e;
     }
   }
   if (serialc < serial.length) {

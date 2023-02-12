@@ -18,9 +18,9 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Pitch wheel
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
 - - [ ] Do we need percussion? How is that going to work?
-- - [ ] Change song per map header
+- - [x] Change song per map header
 - - [x] Defer song start until first interaction. ...forcing to click Reset first, i'm ok with that.
-- - [ ] Prevent rapid-fire sound effects, eg bouncing between two hazards.
+- - [x] Prevent rapid-fire sound effects, eg bouncing between two hazards.
 - [ ] UI for saved game management.
 - [ ] (A) to dismiss menu -- zap input state on resuming game.
 
@@ -89,6 +89,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] MapAllUi: Populate tattle.
 - - [ ] Delete maps (and resources in general)
 - - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
+- - [ ] Helper to analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls.
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
+- [ ] Move Map decoding out of DataService into a class of its own.

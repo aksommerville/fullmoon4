@@ -11,19 +11,20 @@ import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { Synthesizer } from "../synth/Synthesizer.js";
+import { SoundEffects } from "../synth/SoundEffects.js";
  
 export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
       Renderer, MenuFactory, Clock, Constants, Globals,
-      Synthesizer,
+      Synthesizer, SoundEffects,
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
     renderer, menuFactory, clock, constants, globals,
-    synthesizer
+    synthesizer, soundEffects
   ) {
     this.wasmLoader = wasmLoader;
     this.dataService = dataService;
@@ -35,6 +36,7 @@ export class Runtime {
     this.constants = constants;
     this.globals = globals;
     this.synthesizer = synthesizer;
+    this.soundEffects = soundEffects;
     
     this.running = false;
     this.animationFramePending = false;
@@ -53,7 +55,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_map_dirty = () => this.renderer.mapDirty();
     this.wasmLoader.env.fmn_add_plant = (x, y) => {};//TODO
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
-    this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffect(sfxid);
+    this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
     
     this.dataService.load();
   }
@@ -177,11 +179,10 @@ export class Runtime {
     this.globals.setMap(this.map);
     this.triggerMapSetup(cbSpawn);
     this.renderer.mapDirty();
-    
-    //XXX TEMP. 1=tangled-vine, 2=seven-circles-of-a-witchs-soul, 3=toil-and-trouble
-    const song = this.dataService.getSong(3);
-    this.synthesizer.playSong(song);
-    
+    if (map.songId) {
+      const song = this.dataService.getSong(map.songId);
+      this.synthesizer.playSong(song);
+    }
     return 1;
   }
   
@@ -205,34 +206,6 @@ export class Runtime {
     const menu = this.beginMenu(-2, null);
     if (menu instanceof ChalkMenu) {
       menu.setup(sketch);
-    }
-  }
-  
-  soundEffect(sfxid) {
-    //TODO definitions of sound effects, where should those live? not here, certainly
-    switch (sfxid) {
-      case this.constants.SFX_PITCHER_POUR:
-      case this.constants.SFX_BELL: {
-          this.synthesizer.event(0x0f, 0x90, 0x60, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x60, 0x40);
-        } break;
-      case this.constants.SFX_REJECT_DIG:
-      case this.constants.SFX_PITCHER_NO_PICKUP:
-      case this.constants.SFX_REJECT_ITEM: {
-          this.synthesizer.event(0x0f, 0x90, 0x30, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x30, 0x40);
-        } break;
-      case this.constants.SFX_DIG:
-      case this.constants.SFX_MATCH:
-      case this.constants.SFX_PITCHER_PICKUP:
-      case this.constants.SFX_CHEESE: {
-          this.synthesizer.event(0x0f, 0x90, 0x50, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x50, 0x40);
-        } break;
-      case this.constants.SFX_HURT: {
-          this.synthesizer.event(0x0f, 0x90, 0x36, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x36, 0x40);
-        } break;
     }
   }
 }

@@ -18,7 +18,7 @@ Starts with 12 lines of 40 characters each; every 2 characters are one map cell,
 After the map picture, each non-empty line is a command.
 Order of commands is preserved.
 
-Adding new commands, you must add a clause at src/tool/mkmaps/decodeCommand.js.
+Adding new commands, you must add a clause at src/tool/mkdata/processMap.js.
 And probably want to add support in the editor too.
 
 ```

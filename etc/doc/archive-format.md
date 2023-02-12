@@ -50,7 +50,10 @@ TOC may contain zero-length resources if the set is discontiguous.
 ## Resource Formats
 
 Images are PNG.
-
 Songs are MIDI.
-
 Everything else is peculiar to Full Moon, see docs in this repo.
+
+In general, resource files should be named `src/data/TYPE/ID[-NAME][.FORMAT]`.
+Some resources (string and instrument) pack multiple resources into one source file, they are `src/data/TYPE/QUALIFIER`.
+Image resources will also eventually get a qualifier but I haven't decided anything around that yet.
+

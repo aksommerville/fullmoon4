@@ -43,3 +43,6 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
 int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
   return 0;
 }
+
+void fmn_sound_effect(uint16_t sfxid) {
+}
