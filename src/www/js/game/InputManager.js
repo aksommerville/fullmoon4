@@ -30,6 +30,7 @@ export class InputManager {
    *******************************************/
    
   onKey(event, value) {
+    if (event.repeat) return;
     const btnid = this.mapKey(event.code);
     if (!btnid) return;
     event.preventDefault();

@@ -284,8 +284,10 @@ export class RenderHero {
    **********************************************************/
    
   renderOverlay(dst, ctx) {
-    switch (this.globals.g_selected_item[0]) {
-      case this.constants.ITEM_COMPASS: this._renderCompassOverlay(dst, ctx); break;
+    if (this.globals.g_itemv[this.globals.g_selected_item[0]]) {
+      switch (this.globals.g_selected_item[0]) {
+        case this.constants.ITEM_COMPASS: this._renderCompassOverlay(dst, ctx); break;
+      }
     }
     if (this.globals.g_show_off_item_time[0]) {
       if (this.frameCount & 3) { // skip 1/4 frames
@@ -355,8 +357,10 @@ export class RenderHero {
    **********************************************************/
    
   renderUnderlay(dst, ctx) {
-    switch (this.globals.g_selected_item[0]) {
-      case this.constants.ITEM_SHOVEL: this._renderShovelUnderlay(dst, ctx); return;
+    if (this.globals.g_itemv[this.globals.g_selected_item[0]]) {
+      switch (this.globals.g_selected_item[0]) {
+        case this.constants.ITEM_SHOVEL: this._renderShovelUnderlay(dst, ctx); return;
+      }
     }
     switch (this.globals.g_active_item[0]) {
       case this.constants.ITEM_BROOM: this._renderBroomUnderlay(dst, ctx); return;

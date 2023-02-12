@@ -99,7 +99,7 @@ export class PauseMenu {
     if (pressed & 0x02) this.moveSelection( 1, 0);
     if (pressed & 0x04) this.moveSelection( 0,-1);
     if (pressed & 0x08) this.moveSelection( 0, 1);
-    if (pressed & 0x20) this.submit();//TODO I'd also like A to submit, but we must prevent it being delivered to the game after dismissal
+    if (pressed & 0x30) this.submit();
     this.previousInput = state;
   }
   

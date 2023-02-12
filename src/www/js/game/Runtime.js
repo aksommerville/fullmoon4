@@ -170,6 +170,7 @@ export class Runtime {
     if (p < 0) return;
     this.menus.splice(p, 1);
     if (menu instanceof ChalkMenu) this.renderer.mapDirty();
+    this.inputManager.clearState();
   }
   
   loadMap(mapId, cbSpawn) {

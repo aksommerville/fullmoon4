@@ -22,9 +22,10 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Defer song start until first interaction. ...forcing to click Reset first, i'm ok with that.
 - - [x] Prevent rapid-fire sound effects, eg bouncing between two hazards.
 - [ ] UI for saved game management.
-- [ ] (A) to dismiss menu -- zap input state on resuming game.
+- [x] (A) to dismiss menu -- zap input state on resuming game.
 - [x] Hit a fire from directly above at high velocity, sprites get all mixed up.
 - - Map 1, enter at the eastmost tree door, go straight down into the fire on broom or becheezled.
+- [x] Shovel and compass overlay/underlay appear even if we don't have the item
 
 ### March
 
