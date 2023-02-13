@@ -15,7 +15,10 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Pitch wheel
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
 - - [ ] Do we need percussion? How is that going to work?
-- [ ] Can the umbrella shield against hazards you walk into, in addition to missiles? That would be preferable.
+- [x] Can the umbrella shield against hazards you walk into, in addition to missiles? That would be preferable.
+- [ ] Release broom over a hole, choose a different item, activate it. Should reject, but instead the new item activates and you're left able to walk on water.
+- [ ] Compile on refresh, don't wait for Reset.
+- [ ] Auto-focus Reset button
 
 ### March
 
@@ -91,3 +94,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Move Map decoding out of DataService into a class of its own.
 - [ ] Can we pack CSS and favicon into index.html? Just to eliminate the initial HTTP calls.
+- [ ] Unfocus Reset button (all buttons?) after clicking, so accidentally pressing space bar has no effect.

@@ -1,4 +1,5 @@
 #include "fmn_hero_internal.h"
+#include "app/sprite/fmn_physics.h"
 #include <math.h>
 
 /* Begin walking.
@@ -151,11 +152,67 @@ void fmn_hero_motion_update(float elapsed) {
   fmn_hero.sprite->vely+=dy;
 }
 
+/* At the start of injury processing, consider whether we should nix it (eg due to Umbrella).
+ * If yes, move hero to escape the collision, do any other required feedback, and return nonzero.
+ * If no, return zero and caller should proceed with the injury.
+ */
+ 
+static uint8_t fmn_hero_suppress_injury(
+  struct fmn_sprite *hero,float x,float y,struct fmn_sprite *assailant
+) {
+  
+  // First escape the collision. If we find now that no collision exists, allow the injury to proceed.
+  float cx,cy;
+  if (!fmn_physics_check_sprites(&cx,&cy,hero,assailant)) return 0;
+  hero->x+=cx;
+  hero->y+=cy;
+  
+  // Normalize correction vector and clamp current velocity so we're not continuing to advance into the hazard.
+  float d=sqrtf(cx*cx+cy*cy);
+  float nx=0.0f,ny=0.0f;
+  if (d>0.0f) {
+    nx=cx/d;
+    ny=cy/d;
+    if (((nx<0.0f)&&(hero->velx>0.0f))||((nx>0.0f)&&(hero->velx<0.0f))) hero->velx=0.0f;
+    if (((ny<0.0f)&&(hero->vely>0.0f))||((ny>0.0f)&&(hero->vely<0.0f))) hero->vely=0.0f;
+  } else {
+    // Correction is impossibly small, just nix all velocity.
+    hero->velx=0.0f;
+    hero->vely=0.0f;
+  }
+  
+  // Add a little velocity in the corrective direction.
+  hero->velx+=nx*FMN_HERO_INJURY_SUPPRESSION_BOUNCEBACK;
+  hero->vely+=ny*FMN_HERO_INJURY_SUPPRESSION_BOUNCEBACK;
+  
+  fmn_sound_effect(FMN_SFX_INJURY_DEFLECTED);
+  
+  return 1;
+}
+ 
+static uint8_t fmn_hero_suppress_injury_if_applicable(
+  struct fmn_sprite *hero,float x,float y,struct fmn_sprite *assailant
+) {
+  if (!assailant) return 0;
+  
+  if (fmn_global.active_item==FMN_ITEM_UMBRELLA) {
+    uint8_t injury_dir=fmn_dir_from_vector_cardinal(x-hero->x,y-hero->y);
+    if (injury_dir==fmn_global.facedir) return fmn_hero_suppress_injury(hero,x,y,assailant);
+  }
+
+  return 0;
+}
+
 /* Begin injury.
  */
  
 void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   struct fmn_sprite *hero=fmn_hero.sprite;
+  
+  if (fmn_hero_suppress_injury_if_applicable(hero,x,y,assailant)) {
+    //TODO feedback to assailant, eg missiles should bounce off umbrella
+    return;
+  }
   
   // Getting injured implicitly ends any action in flight (broom, in particular).
   // Player won't be able to restart it until the injury exposure is complete.

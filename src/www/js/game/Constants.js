@@ -76,6 +76,7 @@ export class Constants {
     this.SFX_MATCH = 8;
     this.SFX_DIG = 9;
     this.SFX_REJECT_DIG = 10;
+    this.SFX_INJURY_DEFLECTED = 11;
     
     this.SPRITE_STYLE_HIDDEN = 0;
     this.SPRITE_STYLE_TILE = 1;

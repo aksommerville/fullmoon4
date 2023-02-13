@@ -49,6 +49,7 @@ export class SoundEffects {
           this.synthesizer.event(0x0f, 0x90, 0x36, 0x7f);
           this.synthesizer.event(0x0f, 0x80, 0x36, 0x40);
         } break;
+      case this.constants.SFX_INJURY_DEFLECTED: break;
       default: console.log(`Unimplemented sound effect ${sfxid}`);
     }
   }

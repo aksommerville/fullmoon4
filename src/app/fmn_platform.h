@@ -109,6 +109,7 @@ int rand();
 #define FMN_SFX_MATCH 8
 #define FMN_SFX_DIG 9
 #define FMN_SFX_REJECT_DIG 10
+#define FMN_SFX_INJURY_DEFLECTED 11
 
 #define FMN_SPRITE_STYLE_HIDDEN    0 /* don't render */
 #define FMN_SPRITE_STYLE_TILE      1 /* single tile */
