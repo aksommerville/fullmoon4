@@ -170,18 +170,28 @@ static void fmn_hero_broom_begin() {
   fmn_hero.landing_pending=0;
 }
 
+static uint8_t fmn_hero_broom_ok_to_end() {
+  // Offscreen is NOT ok; we don't know whether it's a hole or not, so must assume the worst.
+  if (fmn_hero.cellx<0) return 0;
+  if (fmn_hero.celly<0) return 0;
+  if (fmn_hero.cellx>=FMN_COLC) return 0;
+  if (fmn_hero.celly>=FMN_ROWC) return 0;
+  // Hole tiles are NOT ok.
+  uint8_t tilep=fmn_hero.celly*FMN_COLC+fmn_hero.cellx;
+  uint8_t tile=fmn_global.map[tilep];
+  uint8_t physics=fmn_global.cellphysics[tile];
+  if (physics&0x02) return 0;
+  // Everything else is fine.
+  return 1;
+}
+
 static void fmn_hero_broom_end() {
-  if ((fmn_hero.cellx>=0)&&(fmn_hero.celly>=0)&&(fmn_hero.cellx<FMN_COLC)&&(fmn_hero.celly<FMN_ROWC)) {
-    uint8_t tilep=fmn_hero.celly*FMN_COLC+fmn_hero.cellx;
-    uint8_t tile=fmn_global.map[tilep];
-    uint8_t physics=fmn_global.cellphysics[tile];
-    if (physics&0x02) {
-      fmn_hero.landing_pending=1;
-      return;
-    }
+  if (fmn_hero_broom_ok_to_end()) {
+    fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
+    fmn_global.active_item=0;
+  } else {
+    fmn_hero.landing_pending=1;
   }
-  fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
-  fmn_global.active_item=0;
 }
 
 static void fmn_hero_broom_update(float elapsed) {
@@ -333,6 +343,13 @@ void fmn_hero_item_begin() {
   
   // We do allow unpossessed items to be selected. Must verify first that we actually have it.
   if ((fmn_global.selected_item>=FMN_ITEM_COUNT)||!fmn_global.itemv[fmn_global.selected_item]) {
+    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+    return;
+  }
+  
+  // If some item is already active (selected or otherwise), reject.
+  // This is super important: We might have the Broom 'active' after the key released, because she's in a broom-only position.
+  if (fmn_global.active_item) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }

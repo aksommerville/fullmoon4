@@ -16,7 +16,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
 - - [ ] Do we need percussion? How is that going to work?
 - [x] Can the umbrella shield against hazards you walk into, in addition to missiles? That would be preferable.
-- [ ] Release broom over a hole, choose a different item, activate it. Should reject, but instead the new item activates and you're left able to walk on water.
+- [x] Release broom over a hole, choose a different item, activate it. Should reject, but instead the new item activates and you're left able to walk on water.
 - [ ] Compile on refresh, don't wait for Reset.
 - [ ] Auto-focus Reset button
 
