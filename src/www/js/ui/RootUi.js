@@ -45,8 +45,14 @@ export class RootUi {
     
     this.header.onReset = () => this.reset();
     this.header.onFullscreen = () => this.game.enterFullscreen();
-    this.header.onPause = () => this.runtime.pause();
-    this.header.onResume = () => this.runtime.resume();
+    this.header.onPause = () => {
+      this.game.setRunning(false);
+      this.runtime.pause();
+    };
+    this.header.onResume = () => {
+      this.game.setRunning(true);
+      this.runtime.resume();
+    };
     this.header.onDebugPause = () => this.runtime.debugPauseToggle();
     this.header.onDebugStep = () => this.runtime.debugStep();
     if (this.ready) this.header.setReady(true);
@@ -63,9 +69,11 @@ export class RootUi {
   }
   
   onLoaded() {
+    this.game.setRunning(true);
   }
   
   onError(e) {
+    this.game.setRunning(false);
     console.log(`RootUi.onError`, e);
     const modal = this.dom.spawnModal(ErrorModal);
     modal.setup(e);

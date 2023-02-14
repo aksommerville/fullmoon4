@@ -131,6 +131,10 @@ input.toggle:checked + label > * {
   width: 100%;
 }
 
+.GameUi > .gameView.running {
+  cursor: none;
+}
+
 /* ErrorModal
  ******************************************/
  
