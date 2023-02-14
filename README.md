@@ -20,7 +20,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] Compile on refresh, don't wait for Reset.
 - [ ] Auto-focus Reset button
 - [x] Reset during play: Song should restart, and shouldn't be any clock faults (I'm observing them sometimes). Also seems the instrument gets lost.
-- [ ] Song at reset was an easy fix. But I'm still seeing clock faults, and the bonfire animation seems to be running haywire.
+- [x] Song at reset was an easy fix. But I'm still seeing clock faults, and the bonfire animation seems to be running haywire.
+- - !!! Reset button is causing the update rate to increase by 60 each time !!!
 
 ### March
 
@@ -61,7 +62,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Persist gamepad and keyboard mapping.
 - - [ ] UI for mapping.
 - [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
-- [ ] Clock.js "hard" vs "soft" pause. Do we really need both?
+- [x] Clock.js "hard" vs "soft" pause. Do we really need both?
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
 - [ ] Package web app in a native wrapper eg Electron.
 - [ ] Native platforms.
@@ -91,7 +92,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Delete maps (and resources in general)
 - - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
 - - [ ] Helper to analyze map songs, ensure no map could have a different song depending on entry point
-- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls.
+- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Move Map decoding out of DataService into a class of its own.

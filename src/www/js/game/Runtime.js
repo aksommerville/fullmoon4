@@ -76,13 +76,12 @@ export class Runtime {
         console.log(`Runtime: loaded wasm instance`, this.wasmLoader.instance);
         this.globals.refresh();
         this.running = true;
-        this.clock.runtimeLoaded();
+        //TODO load saved game or initial state
+        this.clock.reset(0);
         if (this.wasmLoader.instance.exports.fmn_init()) {
           this.dropAllState();
           throw new Error("fmn_init failed");
         }
-        //TODO load saved game or initial state
-        //this.clock.setPriorTime(savedGame.time)
         this.scheduleUpdate();
       });
   }
@@ -91,14 +90,17 @@ export class Runtime {
     this.wasmLoader.abort();
     this.running = false;
     this.inputManager.clearState();
-    this.clock.reset();
+    this.clock.reset(0);
     this.synthesizer.reset();
+    this.menus = [];
+    this.map = null;
+    this.mapId = 0;
   }
   
   pause() {
     if (!this.running) return;
     this.running = false;
-    this.clock.hardPause();
+    this.clock.pause();
     this.synthesizer.pause();
   }
   
@@ -107,7 +109,7 @@ export class Runtime {
     this.referenceTime += Date.now() - this.pauseTime;
     this.running = true;
     this.inputManager.clearState();
-    this.clock.hardResume();
+    this.clock.resume();
     if (!this.debugging) this.synthesizer.resume();
     this.scheduleUpdate();
   }
@@ -115,7 +117,11 @@ export class Runtime {
   scheduleUpdate() {
     if (this.animationFramePending) return;
     if (!this.running) return;
-    this.window.requestAnimationFrame(() => this.update());
+    this.animationFramePending = true;
+    this.window.requestAnimationFrame(() => {
+      this.animationFramePending = false;
+      this.update();
+    });
   }
   
   update(viaExplicitDebugger) {
@@ -127,11 +133,10 @@ export class Runtime {
     if (!this.debugging) this.synthesizer.update();
     
     if (this.gameShouldUpdate()) {
-      this.clock.softResume();
       const time = this.clock.update();
       this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
     } else {
-      this.clock.softPause();
+      this.clock.skip();
       if (this.menus.length > 0) {
         const menu = this.menus[this.menus.length - 1];
         menu.update(this.inputManager.state);
