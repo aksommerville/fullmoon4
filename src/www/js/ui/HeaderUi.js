@@ -31,6 +31,9 @@ export class HeaderUi {
     for (const element of this.element.querySelectorAll("input")) {
       element.disabled = !this.ready;
     }
+    if (this.ready) {
+      this.element.querySelector("input[value='Reset']").focus();
+    }
   }
   
   buildUi() {
@@ -39,7 +42,7 @@ export class HeaderUi {
     this.dom.spawn(this.element, "INPUT", { type: "button", value: "Fullscreen", disabled: "disabled", "on-click": () => this.onFullscreen() });
     const pauseId = `HeaderUi-${this.discriminator}-pause`;
     this.dom.spawn(this.element, "INPUT", ["toggle", "pause"], { type: "checkbox", id: pauseId, disabled: "disabled", "on-change": () => this.onPauseToggled() });
-    this.dom.spawn(this.dom.spawn(this.element, "LABEL", { for: pauseId }), "DIV", "Pause");
+    this.dom.spawn(this.dom.spawn(this.element, "LABEL", { for: pauseId, tabindex: "0", "on-keypress": e => this.fakePauseToggle(e) }), "DIV", "Pause");
     
     // Debug controls, not for production:
     this.dom.spawn(this.element, "DIV", ["spacer"]);
@@ -56,7 +59,15 @@ export class HeaderUi {
     }
   }
   
+  fakePauseToggle(event) {
+    event.target.click();
+  }
+  
   reset() {
     this.element.querySelector("input.pause").checked = false;
+  }
+  
+  blurResetButton() {
+    this.element.querySelector("input[value='Reset']").blur();
   }
 }

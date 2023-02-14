@@ -56,6 +56,7 @@ export class RootUi {
   
   reset() {
     this.header.reset();
+    this.header.blurResetButton(); // debatable
     this.runtime.reset()
       .then(() => this.onLoaded())
       .catch(e => this.onError(e));

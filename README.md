@@ -15,13 +15,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Pitch wheel
 - - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
 - - [ ] Do we need percussion? How is that going to work?
-- [x] Can the umbrella shield against hazards you walk into, in addition to missiles? That would be preferable.
-- [x] Release broom over a hole, choose a different item, activate it. Should reject, but instead the new item activates and you're left able to walk on water.
-- [x] Compile on refresh, don't wait for Reset.
-- [ ] Auto-focus Reset button
-- [x] Reset during play: Song should restart, and shouldn't be any clock faults (I'm observing them sometimes). Also seems the instrument gets lost.
-- [x] Song at reset was an easy fix. But I'm still seeing clock faults, and the bonfire animation seems to be running haywire.
-- - !!! Reset button is causing the update rate to increase by 60 each time !!!
 
 ### March
 
@@ -62,7 +55,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Persist gamepad and keyboard mapping.
 - - [ ] UI for mapping.
 - [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
-- [x] Clock.js "hard" vs "soft" pause. Do we really need both?
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
 - [ ] Package web app in a native wrapper eg Electron.
 - [ ] Native platforms.
@@ -73,9 +65,12 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Pippin
 - - [ ] PicoSystem
 - - [ ] Thumby
+- - [ ] PocketStar
+- - [ ] Playdate
 - - [ ] 68k Mac
 - - [ ] iOS
 - - [ ] Android
+- - [ ] Wii
 - - [ ] Modern consoles?
 - - [ ] SNES? I know it won't happen but you got to try
 - [ ] Unit tests.
@@ -97,4 +92,3 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Move Map decoding out of DataService into a class of its own.
 - [ ] Can we pack CSS and favicon into index.html? Just to eliminate the initial HTTP calls.
-- [ ] Unfocus Reset button (all buttons?) after clicking, so accidentally pressing space bar has no effect.
