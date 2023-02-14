@@ -58,7 +58,9 @@ export class Runtime {
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
     
+    // Fetch the data archive and wasm asap. This doesn't start the game or anything.
     this.dataService.load();
+    this.wasmLoader.load("./fullmoon.wasm");
   }
   
   // RootUI should do this once, with the main canvas. OK to replace whenever.

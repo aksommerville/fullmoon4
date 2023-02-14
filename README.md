@@ -17,8 +17,10 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Do we need percussion? How is that going to work?
 - [x] Can the umbrella shield against hazards you walk into, in addition to missiles? That would be preferable.
 - [x] Release broom over a hole, choose a different item, activate it. Should reject, but instead the new item activates and you're left able to walk on water.
-- [ ] Compile on refresh, don't wait for Reset.
+- [x] Compile on refresh, don't wait for Reset.
 - [ ] Auto-focus Reset button
+- [x] Reset during play: Song should restart, and shouldn't be any clock faults (I'm observing them sometimes). Also seems the instrument gets lost.
+- [ ] Song at reset was an easy fix. But I'm still seeing clock faults, and the bonfire animation seems to be running haywire.
 
 ### March
 

@@ -27,6 +27,13 @@ export class SongPlayer {
     }
   }
   
+  reset() {
+    this.releaseAll();
+    this.delay = 0;
+    this.lastUpdateTime = 0;
+    this.eventp = 0;
+  }
+  
   _nextEvent() {
   
     // End of song. Drop all notes, add a wee artificial delay, and return to the beginning.

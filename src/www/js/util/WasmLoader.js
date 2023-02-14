@@ -15,6 +15,8 @@ export class WasmLoader {
     this.memU16 = null;
     this.memU32 = null;
     this.memF32 = null;
+    this.serialWasm = null; // For reset, so we don't try to download twice.
+    this.currentUrl = null;
     
     // Owner should fill this in before loading.
     this.env = {
@@ -24,18 +26,26 @@ export class WasmLoader {
   
   load(url) {
     this.abort();
-    return this.window.fetch(url).then((rsp) => {
-      if (rsp.ok) return rsp.arrayBuffer();
-      if (rsp.status === 555) return rsp.json().then(e => { throw e; });
-      throw rsp;
-    }).then((serial) => this.window.WebAssembly.instantiate(serial, this.generateOptions()))
-    .then((result) => {
+    return this.acquireSerial(url).then((serial) => {
+      this.serialWasm = serial;
+      this.currentUrl = url;
+      return this.window.WebAssembly.instantiate(serial, this.generateOptions());
+    }).then((result) => {
       this.instance = result.instance;
       this.memU8 = new Uint8Array(this.instance.exports.memory.buffer);
       this.memU16 = new Uint16Array(this.instance.exports.memory.buffer);
       this.memU32 = new Uint32Array(this.instance.exports.memory.buffer);
       this.memF32 = new Float32Array(this.instance.exports.memory.buffer);
       return this.instance;
+    });
+  }
+  
+  acquireSerial(url) {
+    if (this.serialWasm && (url === this.currentUrl)) return Promise.resolve(this.serialWasm);
+    return this.window.fetch(url).then((rsp) => {
+      if (rsp.ok) return rsp.arrayBuffer();
+      if (rsp.status === 555) return rsp.json().then(e => { throw e; });
+      throw rsp;
     });
   }
   

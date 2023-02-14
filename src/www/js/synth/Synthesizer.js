@@ -49,6 +49,7 @@ export class Synthesizer {
     this.voices = [];
     this.channels = [];
     this.fqpids = [];
+    if (this.songPlayer) this.songPlayer.reset();
   }
   
   pause() {
