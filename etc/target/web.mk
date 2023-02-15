@@ -22,12 +22,10 @@ web_LDPOST:=
 
 web_HTPROD_DIR:=$(web_OUTDIR)/deploy
 web_HTPROD_HTML:=$(web_HTPROD_DIR)/index.html
-web_HTPROD_CSS:=$(web_HTPROD_DIR)/fullmoon.css
-web_HTPROD_ICON:=$(web_HTPROD_DIR)/favicon.ico
 web_HTPROD_JS:=$(web_HTPROD_DIR)/fullmoon.js
 web_HTPROD_DATA:=$(web_HTPROD_DIR)/fullmoon.data
 web_HTPROD_EXE:=$(web_HTPROD_DIR)/fullmoon.wasm
-web_HTPROD_FILES:=$(web_HTPROD_HTML) $(web_HTPROD_CSS) $(web_HTPROD_ICON) $(web_HTPROD_JS) $(web_HTPROD_DATA) $(web_HTPROD_EXE)
+web_HTPROD_FILES:=$(web_HTPROD_HTML) $(web_HTPROD_JS) $(web_HTPROD_DATA) $(web_HTPROD_EXE)
 web-all:$(web_HTPROD_FILES)
 
 web_EXE:=$(web_HTPROD_EXE)
@@ -36,11 +34,11 @@ web_EXE:=$(web_HTPROD_EXE)
 # It's a ton of work, all implemented in etc/make/per-target.mk
 $(eval $(call SINGLE_DATA_ARCHIVE,web,$(web_HTPROD_DATA)))
 
-# HTML, CSS, and ICON are 1:1 from source files.
-# TODO May eventually need build-time tweaking, minification, etc.
-$(web_HTPROD_HTML):src/www/index.html;$(call PRECMD,web) $(NODE) src/tool/indexhtml/main.js -o$@ $<
-$(web_HTPROD_CSS):src/www/fullmoon.css;$(call PRECMD,web) cp $< $@
-$(web_HTPROD_ICON):src/www/favicon.ico;$(call PRECMD,web) cp $< $@
+# HTML, CSS, and ICON pack into one HTML file for output.
+$(web_HTPROD_HTML):src/www/index.html src/www/favicon.ico src/www/fullmoon.css $(filter src/tool/indexhtml/%,$(SRCFILES)); \
+  $(call PRECMD,web) $(NODE) src/tool/indexhtml/main.js -o$@ $< \
+  --favicon=src/www/favicon.ico \
+  --css=src/www/fullmoon.css
 
 # We emit one Javascript file for all the Javascript inputs.
 # TODO Wiser to use some established tool for this. Is Webpack doable?
@@ -55,7 +53,7 @@ $(web_HTPROD_ARCHIVE):$(web_HTPROD_FILES);$(call PRECMD,web) tar -C$(web_OUTDIR)
 #-----------------------------------------------------------
 # Commands.
 
-# This is what you want during development. You can edit JS and data files, and just refresh the browser to pick up the changes.
+# This is what you want during development. You can edit C, JS and data files, and just refresh the browser to pick up the changes.
 web-run:$(web_EXE) $(web_HTPROD_DATA);$(NODE) src/tool/server/main.js \
   --htdocs=src/www --makeable=$(web_HTPROD_DATA) --makeable=$(web_EXE)
 

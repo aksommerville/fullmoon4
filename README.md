@@ -91,4 +91,3 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Move Map decoding out of DataService into a class of its own.
-- [ ] Can we pack CSS and favicon into index.html? Just to eliminate the initial HTTP calls.
