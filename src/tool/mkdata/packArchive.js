@@ -14,6 +14,7 @@ function parsePath(path) {
   // Multiple resources per input file, and the entire basename is "qualifier".
   if (type === "string") return { type, id: 0, qualifier: base, name: "" };
   if (type === "instrument") return { type, id: 0, qualifier: base, name: "" };
+  if (type === "sound") return { type, id: 0, qualifier: base, name: "" };
   
   // All other resources are 1:1 with input files.
   // Names are: ID[-NAME][.QUALIFIER][.FORMAT]
@@ -59,6 +60,7 @@ function encodeType(type) {
     case "sprite": return 0x05;
     case "string": return 0x06;
     case "instrument": return 0x07;
+    case "sound": return 0x08;
   }
   throw new Error(`Unknown resource type ${JSON.stringify(type)}`);
 }
@@ -75,7 +77,8 @@ function encodeQualifier(type, qualifier) {
         //TODO image qualifiers
         return 0;
       }
-    case "instrument": {
+    case "instrument":
+    case "sound": {
         if (!qualifier) return 0;
         if (qualifier === "WebAudio") return 1;
         const n = +qualifier;
@@ -106,12 +109,13 @@ function encode(files) {
     switch (file.type) {
       case "string": unpack = readStrings; break;
       case "instrument": unpack = readInstruments; break;
+      case "sound": unpack = readInstruments; break; // sic; sound and instrument are the same thing
     }
     if (unpack) {
       files.splice(i, 1);
-      unpack(file.serial, file.path, file.qualifier, (id, serial) => {
+      unpack(file.serial, file.path, file.qualifier, (id, serial, type) => {
         files.push({
-          type: file.type,
+          type: type || file.type,
           path: file.path,
           qualifier: file.qualifier,
           id, serial,

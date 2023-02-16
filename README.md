@@ -13,8 +13,10 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [ ] Synthesizer.
 - - [ ] Pitch wheel
-- - [ ] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
-- - [ ] Do we need percussion? How is that going to work?
+- - [x] Sound effects -- I'm thinking a new platform hook, just fmn_play_sound(id) or so
+- - [x] Do we need percussion? How is that going to work? ...channel 15
+- - [ ] Allow symbolic names eg FMN_SFX_BELL in place of id in instruments source
+- - [ ] Add interactive sound effects editing in fiddle. (still use text files, just make it fast to preview changes)
 
 ### March
 

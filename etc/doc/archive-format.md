@@ -43,6 +43,7 @@ Each Offset can be used to determine the length of the preceding entry.
 | 0x05 | Sprite     | |
 | 0x06 | String     | Language |
 | 0x07 | Instrument | Synthesizer, see instrument-format.md |
+| 0x08 | Sound      | Synthesizer |
 
 Within a (type, qualifier) pair, resources are in order starting from ID 1.
 TOC may contain zero-length resources if the set is discontiguous.
@@ -57,3 +58,5 @@ In general, resource files should be named `src/data/TYPE/ID[-NAME][.FORMAT]`.
 Some resources (string and instrument) pack multiple resources into one source file, they are `src/data/TYPE/QUALIFIER`.
 Image resources will also eventually get a qualifier but I haven't decided anything around that yet.
 
+Sound ID are currently restricted to 1..127.
+We could expand that in the future by using Program Change and Bank Select on the sound effects channel, but for now I think 127 will do.

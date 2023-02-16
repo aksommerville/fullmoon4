@@ -24,34 +24,9 @@ export class SoundEffects {
     this.lastPlayTimeBySfxid = [];
   }
   
-  play(sfxid) {
+  play(sfxid, level) {
     if (this._tooFrequent(sfxid)) return;
-    switch (sfxid) {
-      case this.constants.SFX_PITCHER_POUR:
-      case this.constants.SFX_BELL: {
-          this.synthesizer.event(0x0f, 0x90, 0x60, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x60, 0x40);
-        } break;
-      case this.constants.SFX_REJECT_DIG:
-      case this.constants.SFX_PITCHER_NO_PICKUP:
-      case this.constants.SFX_REJECT_ITEM: {
-          this.synthesizer.event(0x0f, 0x90, 0x30, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x30, 0x40);
-        } break;
-      case this.constants.SFX_DIG:
-      case this.constants.SFX_MATCH:
-      case this.constants.SFX_PITCHER_PICKUP:
-      case this.constants.SFX_CHEESE: {
-          this.synthesizer.event(0x0f, 0x90, 0x50, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x50, 0x40);
-        } break;
-      case this.constants.SFX_HURT: {
-          this.synthesizer.event(0x0f, 0x90, 0x36, 0x7f);
-          this.synthesizer.event(0x0f, 0x80, 0x36, 0x40);
-        } break;
-      case this.constants.SFX_INJURY_DEFLECTED: break;
-      default: console.log(`Unimplemented sound effect ${sfxid}`);
-    }
+    this.synthesizer.event(0x0f, 0x90, sfxid, level || 0x40);
   }
   
   /* Returns false and updates lastPlayTimeBySfxid if it's OK to play this sound effect.

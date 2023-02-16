@@ -96,9 +96,22 @@ export class Synthesizer {
     if (!song) return;
     this.songPlayer = new SongPlayer(this, song);
   }
-   
+  
+  /* As a general rule, we are a MIDI receiver.
+   * Some exceptions:
+   *  - Channel 0x0f is reserved for sound effects. a=MSB, b=LSB. Note Off not necessary.
+   *  - Songs and the game contend for the same 16 channels. No independent sub-busses.
+   */
   event(chid, opcode, a, b) {
     //console.log(`Synthesizer event chid=${chid} opcode=${opcode} a=${a} b=${b}`);
+    
+    // Channel 15 is special, it's for sound effects.
+    if (chid === 0x0f) {
+      if (opcode !== 0x90) return;
+      if (!this.context) return;
+      this.startSoundEffect(a, b);
+      return;
+    }
   
     // Some events, eg All Sound Off, do not target a channel.
     if ((chid < 0) || (chid >= this.constants.AUDIO_CHANNEL_COUNT)) {
@@ -190,6 +203,18 @@ export class Synthesizer {
   dropChannels() {
     for (const channel of this.channels) if (channel) channel.silence();
     this.channels = [];
+  }
+  
+  startSoundEffect(note, velocity) {
+    if (!this.context) return;
+    const sfx = this.dataService.getSound(note);
+    if (!sfx) return;
+    const node = new AudioBufferSourceNode(this.context, {
+      buffer: sfx.buffer,
+      channelCount: 1,
+    });
+    node.connect(this.context.destination);
+    node.start();
   }
 }
 

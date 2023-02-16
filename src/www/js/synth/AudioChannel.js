@@ -2,6 +2,7 @@
  * One logical channel of output.
  * This has nothing to do with mixing.
  * It's a matter of holding configuration, mostly.
+ * Note that channel 15 is special, no AudioChannel will ever be instantiated for it.
  */
  
 import { AudioVoice } from "./AudioVoice.js";

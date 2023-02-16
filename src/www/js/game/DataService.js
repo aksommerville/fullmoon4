@@ -33,6 +33,7 @@
 import { Constants } from "./Constants.js";
 import { Song } from "../synth/Song.js";
 import { Instrument } from "../synth/Instrument.js";
+import { Sound } from "../synth/Sound.js";
 
 const RESTYPE_IMAGE = 0x01;
 const RESTYPE_SONG = 0x02;
@@ -41,6 +42,7 @@ const RESTYPE_TILEPROPS = 0x04;
 const RESTYPE_SPRITE = 0x05;
 const RESTYPE_STRING = 0x06;
 const RESTYPE_INSTRUMENT = 0x07;
+const RESTYPE_SOUND = 0x08;
  
 export class DataService {
   static getDependencies() {
@@ -68,6 +70,7 @@ export class DataService {
   getSong(id) { return this.getResource(RESTYPE_SONG, id); }
   getInstrument(id) { return this.getResource(RESTYPE_INSTRUMENT, id); }
   getString(id) { return this.getResource(RESTYPE_STRING, id); } // TODO qualifier
+  getSound(id) { return this.getResource(RESTYPE_SOUND, id); }
   
   getResource(type, id, qualifier) {
     if (!(this.toc instanceof Array)) return null;
@@ -189,6 +192,7 @@ export class DataService {
       case RESTYPE_STRING: return this._decodeString(res.ser, res.id);
       case RESTYPE_INSTRUMENT: return this._decodeInstrument(res.ser, res.id);
       case RESTYPE_TILEPROPS: return this._decodeTileprops(res.ser, res.id);
+      case RESTYPE_SOUND: return this._decodeSound(res.ser, res.id);
     }
     throw new Error(`Unexpected resource type ${res.type}`);
   }
@@ -285,6 +289,10 @@ export class DataService {
   
   _decodeTileprops(src, id) {
     return src;
+  }
+  
+  _decodeSound(src, id) {
+    return new Sound(src, id, this.constants.AUDIO_FRAME_RATE);
   }
   
   /* Saved game.

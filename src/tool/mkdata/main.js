@@ -51,6 +51,7 @@ function guessOperationName(dst, src) {
     case "sprite": return "./processSprite.js";
     case "string": return "./copyVerbatim.js"; // will always be verbatim; processed at packing
     case "instrument": return "./copyVerbatim.js"; // ''
+    case "sound": return "./copyVerbatim.js"; // '', but there shouldn't be any, they live with instruments
   }
   return "./copyVerbatim.js";
 }
