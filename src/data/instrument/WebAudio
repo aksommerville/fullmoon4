@@ -50,25 +50,85 @@ begin 0x06
   modEnv ff 10 c0 30 ff 200 60
 end
 
-sound 4
-  len 2.600
-  
-  #wave 0 220 triangle
-  #noise 0
-  #wave 0 220 ffff c000 8000 0000 2000 0000 0800
-  #wave 0 ( 220 100 100 100 400 100 220 ) sine
-  #wave 0 ( 220 100 100 100 400 100 220 ) ffff 0000 8000 0000 2000 0000 0800
-  fm 0 ( 1200 50 800 150 500 * 400 ) 0.5 ( 0 200 4 1000 1 ) sine
-  env 0 ( 0 40 0x0fff * 0 )
-  #gain 0 2 0.5
-  
-  wave 1 ( 500 100 2000 100 50 ) square
-  env 1 ( 0 100 0xfff 100 0 )
-  delay 1 0.100 0.5 0.5 0.5 0.5 # dry wet store feedback
+# --------------------------------------------- begin sound effects ---------------------------
+
+sound BELL
+  len 0.600
+  fm 0 2000 6.3 ( 5 ) sine
+  env 0 ( 0 30 0xffff 50 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound REJECT_ITEM
+  len 0.300
+  fm 0 ( 100 40 400 * 50 ) 0.5 ( 0 30 2 50 0.5 * 3 ) sine
+  env 0 ( 0 60 0xffff * 0 )
+  norm 0 0.200
+end
+
+sound CHEESE
+  len 1.500
+  fm 0 ( 600 150 1400 ) 1 ( 0 100 5 50 1 ) sine
+  env 0 ( 0 80 0xffff 70 0 )
+  delay 0 0.160 0.5 0.5 0.5 0.5
+  norm 0 0.200
+end
+
+sound HURT
+  len 0.400
+  fm 0 ( 500 * 40 ) 0.5 ( 5 * 0 ) sine
+  env 0 ( 0 30 0xffff * 0 )
+  norm 0 0.200
+end
+
+sound PITCHER_NO_PICKUP # TODO
+  len 0.200
+  wave 0 300 sine
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  norm 0 0.200
+end
+
+sound PITCHER_PICKUP # TODO
+  len 0.200
+  wave 0 300 sine
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  norm 0 0.200
+end
+
+sound PITCHER_POUR # TODO
+  len 0.200
+  wave 0 300 sine
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  norm 0 0.200
+end
+
+sound MATCH
+  len 0.200
+  noise 0
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  fm 1 ( 40 40 50 40 40 40 50 40 40 40 50 ) 0.5 ( 2 ) sine
+  env 1 ( 0 50 0xffff * 0 )
   mix 0 1
-  
-  delay 0 0.200 0.5 0.5 0.5 0.5
-  env 0 ( 0xffff 2200 0xffff * 0 )
-  
-  norm 0 0.300
+  norm 0 0.200
+end
+
+sound DIG # TODO
+  len 0.200
+  wave 0 300 sine
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  norm 0 0.200
+end
+
+sound REJECT_DIG # TODO
+  len 0.200
+  wave 0 300 sine
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  norm 0 0.200
+end
+
+sound INJURY_DEFLECTED # TODO
+  len 0.200
+  wave 0 300 sine
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  norm 0 0.200
 end

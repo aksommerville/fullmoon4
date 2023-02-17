@@ -1,5 +1,6 @@
 const Encoder = require("../common/Encoder.js");
 const linewise = require("../common/linewise.js");
+const getSoundEffectIdByName = require("../common/getSoundEffectIdByName.js");
 
 /* WebAudio instrument builder.
  **************************************************************/
@@ -547,8 +548,13 @@ function newInstrument(qualifier, args, path, lineno) {
 
 function newSound(qualifier, args, path, lineno) {
   if (args.length !== 1) throw new Error(`${path}:${lineno}: Expected integer, found ${JSON.stringify(args.join(' '))}`);
-  const id = +args[0];
-  if (isNaN(id) || (id < 1) || (id > 127)) throw new Error(`${path}:${lineno}: Invalid sound ID`);
+  let id;
+  try {
+    id = getSoundEffectIdByName(args[0]);
+  } catch (e) {
+    e.message = `${path}:${lineno}: ${e.message}`;
+    throw e;
+  }
   switch (qualifier) {
   
     case "WebAudio": return new WebAudioSound(id, path, lineno);
