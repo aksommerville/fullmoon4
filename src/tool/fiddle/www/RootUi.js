@@ -52,6 +52,9 @@ export class RootUi {
       "on-click": () => this.onSilence(),
     });
     
+    const settingsTable = this.dom.spawn(this.element, "TABLE", ["settings"]);
+    this.spawnSettingsRow(settingsTable, "Instrument", () => this.onInstrumentChange());
+    
     this.dom.spawn(this.element, "H2", "Sound effects");
     const soundsTable = this.dom.spawn(this.element, "TABLE", ["sounds"]);
     const soundsPerRow = 8;
@@ -68,6 +71,18 @@ export class RootUi {
         });
       }
     }
+  }
+  
+  spawnSettingsRow(table, label, cbChanged) {
+    const tr = this.dom.spawn(table, "TR");
+    const tdKey = this.dom.spawn(table, "TD", label);
+    const tdValue = this.dom.spawn(table, "TD");
+    const input = this.dom.spawn(tdValue, "INPUT", {
+      type: "number",
+      name: label,
+      "on-change": cbChanged,
+    });
+    return input;
   }
   
   registerForUpdate() {
@@ -98,5 +113,10 @@ export class RootUi {
   
   playSound(sndid) {
     this.synthesizer.event(0x0f, 0x90, sndid, 0x40);
+  }
+  
+  onInstrumentChange() {
+    const pid = +this.element.querySelector("input[name='Instrument']").value;
+    this.synthesizer.overrideAllInstruments(pid);
   }
 }

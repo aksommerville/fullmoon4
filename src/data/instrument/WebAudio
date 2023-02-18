@@ -1,3 +1,41 @@
+# Instrument 1 should not be used in final songs.
+# Keeping it for temporary work. Will change often.
+
+begin 0x01
+  bpq 1
+  env 20 ff 20 80 200
+end
+
+#-------------------------------------- Final Instruments ----------------------------------
+
+begin 0x04 # synth bass
+  wave sine
+  env 30 80 40 40 200 .. 20 ff 25 80 300
+  modRate 0.5
+  modRange 1.5
+  modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
+end
+
+begin 0x08 # gentle organ (toil_and_trouble lead)
+  wave 0000 ffff 2888 4111 0000 0111
+  env 20 80 20 20 300 .. 10 ff 20 50 600
+  modRate 2
+  modRange 0.4
+  modEnv ff 20 00 40 c0 100 80
+  modRangeLfoRate 1.1
+  wheelRange 200
+end
+
+begin 0x07 # vague wind
+  bpq 80
+  bpq2 3
+  bpBoost 200
+  env 40 80 80 30 200 .. 10 ff 40 80 400
+  wheelRange 1200
+end
+
+#-------------------------------------- Unfinished Instruments -----------------------------
+
 begin 0x02 # Thick siney organ.
   wave sine
   env 20 40 20 10 200 .. 5 ff 25 40 500
@@ -11,35 +49,9 @@ begin 0x03 # in-your-face pipe organ
   env 70 60 40 40 500 .. 60 c0 40 a0 800
 end
 
-begin 0x04
-  wave sine
-  env 30 80 40 40 200 .. 20 ff 25 80 300
-  modRate 0.5
-  modRange 1.5
-  modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
-end
-
 begin 0x14 # plain tight beep
   wave triangle
   env 30 80 30 60 150 .. 20 ff 20 a0 150
-end
-
-begin 0x07
-  bpq 80
-  bpq2 3
-  bpBoost 200
-  env 40 80 80 30 200 .. 10 ff 40 80 400
-  wheelRange 1200
-end
-
-begin 0x01 # gentle organ
-  wave 0000 ffff 2888 4111 0000 0111
-  env 20 80 20 20 300 .. 10 ff 20 50 600
-  modRate 2
-  modRange 0.4
-  modEnv ff 20 00 40 c0 100 80
-  modRangeLfoRate 1.1
-  wheelRange 200
 end
 
 begin 0x05 # wicked space guitar
@@ -58,7 +70,7 @@ begin 0x06
   modEnv ff 10 c0 30 ff 200 60
 end
 
-# --------------------------------------------- begin sound effects ---------------------------
+#-------------------------------------- Final Sound Effects --------------------------------
 
 sound BELL
   len 0.600
@@ -88,6 +100,8 @@ sound HURT
   env 0 ( 0 30 0xffff * 0 )
   norm 0 0.200
 end
+
+#-------------------------------------- Unfinished Sound Effects ---------------------------
 
 sound PITCHER_NO_PICKUP # Same as REJECT_ITEM. Maybe eliminate this sound.
   len 0.300

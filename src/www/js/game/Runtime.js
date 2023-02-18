@@ -192,6 +192,8 @@ export class Runtime {
     if (map.songId) {
       const song = this.dataService.getSong(map.songId);
       this.synthesizer.playSong(song);
+      if (song) console.log(`playing song:${map.songId}`);
+      else console.log(`song:${map.songId} not found, playing silence`);
     }
     return 1;
   }

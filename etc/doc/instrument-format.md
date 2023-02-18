@@ -69,8 +69,8 @@ There are 3 distinct modes. (Actually 2; Oscillator is an edge case of FM).
 | Mode | Fields | Description |
 |------|--------|-------------|
 | Oscillator | wave | Your basic osc+env synthesizer. |
-| FM | wave, *modAbsoluteRate|modRate*, modRange, modEnv, modRangeLfoRate | FM. Wide range of expression, tends to sound synthy. |
-| Bandpass | *bpq*, bpq2, bpBoost | White noise through a bandpass filter for breathy ghost sounds. Think pan flute or shakuhachi. |
+| FM | wave, _modAbsoluteRate or modRate_, modRange, modEnv, modRangeLfoRate | FM. Wide range of expression, tends to sound synthy. |
+| Bandpass | _bpq_, bpq2, bpBoost | White noise through a bandpass filter for breathy ghost sounds. Think pan flute or shakuhachi. |
 
 All modes use `env` and `wheelRange`.
 
@@ -162,6 +162,10 @@ The modulator wave is always a sine, not sure if other shapes are useful.
 
 `bandpass BUFFER MIDFREQ RANGE`
 MIDFREQ and RANGE in Hz.
+
+WebAudio instruments and sounds use completely separate implementations.
+(The sounds are actually processed in pure software; WebAudio is not involved).
+So there will be discrepancies between features that you'd expect to work the same.
 
 ## WebAudio Sound Output Format
 

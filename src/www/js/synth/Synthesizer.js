@@ -23,6 +23,7 @@ export class Synthesizer {
     this.fqpids = []; // Parallel to (channels).
     this.voices = [];
     this.songPlayer = null;
+    this.overrideInstrumentPid = null; // only fiddle should use
   }
   
   /* Entry points from Runtime.
@@ -166,7 +167,10 @@ export class Synthesizer {
     if (chid < 0) return null;
     if (chid >= this.constants.AUDIO_CHANNEL_COUNT) return null;
     if (this.channels[chid]) return this.channels[chid];
-    const channel = this.instantiateChannel(chid, this.fqpids[chid] || 0);
+    let fqpid = this.fqpids[chid];
+    if (!fqpid) fqpid = 0;
+    if (this.overrideInstrumentPid) fqpid = this.overrideInstrumentPid;
+    const channel = this.instantiateChannel(chid, fqpid);
     this.channels[chid] = channel;
     return channel;
   }
@@ -181,6 +185,8 @@ export class Synthesizer {
       } else {
         console.log(`instrument:${pid} not found, substituting 1`);
       }
+    } else {
+      console.log(`using instrument:${pid} ${this.overrideInstrumentPid ? 'OVERRIDE' : ''}`);
     }
     const channel = new AudioChannel(this, chid, pid, res);
     return channel;
@@ -215,6 +221,14 @@ export class Synthesizer {
     });
     node.connect(this.context.destination);
     node.start();
+  }
+  
+  // For fiddle. If (pid) nonzero, every channel will use it and Program Change will be ignored.
+  overrideAllInstruments(pid) {
+    if (pid === this.overrideInstrumentPid) return;
+    this.overrideInstrumentPid = pid;
+    this.silenceAll();
+    this.dropChannels();
   }
 }
 

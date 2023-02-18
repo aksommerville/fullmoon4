@@ -11,17 +11,22 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [x] Synthesizer.
-- - [x] Pitch wheel
-- - [x] Allow symbolic names eg FMN_SFX_BELL in place of id in instruments source
-- - [x] Add interactive sound effects editing in fiddle. (still use text files, just make it fast to preview changes)
-- - [x] Bandpass for sounds
-- - [x] Noise+bandpass as an instrument?
+- [ ] Decide what to do with my ten remaining days :)
+- [ ] Music. We don't need every song yet, just like 3 or so.
+- - [x] Toil and Trouble
+- - [ ] Tangled Vine
+- - [ ] Seven Circles of a Witch's Soul
+- - [ ] Eye of Newt
+- - [ ] Blood for Silver
+- - The two best songs, Jaws of Wrath and Seventh Roots of Unity, we won't need until the final version :(
+- [ ] Make up a new item to take Corn's place.
+- [ ] Occasional "kthump" when changing songs.
+- [x] fiddle: override instrument
+- [ ] Percussion
 
 ### March
 
 - [ ] Spells.
-- [ ] Music. We don't need every song yet, just like 3 or so.
 - [ ] Refine items.
 - - [ ] Corn: Eliminate. Same thing as Seed.
 - - [ ] Seed: Sprite on actuation, and summon the bird or create a plant.
@@ -36,7 +41,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Violin: Chart UI
 - - [ ] Violin: Encode song
 - - [ ] Shovel: Needs a new face tile, show some effort.
-- [ ] Make up a new item to take Corn's place.
 
 ### April
 
