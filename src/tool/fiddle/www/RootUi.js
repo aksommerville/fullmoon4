@@ -25,6 +25,12 @@ export class RootUi {
       .then(() => console.log(`data loaded`))
       .catch((e) => console.error(`failed to load data`, e));
     this.midiInListener = this.midiInService.listen(e => this.synthesizer.event(...e));
+    
+    this.window.fetch("/api/soundNames").then((rsp) => {
+      if (!rsp.ok) throw rsp;
+      return rsp.json();
+    }).then((toc) => this.setSoundEffectButtonNames(toc))
+    .catch((e) => console.error(`Failed to fetch sound effect names`, e));
   }
   
   onRemoveFromDom() {
@@ -33,16 +39,35 @@ export class RootUi {
   
   buildUi() {
     this.element.innerHTML = "";
-    this.dom.spawn(this.element, "INPUT", {
+    
+    const buttonsRow = this.dom.spawn(this.element, "DIV", ["buttonsRow"]);
+    this.dom.spawn(buttonsRow, "INPUT", {
       type: "button",
       value: "Reset Synthesizer",
       "on-click": () => this.onReset(),
     });
-    this.dom.spawn(this.element, "INPUT", {
+    this.dom.spawn(buttonsRow, "INPUT", {
       type: "button",
       value: "Silence",
       "on-click": () => this.onSilence(),
     });
+    
+    this.dom.spawn(this.element, "H2", "Sound effects");
+    const soundsTable = this.dom.spawn(this.element, "TABLE", ["sounds"]);
+    const soundsPerRow = 8;
+    for (let rowStart=0; rowStart<128; rowStart+=soundsPerRow) {
+      const tr = this.dom.spawn(soundsTable, "TR");
+      for (let i=0; i<soundsPerRow; i++) {
+        const sndid = rowStart + i;
+        const td = this.dom.spawn(soundsTable, "TD");
+        const button = this.dom.spawn(td, "INPUT", {
+          type: "button",
+          value: sndid,
+          "on-click": () => this.playSound(sndid),
+          "data-sndid": sndid,
+        });
+      }
+    }
   }
   
   registerForUpdate() {
@@ -50,6 +75,13 @@ export class RootUi {
       this.update();
       this.registerForUpdate();
     });
+  }
+  
+  setSoundEffectButtonNames(toc) {
+    for (const [name, id] of toc) {
+      const button = this.element.querySelector(`input[data-sndid="${id}"]`);
+      if (button) button.value = name;
+    }
   }
   
   update() {
@@ -62,5 +94,9 @@ export class RootUi {
   
   onSilence() {
     this.synthesizer.silenceAll();
+  }
+  
+  playSound(sndid) {
+    this.synthesizer.event(0x0f, 0x90, sndid, 0x40);
   }
 }

@@ -81,24 +81,26 @@ sound HURT
   norm 0 0.200
 end
 
-sound PITCHER_NO_PICKUP # TODO
-  len 0.200
-  wave 0 300 sine
-  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+sound PITCHER_NO_PICKUP # Same as REJECT_ITEM. Maybe eliminate this sound.
+  len 0.300
+  fm 0 ( 100 40 400 * 50 ) 0.5 ( 0 30 2 50 0.5 * 3 ) sine
+  env 0 ( 0 60 0xffff * 0 )
   norm 0 0.200
 end
 
-sound PITCHER_PICKUP # TODO
-  len 0.200
-  wave 0 300 sine
-  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+sound PITCHER_PICKUP
+  len 0.400
+  fm 0 ( 400 * 500 ) 0.9 ( 5 * 1 ) sine
+  env 0 ( 0x2000 80 0xffff 80 0x2000 80 0xffff 80 0x2000 80 0xffff )
+  env 0 ( 0 50 0xffff * 0 )
   norm 0 0.200
 end
 
-sound PITCHER_POUR # TODO
-  len 0.200
-  wave 0 300 sine
-  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+sound PITCHER_POUR
+  len 0.800
+  fm 0 ( 600 400 500 ) 2 ( 1 100 5 300 3 ) sine
+  env 0 ( 0 80 0xffff 320 0 )
+  delay 0 0.010 0.5 0.5 0.5 0.9
   norm 0 0.200
 end
 
@@ -112,23 +114,26 @@ sound MATCH
   norm 0 0.200
 end
 
-sound DIG # TODO
-  len 0.200
-  wave 0 300 sine
-  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+sound DIG
+  len 0.300
+  fm 0 ( 300 * 400 ) 0.4 ( 2 * 3 ) sine
+  env 0 ( 0 30 0x8000 50 0x4000 * 0 )
+  fm 1 ( 200 * 600 ) 0.25 ( 1 80 3 ) sine
+  env 1 ( 0 50 0xffff 80 0x2000 * 0 )
+  mix 0 1
   norm 0 0.200
 end
 
-sound REJECT_DIG # TODO
-  len 0.200
-  wave 0 300 sine
-  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+sound REJECT_DIG
+  len 0.300
+  fm 0 ( 100 40 400 * 50 ) 0.5 ( 0 30 2 50 0.5 * 3 ) sine
+  env 0 ( 0 60 0xffff * 0 )
   norm 0 0.200
 end
 
-sound INJURY_DEFLECTED # TODO
+sound INJURY_DEFLECTED
   len 0.200
-  wave 0 300 sine
+  fm 0 ( 1200 50 100 * 1600 ) 2 ( 1 * 3 ) sine
   env 0 ( 0 30 0xffff 50 0x4000 * 0 )
   norm 0 0.200
 end

@@ -26,6 +26,11 @@ function requireToc() {
 
 function getSoundEffectIdByName(name) {
 
+  if (name === "$$toc$$") {
+    requireToc();
+    return toc;
+  }
+
   // If it's already a number, cool. Our sound effect names must not be numbers.
   let id = +name;
   if (isNaN(id)) {

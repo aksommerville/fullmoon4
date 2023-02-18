@@ -3,6 +3,7 @@
 const http = require("http");
 const fs = require("fs");
 const child_process = require("child_process");
+const getSoundEffectIdByName = require("../common/getSoundEffectIdByName.js");
 
 /* First, validate parameters.
  */
@@ -84,6 +85,25 @@ function freshenMakeableFile(path) {
   });
 }
 
+/* GET /api/soundNames
+ */
+ 
+function serveGetSoundNames(rsp) {
+  rsp.setHeader("Content-Type", "application/json");
+  rsp.end(JSON.stringify(getSoundEffectIdByName("$$toc$$")));
+}
+
+/* "/api/*" endpoints.
+ */
+ 
+function serveApi(req, rsp, path) {
+  const name = req.method + path;
+  switch (name) {
+    case "GET/api/soundNames": return serveGetSoundNames(rsp);
+  }
+  throw new Error("Unknown API call");
+}
+
 /* Generate JSON from a freshMakeableFile error, to send to client.
  */
  
@@ -123,6 +143,8 @@ const server = http.createServer((req, rsp) => {
     let path = req.url.split('?')[0];
     if (path === "/") path = "/index.html";
     if (!path.startsWith("/")) throw new Error("Invalid path");
+    
+    if (path.startsWith("/api/")) return serveApi(req, rsp, path);
     
     if (req.method === "GET") {
       for (const [requestPrefix, localPath] of htalias) {
