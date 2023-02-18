@@ -155,6 +155,9 @@ class WebAudioInstrument {
         case "modEnv": this._env(words.slice(1), 0x06); break;
         case "modRangeLfoRate": this._uscalar(words.slice(1), 0x07, 16, 8); break;
         case "wheelRange": this._uscalar(words.slice(1), 0x08, 16, 0); break;
+        case "bpq": this._uscalar(words.slice(1), 0x09, 8, 8); break;
+        case "bpq2": this._uscalar(words.slice(1), 0x0a, 8, 8); break;
+        case "bpBoost": this._uscalar(words.slice(1), 0x0b, 16, 0); break;
         
         default: throw new Error(`Unknown key ${JSON.stringify(words[0])} for WebAudio instrument`);
       }

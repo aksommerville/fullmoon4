@@ -14,10 +14,13 @@ export class Instrument {
     this.env = new Envelope();
     this.modAbsoluteRate = 0;
     this.modRate = 0;
-    this.modRange = 0;
+    this.modRange = 0; // nonzero to select FM mode.
     this.modEnv = null; // Envelope | null
     this.modRangeLfoRate = 0;
     this.wheelRange = 200;
+    this.bpq = 0; // nonzero to select Bandpass mode.
+    this.bpq2 = 0;
+    this.bpBoost = 1;
 
     if (!src) ;
     else if (src instanceof Uint8Array) this._decode(src);
@@ -51,6 +54,9 @@ export class Instrument {
         case 0x06: srcp += this._decodeEnv("modEnv", src, srcp); break;
         case 0x07: this.modRangeLfoRate = this._decodeScalar(src, srcp, 16, 8); srcp += 3; break;
         case 0x08: this.wheelRange = this._decodeScalar(src, srcp, 16, 0); srcp += 2; break;
+        case 0x09: this.bpq = this._decodeScalar(src, srcp, 8, 8); srcp += 2; break;
+        case 0x0a: this.bpq2 = this._decodeScalar(src, srcp, 8, 8); srcp += 2; break;
+        case 0x0b: this.bpBoost = this._decodeScalar(src, srcp, 16, 0); srcp += 2; break;
         default: throw new Error(`Unexpected instrument opcode ${opcode} at ${srcp-1}/${src.length} in pid ${this.pid}`);
       }
     }

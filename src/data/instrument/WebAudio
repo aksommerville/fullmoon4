@@ -24,6 +24,14 @@ begin 0x14 # plain tight beep
   env 30 80 30 60 150 .. 20 ff 20 a0 150
 end
 
+begin 0x07
+  bpq 80
+  bpq2 3
+  bpBoost 200
+  env 40 80 80 30 200 .. 10 ff 40 80 400
+  wheelRange 1200
+end
+
 begin 0x01 # gentle organ
   wave 0000 ffff 2888 4111 0000 0111
   env 20 80 20 20 300 .. 10 ff 20 50 600

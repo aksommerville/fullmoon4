@@ -60,6 +60,19 @@ ID for a Sound must currently be in 1..127. Maybe extend that later.
 | modEnv          | Velocity-Sensitive Envelope, for modulation range. |
 | modRangeLfoRate | Hz, extra LFO multiplied against modulator range. |
 | wheelRange      | Cents |
+| bpq             | Bandpass width ("Q" to a WebAudio BiquadFilterNode in "bandpass" mode, i think it's 0..100) |
+| bpq2            | Second-pass bandpass filter, makes it much cleaner. |
+| bpBoost         | Extra gain when `bpq` in play |
+
+There are 3 distinct modes. (Actually 2; Oscillator is an edge case of FM).
+
+| Mode | Fields | Description |
+|------|--------|-------------|
+| Oscillator | wave | Your basic osc+env synthesizer. |
+| FM | wave, *modAbsoluteRate|modRate*, modRange, modEnv, modRangeLfoRate | FM. Wide range of expression, tends to sound synthy. |
+| Bandpass | *bpq*, bpq2, bpBoost | White noise through a bandpass filter for breathy ghost sounds. Think pan flute or shakuhachi. |
+
+All modes use `env` and `wheelRange`.
 
 ## WebAudio Instrument Output Format
 
@@ -76,6 +89,9 @@ Leading byte describes a command.
 0x06 modEnv (see below)
 0x07 modRangeLfoRate (u16.8 hz)
 0x08 weelRange (u16 cents)
+0x09 bpq (u8.8 q)
+0x0a bpq2 (u8.8 q)
+0x0b bpBoost (u16 mlt)
 
 Envelopes:
   u8 flags

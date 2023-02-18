@@ -19,6 +19,7 @@ export class AudioVoice {
     this.modulatorReleaseTime = 0;
     this.modulatorReleaseLevel = 0;
     this.oscillators = [];
+    this.frequencyTargets = []; // for bending
     this.unbentFrequency = 0;
     this.unbentModFrequency = 0;
   }
@@ -29,12 +30,75 @@ export class AudioVoice {
     this.noteId = noteId;
     const frequency = 440 * 2 ** ((this.noteId - 0x45) / 12);
     const ctx = this.synthesizer.context;
-    this._initOscillator(ctx, instrument, frequency);
-    if (instrument.modRange) {
-      this._initFm(ctx, instrument, frequency, velocity);
+    
+    // The three modes (Bandpass, Oscillator, FM):
+    if (instrument.bpq) {
+      this._initBandpass(ctx, instrument, frequency);
+    } else {
+      this._initOscillator(ctx, instrument, frequency);
+      if (instrument.modRange) {
+        this._initFm(ctx, instrument, frequency, velocity);
+      }
     }
+    
     this._initEnvelope(ctx, instrument, velocity);
     if (this.channel.bend !== 1) this.bend(this.channel.bend);
+  }
+  
+  _initBandpass(ctx, ins, frequency) {
+    this.unbentFrequency = frequency;
+    const buffer = AudioVoice.getSharedNoiseBuffer(ctx.sampleRate);
+    const bufferLengthSeconds = buffer.length / ctx.sampleRate;
+    const noiseNode = new AudioBufferSourceNode(ctx, {
+      buffer,
+      channelCount: 1,
+      loop: true,
+      loopEnd: bufferLengthSeconds,
+      loopStart: 0,
+    });
+    noiseNode.start(0, Math.random() * bufferLengthSeconds);
+    this.oscillators.push(noiseNode); // It's not an "Oscillator" node, but it does have a stop(), and that must get called.
+    let filter = new BiquadFilterNode(ctx, {
+      type: "bandpass",
+      frequency,
+      Q: ins.bpq,
+    });
+    this.frequencyTargets.push(filter);
+    noiseNode.connect(filter);
+    if (ins.bpq2) {
+      const secondBreakfast = new BiquadFilterNode(ctx, {
+        type: "bandpass",
+        frequency,
+        Q: ins.bpq2,
+      });
+      this.frequencyTargets.push(secondBreakfast);
+      filter.connect(secondBreakfast);
+      filter = secondBreakfast;
+    }
+    if (ins.bpBoost !== 1) {
+      const bigGain = new GainNode(ctx, {
+        gain: ins.bpBoost,
+      });
+      filter.connect(bigGain);
+      this.oscillator = bigGain;
+    } else {
+      this.oscillator = filter;
+    }
+  }
+  
+  static getSharedNoiseBuffer(sampleRate) {
+    if (!AudioVoice.sharedNoiseBuffer) {
+      const pcm = new Float32Array(sampleRate); // length not really important, long enough to not repeat itself much.
+      for (let i=pcm.length; i-->0; ) pcm[i] = Math.random() * 2 - 1;
+      AudioVoice.sharedNoiseBuffer = new AudioBuffer({
+        length: pcm.length,
+        numberOfChannels: 1,
+        sampleRate,
+        channelCount: 1,
+      });
+      AudioVoice.sharedNoiseBuffer.copyToChannel(pcm, 0);
+    }
+    return AudioVoice.sharedNoiseBuffer;
   }
   
   _initOscillator(ctx, ins, frequency) {
@@ -53,6 +117,7 @@ export class AudioVoice {
     this.oscillator = new OscillatorNode(ctx, oscillatorOptions);
     this.oscillator.start();
     this.oscillators.push(this.oscillator);
+    this.frequencyTargets.push(this.oscillator);
   }
   
   _initFm(ctx, ins, frequency, velocity) {
@@ -143,8 +208,8 @@ export class AudioVoice {
   }
   
   bend(multiplier) {
-    if (this.oscillator) {
-      this.oscillator.frequency.value = this.unbentFrequency * multiplier;
+    for (const node of this.frequencyTargets) {
+      node.frequency.value = this.unbentFrequency * multiplier;
     }
     if (this.modOscillator) {
       this.modOscillator.frequency.value = this.unbentModFrequency * multiplier;
