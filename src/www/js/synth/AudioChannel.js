@@ -22,8 +22,8 @@ export class AudioChannel {
     this.pid = pid;
     this.instrument = instrument || new Instrument(null, pid);
     this.volume = UNIVERSAL_CHANNEL_VOLUME_LIMIT * 0.5;
-    
-    //TODO pitch wheel
+    this.wheel = 0; // from bus, -8192..8191
+    this.bend = 1; // multiplier, derived from (wheel) and (instrument.wheelRange)
   }
   
   /* Usually not meaningful.
@@ -57,7 +57,14 @@ export class AudioChannel {
   }
   
   wheelEvent(vi) {
-    //TODO important that we apply this to both new and existing voices.
-    console.log(`TODO AudioChannel.wheelEvent ${vi}`);
+    vi -= 8192;
+    if (vi === this.wheel) return;
+    this.wheel = vi;
+    if (!this.instrument.wheelRange) return;
+    this.bend = Math.pow(2, (this.wheel * this.instrument.wheelRange ) / (8192 * 1200));
+    for (const voice of this.synthesizer.voices) {
+      if (voice.channel !== this) continue;
+      voice.bend(this.bend);
+    }
   }
 }

@@ -14,10 +14,13 @@ export class AudioVoice {
     this.oscillator = null;
     this.node = null;
     this.modulator = null;
+    this.modOscillator = null;
     this.releaseTime = 0;
     this.modulatorReleaseTime = 0;
     this.modulatorReleaseLevel = 0;
     this.oscillators = [];
+    this.unbentFrequency = 0;
+    this.unbentModFrequency = 0;
   }
   
   setup(instrument, noteId, velocity) {
@@ -31,9 +34,11 @@ export class AudioVoice {
       this._initFm(ctx, instrument, frequency, velocity);
     }
     this._initEnvelope(ctx, instrument, velocity);
+    if (this.channel.bend !== 1) this.bend(this.channel.bend);
   }
   
   _initOscillator(ctx, ins, frequency) {
+    this.unbentFrequency = frequency;
     const oscillatorOptions = { frequency };
     if (typeof(ins.wave) === "string") {
       oscillatorOptions.type = ins.wave;
@@ -51,8 +56,9 @@ export class AudioVoice {
   }
   
   _initFm(ctx, ins, frequency, velocity) {
+    this.unbentModFrequency = ins.modAbsoluteRate || (frequency * ins.modRate);
     const modOscillator = new OscillatorNode(ctx, {
-      frequency: ins.modAbsoluteRate || (frequency * ins.modRate),
+      frequency: this.unbentModFrequency,
       type: "sine", // TODO Do we want non-sine modulation oscillators?
     });
     const modGain = new GainNode(ctx);
@@ -82,6 +88,7 @@ export class AudioVoice {
     modOscillator.connect(modGain);
     modOscillator.start();
     this.oscillators.push(modOscillator);
+    this.modOscillator = modOscillator;
     modGain.connect(this.oscillator.frequency);
     this.modulator = modGain;
   }
@@ -133,5 +140,15 @@ export class AudioVoice {
       this.modulator.gain.setValueAtTime(this.modulator.gain.value, this.synthesizer.context.currentTime);
       this.modulator.gain.linearRampToValueAtTime(this.modulatorReleaseLevel, this.synthesizer.context.currentTime + this.modulatorReleaseTime);
     }
+  }
+  
+  bend(multiplier) {
+    if (this.oscillator) {
+      this.oscillator.frequency.value = this.unbentFrequency * multiplier;
+    }
+    if (this.modOscillator) {
+      this.modOscillator.frequency.value = this.unbentModFrequency * multiplier;
+    }
+    // modLfoOscillator is not impacted; that's pegged to real time.
   }
 }
