@@ -144,6 +144,9 @@ The modulator wave is always a sine, not sure if other shapes are useful.
 
 `delay BUFFER DURATION DRY WET STORE FEEDBACK`
 
+`bandpass BUFFER MIDFREQ RANGE`
+MIDFREQ and RANGE in Hz.
+
 ## WebAudio Sound Output Format
 
 Starts with a fixed-size header:
@@ -170,6 +173,7 @@ Followed by commands knowable by the first byte:
 0x0c MIX (u8 dst,u8 src)
 0x0d norm (u8 buf,u0.8 peak)
 0x0e delay (u8 buf,u16 durationMs,u0.8 dry,u0.8 wet,u0.8 store,u0.8 feedback)
+0x0f bandpass (u8 buf,u16 midfreq,u16 range)
 ```
 
 ENV: u16 level, u8 count, then count * (u16 timems,u16 level)

@@ -85,6 +85,7 @@ export class Sound {
         case 0x0c: srcp += this._cmd_mix(bufferId, src, srcp); break;
         case 0x0d: srcp += this._cmd_norm(bufferId, src, srcp); break;
         case 0x0e: srcp += this._cmd_delay(bufferId, src, srcp); break;
+        case 0x0f: srcp += this._cmd_bandpass(bufferId, src, srcp); break;
         
         default: throw new Error(`Unknown opcode ${opcode}`);
       }
@@ -458,6 +459,48 @@ export class Sound {
     }
     
     return 6;
+  }
+  
+  _cmd_bandpass(bufferId, src, srcp) {
+    const v = this.buffers[bufferId];
+    const midfreqHz = (src[srcp] << 8) | src[srcp + 1];
+    const rangeHz = (src[srcp + 2] << 8) | src[srcp + 3];
+    
+    /* 3-point IIR bandpass.
+     * I have only a vague idea of how this works, and the formula is taken entirely on faith.
+     * Reference:
+     *   Steven W Smith: The Scientist and Engineer's Guide to Digital Signal Processing
+     *   Ch 19, p 326, Equation 19-7
+     */
+    const midfreqNorm = (midfreqHz / this.rate);
+    const rangeNorm = (rangeHz / this.rate);
+    const r = 1 - 3 * rangeNorm;
+    const cosfreq = Math.cos(Math.PI * 2 * midfreqNorm);
+    const k = (1 - 2 * r * cosfreq + r * r) / (2 - 2 * cosfreq);
+    const dryCoefs = [1 - k, 2 * (k - r) * cosfreq, r * r - k];
+    const wetCoefs = [2 * r * cosfreq, -r * r];
+    const dry = [0, 0, 0];
+    const wet = [0, 0];
+    
+    let lo=0, hi=0;
+    for (let i=0; i<v.length; i++) {
+      dry[2] = dry[1];
+      dry[1] = dry[0];
+      dry[0] = v[i];
+      const ws = 
+        dry[0] * dryCoefs[0] +
+        dry[1] * dryCoefs[1] +
+        dry[2] * dryCoefs[2] +
+        wet[0] * wetCoefs[0] +
+        wet[1] * wetCoefs[1];
+      wet[1] = wet[0];
+      wet[0] = ws;
+      v[i] = ws;
+      
+      if (ws < lo) lo=ws; else if (ws>hi) hi=ws;
+    }
+    
+    return 4;
   }
   
   // Populates (points) with [[time(frames), v(0..1 or 0..0xffff)]...], and returns src length consumed.

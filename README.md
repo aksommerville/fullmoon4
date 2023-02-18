@@ -15,7 +15,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Pitch wheel
 - - [x] Allow symbolic names eg FMN_SFX_BELL in place of id in instruments source
 - - [x] Add interactive sound effects editing in fiddle. (still use text files, just make it fast to preview changes)
-- - [ ] Bandpass for sounds
+- - [x] Bandpass for sounds
 - - [ ] Noise+bandpass as an instrument?
 
 ### March

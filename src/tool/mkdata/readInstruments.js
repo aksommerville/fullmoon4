@@ -456,6 +456,18 @@ class WebAudioSound {
     this.encoder.u8(Math.max(0, Math.min(0xff, ~~(feedback * 256))));
   }
   
+  _cmd_bandpass(bufferId, args) {
+    // bandpass BUFFER MIDFREQ RANGE
+    // 0x0f bandpass (u8 buf,u16 midfreq,u16 range)
+    if (args.length !== 2) throw new Error(`"bandpass" takes two arguments: MIDFREQ RANGE, both in Hz`);
+    const midfreq = +args[0];
+    const range = +args[1];
+    this.encoder.u8(0x0f);
+    this.encoder.u8(bufferId);
+    this.encoder.u16be(Math.max(0, Math.min(0xffff, ~~midfreq)));
+    this.encoder.u16be(Math.max(0, Math.min(0xffff, ~~range)));
+  }
+  
   // True if (kw) is read/write and is not sensible to operate on a new buffer.
   // There are commands eg "mix" that might be used just to copy a buffer, when you know the output is fresh.
   // So only ones where we know it's an error to use on a fresh buffer.
@@ -509,6 +521,7 @@ class WebAudioSound {
           case "mix": this._cmd_mix(bufferId, args); break;
           case "norm": this._cmd_norm(bufferId, args); break;
           case "delay": this._cmd_delay(bufferId, args); break;
+          case "bandpass": this._cmd_bandpass(bufferId, args); break;
 
           default: throw new Error(`Unknown WebAudio sound command ${JSON.stringify(kw)}`);
         }

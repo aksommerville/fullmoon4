@@ -137,3 +137,12 @@ sound INJURY_DEFLECTED
   env 0 ( 0 30 0xffff 50 0x4000 * 0 )
   norm 0 0.200
 end
+
+sound 12
+  len 0.500
+  noise 0
+  bandpass 0 600 180
+  bandpass 0 600 190
+  env 0 ( 0 20 0xffff 100 0x1000 * 0 )
+  norm 0 0.500
+end
