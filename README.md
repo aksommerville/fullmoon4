@@ -11,19 +11,24 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [ ] Decide what to do with my ten remaining days :)
 - [ ] Music. We don't need every song yet, just like 3 or so.
 - - [x] Toil and Trouble
 - - [x] Tangled Vine
-- - [ ] Seven Circles of a Witch's Soul
+- - [x] Seven Circles of a Witch's Soul
+- - - [ ] Do something more interesting with the bassline, geez this is boring.
 - - [x] Eye of Newt
+- - - [ ] Cleaner lead, and less distorted during the twirly half.
+- - - [ ] In the chromatic circling, use an instrument we can reduce the attack for all but first note.
 - - [ ] Blood for Silver
 - - The two best songs, Jaws of Wrath and Seventh Roots of Unity, we won't need until the final version :(
 - [ ] Make up a new item to take Corn's place.
-- [ ] Occasional "kthump" when changing songs.
+- [ ] Check song restarting. Is it releasing or aborting voices? (should release, not abort) I get some poppage now and then.
+- - Eye of Newt does this every time.
 - [x] fiddle: override instrument
 - [x] Percussion
+- [ ] Check velocity=>gain for sound effects. I added it but not sure I'm hearing it.
 - [ ] Kill hero's velocity when entering a menu.
+- [ ] Return to map entry point if injured while another injury in progress. No more ping-ponging between hazards.
 
 ### March
 
