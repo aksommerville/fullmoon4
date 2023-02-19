@@ -54,6 +54,14 @@ begin 0x09 # versatile lead
   wheelRange 600
 end
 
+begin 0x0a
+  wave square
+  modRate 1
+  modRange 5
+  modRangeLfoRate 1
+  env 20 40 40 10 100 .. 15 ff 40 40 300
+end
+
 #-------------------------------------- Unfinished Instruments -----------------------------
 
 begin 0x02 # Thick siney organ.

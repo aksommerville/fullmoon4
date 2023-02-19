@@ -16,7 +16,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Toil and Trouble
 - - [x] Tangled Vine
 - - [ ] Seven Circles of a Witch's Soul
-- - [ ] Eye of Newt
+- - [x] Eye of Newt
 - - [ ] Blood for Silver
 - - The two best songs, Jaws of Wrath and Seventh Roots of Unity, we won't need until the final version :(
 - [ ] Make up a new item to take Corn's place.
