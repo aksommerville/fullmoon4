@@ -22,13 +22,25 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Blood for Silver
 - - The two best songs, Jaws of Wrath and Seventh Roots of Unity, we won't need until the final version :(
 - [ ] Make up a new item to take Corn's place.
-- [ ] Check song restarting. Is it releasing or aborting voices? (should release, not abort) I get some poppage now and then.
+- [x] Check song restarting. Is it releasing or aborting voices? (should release, not abort) I get some poppage now and then.
 - - Eye of Newt does this every time.
+- - Due to Time-Zero event sequencing. Fixed in Midevil.
 - [x] fiddle: override instrument
 - [x] Percussion
-- [ ] Check velocity=>gain for sound effects. I added it but not sure I'm hearing it.
-- [ ] Kill hero's velocity when entering a menu.
+- [x] Check velocity=>gain for sound effects. I added it but not sure I'm hearing it.
+- [x] Is Channel Volume working?
+- - It is, we just need to make sure that Program Change comes first. See `make verify`
+- [x] Kill hero's velocity when entering a menu.
 - [ ] Return to map entry point if injured while another injury in progress. No more ping-ponging between hazards.
+- [ ] `make verify` or something, to auto-validate resources:
+- - [ ] Song must start with a Program Change for each channel before any notes.
+- - [ ] Song events should be tracked by channel.
+- - [ ] Map neighbors, song, tilesheet.
+- - [ ] Sprite controller, tilesheet.
+- - [ ] No unused resources.
+- - [ ] Image dimensions and colorspace.
+- [ ] Able to skip thru left wall in the Seven-Circles zone, with cheese+broom. Limit velocity.
+- - [ ] Devise some kind of assurance that final velocity is never more than 0.5 m/frame, whatever a frame is.
 
 ### March
 

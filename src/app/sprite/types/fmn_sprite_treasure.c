@@ -1,4 +1,5 @@
 #include "app/sprite/fmn_sprite.h"
+#include "app/hero/fmn_hero.h"
 
 #define itemid sprite->argv[0]
 
@@ -27,6 +28,7 @@ static void _treasure_hero_collision(struct fmn_sprite *sprite,struct fmn_sprite
     fmn_global.itemv[itemid]=1;
     fmn_global.selected_item=itemid;
     fmn_begin_menu(FMN_MENU_TREASURE,itemid,cb_modal);
+    fmn_hero_kill_velocity();
   } else {
     // Something we already have, so do the passive "show_off_item" instead of the modal.
     // Do not auto-select it.

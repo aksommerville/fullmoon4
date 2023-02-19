@@ -198,8 +198,6 @@ export class AudioVoice {
       // Important to stake the current time, otherwise the ramp goes from the start of sustain, way in the past.
       this.node.gain.setValueAtTime(this.node.gain.value, this.synthesizer.context.currentTime);
       this.node.gain.linearRampToValueAtTime(0, this.synthesizer.context.currentTime + this.releaseTime);
-      //this.modulatorGain.gain.setValueAtTime(this.modulatorGain.gain.value, this.synthesizer.context.currentTime);
-      //this.modulatorGain.gain.linearRampToValueAtTime(0, this.synthesizer.context.currentTime + this.releaseTime);
     }
     if (this.modulator && this.modulatorReleaseTime) {
       this.modulator.gain.setValueAtTime(this.modulator.gain.value, this.synthesizer.context.currentTime);

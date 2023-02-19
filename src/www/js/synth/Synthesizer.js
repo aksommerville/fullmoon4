@@ -186,7 +186,7 @@ export class Synthesizer {
         console.log(`instrument:${pid} not found, substituting 1`);
       }
     } else {
-      console.log(`using instrument:${pid} ${this.overrideInstrumentPid ? 'OVERRIDE' : ''}`);
+      //console.log(`using instrument:${pid} ${this.overrideInstrumentPid ? 'OVERRIDE' : ''}`);
     }
     const channel = new AudioChannel(this, chid, pid, res);
     return channel;

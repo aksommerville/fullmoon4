@@ -60,6 +60,7 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
   } else if (bit==FMN_INPUT_MENU) {
     if (value) {
       fmn_begin_menu(FMN_MENU_PAUSE);
+      fmn_hero_kill_velocity();
     }
   }
   
