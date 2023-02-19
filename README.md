@@ -34,7 +34,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Image dimensions and colorspace.
 - [x] Able to skip thru left wall in the Seven-Circles zone, with cheese+broom. Limit velocity.
 - - [x] Devise some kind of assurance that final velocity is never more than 0.5 m/frame, whatever a frame is.
-- [ ] Resume broom over hole. Rejects due to "action in progress". Can we let it thru?
+- [x] Resume broom over hole. Rejects due to "action in progress". Can we let it thru?
 
 ### March
 

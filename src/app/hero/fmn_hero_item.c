@@ -209,6 +209,12 @@ static void fmn_hero_broom_update(float elapsed) {
   }
 }
 
+// Broom is unusual in that you can end it, it doesn't actually end, and then restart it.
+// No feedback in this case, because to the user it seems that nothing changes.
+static void fmn_hero_broom_restart() {
+  fmn_hero.landing_pending=0;
+}
+
 /* Wand.
  */
  
@@ -350,6 +356,9 @@ void fmn_hero_item_begin() {
   // If some item is already active (selected or otherwise), reject.
   // This is super important: We might have the Broom 'active' after the key released, because she's in a broom-only position.
   if (fmn_global.active_item) {
+    if (fmn_global.active_item==fmn_global.selected_item) switch (fmn_global.active_item) {
+      case FMN_ITEM_BROOM: fmn_hero_broom_restart(); return;
+    }
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }

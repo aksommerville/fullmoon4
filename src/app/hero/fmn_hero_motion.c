@@ -217,6 +217,8 @@ void fmn_hero_return_to_map_entry() {
   fmn_hero.vely=hero->vely=0.0f;
   hero->x=fmn_hero.enterx;
   hero->y=fmn_hero.entery;
+  int8_t dumx,dumy;
+  fmn_hero_get_quantized_position(&dumx,&dumy);
   fmn_hero_walk_end();
 }
 
