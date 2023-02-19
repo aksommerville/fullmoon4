@@ -11,7 +11,9 @@
 #define FMN_HERO_INJURY_VELOCITY  16.000f
 #define FMN_HERO_INJURY_MIN       10.000f
 #define FMN_HERO_INJURY_MAX       18.000f
-#define FMN_HERO_INJURY_TIME       0.500f
+#define FMN_HERO_INJURY_TIME        0.500f
+#define FMN_HERO_INJURY_BLANK_TIME  0.040f /* Suppress double-injury for two frames or so (because collision detection isn't perfect) */
+#define FMN_HERO_DOUBLE_INJURY_TIME 0.300f /* A second injury within this time forces restart. */
 #define FMN_HERO_INJURY_SUPPRESSION_BOUNCEBACK 6.000f
 #define FMN_HERO_CHEESE_TIME       4.000f
 #define FMN_HERO_CHEESE_ADJUST     2.000f
@@ -26,6 +28,8 @@ extern struct fmn_hero {
   float walkspeed_target;
   float walkaccel; // always positive
   int8_t cellx,celly; // quantized position
+  float enterx,entery; // position at map entry
+  uint8_t recent_reset; // signal to fmn_hero_update that we have just reset
   
   float walkforce;
   float velx,vely; // to cache across sprite rebuilds
@@ -50,5 +54,7 @@ void fmn_hero_item_end();
 
 uint8_t fmn_hero_facedir_agrees();
 void fmn_hero_reset_facedir();
+
+void fmn_hero_return_to_map_entry();
 
 #endif

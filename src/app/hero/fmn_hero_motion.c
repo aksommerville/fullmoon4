@@ -203,6 +203,23 @@ static uint8_t fmn_hero_suppress_injury_if_applicable(
   return 0;
 }
 
+/* Return to map entry.
+ * Right now this will only happen due to multiple injuries.
+ */
+ 
+void fmn_hero_return_to_map_entry() {
+  struct fmn_sprite *hero=fmn_hero.sprite;
+  fmn_sprite_generate_soulballs(hero->x,hero->y,7);
+  fmn_global.injury_time=FMN_HERO_INJURY_TIME;
+  fmn_hero_item_end();
+  //fmn_sound_effect TODO
+  fmn_hero.velx=hero->velx=0.0f;
+  fmn_hero.vely=hero->vely=0.0f;
+  hero->x=fmn_hero.enterx;
+  hero->y=fmn_hero.entery;
+  fmn_hero_walk_end();
+}
+
 /* Begin injury.
  */
  
@@ -212,6 +229,16 @@ void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   if (fmn_hero_suppress_injury_if_applicable(hero,x,y,assailant)) {
     //TODO feedback to assailant, eg missiles should bounce off umbrella
     return;
+  }
+  
+  if (fmn_global.injury_time>0.0f) {
+    float time_since=FMN_HERO_INJURY_TIME-fmn_global.injury_time;
+    if (time_since<FMN_HERO_INJURY_BLANK_TIME) {
+      return;
+    } else if (time_since<FMN_HERO_DOUBLE_INJURY_TIME) {
+      fmn_hero_return_to_map_entry();
+      return;
+    }
   }
   
   // Getting injured implicitly ends any action in flight (broom, in particular).

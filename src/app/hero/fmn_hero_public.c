@@ -37,15 +37,20 @@ int fmn_hero_reset() {
     fmn_hero.sprite->vely=fmn_hero.vely;
     fmn_hero.sprite->invmass=0x80;
     
-    //XXX TEMP get some items initially.
+    /*XXX TEMP get some items initially.
     fmn_global.itemv[FMN_ITEM_BROOM]=1;
     fmn_global.itemv[FMN_ITEM_CHEESE]=1;
     fmn_global.itemqv[FMN_ITEM_CHEESE]=20;
     fmn_global.selected_item=FMN_ITEM_BROOM;
+    /**/
   }
   
   fmn_hero.cellx=-128;
   fmn_hero.celly=-128;
+  
+  fmn_hero.enterx=fmn_hero.sprite->x;
+  fmn_hero.entery=fmn_hero.sprite->y;
+  fmn_hero.recent_reset=1;
   
   if (!fmn_global.facedir) fmn_global.facedir=FMN_DIR_S;
   
@@ -77,6 +82,13 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
  */
  
 void fmn_hero_update(float elapsed) {
+
+  if (fmn_hero.recent_reset) {
+    fmn_hero.enterx=fmn_hero.sprite->x;
+    fmn_hero.entery=fmn_hero.sprite->y;
+    fmn_hero.recent_reset=0;
+  }
+
   fmn_hero_motion_update(elapsed);
   fmn_hero_item_update(elapsed);
   

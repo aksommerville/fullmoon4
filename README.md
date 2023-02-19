@@ -24,7 +24,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - - [ ] In the chromatic circling, use an instrument we can reduce the attack for all but first note.
 - - [ ] Blood for Silver
 - [ ] Make up a new item to take Corn's place.
-- [ ] Return to map entry point if injured while another injury in progress. No more ping-ponging between hazards.
+- [x] Return to map entry point if injured while another injury in progress. No more ping-ponging between hazards.
 - [ ] `make verify` or something, to auto-validate resources:
 - - [ ] Song must start with a Program Change for each channel before any notes.
 - - [ ] Song events should be tracked by channel.

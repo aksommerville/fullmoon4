@@ -352,3 +352,20 @@ void fmn_sprites_sort_partial() {
   }
   fmn_sprites_sortdir=-fmn_sprites_sortdir;
 }
+
+/* Generate soulballs.
+ */
+ 
+void fmn_sprite_generate_soulballs(float x,float y,uint8_t c) {
+  uint8_t cmdv[]={
+    0x20,2, // imageid
+    0x21,0x0a, // tileid
+    0x26,0xf0, // layer
+    0x42,FMN_SPRCTL_soulball>>8,FMN_SPRCTL_soulball,
+  };
+  uint8_t argv[]={0,c};
+  while (c-->0) {
+    argv[0]=c;
+    struct fmn_sprite *sprite=fmn_sprite_spawn(x,y,0,cmdv,sizeof(cmdv),argv,sizeof(argv));
+  }
+}

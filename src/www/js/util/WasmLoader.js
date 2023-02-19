@@ -21,6 +21,8 @@ export class WasmLoader {
     // Owner should fill this in before loading.
     this.env = {
       rand: () => Math.floor(Math.random() * 0x10000),
+      sinf: x => Math.sin(x),
+      cosf: x => Math.cos(x),
     };
   }
   
