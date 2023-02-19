@@ -2,8 +2,11 @@
 # Keeping it for temporary work. Will change often.
 
 begin 0x01
-  bpq 1
-  env 20 ff 20 80 200
+  wave ffff 1000 6000 0080 1000
+  modRate 1
+  modRange 1
+  env 20 50 30 10 100 .. 10 ff 20 40 300
+  wheelRange 600
 end
 
 #-------------------------------------- Final Instruments ----------------------------------
@@ -34,6 +37,23 @@ begin 0x07 # vague wind
   wheelRange 1200
 end
 
+begin 0x05 # fancy pluck
+  wave ffff 0000 8000 0000 1000
+  modRate 2
+  modRange 3
+  modEnv ff 40 00 20 10 0 10 .. ff 10 00 30 80 0 80
+  modRangeLfoRate 1
+  env 20 40 20 08 100 .. 10 ff 30 20 400
+end
+
+begin 0x09 # versatile lead
+  wave ffff 1000 6000 0080 1000
+  modRate 1
+  modRange 1
+  env 20 50 30 10 100 .. 10 ff 20 40 300
+  wheelRange 600
+end
+
 #-------------------------------------- Unfinished Instruments -----------------------------
 
 begin 0x02 # Thick siney organ.
@@ -54,7 +74,7 @@ begin 0x14 # plain tight beep
   env 30 80 30 60 150 .. 20 ff 20 a0 150
 end
 
-begin 0x05 # wicked space guitar
+begin 0x25 # wicked space guitar
   wave square
   env 10 40 20 40 200 .. 5 ff 20 80 300
   modRate 0.5
@@ -99,6 +119,183 @@ sound HURT
   fm 0 ( 500 * 40 ) 0.5 ( 5 * 0 ) sine
   env 0 ( 0 30 0xffff * 0 )
   norm 0 0.200
+end
+
+#-------------------------------------- GM Drums (Sound Effects) ---------------------------
+
+sound KICK_1
+  len 0.100
+  fm 0 ( 20 15 40 * 20 ) 0.5 ( 1 10 3 40 1 ) sine
+  env 0 ( 0 15 0xffff 30 0x2000 * 0 )
+  norm 0 0.400
+end
+
+sound KICK_2
+  len 0.200
+  fm 0 ( 300 15 50 * 20 ) 0.5 ( 2 10 3 40 2 ) sine
+  env 0 ( 0 10 0xffff 50 0x2000 * 0 )
+  norm 0 0.300
+end
+
+sound SIDE_STICK
+  len 0.100
+  noise 0
+  bandpass 0 1000 100
+  env 0 ( 0 15 0xffff 15 0x1000 * 0 )
+  norm 0 0.200
+end
+
+sound SNARE_1
+  len 0.250
+  noise 0
+  bandpass 0 800 150
+  env 0 ( 0 15 0xffff 40 0x2000 100 0x2000 * 0 )
+  norm 0 0.300
+end
+
+sound HAND_CLAP # More like a 1980s arcade laser gun.
+  len 0.200
+  fm 0 ( 500 10 1000 10 400 * 150 ) 3.77 ( 1 30 5 * 2 ) triangle
+  env 0 ( 0 10 0xffff 30 0x3000 * 0 )
+  norm 0 0.200
+end
+
+sound SNARE_2
+  len 0.250
+  noise 0
+  bandpass 0 900 100
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  delay 0 0.050 0.8 0.3 0.7 0.5
+  norm 0 0.300
+end
+
+sound TOM_1
+  len 0.100
+  fm 0 ( 800 10 50 ) 0.5 ( 2 ) sine
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound TOM_2
+  len 0.100
+  fm 0 ( 800 10 70 ) 0.5 ( 2 ) sine
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound TOM_3
+  len 0.100
+  fm 0 ( 800 10 100 ) 0.5 ( 2 ) sine
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound TOM_4
+  len 0.100
+  fm 0 ( 800 10 150 ) 0.7 ( 2 ) sine
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound TOM_5
+  len 0.100
+  fm 0 ( 800 10 250 ) 0.7 ( 2 ) sine
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound TOM_6
+  len 0.100
+  fm 0 ( 800 10 350 ) 0.7 ( 2 ) sine
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound CLOSED_HAT
+  len 0.100
+  fm 0 ( 1800 ) 0.9 ( 13 * 0 ) 8000 1000 c000 0400 2000
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.070
+end
+
+sound PEDAL_HAT
+  len 0.200
+  fm 0 ( 1800 ) 0.9 ( 13 * 0 ) 8000 1000 c000 0400 2000
+  env 0 ( 0 20 0xffff 10 0x8000 10 0xcccc 10 0x2000 * 0 )
+  norm 0 0.100
+end
+
+sound OPEN_HAT
+  len 0.300
+  fm 0 ( 2200 ) 0.9 ( 13 * 0 ) c000 1000 c000 0400 2000
+  env 0 ( 0 10 0xffff 30 0x2000 * 0 )
+  norm 0 0.150
+end
+
+sound CRASH_1
+  len 0.800
+  
+  noise 0
+  bandpass 0 10000 500
+  env 0 ( 0 10 0xffff 40 0x3000 * 0 )
+  
+  fm 1 ( 10000 ) 2.1 ( 7 ) sine
+  env 1 ( 0 20 0x2000 50 0x0800 700 0 )
+  mix 0 1
+  
+  norm 0 0.400
+end
+
+sound CRASH_2
+  len 0.800
+  
+  noise 0
+  bandpass 0 12000 1500
+  env 0 ( 0 10 0xffff 40 0x3000 * 0 )
+  
+  fm 1 ( 11000 ) 1.1 ( 7 ) sine
+  env 1 ( 0 20 0x1000 50 0x0200 700 0 )
+  mix 0 1
+  
+  norm 0 0.400
+end
+
+sound RIDE_1
+  len 0.500
+  fm 0 ( 7000 ) 3.1 ( 5 ) sine
+  env 0 ( 0 10 0xffff 30 0x1000 * 0 )
+  norm 0 0.200
+end
+
+sound RIDE_2
+  len 0.500
+  fm 0 ( 5000 ) 3.5 ( 3 ) sine
+  env 0 ( 0 20 0xffff 30 0x1000 10 0x2000 10 0x1000 10 0x2000 * 0 )
+  norm 0 0.150
+end
+
+sound TAMBOURINE
+  len 0.800
+  fm 0 ( 2200 70 2100 70 1800 ) 2.1 ( 3 ) f000 0000 3000 0000 1000
+  env 0 ( 0 30 0xffff 20 0x2000 20 0xc000 20 0x2000 50 0 )
+  delay 0 0.100 0.5 0.5 0.5 0.4
+  env 0 ( 0 10 0xffff 500 0x7fff * 0 )
+  norm 0 0.100
+end
+
+sound SPLASH_1 # there's just one
+  len 0.500
+  noise 0
+  bandpass 0 5000 100
+  env 0 ( 0 10 0xffff 30 0x1000 * 0 )
+  norm 0 0.300
+end
+
+sound COWBELL
+  len 0.200
+  fm 0 ( 1000 ) 3.7 ( 5 ) sine
+  env 0 ( 0 10 0xffff 30 0x1000 * 0 )
+  norm 0 0.100
 end
 
 #-------------------------------------- Unfinished Sound Effects ---------------------------

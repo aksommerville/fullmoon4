@@ -78,7 +78,7 @@ export class Instrument {
     }
     const srcp0 = srcp;
     const coefc = src[srcp++];
-    const coefv = [];
+    const coefv = [0]; // WebAudio expects a DC coefficient, we won't supply one.
     for (let i=coefc; i-->0; srcp+=2) {
       const vi = (src[srcp] << 8) | src[srcp + 1];
       coefv.push(vi / 0xffff);

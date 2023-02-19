@@ -14,7 +14,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Decide what to do with my ten remaining days :)
 - [ ] Music. We don't need every song yet, just like 3 or so.
 - - [x] Toil and Trouble
-- - [ ] Tangled Vine
+- - [x] Tangled Vine
 - - [ ] Seven Circles of a Witch's Soul
 - - [ ] Eye of Newt
 - - [ ] Blood for Silver
@@ -22,7 +22,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Make up a new item to take Corn's place.
 - [ ] Occasional "kthump" when changing songs.
 - [x] fiddle: override instrument
-- [ ] Percussion
+- [x] Percussion
+- [ ] Kill hero's velocity when entering a menu.
 
 ### March
 

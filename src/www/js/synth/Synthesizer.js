@@ -219,7 +219,9 @@ export class Synthesizer {
       buffer: sfx.buffer,
       channelCount: 1,
     });
-    node.connect(this.context.destination);
+    const gain = new GainNode(this.context, { gain: velocity / 0x7f });
+    node.connect(gain);
+    gain.connect(this.context.destination);
     node.start();
   }
   

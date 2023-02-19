@@ -110,6 +110,30 @@ int rand();
 #define FMN_SFX_DIG 9
 #define FMN_SFX_REJECT_DIG 10
 #define FMN_SFX_INJURY_DEFLECTED 11
+// Available space here. Skipping forward to GM drums.
+#define FMN_SFX_KICK_1 35
+#define FMN_SFX_KICK_2 36
+#define FMN_SFX_SIDE_STICK 37
+#define FMN_SFX_SNARE_1 38
+#define FMN_SFX_HAND_CLAP 39
+#define FMN_SFX_SNARE_2 40
+#define FMN_SFX_TOM_1 41
+#define FMN_SFX_CLOSED_HAT 42
+#define FMN_SFX_TOM_2 43
+#define FMN_SFX_PEDAL_HAT 44
+#define FMN_SFX_TOM_3 45
+#define FMN_SFX_OPEN_HAT 46
+#define FMN_SFX_TOM_4 47
+#define FMN_SFX_TOM_5 48
+#define FMN_SFX_CRASH_1 49
+#define FMN_SFX_TOM_6 50
+#define FMN_SFX_RIDE_1 51
+#define FMN_SFX_CRASH_2 52
+#define FMN_SFX_RIDE_2 53
+#define FMN_SFX_TAMBOURINE 54
+#define FMN_SFX_SPLASH_1 55
+#define FMN_SFX_COWBELL 56
+// There's more GM, thru 81, but I'm sure we won't need all that.
 
 #define FMN_SPRITE_STYLE_HIDDEN    0 /* don't render */
 #define FMN_SPRITE_STYLE_TILE      1 /* single tile */
