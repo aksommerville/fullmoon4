@@ -172,12 +172,6 @@ int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),voi
  * Check for collisions and resolve them.
  */
  
-/* TODO Collision detection is definitely imperfect.
- * We check one feature at a time and resolve it immediately.
- * Where two or more collisions exist, we don't correct intelligently for the combined collision.
- * Does it matter? Push this hard, make sure it at least behaves coherently when the situation gets weird.
- */
- 
 static void fmn_sprite_physics_update(float elapsed) {
   const uint8_t any_physics=FMN_PHYSICS_EDGE|FMN_PHYSICS_SPRITES|FMN_PHYSICS_GRID;
   struct fmn_sprite *hero=0;
@@ -293,9 +287,22 @@ void fmn_sprites_update(float elapsed) {
       } else if (sprite->vely>0.0f) {
         if ((sprite->vely-=sprite->veldecay*elapsed)<=0.0f) sprite->vely=0.0f;
       }
+      
+      // Calculate effective velocity per axis and clamp to a sanity limit.
+      // Regardless of the length of a frame, no sprite is allowed to move at the Nyquist frequency or faster.
+      // ie, limit one half-tile per update.
+      // This is a safety mechanism to prevent walking through walls and such.
+      // (as i'm writing this, the hero's speed when broom and cheese in play actually does exceed the nyquist at 60 Hz (32 m/s)).
+      float dx=sprite->velx*elapsed;
+      float dy=sprite->vely*elapsed;
+      if (dx<=-0.5f) dx=-0.499f;
+      else if (dx>=0.5f) dx=0.499f;
+      if (dy<=-0.5f) dy=-0.499f;
+      else if (dy>=0.5f) dy=0.499f;
+      
       // Apply velocity.
-      sprite->x+=sprite->velx*elapsed;
-      sprite->y+=sprite->vely*elapsed;
+      sprite->x+=dx;
+      sprite->y+=dy;
     }
     
     if (sprite->update) {

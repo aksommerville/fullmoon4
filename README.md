@@ -1,9 +1,14 @@
 # Full Moon
 
-Fourth time's the charm!
+Non-violent adventure game where the witch has to find and kill the werewolf.
+
+I mean "non-violent" in a pretty loose sense.
+Because there is definitely a werewolf-slaying involved.
 
 Target platform is web browsers only.
 There will be a "platform" layer in Javascript, and an "app" layer in C compiled to WebAssembly.
+
+^ meaning "*initial* target platform". I am definitely making a Linux-native version, and yknow, as many others as we can.
 
 ## TODO
 
@@ -12,25 +17,13 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 ### February
 
 - [ ] Music. We don't need every song yet, just like 3 or so.
-- - [x] Toil and Trouble
-- - [x] Tangled Vine
 - - [x] Seven Circles of a Witch's Soul
 - - - [ ] Do something more interesting with the bassline, geez this is boring.
 - - [x] Eye of Newt
 - - - [ ] Cleaner lead, and less distorted during the twirly half.
 - - - [ ] In the chromatic circling, use an instrument we can reduce the attack for all but first note.
 - - [ ] Blood for Silver
-- - The two best songs, Jaws of Wrath and Seventh Roots of Unity, we won't need until the final version :(
 - [ ] Make up a new item to take Corn's place.
-- [x] Check song restarting. Is it releasing or aborting voices? (should release, not abort) I get some poppage now and then.
-- - Eye of Newt does this every time.
-- - Due to Time-Zero event sequencing. Fixed in Midevil.
-- [x] fiddle: override instrument
-- [x] Percussion
-- [x] Check velocity=>gain for sound effects. I added it but not sure I'm hearing it.
-- [x] Is Channel Volume working?
-- - It is, we just need to make sure that Program Change comes first. See `make verify`
-- [x] Kill hero's velocity when entering a menu.
 - [ ] Return to map entry point if injured while another injury in progress. No more ping-ponging between hazards.
 - [ ] `make verify` or something, to auto-validate resources:
 - - [ ] Song must start with a Program Change for each channel before any notes.
@@ -39,8 +32,9 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Sprite controller, tilesheet.
 - - [ ] No unused resources.
 - - [ ] Image dimensions and colorspace.
-- [ ] Able to skip thru left wall in the Seven-Circles zone, with cheese+broom. Limit velocity.
-- - [ ] Devise some kind of assurance that final velocity is never more than 0.5 m/frame, whatever a frame is.
+- [x] Able to skip thru left wall in the Seven-Circles zone, with cheese+broom. Limit velocity.
+- - [x] Devise some kind of assurance that final velocity is never more than 0.5 m/frame, whatever a frame is.
+- [ ] Resume broom over hole. Rejects due to "action in progress". Can we let it thru?
 
 ### March
 
@@ -64,12 +58,17 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [ ] Graphics.
 - [ ] Maps for demo.
-- [ ] Pretty up the public web page.
 - [ ] Coloring book, violin pic: Make the hat less dicky.
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [ ] Persist plants and sketches across map loads.
 - [ ] UI for saved game management.
+
+### May
+
+- [ ] Order merch.
+- [ ] Beta test.
+- [ ] Pretty up the public web page.
 
 ### After GDEX
 
@@ -115,3 +114,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Move Map decoding out of DataService into a class of its own.
+- [ ] Finish everything by Halloween.

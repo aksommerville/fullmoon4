@@ -28,10 +28,9 @@ export class RootUi {
     
     this.buildUi();
     
-    /* We don't really interact with DataService, but we do create an initial delay, waiting for user input.
-     * It's crazy to not load all the data during that delay.
+    /* If either DataService or WasmLoader fails during its preload, we should report it immediately.
      */
-    this.dataService.load()
+    this.runtime.preloadAtConstruction
       .then(() => this.dataLoaded())
       .catch(e => this.onError(e));
   }
