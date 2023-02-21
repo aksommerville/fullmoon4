@@ -17,9 +17,9 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 ### February
 
 - [x] Sound effect for map-reset.
-- [ ] Coloring book, violin pic: Make the hat less dicky.
+- [x] Coloring book, violin pic: Make the hat less dicky.
 - [ ] Fresh graphics
-- - [ ] Combining trees, but larger than one tile.
+- - [x] Combining trees, but larger than one tile.
 - - [ ] Caves.
 - - [ ] Village.
 - [x] Enter a map over water, then get hurt twice to force a reset -- you get stuck toggling between the two maps.
@@ -59,6 +59,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [ ] Persist plants and sketches across map loads.
 - [ ] UI for saved game management.
+- [ ] Physics flag to control whether chalk is allowed? Consider the black octopus tree, chalk looks weird like it's floating in air.
 
 ### May
 
@@ -116,3 +117,14 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Move Map decoding out of DataService into a class of its own.
 - [ ] Finish everything by Halloween.
 - [ ] verify: Check neighbor edges cell by cell
+
+### Disambiguation
+
+There are other things called Full Moon, which are not this game.
+
+- Bart Bonte's 2009 Flash game: https://www.bartbonte.com/fullmoon/
+- ^ this is really cool
+- The tabletop gaming store in Terre Haute: https://www.fullmoongames.com/
+- Claude Leroy's nice-looking card game: https://boardgamegeek.com/boardgame/136523/full-moon
+- Many other google hits containing "Full Moon". But hey, it's a reasonably common phrase.
+- I think we're OK step-on-toes-wise.
