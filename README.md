@@ -16,30 +16,19 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [ ] Music. We don't need every song yet, just like 3 or so.
-- - [x] Seven Circles of a Witch's Soul
-- - - xxx Do something more interesting with the bassline, geez this is boring. ...nah it's good
-- - [x] Eye of Newt
-- - - [x] Cleaner lead, and less distorted during the twirly half.
-- - - [x] In the chromatic circling, use an instrument we can reduce the attack for all but first note.
-- - [ ] Blood for Silver
-- [x] Return to map entry point if injured while another injury in progress. No more ping-ponging between hazards.
-- [x] `make verify` or something, to auto-validate resources:
-- - [x] Song must start with a Program Change for each channel before any notes.
-- - [x] Song events should be tracked by channel.
-- - [x] Map neighbors, song, tilesheet.
-- - [x] Sprite controller, tilesheet.
-- - [x] No unused resources.
-- - [ ] Image dimensions and colorspace. ...can't do much here until we do separate image formats per platform
-- [x] Able to skip thru left wall in the Seven-Circles zone, with cheese+broom. Limit velocity.
-- - [x] Devise some kind of assurance that final velocity is never more than 0.5 m/frame, whatever a frame is.
-- [x] Resume broom over hole. Rejects due to "action in progress". Can we let it thru?
+- [x] Sound effect for map-reset.
+- [ ] Coloring book, violin pic: Make the hat less dicky.
+- [ ] Fresh graphics
+- - [ ] Combining trees, but larger than one tile.
+- - [ ] Caves.
+- - [ ] Village.
+- [x] Enter a map over water, then get hurt twice to force a reset -- you get stuck toggling between the two maps.
 
 ### March
 
 - [ ] Spells.
 - [ ] Refine items.
-- - [ ] Corn: Eliminate. Same thing as Seed.
+- - [x] Corn: Eliminate. Same thing as Seed.
 - - [ ] Seed: Sprite on actuation, and summon the bird or create a plant.
 - - [ ] Cheese: Visual feedback. Maybe a second sound effect when it ends?
 - - [ ] Feather: Actuate blocks and ...whatever else a feather does.
@@ -52,12 +41,20 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Violin: Chart UI
 - - [ ] Violin: Encode song
 - - [ ] Shovel: Needs a new face tile, show some effort.
+- [ ] Sprites:
+- - [ ] Sawblades like v1
+- - [ ] Alphablocks
+- - [ ] Firewall
+- - [ ] Chalk-aware sentinel
+- - [ ] Fire nozzle
+- - [ ] Treadle-n-gate
+- - [ ] Raccoon, throws acorns
+- - [ ] Rat, pounce and bite. He'll miss if you're flying.
 
 ### April
 
 - [ ] Graphics.
 - [ ] Maps for demo.
-- [ ] Coloring book, violin pic: Make the hat less dicky.
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [ ] Persist plants and sketches across map loads.
@@ -69,6 +66,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Lively intro splash.
+- [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
 
 ### After GDEX
 
@@ -117,3 +115,4 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Move Map decoding out of DataService into a class of its own.
 - [ ] Finish everything by Halloween.
+- [ ] verify: Check neighbor edges cell by cell

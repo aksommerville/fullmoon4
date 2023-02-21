@@ -249,14 +249,14 @@ function reachable(type, id) {
 reachable(RESTYPE_MAP, 1); // initial map
 reachable(RESTYPE_IMAGE, 2); // hero
 reachable(RESTYPE_IMAGE, 4); // items splash
-for (let id=1; id<=11; id++) { // #define FMN_SFX_INJURY_DEFLECTED 11
+for (let id=1; id<=12; id++) { // #define FMN_SFX_GRIEVOUS_INJURY 12
   reachable(RESTYPE_SOUND, id);
 }
 
 if (unreachable.length) {
   warningCount++;
   console.log(`${archivePath}:WARNING: ${unreachable.length} unreachable resources:`);
-  // If few enough, show each unreachable resources.
+  // If few enough, show each unreachable resource.
   if (unreachable.length < 30) {
     for (let i=0; i<unreachable.length; i++) {
       const res = unreachable[i];

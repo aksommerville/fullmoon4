@@ -467,13 +467,13 @@ sound INJURY_DEFLECTED
   norm 0 0.200
 end
 
-sound 12
-  len 0.500
-  noise 0
-  bandpass 0 600 180
-  bandpass 0 600 190
-  env 0 ( 0 20 0xffff 100 0x1000 * 0 )
-  norm 0 0.500
+sound GRIEVOUS_INJURY
+  len 0.800
+  fm 0 ( 200 100 1500 100 500 ) 1 ( 0 50 5 150 0 ) sine
+  env 0 ( 0 40 0xffff 160 0 )
+  delay 0 0.120 0.5 0.5 0.5 0.4
+  env 0 ( 0xffff 700 0xffff * 0 )
+  norm 0 0.200
 end
 
 # Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)

@@ -110,6 +110,7 @@ int rand();
 #define FMN_SFX_DIG 9
 #define FMN_SFX_REJECT_DIG 10
 #define FMN_SFX_INJURY_DEFLECTED 11
+#define FMN_SFX_GRIEVOUS_INJURY 12
 // Available space here. Skipping forward to GM drums.
 #define FMN_SFX_KICK_1 35
 #define FMN_SFX_KICK_2 36

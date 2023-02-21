@@ -203,6 +203,56 @@ static uint8_t fmn_hero_suppress_injury_if_applicable(
   return 0;
 }
 
+/* After resetting to the map entry, check whether our position is valid and try to make it so if not.
+ * This is a serious problem if you entered the map on a broom over water, then get reset.
+ */
+ 
+static void fmn_hero_attempt_valid_position() {
+  struct fmn_sprite *hero=fmn_hero.sprite;
+  
+  // Offscreen is OK; she'll immediately bump to the neighbor map.
+  if ((hero->x<0.0f)||(hero->y<0.0f)) return;
+  if ((hero->x>=FMN_COLC)||(hero->y>=FMN_ROWC)) return;
+  
+  // If the cell is vacant, call it OK.
+  // We're not checking for solid sprites or hazards. (TODO should we?)
+  uint8_t col=hero->x,row=hero->y;
+  uint8_t tile=fmn_global.map[row*FMN_COLC+col];
+  uint8_t physics=fmn_global.cellphysics[tile];
+  if (!(physics&0x03)) return;
+  
+  // Fan out from current position along the edge we're on.
+  // Abort if we're not actually on an edge.
+  // Stop at any solid cell, don't consider ones on the other side of it.
+  // Abort if nothing is vacant on this edge.
+  // Otherwise take the nearest vacant tile.
+  // If we're on a corner, both edges are valid.
+  #define CHECKCELL(_x,_y) { \
+    if (!(fmn_global.cellphysics[fmn_global.map[_y*FMN_COLC+_x]]&3)) { \
+      hero->x=_x+0.5f; \
+      hero->y=_y+0.5f; \
+      return; \
+    } \
+  }
+  if ((col==0)||(col==FMN_COLC-1)) {
+    int8_t d=1; for (;d<FMN_ROWC;d++) {
+      int8_t qrow=row+d;
+      if (qrow<FMN_ROWC) CHECKCELL(col,qrow)
+      qrow=row-d;
+      if (qrow>=0) CHECKCELL(col,qrow)
+    }
+  }
+  if ((row==0)||(row==FMN_ROWC-1)) {
+    int8_t d=1; for (;d<FMN_COLC;d++) {
+      int8_t qcol=col+d;
+      if (qcol<FMN_COLC) CHECKCELL(qcol,row)
+      qcol=col-d;
+      if (qcol>=0) CHECKCELL(qcol,row)
+    }
+  }
+  #undef CHECKCELL
+}
+
 /* Return to map entry.
  * Right now this will only happen due to multiple injuries.
  */
@@ -212,7 +262,7 @@ void fmn_hero_return_to_map_entry() {
   fmn_sprite_generate_soulballs(hero->x,hero->y,7);
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
   fmn_hero_item_end();
-  //fmn_sound_effect TODO
+  fmn_sound_effect(FMN_SFX_GRIEVOUS_INJURY);
   fmn_hero.velx=hero->velx=0.0f;
   fmn_hero.vely=hero->vely=0.0f;
   hero->x=fmn_hero.enterx;
@@ -220,6 +270,7 @@ void fmn_hero_return_to_map_entry() {
   int8_t dumx,dumy;
   fmn_hero_get_quantized_position(&dumx,&dumy);
   fmn_hero_walk_end();
+  fmn_hero_attempt_valid_position();
 }
 
 /* Begin injury.
