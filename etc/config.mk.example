@@ -18,6 +18,7 @@ run:web-run
 edit:web-edit
 deploy:web-deploy
 fiddle:web-fiddle
+verify:web-verify
 
 #-------------------------------------------
 # For "web" target.

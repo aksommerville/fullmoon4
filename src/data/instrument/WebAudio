@@ -54,12 +54,12 @@ begin 0x09 # versatile lead
   wheelRange 600
 end
 
-begin 0x0a
-  wave square
+begin 0x0a # bow-wow circus lead
+  wave sine
   modRate 1
-  modRange 5
+  modRange 3
   modRangeLfoRate 1
-  env 20 40 40 10 100 .. 15 ff 40 40 300
+  env 40 a0 40 20 100 .. 10 ff 40 40 300
 end
 
 #-------------------------------------- Unfinished Instruments -----------------------------
@@ -85,7 +85,7 @@ end
 begin 0x25 # wicked space guitar
   wave square
   env 10 40 20 40 200 .. 5 ff 20 80 300
-  modRate 0.5
+  modRate 1
   modRange 5
   modEnv 00 50 00 400 00 200 00 .. 80 50 c0 400 80 200 00
 end
@@ -96,6 +96,108 @@ begin 0x06
   modRate 12
   modRange 5
   modEnv ff 10 c0 30 ff 200 60
+end
+
+# Instrument placeholders.
+begin 11
+  wave sine
+  env 10 80 10 20 100
+end
+begin 12
+  wave sine
+  env 10 80 10 20 100
+end
+begin 13
+  wave sine
+  env 10 80 10 20 100
+end
+begin 14
+  wave sine
+  env 10 80 10 20 100
+end
+begin 15
+  wave sine
+  env 10 80 10 20 100
+end
+begin 16
+  wave sine
+  env 10 80 10 20 100
+end
+begin 17
+  wave sine
+  env 10 80 10 20 100
+end
+begin 18
+  wave sine
+  env 10 80 10 20 100
+end
+begin 19
+  wave sine
+  env 10 80 10 20 100
+end
+begin 21
+  wave sine
+  env 10 80 10 20 100
+end
+begin 22
+  wave sine
+  env 10 80 10 20 100
+end
+begin 23
+  wave sine
+  env 10 80 10 20 100
+end
+begin 24
+  wave sine
+  env 10 80 10 20 100
+end
+begin 25
+  wave sine
+  env 10 80 10 20 100
+end
+begin 26
+  wave sine
+  env 10 80 10 20 100
+end
+begin 27
+  wave sine
+  env 10 80 10 20 100
+end
+begin 28
+  wave sine
+  env 10 80 10 20 100
+end
+begin 29
+  wave sine
+  env 10 80 10 20 100
+end
+begin 30
+  wave sine
+  env 10 80 10 20 100
+end
+begin 31
+  wave sine
+  env 10 80 10 20 100
+end
+begin 32
+  wave sine
+  env 10 80 10 20 100
+end
+begin 33
+  wave sine
+  env 10 80 10 20 100
+end
+begin 34
+  wave sine
+  env 10 80 10 20 100
+end
+begin 35
+  wave sine
+  env 10 80 10 20 100
+end
+begin 36
+  wave sine
+  env 10 80 10 20 100
 end
 
 #-------------------------------------- Final Sound Effects --------------------------------
@@ -372,4 +474,94 @@ sound 12
   bandpass 0 600 190
   env 0 ( 0 20 0xffff 100 0x1000 * 0 )
   norm 0 0.500
+end
+
+# Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
+sound 13
+  len 0.001
+  noise 0
+end
+sound 14
+  len 0.001
+  noise 0
+end
+sound 15
+  len 0.001
+  noise 0
+end
+sound 16
+  len 0.001
+  noise 0
+end
+sound 17
+  len 0.001
+  noise 0
+end
+sound 18
+  len 0.001
+  noise 0
+end
+sound 19
+  len 0.001
+  noise 0
+end
+sound 20
+  len 0.001
+  noise 0
+end
+sound 21
+  len 0.001
+  noise 0
+end
+sound 22
+  len 0.001
+  noise 0
+end
+sound 23
+  len 0.001
+  noise 0
+end
+sound 24
+  len 0.001
+  noise 0
+end
+sound 25
+  len 0.001
+  noise 0
+end
+sound 26
+  len 0.001
+  noise 0
+end
+sound 27
+  len 0.001
+  noise 0
+end
+sound 28
+  len 0.001
+  noise 0
+end
+sound 29
+  len 0.001
+  noise 0
+end
+sound 30
+  len 0.001
+  noise 0
+end
+sound 31
+  len 0.001
+  noise 0
+end
+sound 32
+  len 0.001
+  noise 0
+end
+sound 33
+  len 0.001
+  noise 0
+end
+sound 34
+  len 0.001
+  noise 0
 end

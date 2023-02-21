@@ -18,20 +18,19 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [ ] Music. We don't need every song yet, just like 3 or so.
 - - [x] Seven Circles of a Witch's Soul
-- - - [ ] Do something more interesting with the bassline, geez this is boring.
+- - - xxx Do something more interesting with the bassline, geez this is boring. ...nah it's good
 - - [x] Eye of Newt
-- - - [ ] Cleaner lead, and less distorted during the twirly half.
-- - - [ ] In the chromatic circling, use an instrument we can reduce the attack for all but first note.
+- - - [x] Cleaner lead, and less distorted during the twirly half.
+- - - [x] In the chromatic circling, use an instrument we can reduce the attack for all but first note.
 - - [ ] Blood for Silver
-- [ ] Make up a new item to take Corn's place.
 - [x] Return to map entry point if injured while another injury in progress. No more ping-ponging between hazards.
-- [ ] `make verify` or something, to auto-validate resources:
-- - [ ] Song must start with a Program Change for each channel before any notes.
-- - [ ] Song events should be tracked by channel.
-- - [ ] Map neighbors, song, tilesheet.
-- - [ ] Sprite controller, tilesheet.
-- - [ ] No unused resources.
-- - [ ] Image dimensions and colorspace.
+- [x] `make verify` or something, to auto-validate resources:
+- - [x] Song must start with a Program Change for each channel before any notes.
+- - [x] Song events should be tracked by channel.
+- - [x] Map neighbors, song, tilesheet.
+- - [x] Sprite controller, tilesheet.
+- - [x] No unused resources.
+- - [ ] Image dimensions and colorspace. ...can't do much here until we do separate image formats per platform
 - [x] Able to skip thru left wall in the Seven-Circles zone, with cheese+broom. Limit velocity.
 - - [x] Devise some kind of assurance that final velocity is never more than 0.5 m/frame, whatever a frame is.
 - [x] Resume broom over hole. Rejects due to "action in progress". Can we let it thru?
@@ -69,9 +68,11 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Order merch.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
+- [ ] Lively intro splash.
 
 ### After GDEX
 
+- [ ] Make up a new item to take Corn's place.
 - [ ] Touch input.
 - [ ] Input configuration.
 - - [ ] Generalize mapping, see src/www/js/game/InputManager.js
@@ -96,6 +97,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Wii
 - - [ ] Modern consoles?
 - - [ ] SNES? I know it won't happen but you got to try
+- - [ ] node or deno? Shame to write all this Javascript and use it for just one platform...
 - [ ] Unit tests.
 - - [ ] General-purpose test runner.
 - - [ ] C tests

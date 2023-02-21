@@ -76,3 +76,5 @@ endif
 # Designed to attach to my MIDI sequencer Midevil: https://github.com/aksommerville/midevil
 web-fiddle:;$(NODE) src/tool/server/main.js \
   --htdocs=src/tool/fiddle/www --midi-broadcast --port=43215 --htalias=/js/:src/www/js/ --makeable=$(web_HTPROD_DATA)
+  
+web-verify:$(web_HTPROD_DATA);$(NODE) src/tool/verify/main.js --archive=$(web_HTPROD_DATA) --dir=src/data
