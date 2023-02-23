@@ -372,6 +372,14 @@ export class ResService {
       if (used.indexOf(id) < 0) return id;
     }
   }
+  
+  resolveId(type, src) {
+    let id = +src;
+    if (!isNaN(id)) return id;
+    const r = this.toc.find(e => e.type === type && e.name === src);
+    if (r) return r.id;
+    throw new Error(`Unable to resolve resource id ${type}:${src}`);
+  }
 }
 
 ResService.singleton = true;

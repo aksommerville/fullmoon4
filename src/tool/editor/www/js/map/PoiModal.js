@@ -4,16 +4,18 @@
 import { Dom } from "/js/util/Dom.js";
 import { ResService } from "/js/util/ResService.js";
 import { FullmoonMap } from "/js/map/FullmoonMap.js";
+import { MapService } from "./MapService.js";
 
 export class PoiModal {
   static getDependencies() {
-    return [HTMLElement, Dom, ResService, "discriminator"];
+    return [HTMLElement, Dom, ResService, "discriminator", MapService];
   }
-  constructor(element, dom, resService, discriminator) {
+  constructor(element, dom, resService, discriminator, mapService) {
     this.element = element;
     this.dom = dom;
     this.resService = resService;
     this.discriminator = discriminator;
+    this.mapService = mapService;
     
     // Owner should set:
     this.onDirty = (command) => {};
@@ -128,7 +130,7 @@ export class PoiModal {
   }
   
   buildExitForm(table) {
-    this.addNumberRow(table, "mapId", 1, 65535, this.poi ? this.poi.mapId : 1);
+    this.addNumberRow(table, "mapId", 0, 65535, this.poi ? this.poi.mapId : 1, "0 to create");
     this.addNumberRow(table, "dstx", 0, FullmoonMap.COLC - 1, this.poi ? this.poi.dstx : 0);
     this.addNumberRow(table, "dsty", 0, FullmoonMap.ROWC - 1, this.poi ? this.poi.dsty : 0);
     if (!this.poi) this.addCheckboxRow(table, "createRemote");
@@ -161,7 +163,7 @@ export class PoiModal {
     return input;
   }
   
-  addNumberRow(table, key, lo, hi, value) {
+  addNumberRow(table, key, lo, hi, value, comment) {
     const tr = this.dom.spawn(table, "TR");
     this.dom.spawn(tr, "TD", ["key"], key);
     const td = this.dom.spawn(tr, "TD", ["value"]);
@@ -172,6 +174,7 @@ export class PoiModal {
       max: hi,
       value,
     });
+    if (comment) this.dom.spawn(tr, "TD", ["comment"], comment);
     return input;
   }
   
@@ -190,6 +193,12 @@ export class PoiModal {
     const poi = this.readPoiFromDom();
     const command = this.commandFromPoiModel(poi);
     if (!command) return;
+    
+    if ((command[0] === "door") && (command[3] === "0")) {
+      const mapId = this.mapService.createMap(this.resService);
+      command[3] = mapId.toString();
+      poi.mapId = mapId;
+    }
     
     if (poi.createRemote) {
       const remoteCommand = ["door", command[4], command[5], this.map.id.toString(), command[1], command[2]];
@@ -210,7 +219,7 @@ export class PoiModal {
     switch (poi.type) {
     
       case "exit": {
-          if (isNaN(poi.mapId) || (poi.mapId < 1) || (poi.mapId > 0xffff)) return null;
+          if (isNaN(poi.mapId) || (poi.mapId < 0) || (poi.mapId > 0xffff)) return null;
           if (isNaN(poi.dstx) || (poi.dstx < 0) || (poi.dstx >= FullmoonMap.COLC)) return null;
           if (isNaN(poi.dsty) || (poi.dsty < 0) || (poi.dsty >= FullmoonMap.COLC)) return null;
           return ["door", poi.x.toString(), poi.y.toString(), poi.mapId.toString(), poi.dstx.toString(), poi.dsty.toString()];

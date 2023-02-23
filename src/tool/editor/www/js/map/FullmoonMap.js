@@ -51,15 +51,15 @@ export class FullmoonMap {
     for (const command of this.commands) {
       if (command[0] !== keyword) continue;
       if (index--) continue;
-      return command;
+      return command[1];
     }
     return null;
   }
   
   getIntCommand(keyword, index=0) {
     const command = this.getCommand(keyword, index);
-    if (!command) return 0;
-    return +command[1] || 0;
+    if (command === null) return 0;
+    return +command || 0;
   }
   
   // Replaces the first existing instance, or appends. Single value only.

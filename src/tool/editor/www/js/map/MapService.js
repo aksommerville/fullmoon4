@@ -263,7 +263,7 @@ export class MapService {
     
     const toMap = new FullmoonMap();
     toMap.id = toId;
-    toMap.setCommand("tilesheet", fromMap.getIntCommand("tilesheet") || 1);
+    toMap.setCommand("tilesheet", fromMap.getCommand("tilesheet") || 1);
     toMap.setCommand("neighbor" + reverseDir, fromMap.id);
     
     /* Important! Walk from fromMap around the new one, and check if any other neighbors exist.
@@ -299,6 +299,20 @@ export class MapService {
     resService.dirty("map", fromMap.id, fromMap);
     resService.dirty("map", toId, toMap);
     return toId;
+  }
+  
+  /* Create a new map, make up an ID. Not a neighbor of an existing one.
+   * PoiModal presents this option when you make a door.
+   ***********************************************************/
+   
+  createMap(resService) {
+    if (!resService) throw new Error(`MapService.createMap() caller must supply a ResService`);
+    const id = resService.unusedId("map");
+    if (isNaN(id) || (id < 1) || (id > 0xffff)) throw new Error(`Unable to allocate a new map id`);
+    const map = new FullmoonMap();
+    map.id = id;
+    resService.dirty("map", id, map);
+    return id;
   }
 }
 

@@ -108,7 +108,7 @@ export class MapAllUi {
   
   renderMap(context, dstx, dsty, map) {
     if (!map) return;
-    const imageId = map.getIntCommand("tilesheet");
+    const imageId = this.resService.resolveId("image", map.getCommand("tilesheet"));
     const tilesheet = imageId && this.resService.getResourceObject("image", imageId);
     if (tilesheet) {
       this.renderScratchMap(map, tilesheet);

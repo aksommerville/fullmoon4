@@ -57,7 +57,7 @@ export class MapUi {
   
   setup(mapId, args) {
     this.map = this.resService.getResourceObject("map", mapId);
-    const imageId = this.map ? this.map.getIntCommand("tilesheet") : 0;
+    const imageId = this.map ? this.resService.resolveId("image", this.map.getCommand("tilesheet")) : 0;
     this.tileprops = this.resService.getResourceObject("tileprops", imageId);
     this.mapRenderer.setup(this.map, this.tileprops, this.element.querySelector(".mainView"));
     this.mapEditor.setup(this.map, this.tileprops);

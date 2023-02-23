@@ -227,7 +227,7 @@ export class MapRenderer {
   renderMap(context, map, bounds, style) {
     
     // TODO Fallback when image not available. Does it matter?
-    const tilesheetId = map.getIntCommand("tilesheet");
+    const tilesheetId = this.resService.resolveId("image", map.getCommand("tilesheet"));
     if (!tilesheetId) return;
     const tilesheet = this.resService.getResourceObject("image", tilesheetId);
     if (!tilesheet) return;

@@ -18,10 +18,10 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [x] Sound effect for map-reset.
 - [x] Coloring book, violin pic: Make the hat less dicky.
-- [ ] Fresh graphics
+- [x] Fresh graphics
 - - [x] Combining trees, but larger than one tile.
-- - [ ] Caves.
-- - [ ] Village.
+- - [x] Caves.
+- - [x] Village.
 - [x] Enter a map over water, then get hurt twice to force a reset -- you get stuck toggling between the two maps.
 
 ### March
