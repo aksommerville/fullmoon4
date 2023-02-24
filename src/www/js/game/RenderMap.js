@@ -20,12 +20,15 @@ export class RenderMap {
     this.dataService = dataService;
     this.renderBasics = renderBasics;
     
+    this.ILLUMINATION_PERIOD = 70; // frames. figure about 60 Hz, but it needn't be precise
+    
     this.dirty = false;
     this.awaitingTilesheet = false;
     this.canvas = this.dom.createElement("CANVAS", {
       width: this.constants.COLC * this.constants.TILESIZE,
       height: this.constants.COLC * this.constants.TILESIZE,
     });
+    this.illuminationPhase = ~~(this.ILLUMINATION_PERIOD * 0.25);
   }
   
   setDirty() {
@@ -39,6 +42,29 @@ export class RenderMap {
       this.dirty = false;
     }
     return this.canvas;
+  }
+  
+  /* If the map is darkened, check illumination status and darken the entire framebuffer accordingly.
+   * No darkening in play, we quickly no-op.
+   */
+  renderDarkness(canvas, ctx) {
+    if (!this.globals.g_mapdark[0]) return;
+    const countdown = this.globals.g_illumination_time[0];
+    if (!countdown) {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      this.illuminationPhase = ~~(this.ILLUMINATION_PERIOD * 0.25);
+      return;
+    }
+    this.illuminationPhase++;
+    if (this.illuminationPhase >= this.ILLUMINATION_PERIOD) this.illuminationPhase = 0;
+    ctx.globalAlpha = Math.sin((this.illuminationPhase * Math.PI * 2) / this.ILLUMINATION_PERIOD) * 0.25 + 0.25;
+    if (countdown < 1) {
+      ctx.globalAlpha += (1 - ctx.globalAlpha) * (1 - countdown);
+    }
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 1;
   }
   
   /* Private.

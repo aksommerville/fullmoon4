@@ -200,7 +200,8 @@ extern struct fmn_global {
   uint16_t neighbore;
   uint16_t neighborn;
   uint16_t neighbors;
-  uint16_t pad1;
+  uint8_t mapdark;
+  uint8_t pad1;
   uint8_t cellphysics[256];
   uint8_t sprite_storage[FMN_SPRITE_STORAGE_SIZE];
   struct fmn_door doorv[FMN_DOOR_LIMIT];

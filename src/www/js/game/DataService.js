@@ -218,6 +218,7 @@ export class DataService {
       doors: [],
       sprites: [],
       cellphysics: null,
+      dark: 0,
     };
     map.cells.set(new Uint8Array(src.buffer, src.byteOffset + p, cellsLength));
     p += cellsLength;
@@ -247,6 +248,7 @@ export class DataService {
   
   _decodeMapCommand(map, opcode, src, p, c) {
     switch (opcode) {
+      case 0x01: map.dark = 1; break;
       case 0x20: map.songId = src[p]; break;
       case 0x21: map.bgImageId = src[p]; break;
       case 0x40: map.neighborw = (src[p] << 8) | src[p + 1]; break;

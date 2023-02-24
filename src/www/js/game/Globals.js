@@ -54,6 +54,7 @@ export class Globals {
     this.g_neighbore = new Uint16Array(this.memU8.buffer, this.p_map_end + 4, 1);
     this.g_neighborn = new Uint16Array(this.memU8.buffer, this.p_map_end + 6, 1);
     this.g_neighbors = new Uint16Array(this.memU8.buffer, this.p_map_end + 8, 1);
+    this.g_mapdark = new Uint8Array(this.memU8.buffer, this.p_map_end + 10, 1);
     this.g_cellphysics = new Uint8Array(this.memU8.buffer, this.p_cellphysics, 256);
     this.g_sprite_storage = new Uint8Array(this.memU8.buffer, this.p_sprite_storage, this.constants.SPRITE_STORAGE_SIZE);
     this.g_doorv = new Uint8Array(this.memU8.buffer, this.p_sprite_storage_end, this.constants.DOOR_SIZE * this.constants.DOOR_LIMIT);
@@ -118,6 +119,7 @@ export class Globals {
     this.g_neighbore[0] = map.neighbore;
     this.g_neighborn[0] = map.neighborn;
     this.g_neighbors[0] = map.neighbors;
+    this.g_mapdark[0] = map.dark;
     if (map.doors && map.doors.length) {
       const doorc = Math.min(map.doors.length, this.constants.DOOR_LIMIT);
       this.g_doorc[0] = doorc;

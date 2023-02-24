@@ -16,13 +16,12 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [x] Sound effect for map-reset.
-- [x] Coloring book, violin pic: Make the hat less dicky.
-- [x] Fresh graphics
-- - [x] Combining trees, but larger than one tile.
-- - [x] Caves.
-- - [x] Village.
-- [x] Enter a map over water, then get hurt twice to force a reset -- you get stuck toggling between the two maps.
+- [ ] Cave graphics: ladder, entrance, water
+- [ ] Village graphics: huts, fountain, fences
+- [x] Illumination
+- [ ] Cheese wind-down sound and visual feedback
+- [ ] Fire nozzle
+- [ ] Treadle-n-gate
 
 ### March
 
@@ -46,8 +45,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Alphablocks
 - - [ ] Firewall
 - - [ ] Chalk-aware sentinel
-- - [ ] Fire nozzle
-- - [ ] Treadle-n-gate
 - - [ ] Raccoon, throws acorns
 - - [ ] Rat, pounce and bite. He'll miss if you're flying.
 

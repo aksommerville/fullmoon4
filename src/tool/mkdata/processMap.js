@@ -33,6 +33,13 @@ function assertIntArgs(args, ...schema) {
 /* Generic single-argument commands.
  */
  
+function decodeCommand_noarg(opcode, args) {
+  if (args.length) throw new Error(`Expected no arguments`);
+  const dst = Buffer.alloc(1);
+  dst[0] = opcode;
+  return dst;
+}
+ 
 function decodeCommand_singleU8(opcode, args, resType) {
   if (args.length !== 1) throw new Error(`Expected single argument in 0..255`);
   const v = getResourceIdByName(resType, args[0]);
@@ -111,6 +118,7 @@ function decodeCommand(words) {
     case "neighbors": return decodeCommand_singleU16(0x43, words.slice(1), "map");
     case "door": return decodeCommand_door(words.slice(1));
     case "sprite": return decodeCommand_sprite(words.slice(1));
+    case "dark": return decodeCommand_noarg(0x01, words.slice(1));
   }
   return null;
 }
