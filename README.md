@@ -16,8 +16,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [ ] Cave graphics: ladder, entrance, water
-- [ ] Village graphics: huts, fountain, fences
+- [x] Cave graphics: ladder, entrance, water
+- [x] Village graphics: huts, fountain, fences
 - [x] Illumination
 - [x] Cheese wind-down sound and visual feedback
 - [x] Fire nozzle
@@ -25,6 +25,9 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] Quickie touch input, just for verification on mobile.
 - [ ] Music timing is not tolerable. It's worse on mobile than desktop. Find a better way.
 - [ ] Round-off jitter has returned: Try walking east into the west octopus tree in the eye-of-newt map.
+- [ ] treasure: Sound when picking up an already-have item
+- [ ] treadle: sounds
+- [ ] Need a better solution for shovel holes. eg dig in the packed earth in the village, it shows a grass outline
 
 ### March
 
