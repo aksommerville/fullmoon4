@@ -20,4 +20,14 @@ void fmn_secrets_refresh_for_map();
 uint8_t fmn_spell_eval(const uint8_t *v,uint8_t c);
 void fmn_spell_cast(uint8_t spellid);
 
+uint8_t fmn_gs_get_bit(uint16_t p);
+void fmn_gs_set_bit(uint16_t p,uint8_t v);
+
+/* Game will call whenever this gs bit changes.
+ * All listeners are blindly dropped at each map transition.
+ */
+uint16_t fmn_gs_listen_bit(uint16_t p,void (*cb)(void *userdata,uint16_t p,uint8_t v),void *userdata);
+void fmn_gs_unlisten(uint16_t id);
+void fmn_gs_drop_listeners();
+
 #endif

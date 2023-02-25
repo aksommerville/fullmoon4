@@ -147,6 +147,8 @@ int rand();
 #define FMN_SPRITE_SV_SIZE 4
 #define FMN_SPRITE_FV_SIZE 4
 
+#define FMN_GS_SIZE 64 /* General global persistent state size in bytes. */
+
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
  */
@@ -256,6 +258,12 @@ extern struct fmn_global {
   // Current cell focussed for shovel.
   int8_t shovelx;
   int8_t shovely;
+  uint16_t pad3;
+  
+  // General-purpose global state.
+  // The whole thing gets persisted on saves.
+  // Don't modify directly. There are helpers to toggle values, which will notify subscribers. (TODO)
+  uint8_t gs[FMN_GS_SIZE];
   
 } fmn_global;
 
@@ -271,6 +279,11 @@ int fmn_init();
  * It includes time from prior sessions, and overflows every 1200 hours or so.
  */
 void fmn_update(uint32_t timems,uint8_t input);
+
+/* Notification of some change to fmn_global.gs initiated by the platform.
+ * (p,c) are in bits, reading each byte big-endianly. (p=0 is [0]&0x80, p=1 is [0]&0x40, ...)
+ */
+void fmn_gs_notify(uint16_t p,uint16_t c);
 
 /* Platform implements the rest.
  *************************************************/

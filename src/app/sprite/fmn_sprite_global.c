@@ -101,6 +101,10 @@ static void fmn_sprite_apply_command(struct fmn_sprite *sprite,uint8_t command,c
     case 0x40: sprite->veldecay=v[0]+v[1]/256.0f; break;
     case 0x41: sprite->radius=v[0]+v[1]/256.0f; break;
     case 0x42: sprite->controller=(v[0]<<8)|v[1]; break;
+    case 0x43: {
+        uint8_t n=v[0];
+        if (n<FMN_SPRITE_BV_SIZE) sprite->bv[n]=v[1];
+      } break;
   }
 }
 

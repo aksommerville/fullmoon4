@@ -40,6 +40,7 @@ export class SpriteService {
       case "invmass": return "0=infinite, 1=heavy, 255=light";
       case "layer": return "hero=128";
     }
+    // TODO The `bv[N]` fields, dependent on controller, would be really helpful to comment.
     return "";
   }
   
@@ -56,6 +57,8 @@ export class SpriteService {
       "invmass",
       "layer",
     ].indexOf(key) >= 0) return true;
+    // Parameterized keys.
+    if (key.match(/^bv\[\d+\]$/)) return true;
     // Any integer 1..255 is also valid.
     const v = +key;
     if (isNaN(v)) return false;

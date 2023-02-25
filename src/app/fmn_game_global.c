@@ -39,6 +39,7 @@ static void cb_spawn(
  
 int fmn_game_load_map(int mapid) {
   fmn_sprites_clear();
+  fmn_gs_drop_listeners();
   int err=fmn_load_map(mapid,cb_spawn);
   if (err<=0) return err;
   if (fmn_hero_reset()<0) return -1;
@@ -140,4 +141,85 @@ void fmn_game_update(float elapsed) {
  
 void fmn_spell_cast(uint8_t spellid) {
   fmn_log("TODO %s %d",__func__,spellid);
+}
+
+/* GS listeners.
+ */
+ 
+#define FMN_GS_LISTENER_LIMIT 32
+ 
+static struct fmn_gs_listener {
+  uint16_t id;
+  uint16_t p;
+  void (*cb)(void *userdata,uint16_t p,uint8_t v);
+  void *userdata;
+} fmn_gs_listenerv[FMN_GS_LISTENER_LIMIT];
+static uint16_t fmn_gs_listenerc=0;
+static uint16_t fmn_gs_listener_id_next=1; // if we create 64k listeners in one map, there may be collisions. unlikely.
+ 
+uint16_t fmn_gs_listen_bit(uint16_t p,void (*cb)(void *userdata,uint16_t p,uint8_t v),void *userdata) {
+  if (fmn_gs_listenerc>=FMN_GS_LISTENER_LIMIT) return 0;
+  struct fmn_gs_listener *listener=fmn_gs_listenerv+fmn_gs_listenerc++;
+  listener->id=fmn_gs_listener_id_next++;
+  if (!fmn_gs_listener_id_next) fmn_gs_listener_id_next=1;
+  listener->p=p;
+  listener->cb=cb;
+  listener->userdata=userdata;
+  return listener->id;
+}
+
+void fmn_gs_unlisten(uint16_t id) {
+  uint16_t i=fmn_gs_listenerc;
+  while (i-->0) {
+    if (fmn_gs_listenerv[i].id==id) {
+      fmn_gs_listenerc--;
+      memmove(fmn_gs_listenerv+i,fmn_gs_listenerv+i+1,sizeof(struct fmn_gs_listener)*(fmn_gs_listenerc-i));
+      return;
+    }
+  }
+}
+
+void fmn_gs_drop_listeners() {
+  fmn_gs_listenerc=0;
+}
+
+/* GS changes.
+ */
+ 
+void fmn_gs_notify(uint16_t p,uint16_t c) {
+  if (c==1) { //TODO listening on multiple bits, i haven't thought it through yet
+    uint8_t v=(fmn_global.gs[p>>3]&(0x80>>(p&7)))?1:0;
+    uint16_t i=fmn_gs_listenerc;
+    while (i-->0) {
+      const struct fmn_gs_listener *listener=fmn_gs_listenerv+i;
+      if (listener->p!=p) continue;
+      listener->cb(listener->userdata,p,v);
+    }
+  }
+}
+
+uint8_t fmn_gs_get_bit(uint16_t p) {
+  uint16_t bytep=p>>3;
+  if (bytep>=FMN_GS_SIZE) return 0;
+  uint8_t mask=0x80>>(p&7);
+  return (fmn_global.gs[bytep]&mask)?1:0;
+}
+
+void fmn_gs_set_bit(uint16_t p,uint8_t v) {
+  uint16_t bytep=p>>3;
+  if (bytep>=FMN_GS_SIZE) return;
+  uint8_t mask=0x80>>(p&7);
+  if (v) {
+    if (fmn_global.gs[bytep]&mask) return;
+    fmn_global.gs[bytep]|=mask;
+  } else {
+    if (!(fmn_global.gs[bytep]&mask)) return;
+    fmn_global.gs[bytep]&=~mask;
+  }
+  uint16_t i=fmn_gs_listenerc;
+  while (i-->0) {
+    const struct fmn_gs_listener *listener=fmn_gs_listenerv+i;
+    if (listener->p!=p) continue;
+    listener->cb(listener->userdata,p,v);
+  }
 }

@@ -1,0 +1,5 @@
+controller treadle
+image 3
+tile 0x24
+style tile
+layer 100

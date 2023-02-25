@@ -80,6 +80,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_treasure       5
 #define FMN_SPRCTL_soulball       6
 #define FMN_SPRCTL_firenozzle     7
+#define FMN_SPRCTL_treadle        8
+#define FMN_SPRCTL_gate           9
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -89,7 +91,9 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(hazard) \
   _(treasure) \
   _(soulball) \
-  _(firenozzle)
+  _(firenozzle) \
+  _(treadle) \
+  _(gate)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

@@ -22,6 +22,7 @@ radius (FLOAT 0..255)
 invmass (0..255)
 controller (0..65535|name)
 layer (0..255)
+bv[N] (0..255) # N in 0..7
 ```
 
 ## Binary Format
@@ -55,6 +56,7 @@ Defined fields:
 0x40 Velocity decay. u8.8 linear decay in m/s**2
 0x41 Radius. u8.8 m
 0x42 Controller. See FMN_SPRCTL_* in src/app/sprite/fmn_sprite.h
+0x43 bv, controller-specific parameters. (u8 k,u8 v)
 ```
 
 Physics:

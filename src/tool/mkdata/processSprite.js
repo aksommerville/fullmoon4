@@ -3,6 +3,8 @@ const linewise = require("../common/linewise.js");
 const getControllerIdsByName = require("../common/getControllerIdsByName.js");
 const getResourceIdByName = require("../common/getResourceIdByName.js");
 
+const BV_SIZE = 8;
+
 /* Generic handlers.
  */
  
@@ -33,6 +35,13 @@ function decodeCommand_u16(src, opcode, resType) {
   dst[1] = v >> 8;
   dst[2] = v;
   return dst;
+}
+
+function decodeCommand_u8k(src, opcode, firstByte, resType) {
+  if (src.length !== 2) throw new Error(`Expected one argument for command ${JSON.stringify(src[0])}`);
+  const v = getResourceIdByName(resType, src[1]);
+  if (isNaN(v) || (v < 0) || (v > 0xff)) throw new Error(`Expected integer in 0..255, found ${JSON.stringify(src[1])}`);
+  return Buffer.from([opcode, firstByte, v]);
 }
 
 /* Commands with special tokens.
@@ -120,6 +129,16 @@ function decodeCommand(src) {
     case "invmass": return decodeCommand_u8(src, 0x25);
     case "controller": return decodeCommand_u16(rewriteInput_controller(src), 0x42);
     case "layer": return decodeCommand_u8(src, 0x26);
+    default: {
+        let match;
+        if (match = src[0].match(/^bv\[(\d+)\]$/)) {
+          const n = +match[1];
+          if (isNaN(n) || (n < 0) || (n >= BV_SIZE)) {
+            throw new Error(`Invalid bv index ${JSON.stringify(match[1])}`);
+          }
+          return decodeCommand_u8k(src, 0x43, n);
+        }
+      }
   }
   // Not a known token. The input can be all integers, 1 output byte each, and if it adds up, we'll use it.
   const lead = +src[0];

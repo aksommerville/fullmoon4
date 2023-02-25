@@ -149,3 +149,11 @@ void fmn_hero_kill_velocity() {
   fmn_hero.sprite->vely=0.0f;
   fmn_global.walking=0;
 }
+
+/* Check feet.
+ */
+ 
+uint8_t fmn_hero_feet_on_ground() {
+  if (fmn_global.active_item==FMN_ITEM_BROOM) return 0;
+  return 1;
+}

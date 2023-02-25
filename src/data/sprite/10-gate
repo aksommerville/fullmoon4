@@ -1,0 +1,7 @@
+controller gate
+image 3
+tile 0x2a
+style tile
+physics sprites
+radius 0.5
+layer 128

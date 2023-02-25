@@ -1,0 +1,6 @@
+controller treadle
+image 3
+tile 0x26
+style tile
+layer 100
+bv[3] 1

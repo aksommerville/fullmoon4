@@ -21,9 +21,10 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] Illumination
 - [x] Cheese wind-down sound and visual feedback
 - [x] Fire nozzle
-- [ ] Treadle-n-gate
+- [x] Treadle-n-gate
 - [x] Quickie touch input, just for verification on mobile.
 - [ ] Music timing is not tolerable. It's worse on mobile than desktop. Find a better way.
+- [ ] Round-off jitter has returned: Try walking east into the west octopus tree in the eye-of-newt map.
 
 ### March
 
@@ -120,6 +121,9 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Move Map decoding out of DataService into a class of its own.
 - [ ] Finish everything by Halloween.
 - [ ] verify: Check neighbor edges cell by cell
+- [ ] Rekajigger Constants.js, use actual inlinable constants.
+- [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
+- [ ] ^ or if not all that, we at least need a repository of named `gs` fields.
 
 ### Disambiguation
 
