@@ -88,6 +88,12 @@ export class ResService {
     return null;
   }
   
+  getResourceName(type, id) {
+    const res = this.toc.find(r => r.type === type && r.id === id);
+    if (!res) return "";
+    return res.name || "";
+  }
+  
   /* Fetch.
    *************************************************************/
   

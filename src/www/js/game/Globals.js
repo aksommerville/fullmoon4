@@ -97,6 +97,9 @@ export class Globals {
       imageid: this.memU8[p + 9],
       tileid: this.memU8[p + 10],
       xform: this.memU8[p + 11],
+      b0: this.memU8[p + 16],
+      b1: this.memU8[p + 17],
+      b2: this.memU8[p + 18],
     };
     return sprite;
   }

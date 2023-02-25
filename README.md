@@ -20,7 +20,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Village graphics: huts, fountain, fences
 - [x] Illumination
 - [x] Cheese wind-down sound and visual feedback
-- [ ] Fire nozzle
+- [x] Fire nozzle
 - [ ] Treadle-n-gate
 - [x] Quickie touch input, just for verification on mobile.
 - [ ] Music timing is not tolerable. It's worse on mobile than desktop. Find a better way.
@@ -61,6 +61,12 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 ### May
 
 - [ ] Order merch.
+- - [ ] Coloring book. (printingcenterusa.com says about $1/ea for 250)
+- - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
+- - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
+- - [ ] Notebooks
+- - [ ] Pencils
+- - Probly no need for thumb drives if we've only got the demo.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Lively intro splash.

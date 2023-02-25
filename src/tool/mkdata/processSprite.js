@@ -67,6 +67,7 @@ function rewriteInput_style(src) {
     case "tile": v = 1; break;
     case "hero": v = 2; break;
     case "fourframe": v = 3; break;
+    case "firenozzle": v = 4; break;
   }
   return ["style", v];
 }
@@ -118,6 +119,7 @@ function decodeCommand(src) {
     case "radius": return decodeCommand_u88(src, 0x41);
     case "invmass": return decodeCommand_u8(src, 0x25);
     case "controller": return decodeCommand_u16(rewriteInput_controller(src), 0x42);
+    case "layer": return decodeCommand_u8(src, 0x26);
   }
   // Not a known token. The input can be all integers, 1 output byte each, and if it adds up, we'll use it.
   const lead = +src[0];

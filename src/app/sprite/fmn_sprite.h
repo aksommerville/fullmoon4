@@ -8,9 +8,6 @@
 #include "app/fmn_platform.h"
 
 #define FMN_SPRITE_ARGV_SIZE 4
-#define FMN_SPRITE_BV_SIZE 8
-#define FMN_SPRITE_SV_SIZE 4
-#define FMN_SPRITE_FV_SIZE 4
 
 #define FMN_PHYSICS_MOTION  0x01 /* Automatic motion per (velx,vely,veldecay) */
 #define FMN_PHYSICS_EDGE    0x02 /* Collide against screen edges. */
@@ -36,11 +33,6 @@ struct fmn_sprite {
   // Reference data recorded at spawn point.
   uint16_t spriteid;
   uint8_t argv[FMN_SPRITE_ARGV_SIZE];
-  
-  // Controller's state.
-  uint8_t bv[FMN_SPRITE_BV_SIZE];
-  int16_t sv[FMN_SPRITE_SV_SIZE];
-  float fv[FMN_SPRITE_FV_SIZE];
   
   // Generic physics.
   uint8_t physics; // Bitfields, FMN_PHYSICS_*
@@ -87,6 +79,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_hazard         4
 #define FMN_SPRCTL_treasure       5
 #define FMN_SPRCTL_soulball       6
+#define FMN_SPRCTL_firenozzle     7
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -95,7 +88,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(alphablock) \
   _(hazard) \
   _(treasure) \
-  _(soulball)
+  _(soulball) \
+  _(firenozzle)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

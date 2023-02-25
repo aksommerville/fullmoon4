@@ -137,10 +137,15 @@ int rand();
 #define FMN_SFX_COWBELL 56
 // There's more GM, thru 81, but I'm sure we won't need all that.
 
-#define FMN_SPRITE_STYLE_HIDDEN    0 /* don't render */
-#define FMN_SPRITE_STYLE_TILE      1 /* single tile */
-#define FMN_SPRITE_STYLE_HERO      2 /* special */
-#define FMN_SPRITE_STYLE_FOURFRAME 3 /* 4 tiles arranged horizontally, automatic animation */
+#define FMN_SPRITE_STYLE_HIDDEN     0 /* don't render */
+#define FMN_SPRITE_STYLE_TILE       1 /* single tile */
+#define FMN_SPRITE_STYLE_HERO       2 /* special */
+#define FMN_SPRITE_STYLE_FOURFRAME  3 /* 4 tiles arranged horizontally, automatic animation */
+#define FMN_SPRITE_STYLE_FIRENOZZLE 4 /* special */
+
+#define FMN_SPRITE_BV_SIZE 8
+#define FMN_SPRITE_SV_SIZE 4
+#define FMN_SPRITE_FV_SIZE 4
 
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
@@ -151,7 +156,11 @@ int rand();
   uint8_t imageid; \
   uint8_t tileid; \
   uint8_t xform; \
-  uint16_t controller;
+  uint16_t controller; \
+  uint16_t pad1; \
+  uint8_t bv[FMN_SPRITE_BV_SIZE]; \
+  int16_t sv[FMN_SPRITE_SV_SIZE]; \
+  float fv[FMN_SPRITE_FV_SIZE];
 struct fmn_sprite_header { FMN_SPRITE_HEADER };
 
 struct fmn_plant {

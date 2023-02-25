@@ -1,0 +1,6 @@
+controller firenozzle
+image 3
+tile 0x10
+style firenozzle
+xform xrev swap
+layer 130

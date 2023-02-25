@@ -33,11 +33,12 @@ export class SpriteService {
       case "image": return "Image ID";
       case "tile": return "0..255";
       case "xform": return "Multi: xrev, yrev, swap";
-      case "style": return "One: hidden, tile, hero, fourframe";
+      case "style": return "One: hidden, tile, hero, fourframe, firenozzle";
       case "physics": return "Multi: motion, edge, sprites, solid, hole";
       case "decay": return "0.0 <= n < 256.0";
       case "radius": return "0.0 <= n < 256.0";
       case "invmass": return "0=infinite, 1=heavy, 255=light";
+      case "layer": return "hero=128";
     }
     return "";
   }
@@ -53,6 +54,7 @@ export class SpriteService {
       "decay",
       "radius",
       "invmass",
+      "layer",
     ].indexOf(key) >= 0) return true;
     // Any integer 1..255 is also valid.
     const v = +key;

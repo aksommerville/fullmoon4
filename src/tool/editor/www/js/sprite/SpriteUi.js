@@ -21,7 +21,7 @@ export class SpriteUi {
     /* We'll show a few fields in a predictable order, whether they're defined or not.
      * The format is new as I'm writing this, and it's small enough we might as well include all of them.
      */
-    this.fieldsAlways = ["controller", "image", "tile", "xform", "style", "physics", "decay", "radius"];
+    this.fieldsAlways = ["controller", "image", "tile", "xform", "style", "physics", "decay", "radius", "layer"];
     
     this.spriteId = 0;
     this.sprite = null;
@@ -40,6 +40,10 @@ export class SpriteUi {
   
   buildUi() {
     this.element.innerHTML = "";
+    
+    const headerRow = this.dom.spawn(this.element, "DIV", ["headerRow"]);
+    const idTattle = this.dom.spawn(headerRow, "DIV", ["idTattle"]);
+    
     const table = this.dom.spawn(this.element, "TABLE", ["mainTable"], { "on-change": () => this.onChange() });
     const trFooter = this.dom.spawn(table, "TR", ["footer"]);
     const tdFooter = this.dom.spawn(trFooter, "TD", { colspan: 4 });
@@ -50,6 +54,7 @@ export class SpriteUi {
   }
   
   populateUi() {
+    this.element.querySelector(".idTattle").innerText = this._generateIdTattleText();
     const mainTable = this.element.querySelector(".mainTable");
     const trFooter = mainTable.querySelector("tr.footer");
     for (const tr of mainTable.querySelectorAll("tr.field")) tr.remove();
@@ -77,6 +82,11 @@ export class SpriteUi {
     } else {
       this.element.querySelector(".addField").disabled = false;
     }
+  }
+  
+  _generateIdTattleText() {
+    if (!this.sprite) return "";
+    return `${this.spriteId}: ${this.resService.getResourceName("sprite", this.spriteId)}`;
   }
   
   populateFieldRow(tr, command) {

@@ -58,7 +58,45 @@ export class RenderSprites {
             const frame = (this.frameCount >> 3) & 3;
             this.renderBasics.tile(ctx, sprite.x * tilesize, sprite.y * tilesize, srcImage, sprite.tileid + frame, sprite.xform);
           } break;
+          
+        case this.constants.SPRITE_STYLE_FIRENOZZLE: {
+            this._renderFirenozzle(ctx, sprite, srcImage);
+          } break;
       }
+    }
+  }
+  
+  _renderFirenozzle(ctx, sprite, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    switch (sprite.b1) {
+      case 1: { // huff
+          this.renderBasics.tile(ctx, sprite.x * tilesize, sprite.y * tilesize, srcImage, sprite.tileid + 1, sprite.xform);
+        } break;
+      case 2: { // puff
+          let dstx = ~~(sprite.x * tilesize);
+          let dsty = ~~(sprite.y * tilesize);
+          let dx=0, dy=0;
+          switch (sprite.xform) {
+            case 0: dx = tilesize; break;
+            case this.constants.XFORM_XREV: dx = -tilesize; break;
+            case this.constants.XFORM_SWAP: dy = tilesize; break;
+            case this.constants.XFORM_SWAP | this.constants.XFORM_XREV: dy = -tilesize; break;
+          }
+          this.renderBasics.tile(ctx, dstx, dsty, srcImage, sprite.tileid + 2, sprite.xform);
+          const flameBase = sprite.tileid + ((this.frameCount & 8) ? 3 : 6);
+          dstx += dx;
+          dsty += dy;
+          this.renderBasics.tile(ctx, dstx, dsty, srcImage, flameBase, sprite.xform);
+          dstx += dx;
+          dsty += dy;
+          for (let i=sprite.b2; i-->2; dstx+=dx, dsty+=dy) {
+            this.renderBasics.tile(ctx, dstx, dsty, srcImage, flameBase + 1, sprite.xform);
+          }
+          this.renderBasics.tile(ctx, dstx, dsty, srcImage, flameBase + 2, sprite.xform);
+        } break;
+      default: { // idle
+          this.renderBasics.tile(ctx, sprite.x * tilesize, sprite.y * tilesize, srcImage, sprite.tileid, sprite.xform);
+        } break;
     }
   }
 }
