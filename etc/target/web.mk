@@ -57,6 +57,10 @@ $(web_HTPROD_ARCHIVE):$(web_HTPROD_FILES);$(call PRECMD,web) tar -C$(web_OUTDIR)
 web-run:$(web_EXE) $(web_HTPROD_DATA);$(NODE) src/tool/server/main.js \
   --htdocs=src/www --makeable=$(web_HTPROD_DATA) --makeable=$(web_EXE)
 
+# Same as web-run, but on INADDR_ANY, so other hosts on your network can reach it (eg mobile).
+web-run-routable:$(web_EXE) $(web_HTPROD_DATA);$(NODE) src/tool/server/main.js \
+  --htdocs=src/www --makeable=$(web_HTPROD_DATA) --makeable=$(web_EXE) --host=0.0.0.0
+
 # Run our maps editor.
 web-edit:;$(NODE) src/tool/editor/main.js --htdocs=src/tool/editor/www --data=src/data
   

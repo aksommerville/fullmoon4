@@ -140,7 +140,9 @@ if (archivePath) {
       throw new Error(`${archivePath}: ${res.type}:${res.qualifier}:${res.id} at ${res.offset} followed by ${next.type}:${next.qualifier}:${next.id} at ${next.offset}. Offsets out of order.`);
     }
     if (!len) {
-      missing.push(res);
+      if (res.type !== RESTYPE_TILEPROPS) { // TILEPROPS are expected to be sparse, don't report it
+        missing.push(res);
+      }
       resources.splice(i, 1);
       continue;
     }

@@ -22,7 +22,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] Cheese wind-down sound and visual feedback
 - [ ] Fire nozzle
 - [ ] Treadle-n-gate
-- [ ] Quickie touch input, just for verification on mobile.
+- [x] Quickie touch input, just for verification on mobile.
+- [ ] Music timing is not tolerable. It's worse on mobile than desktop. Find a better way.
 
 ### March
 

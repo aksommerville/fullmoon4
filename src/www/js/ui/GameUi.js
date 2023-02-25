@@ -3,18 +3,22 @@
  */
  
 import { Dom } from "../util/Dom.js";
+import { InputManager } from "../game/InputManager.js";
 
 export class GameUi {
   static getDependencies() {
-    return [HTMLElement, Dom];
+    return [HTMLElement, Dom, InputManager];
   }
-  constructor(element, dom) {
+  constructor(element, dom, inputManager) {
     this.element = element;
     this.dom = dom;
+    this.inputManager = inputManager;
     
     this.running = false;
     
     this.buildUi();
+    
+    this.inputManager.registerTouchListeners(this.element);
   }
   
   buildUi() {
