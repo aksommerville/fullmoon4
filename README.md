@@ -19,9 +19,10 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Cave graphics: ladder, entrance, water
 - [ ] Village graphics: huts, fountain, fences
 - [x] Illumination
-- [ ] Cheese wind-down sound and visual feedback
+- [x] Cheese wind-down sound and visual feedback
 - [ ] Fire nozzle
 - [ ] Treadle-n-gate
+- [ ] Quickie touch input, just for verification on mobile.
 
 ### March
 
@@ -29,13 +30,11 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Refine items.
 - - [x] Corn: Eliminate. Same thing as Seed.
 - - [ ] Seed: Sprite on actuation, and summon the bird or create a plant.
-- - [ ] Cheese: Visual feedback. Maybe a second sound effect when it ends?
 - - [ ] Feather: Actuate blocks and ...whatever else a feather does.
 - - [ ] Coin: throw
 - - [ ] Pitcher: pickup from environment
 - - [ ] Pitcher: advance plants when poured. And put out fires. and what else?
 - - [ ] Pitcher: visual feedback on pickup
-- - [ ] Match: Use global illumination_time for something. Darkened caves etc.
 - - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - - [ ] Violin: Chart UI
 - - [ ] Violin: Encode song

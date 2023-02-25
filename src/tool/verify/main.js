@@ -249,7 +249,7 @@ function reachable(type, id) {
 reachable(RESTYPE_MAP, 1); // initial map
 reachable(RESTYPE_IMAGE, 2); // hero
 reachable(RESTYPE_IMAGE, 4); // items splash
-for (let id=1; id<=12; id++) { // #define FMN_SFX_GRIEVOUS_INJURY 12
+for (let id=1; id<=13; id++) { // #define FMN_SFX_UNCHEESE 13
   reachable(RESTYPE_SOUND, id);
 }
 

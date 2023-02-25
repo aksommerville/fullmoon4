@@ -74,6 +74,7 @@ static void fmn_hero_cheese_begin() {
   fmn_sound_effect(FMN_SFX_CHEESE);
   fmn_global.itemqv[FMN_ITEM_CHEESE]--;
   fmn_hero.cheesetime+=FMN_HERO_CHEESE_TIME;
+  fmn_global.cheesing=1;
 }
 
 /* Pitcher.

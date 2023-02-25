@@ -129,9 +129,14 @@ void fmn_hero_motion_update(float elapsed) {
     tvx=tvy=0.0f;
   } else {
     if (fmn_hero.cheesetime>0.0f) {
-      fmn_hero.cheesetime-=elapsed;
-      tvx*=FMN_HERO_CHEESE_ADJUST;
-      tvy*=FMN_HERO_CHEESE_ADJUST;
+      if ((fmn_hero.cheesetime-=elapsed)<=0.0f) {
+        fmn_sound_effect(FMN_SFX_UNCHEESE);
+        fmn_hero.cheesetime=0.0f;
+        fmn_global.cheesing=0;
+      } else {
+        tvx*=FMN_HERO_CHEESE_ADJUST;
+        tvy*=FMN_HERO_CHEESE_ADJUST;
+      }
     }
     if (fmn_hero.walkdx&&fmn_hero.walkdy) {
       const float halfroot2=M_SQRT2/2.0f;

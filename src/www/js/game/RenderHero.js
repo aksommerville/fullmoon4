@@ -49,6 +49,7 @@ export class RenderHero {
     this.compassRateMin = 0.010;
     this.compassDistanceMax = 40;
     this.compassDistanceMin = 1;
+    this.cheesePhase = 0;
   }
   
   render(ctx, srcImage, sprite) {
@@ -117,6 +118,13 @@ export class RenderHero {
       this._renderItem(ctx, midx, midy, facedir, srcImage);
       this._renderHead(ctx, midx, midy, facedir, srcImage, col, xform);
       this._renderHat(ctx, midx, midy, facedir, srcImage, col, xform);
+    }
+    
+    // Cheesing is an overlay, but doesn't need to worry about other sprites.
+    if (this.globals.g_cheesing[0]) {
+      this._renderCheeseWhiz(ctx, midx, midy, srcImage);
+    } else {
+      this.cheesePhase = 0;
     }
   }
   
@@ -213,6 +221,32 @@ export class RenderHero {
       xform = itemCarryLayout[3] || 0;
     }
     this.renderBasics.tile(ctx, dstx, dsty, srcImage, itemCarryLayout[0], xform);
+  }
+  
+  _renderCheeseWhiz(ctx, midx, midy, srcImage) {
+    const period = 40;
+    const phasef = this.cheesePhase / period;
+    this.cheesePhase++;
+    if (this.cheesePhase >= period) {
+      this.cheesePhase = 0;
+    }
+    
+    midy -= 0.5;
+    this._renderCheeseSpot(ctx, midx, midy, srcImage, 1.5, -1.5, "#ff0", phasef);
+    this._renderCheeseSpot(ctx, midx, midy, srcImage, 0, -2.0, "#f80", phasef);
+    this._renderCheeseSpot(ctx, midx, midy, srcImage, -1.5, -1.5, "#ff0", phasef);
+  }
+  
+  _renderCheeseSpot(ctx, midx, midy, srcImage, dx, dy, color, phase) {
+    const dstx = (midx + dx * phase) * this.constants.TILESIZE;
+    const dsty = (midy + dy * phase) * this.constants.TILESIZE;
+    const r = this.constants.TILESIZE / 8;
+    ctx.beginPath();
+    ctx.ellipse(dstx, dsty, r, r, 0, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 1 - phase;
+    ctx.fill();
+    ctx.globalAlpha = 1;
   }
   
   _animateFeather() {

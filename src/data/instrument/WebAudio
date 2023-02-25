@@ -224,6 +224,14 @@ sound CHEESE
   norm 0 0.200
 end
 
+sound UNCHEESE
+  len 1.500
+  fm 0 ( 1400 150 600 ) 1 ( 0 100 5 50 1 ) sine
+  env 0 ( 0 80 0xffff 70 0 )
+  delay 0 0.160 0.5 0.5 0.5 0.5
+  norm 0 0.200
+end
+
 sound HURT
   len 0.400
   fm 0 ( 500 * 40 ) 0.5 ( 5 * 0 ) sine
@@ -477,10 +485,6 @@ sound GRIEVOUS_INJURY
 end
 
 # Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 13
-  len 0.001
-  noise 0
-end
 sound 14
   len 0.001
   noise 0

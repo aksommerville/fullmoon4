@@ -75,8 +75,9 @@ export class Globals {
     this.g_wand_dir = new Uint8Array(this.memU8.buffer, this.p_hero + 3, 1);
     this.g_injury_time = new Float32Array(this.memU8.buffer, this.p_hero + 4, 1);
     this.g_illumination_time = new Float32Array(this.memU8.buffer, this.p_hero + 8, 1);
-    this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 12, 2); // [x,y]
-    this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 16, 2); // [x,y]
+    this.g_cheesing = new Uint8Array(this.memU8.buffer, this.p_hero + 12, 1);
+    this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 14, 2); // [x,y]
+    this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 18, 2); // [x,y]
   }
   
   /* Higher-level logical access with structured models.
