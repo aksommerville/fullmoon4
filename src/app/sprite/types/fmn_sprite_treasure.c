@@ -27,6 +27,7 @@ static void _treasure_hero_collision(struct fmn_sprite *sprite,struct fmn_sprite
     // If we didn't already have this, begin some fanfare and select it.
     fmn_global.itemv[itemid]=1;
     fmn_global.selected_item=itemid;
+    fmn_sound_effect(FMN_SFX_ITEM_MAJOR);
     fmn_begin_menu(FMN_MENU_TREASURE,itemid,cb_modal);
     fmn_hero_kill_velocity();
   } else {
@@ -34,6 +35,7 @@ static void _treasure_hero_collision(struct fmn_sprite *sprite,struct fmn_sprite
     // Do not auto-select it.
     fmn_global.show_off_item=itemid;
     fmn_global.show_off_item_time=0xff;
+    fmn_sound_effect(FMN_SFX_ITEM_MINOR);
   }
   uint8_t q=fmn_initial_qualifier_per_itemid[itemid];
   if (q) {

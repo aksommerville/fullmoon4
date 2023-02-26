@@ -54,15 +54,18 @@ static void _treadle_press(struct fmn_sprite *sprite) {
   sprite->tileid=tileid0+1;
   state=1;
   if (gsbit) fmn_gs_set_bit(gsbit,1);
+  fmn_sound_effect(FMN_SFX_TREADLE_PRESS);
 }
  
 static void _treadle_release(struct fmn_sprite *sprite) {
   sprite->tileid=tileid0;
   state=0;
   if (gsbit) fmn_gs_set_bit(gsbit,0);
+  fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
 }
  
 static void _stompbox_press(struct fmn_sprite *sprite) {
+  fmn_sound_effect(FMN_SFX_TREADLE_PRESS);
   if (state) {
     state=0;
     sprite->tileid=tileid0+1;
@@ -75,6 +78,7 @@ static void _stompbox_press(struct fmn_sprite *sprite) {
 }
  
 static void _stompbox_release(struct fmn_sprite *sprite) {
+  fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
   if (state) sprite->tileid=tileid0+2;
   else sprite->tileid=tileid0;
 }

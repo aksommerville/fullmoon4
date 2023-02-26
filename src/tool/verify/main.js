@@ -12,6 +12,8 @@ const verifyString = require("./verifyString.js");
 const verifyWebAudioInstrument = require("./verifyWebAudioInstrument.js");
 const verifyWebAudioSound = require("./verifyWebAudioSound.js");
 
+const HIGHEST_DEFINED_SOUND_ID = 17; // TREADLE_RELEASE
+
 const RESTYPE_IMAGE = 1;
 const RESTYPE_SONG = 2;
 const RESTYPE_MAP = 3;
@@ -251,7 +253,7 @@ function reachable(type, id) {
 reachable(RESTYPE_MAP, 1); // initial map
 reachable(RESTYPE_IMAGE, 2); // hero
 reachable(RESTYPE_IMAGE, 4); // items splash
-for (let id=1; id<=13; id++) { // #define FMN_SFX_UNCHEESE 13
+for (let id=1; id<=HIGHEST_DEFINED_SOUND_ID; id++) {
   reachable(RESTYPE_SOUND, id);
 }
 

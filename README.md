@@ -42,8 +42,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] No, dipshit! Drum levels are low because you deferred their gain but not their start time.
 - [x] Round-off jitter has returned: Try walking east into the west octopus tree in the eye-of-newt map.
 - - ...both octopus trees actually, which happen to be at x=8 and x=16.
-- [ ] treasure: Sound when picking up an already-have item
-- [ ] treadle: sounds
+- [x] treasure: Sound when picking up an already-have item
+- [x] treadle: sounds
 - [ ] Need a better solution for shovel holes. eg dig in the packed earth in the village, it shows a grass outline
 
 ### March
@@ -96,39 +96,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### After GDEX
 
-- [ ] Make up a new item to take Corn's place.
-- [ ] Touch input.
-- [ ] Input configuration.
-- - [ ] Generalize mapping, see src/www/js/game/InputManager.js
-- - [ ] Persist gamepad and keyboard mapping.
-- - [ ] UI for mapping.
-- [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
-- [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
-- [ ] Package web app in a native wrapper eg Electron.
-- [ ] Native platforms.
-- - [ ] Linux
-- - [ ] MacOS
-- - [ ] Windows
-- - [ ] Tiny
-- - [ ] Pippin
-- - [ ] PicoSystem
-- - [ ] Thumby
-- - [ ] PocketStar
-- - [ ] Playdate
-- - [ ] 68k Mac
-- - [ ] iOS
-- - [ ] Android
-- - [ ] Wii
-- - [ ] Modern consoles?
-- - [ ] SNES? I know it won't happen but you got to try
-- - [ ] node or deno? Shame to write all this Javascript and use it for just one platform...
-- [ ] Unit tests.
-- - [ ] General-purpose test runner.
-- - [ ] C tests
-- - [ ] JS platform tests
-- [ ] Automation against headless native build.
-- [ ] Maps for full game.
-- [ ] Translation.
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.
@@ -136,15 +103,49 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Delete maps (and resources in general)
 - - [ ] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
 - - [ ] Helper to analyze map songs, ensure no map could have a different song depending on entry point
-- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
-- [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
-- [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
-- [ ] Move Map decoding out of DataService into a class of its own.
-- [ ] Finish everything by Halloween.
-- [ ] verify: Check neighbor edges cell by cell
-- [ ] Rekajigger Constants.js, use actual inlinable constants.
+- - - Consider using `verify` instead of `editor` for this.
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
 - [ ] ^ or if not all that, we at least need a repository of named `gs` fields.
+- [ ] verify: Check neighbor edges cell by cell
+- [ ] Make up a new item to take Corn's place.
+- [ ] Maps for full game.
+- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
+- [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
+- [ ] Rekajigger Constants.js, use actual inlinable constants.
+- [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
+- [ ] Translation.
+- [ ] Touch input.
+- [ ] Input configuration.
+- - [ ] Generalize mapping, see src/www/js/game/InputManager.js
+- - [ ] Persist gamepad and keyboard mapping.
+- - [ ] UI for mapping.
+- [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
+- [ ] Finish everything by Halloween. (to this point in the list at least)
+- [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
+- [ ] Move Map decoding out of DataService into a class of its own.
+- [ ] Unit tests.
+- - [ ] General-purpose test runner.
+- - [ ] C tests
+- - [ ] JS platform tests
+- [ ] Automation against headless native build.
+- [ ] Other platforms:
+- - [ ] Web wrapper eg Electron
+- - [ ] Linux
+- - [ ] Tiny
+- - [ ] MacOS
+- - [ ] Windows
+- - [ ] iOS
+- - [ ] Android
+- - [ ] Pippin
+- - [ ] PicoSystem
+- - [ ] Thumby
+- - [ ] PocketStar
+- - [ ] Playdate
+- - [ ] 68k Mac
+- - [ ] Wii
+- - [ ] Modern consoles?
+- - [ ] SNES? I know it won't happen but you got to try
+- - [ ] node or deno? Shame to write all this Javascript and use it for just one platform...
 
 ### Disambiguation
 
