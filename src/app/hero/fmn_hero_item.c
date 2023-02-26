@@ -277,19 +277,86 @@ static void fmn_hero_wand_motion(uint8_t bit,uint8_t value) {
 /* Violin.
  */
  
+static uint8_t fmn_violin_note_from_dir(uint8_t dir) {
+  // Consider using a different note depending on the last one played.
+  // Will be a little complicated, but it would be nice to expand the tones available for songs.
+  // That will be auditory only; a canonical song will always be composed of The Four Notes.
+  switch (dir) {
+    case FMN_DIR_N: return 0x47;
+    case FMN_DIR_E: return 0x45;
+    case FMN_DIR_W: return 0x43;
+    case FMN_DIR_S: return 0x40;
+  }
+  return 0;
+}
+
+static void fmn_violin_check_song() {
+  // Copy out of the ring buffer and trim space.
+  uint8_t song[FMN_VIOLIN_SONG_LENGTH];
+  uint8_t dstc=0,srcp=fmn_global.violin_songp;
+  uint8_t i=FMN_VIOLIN_SONG_LENGTH;
+  for (;i-->0;srcp++) {
+    if (srcp>=FMN_VIOLIN_SONG_LENGTH) srcp=0;
+    if (dstc||fmn_global.violin_song[srcp]) {
+      song[dstc++]=fmn_global.violin_song[srcp];
+    }
+  }
+  // Trim trailing space and require at least one. (don't commit-and-abort instantly upon the last note)
+  if (!dstc) return;
+  if (song[--dstc]) return;
+  while (dstc&&!song[dstc-1]) dstc--;
+  if (dstc) {
+    uint8_t spellid=fmn_song_eval(song,dstc);
+    if (spellid) {
+      fmn_spell_cast(spellid);
+      if (fmn_global.wand_dir) {
+        fmn_synth_event(0x0e,0x80,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
+      }
+      fmn_global.active_item=0;
+    }
+  }
+}
+ 
 static void fmn_hero_violin_begin() {
   fmn_global.wand_dir=0;
-  fmn_hero.spellc=0;
+  memset(fmn_global.violin_song,0,FMN_VIOLIN_SONG_LENGTH);
+  fmn_global.violin_clock=0.0f;
+  fmn_global.violin_songp=0;
+  fmn_hero.next_metronome_songp=0;
+  fmn_synth_event(0x0e,0x0c,1,0); // load violin program in channel 14
 }
 
 static void fmn_hero_violin_end() {
+  if (fmn_global.wand_dir) {
+    fmn_synth_event(0x0e,0x80,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
+  }
 }
 
 static void fmn_hero_violin_update(float elapsed) {
+  fmn_global.violin_clock+=elapsed*FMN_VIOLIN_BEATS_PER_SEC;
+  
+  // Metronome sounds halfway thru each beat, not at the transitions.
+  // Because when we record a note, we floor time rather than rounding.
+  if ((fmn_global.violin_songp==fmn_hero.next_metronome_songp)&&(fmn_global.violin_clock>=0.5f)) {
+    fmn_sound_effect(FMN_SFX_COWBELL);
+    fmn_hero.next_metronome_songp+=2;
+    if (fmn_hero.next_metronome_songp>=FMN_VIOLIN_SONG_LENGTH) {
+      fmn_hero.next_metronome_songp-=FMN_VIOLIN_SONG_LENGTH;
+    }
+  }
+  
+  while (fmn_global.violin_clock>=1.0f) {
+    fmn_global.violin_clock-=1.0f;
+    fmn_global.violin_song[fmn_global.violin_songp]=0;
+    fmn_global.violin_songp++;
+    if (fmn_global.violin_songp>=FMN_VIOLIN_SONG_LENGTH) {
+      fmn_global.violin_songp=0;
+    }
+    fmn_violin_check_song();
+  }
 }
 
 static void fmn_hero_violin_motion(uint8_t bit,uint8_t value) {
-  //TODO this is copied from wand, but it won't be exactly the same...
   uint8_t ndir=fmn_global.wand_dir;
   if (value) {
     switch (bit) {
@@ -307,10 +374,15 @@ static void fmn_hero_violin_motion(uint8_t bit,uint8_t value) {
     }
   }
   if (ndir==fmn_global.wand_dir) return;
+  if (fmn_global.wand_dir) {
+    fmn_synth_event(0x0e,0x80,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
+  }
   fmn_global.wand_dir=ndir;
   if (ndir) {
-    if (fmn_hero.spellc<FMN_HERO_SPELL_LIMIT) fmn_hero.spellv[fmn_hero.spellc]=ndir;
-    if (fmn_hero.spellc<0xff) fmn_hero.spellc++;
+    int8_t p=fmn_global.violin_songp-1;
+    if (p<0) p=FMN_VIOLIN_SONG_LENGTH-1;
+    fmn_global.violin_song[p]=ndir;
+    fmn_synth_event(0x0e,0x90,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
   }
 }
 

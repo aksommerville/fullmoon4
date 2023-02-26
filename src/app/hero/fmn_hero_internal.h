@@ -19,7 +19,8 @@
 #define FMN_HERO_CHEESE_ADJUST     2.000f
 #define FMN_HERO_MATCH_ILLUMINATION_TIME   5.0f
 #define FMN_HERO_SHOVEL_TIME               0.500f
-#define FMN_HERO_SPELL_LIMIT 12
+#define FMN_HERO_SPELL_LIMIT 12 /* Must be <=FMN_VIOLIN_SONG_LENGTH (20) */
+#define FMN_VIOLIN_BEATS_PER_SEC 4
 
 extern struct fmn_hero {
   struct fmn_sprite *sprite;
@@ -40,6 +41,7 @@ extern struct fmn_hero {
   uint8_t spellv[FMN_HERO_SPELL_LIMIT];
   uint8_t spellc; // may exceed limit
   uint8_t landing_pending; // broom flight ended over a hole, will end when clear
+  uint8_t next_metronome_songp;
 } fmn_hero;
 
 void fmn_hero_motion_event(uint8_t bit,uint8_t value); // dpad changes

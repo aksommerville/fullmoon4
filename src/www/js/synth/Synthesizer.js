@@ -24,6 +24,7 @@ export class Synthesizer {
     this.voices = [];
     this.songPlayer = null;
     this.overrideInstrumentPid = null; // only fiddle should use
+    this.pausedForViolin = false; // Song pauses while violin active. Otherwise playback as usual.
   }
   
   /* Entry points from Runtime.
@@ -75,12 +76,29 @@ export class Synthesizer {
       }
     }
     if (this.songPlayer) {
-      try {
-        this.songPlayer.update();
-      } catch (e) {
-        console.error(`error updating song`, e);
+      this._checkViolin();
+      if (!this.pausedForViolin) {
+        try {
+          this.songPlayer.update();
+        } catch (e) {
+          console.error(`error updating song`, e);
+          this.songPlayer.releaseAll();
+          this.songPlayer = null;
+        }
+      }
+    }
+  }
+  
+  _checkViolin() {
+    if (this.globals.g_active_item[0] === this.constants.ITEM_VIOLIN) {
+      if (!this.pausedForViolin) {
+        this.pausedForViolin = true;
         this.songPlayer.releaseAll();
-        this.songPlayer = null;
+      }
+    } else {
+      if (this.pausedForViolin) {
+        this.pausedForViolin = false;
+        this.songPlayer.resetClock();
       }
     }
   }

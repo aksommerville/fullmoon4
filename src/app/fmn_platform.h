@@ -159,6 +159,11 @@ int rand();
 #define FMN_CELLPHYSICS_UNSHOVELLABLE 3
 #define FMN_CELLPHYSICS_UNCHALKABLE 4
 
+/* Size of the violin input buffer.
+ * The longest song must be shorter than this. (not equal)
+ */
+#define FMN_VIOLIN_SONG_LENGTH 20
+
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
  */
@@ -268,12 +273,18 @@ extern struct fmn_global {
   // Current cell focussed for shovel.
   int8_t shovelx;
   int8_t shovely;
-  uint16_t pad3;
+  uint32_t pad3;
   
   // General-purpose global state.
   // The whole thing gets persisted on saves.
   // Don't modify directly. There are helpers to toggle values, which will notify subscribers. (TODO)
   uint8_t gs[FMN_GS_SIZE];
+  
+  uint8_t violin_song[FMN_VIOLIN_SONG_LENGTH];
+  float violin_clock; // 0..1, counts up to the next beat transition.
+  uint8_t violin_songp;
+  uint8_t pad4;
+  uint16_t pad5;
   
 } fmn_global;
 
@@ -350,5 +361,6 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y);
 int8_t fmn_begin_sketch(uint16_t x,uint16_t y);
 
 void fmn_sound_effect(uint16_t sfxid);
+void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
 
 #endif

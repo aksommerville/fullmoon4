@@ -74,6 +74,8 @@ export class Constants {
     
     this.GS_SIZE = 64;
     
+    this.VIOLIN_SONG_LENGTH = 20;
+    
     this.AUDIO_FRAME_RATE = 44100;
     this.AUDIO_CHANNEL_COUNT = 16; // logical bus channels, not mono/stereo output
     

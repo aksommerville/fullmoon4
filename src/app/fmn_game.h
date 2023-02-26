@@ -17,7 +17,13 @@ void fmn_game_update(float elapsed);
  */
 void fmn_secrets_refresh_for_map();
 
+/* Songs and spells use the same namespace.
+ * Both 'eval' return zero if invalid.
+ * Caller must trim leading and trailing space.
+ * Songs will match by suffix; spells must be a perfect match.
+ */
 uint8_t fmn_spell_eval(const uint8_t *v,uint8_t c);
+uint8_t fmn_song_eval(const uint8_t *v,uint8_t c);
 void fmn_spell_cast(uint8_t spellid);
 
 uint8_t fmn_gs_get_bit(uint16_t p);

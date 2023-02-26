@@ -136,7 +136,7 @@ void fmn_game_update(float elapsed) {
   }
 }
 
-/* Cast spell.
+/* Cast spell or song.
  */
  
 void fmn_spell_cast(uint8_t spellid) {

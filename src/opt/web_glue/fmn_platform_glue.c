@@ -273,3 +273,15 @@ void *memset(void *dst,int src,size_t c) {
   for (;c-->0;DST++) *DST=src;
   return dst;
 }
+
+int memcmp(const void *a,const void *b,size_t c) {
+  if (a==b) return 0;
+  if (!a) return -1;
+  if (!b) return 1;
+  const uint8_t *A=a,*B=b;
+  for (;c-->0;A++,B++) {
+    if (*A<*B) return -1;
+    if (*A>*B) return 1;
+  }
+  return 0;
+}

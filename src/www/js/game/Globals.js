@@ -44,6 +44,7 @@ export class Globals {
     this.p_sketchv_end = this.p_plantv_end + 4 + this.constants.SKETCH_LIMIT * this.constants.SKETCH_SIZE;
     this.p_hero = this.p_sketchv_end + 40;
     this.p_gs = this.p_hero + 24;
+    this.p_violin_song = this.p_gs + this.constants.GS_SIZE;
     
     // "g_" Make a bunch of TypedArrays pointing to individual variables.
     this.g_spritev = new Uint32Array(this.memU8.buffer, this.p_fmn_global, 1);
@@ -80,6 +81,9 @@ export class Globals {
     this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 14, 2); // [x,y]
     this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 18, 2); // [x,y]
     this.g_gs = new Uint8Array(this.memU8.buffer, this.p_gs, this.constants.GS_SIZE);
+    this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, this.constants.VIOLIN_SONG_LENGTH);
+    this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH, 1);
+    this.g_violin_songp = new Uint8Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH + 4, 1);
   }
   
   /* Higher-level logical access with structured models.

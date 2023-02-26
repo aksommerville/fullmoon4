@@ -57,6 +57,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_add_plant = (x, y) => {};//TODO
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
+    this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
     
     // Fetch the data archive and wasm asap. This doesn't start the game or anything.
     this.preloadAtConstruction = Promise.all([

@@ -4,23 +4,33 @@
  */
  
 import { Constants } from "./Constants.js";
+import { Globals } from "./Globals.js";
 import { RenderTransitions } from "./RenderTransitions.js";
 import { RenderMap } from "./RenderMap.js";
 import { RenderSprites } from "./RenderSprites.js";
 import { RenderHero } from "./RenderHero.js";
 import { RenderMenu } from "./RenderMenu.js";
+import { RenderViolin } from "./RenderViolin.js";
  
 export class Renderer {
   static getDependencies() {
-    return [Constants, RenderTransitions, RenderMap, RenderSprites, RenderHero, RenderMenu];
+    return [
+      Constants, Globals,
+      RenderTransitions, RenderMap, RenderSprites, RenderHero, RenderMenu, RenderViolin,
+    ];
   }
-  constructor(constants, renderTransitions, renderMap, renderSprites, renderHero, renderMenu) {
+  constructor(
+    constants, globals,
+    renderTransitions, renderMap, renderSprites, renderHero, renderMenu, renderViolin
+  ) {
     this.constants = constants;
+    this.globals = globals;
     this.renderTransitions = renderTransitions;
     this.renderMap = renderMap;
     this.renderSprites = renderSprites;
     this.renderHero = renderHero;
     this.renderMenu = renderMenu;
+    this.renderViolin = renderViolin;
     
     this.canvas = null;
     this.frameCount = 0;
@@ -63,9 +73,17 @@ export class Renderer {
   render(menus) {
     if (!this.canvas) return;
     this.frameCount++;
+    
     if (!this.renderTransitions.render(this.canvas)) {
       this._renderScene(this.canvas, true);
     }
+    
+    if (this.globals.g_active_item[0] === this.constants.ITEM_VIOLIN) {
+      this.renderViolin.render(this.canvas);
+    } else if (this.renderViolin.running) {
+      this.renderViolin.reset();
+    }
+    
     this.renderMenu.render(this.canvas, menus);
   }
   

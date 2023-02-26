@@ -46,3 +46,6 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
 
 void fmn_sound_effect(uint16_t sfxid) {
 }
+
+void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
+}
