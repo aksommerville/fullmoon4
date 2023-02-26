@@ -530,15 +530,48 @@ sound TREADLE_RELEASE
   norm 0 0.200
 end
 
+sound PUSHBLOCK_ENCHANT
+  len 0.430
+  
+  wave 0 600 sine
+  env 0 ( 0 15 0xffff 20 0x2000 100 0 )
+  
+  wave 1 750 sine
+  env 1 ( 0 50 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 900 sine
+  env 1 ( 0 100 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 1200 sine
+  env 1 ( 0 150 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 1500 sine
+  env 1 ( 0 200 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 1800 sine
+  env 1 ( 0 250 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 2400 sine
+  env 1 ( 0 300 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  norm 0 0.200
+end
+
+sound BLOCK_EXPLODE
+  len 0.400
+  wave 0 ( 5000 * 100 ) square
+  bandpass 0 1000 500
+  env 0 ( 0 30 0xffff 50 0x4000 * 0 )
+  norm 0 0.200
+end
+
 # Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 18
-  len 0.001
-  noise 0
-end
-sound 19
-  len 0.001
-  noise 0
-end
 sound 20
   len 0.001
   noise 0

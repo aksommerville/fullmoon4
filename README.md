@@ -16,11 +16,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [x] Violin: Chart UI
-- [x] Violin: Encode song
-- [ ] Alphablocks
-- [ ] Feather: Actuate blocks and ...whatever else a feather does.
-
 ### March
 
 - [ ] Spells.
@@ -51,6 +46,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Fine-tune song endings so they loop seamlessly.
 - [ ] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
 - - Would it help to scale up only by integers? That's probably a good idea in any case.
+- - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
 
 ### May
 

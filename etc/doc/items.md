@@ -140,6 +140,12 @@ Hold button to waggle it in front of you.
 
 Mostly it will influence blocks. Tickling a block may trigger some behavior from it.
 
+- pushblock: Follow me, one direction only.
+- alphablock_alpha: Tickle each edge in a clockwise pattern to move by one cell.
+- alphablock_gamma: Tickle LRL, disappear.
+- alphablock_lambda: Summon from a distance.
+- alphablock_mu: 3A 1B 1A, move by one cell.
+
 I want the feather to be the first thing you get, and the final play to kill the werewolf.
 "A story that begins with a feather, ends with a feather."
 

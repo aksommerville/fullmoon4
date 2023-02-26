@@ -132,6 +132,7 @@ struct fmn_sprite *fmn_sprite_spawn(
   // A few things perhaps unexpectedly, do not default to zero.
   sprite->style=FMN_SPRITE_STYLE_TILE;
   sprite->layer=0x80;
+  sprite->invmass=0x80;
   
   uint16_t cmdp=0; while (cmdp<cmdc) {
     uint8_t lead=cmdv[cmdp++];
@@ -211,8 +212,13 @@ static void fmn_sprite_physics_update(float elapsed) {
         if (!fmn_physics_check_sprites(&cx,&cy,a,b)) continue;
         int msum=a->invmass+b->invmass;
         float aweight;
-        if (msum<1) aweight=0.5f; // panic, both infinite-mass! divide equally.
-        else if (!a->invmass) aweight=0.0f;
+        if (msum<1) { // panic, both infinite-mass! Restore last known positions.
+          a->x=a->pvx;
+          a->y=a->pvy;
+          b->x=b->pvx;
+          b->y=b->pvy;
+          continue;
+        } else if (!a->invmass) aweight=0.0f;
         else if (!b->invmass) aweight=1.0f;
         else aweight=(float)a->invmass/(float)msum;
         float acx=cx*aweight;
@@ -254,6 +260,17 @@ static void fmn_sprite_physics_update(float elapsed) {
           b->pressure(b,a,fmn_dir_reverse(dir));
         }
       }
+    }
+  }
+  
+  // Positions are now final.
+  {
+    struct fmn_sprite **p=fmn_spritepv;
+    int i=fmn_global.spritec;
+    for (;i-->0;p++) {
+      struct fmn_sprite *sprite=*p;
+      sprite->pvx=sprite->x;
+      sprite->pvy=sprite->y;
     }
   }
   

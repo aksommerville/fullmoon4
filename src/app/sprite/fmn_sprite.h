@@ -40,6 +40,7 @@ struct fmn_sprite {
   float veldecay; // Linear velocity decay in m/s**2.
   float radius;
   uint8_t invmass; // 1/mass, 0 if infinite
+  float pvx,pvy;
   
   // Lower layers draw first. The hero is at layer 0x80.
   uint8_t layer;

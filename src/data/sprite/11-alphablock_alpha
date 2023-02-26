@@ -1,0 +1,7 @@
+controller alphablock
+image 3
+tile 0x01
+style tile
+physics motion edge sprites solid hole
+radius 0.5
+invmass 0

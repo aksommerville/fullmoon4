@@ -5,3 +5,4 @@ style tile
 physics sprites
 radius 0.5
 layer 128
+invmass 0

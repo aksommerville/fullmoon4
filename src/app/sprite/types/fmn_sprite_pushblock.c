@@ -1,13 +1,17 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/sprite/fmn_physics.h"
+#include "app/hero/fmn_hero.h"
 
 #define FMN_PUSHBLOCK_PRESS_TIME 1.0f
 #define FMN_PUSHBLOCK_SPEED 5.0f
 #define FMN_PUSHBLOCK_MINIMUM_TRAVEL 0.01f
+#define FMN_PUSHBLOCK_ENCHANT_SPEED 1.0f
+#define FMN_PUSHBLOCK_ENCHANT_MIN_DISTANCE 1.0f
 
 #define pressflag sprite->bv[0]
 #define pressdir sprite->bv[1]
 #define movedir sprite->bv[2]
+#define enchantdir sprite->bv[3]
 #define presstime sprite->fv[0]
 #define recenttime sprite->fv[1]
 #define pending_voyage sprite->fv[2]
@@ -65,8 +69,61 @@ static void fmn_pushblock_begin_motion(struct fmn_sprite *sprite) {
   }
 }
 
+/* Enchantment.
+ * If the hero tickles us with a feather, we follow her as long as she stays in that line of sight.
+ */
+ 
+static void fmn_pushblock_check_enchantment(struct fmn_sprite *sprite) {
+  if (fmn_global.active_item!=FMN_ITEM_FEATHER) return;
+  uint8_t qdir=fmn_dir_reverse(fmn_global.facedir);
+  if (qdir==enchantdir) return; // already enchanted in this direction, no need to check
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  float herodx,herody;
+  fmn_vector_from_dir(&herodx,&herody,fmn_global.facedir);
+  float focusx=herox+herodx*0.5f;
+  float focusy=heroy+herody*0.5f;
+  if (focusx<sprite->x-0.5f) return;
+  if (focusx>sprite->x+0.5f) return;
+  if (focusy<sprite->y-0.5f) return;
+  if (focusy>sprite->y+0.5f) return;
+  fmn_sound_effect(FMN_SFX_PUSHBLOCK_ENCHANT);
+  enchantdir=qdir;
+}
+
+static void fmn_pushblock_update_enchantment(struct fmn_sprite *sprite,float elapsed) {
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  float dx,dy;
+  fmn_vector_from_dir(&dx,&dy,enchantdir);
+  if (dx<0.0f) {
+    if (herox>sprite->x-FMN_PUSHBLOCK_ENCHANT_MIN_DISTANCE) return;
+    if (heroy<sprite->y-0.5f) return;
+    if (heroy>sprite->y+0.5f) return;
+  } else if (dx>0.0f) {
+    if (herox<sprite->x+FMN_PUSHBLOCK_ENCHANT_MIN_DISTANCE) return;
+    if (heroy<sprite->y-0.5f) return;
+    if (heroy>sprite->y+0.5f) return;
+  } else if (dy<0.0f) {
+    if (heroy>sprite->y-FMN_PUSHBLOCK_ENCHANT_MIN_DISTANCE) return;
+    if (herox<sprite->x-0.5f) return;
+    if (herox>sprite->x+0.5f) return;
+  } else if (dy>0.0f) {
+    if (heroy<sprite->y+FMN_PUSHBLOCK_ENCHANT_MIN_DISTANCE) return;
+    if (herox<sprite->x-0.5f) return;
+    if (herox>sprite->x+0.5f) return;
+  } else return;
+  sprite->x+=dx*FMN_PUSHBLOCK_ENCHANT_SPEED*elapsed;
+  sprite->y+=dy*FMN_PUSHBLOCK_ENCHANT_SPEED*elapsed;
+}
+
+/* Main update.
+ */
+
 static void _pushblock_update(struct fmn_sprite *sprite,float elapsed) {
   recenttime=elapsed;
+  
+  fmn_pushblock_check_enchantment(sprite);
   
   if (movedir) {
     // Motion in progress. Nothing else can happen, until it's complete.
@@ -80,9 +137,15 @@ static void _pushblock_update(struct fmn_sprite *sprite,float elapsed) {
     // We are currently being pressed. Let _pushblock_pressure continue tallying the duration.
     pressflag=0;
     
-  } else if (presstime>0.0f) {
-    // Pressure ended and some time was on the clock. Probably doesn't mean a thing, except drop the tally.
-    presstime=0.0f;
+  } else {
+    if (presstime>0.0f) {
+      // Pressure ended and some time was on the clock. Probably doesn't mean a thing, except drop the tally.
+      presstime=0.0f;
+    }
+    if (enchantdir) {
+      // Enchanted, and not being pressed. Move in the direction of enchantment, if the hero is over there.
+      fmn_pushblock_update_enchantment(sprite,elapsed);
+    }
   }
 }
 
