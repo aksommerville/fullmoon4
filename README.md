@@ -40,7 +40,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - xxx Eye of Newt, bump up drums
 - - xxx Tangled Vine, ''
 - - [x] No, dipshit! Drum levels are low because you deferred their gain but not their start time.
-- [ ] Round-off jitter has returned: Try walking east into the west octopus tree in the eye-of-newt map.
+- [x] Round-off jitter has returned: Try walking east into the west octopus tree in the eye-of-newt map.
+- - ...both octopus trees actually, which happen to be at x=8 and x=16.
 - [ ] treasure: Sound when picking up an already-have item
 - [ ] treadle: sounds
 - [ ] Need a better solution for shovel holes. eg dig in the packed earth in the village, it shows a grass outline

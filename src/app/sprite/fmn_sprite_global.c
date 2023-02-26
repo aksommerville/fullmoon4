@@ -194,6 +194,11 @@ static void fmn_sprite_physics_update(float elapsed) {
     if ((a->physics&FMN_PHYSICS_GRID)&&fmn_physics_check_grid(&cx,&cy,a,a->physics)) {
       a->x+=cx;
       a->y+=cy;
+      // See "Extra mitigation" below; the same problem can arise against the grid. Correction is easier than against sprites.
+      if (cx<0.0f) a->x=roundf(a->x+a->radius)-a->radius;
+      else if (cx>0.0f) a->x=roundf(a->x-a->radius)+a->radius;
+      else if (cy<0.0f) a->y=roundf(a->y+a->radius)-a->radius;
+      else if (cy>0.0f) a->y=roundf(a->y-a->radius)+a->radius;
     }
     
     if (a->physics&FMN_PHYSICS_SPRITES) {

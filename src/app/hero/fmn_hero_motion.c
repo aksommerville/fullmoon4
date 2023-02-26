@@ -15,8 +15,6 @@ static void fmn_hero_walk_begin(int8_t dx,int8_t dy) {
  */
  
 static void fmn_hero_walk_turn(int8_t dx,int8_t dy) {
-  //TODO I think I want inertia to continue carrying the hero in the previous direction a little.
-  // Currently, the full inertia redirects instantly. Doesn't feel natural.
   fmn_hero.walkdx=dx;
   fmn_hero.walkdy=dy;
 }
