@@ -35,13 +35,13 @@ export class AudioChannel {
   silence() {
   }
   
-  event(opcode, a, b) {
+  event(opcode, a, b, delayMs) {
     switch (opcode) {
       // 0x80 Note Off are not delivered to channels; Synthesizer delivers straight to the appropriate AudioVoice.
       case 0x90: {
           if (!this.synthesizer.context) return;
           const voice = new AudioVoice(this.synthesizer, this, this.chid);
-          voice.setup(this.instrument, a, b);
+          voice.setup(this.instrument, a, b, delayMs);
           this.synthesizer.voices.push(voice);
         } break;
       case 0xb0: switch (a) {
@@ -52,11 +52,11 @@ export class AudioChannel {
           case 0x0b: break; // Expression
           case 0x40: break; // Sustain
         } break;
-      case 0xe0: this.wheelEvent(a | (b << 7)); break;
+      case 0xe0: this.wheelEvent(a | (b << 7), delayMs); break;
     }
   }
   
-  wheelEvent(vi) {
+  wheelEvent(vi, delayMs) {
     vi -= 8192;
     if (vi === this.wheel) return;
     this.wheel = vi;
@@ -64,7 +64,7 @@ export class AudioChannel {
     this.bend = Math.pow(2, (this.wheel * this.instrument.wheelRange ) / (8192 * 1200));
     for (const voice of this.synthesizer.voices) {
       if (voice.channel !== this) continue;
-      voice.bend(this.bend);
+      voice.bend(this.bend, delayMs);
     }
   }
 }

@@ -12,6 +12,7 @@ export class SongPlayer {
     this.eventp = 0;
     this.msPerTick = 1000 / this.song.ticksPerSecond;
     this.notes = []; // as a safety net, we track all held notes
+    this.foresightTime = 100; // Read ahead in time, up to so many ms. Zero is valid.
   }
   
   update() {
@@ -22,7 +23,7 @@ export class SongPlayer {
       this.delay -= elapsedMs;
     }
     this.lastUpdateTime = now;
-    while (this.delay <= 0) {
+    while (this.delay <= this.foresightTime) {
       this._nextEvent();
     }
   }
@@ -53,7 +54,7 @@ export class SongPlayer {
       const opcode = (event >> 16) & 0xff;
       const a = (event >> 8) & 0x7f;
       const b = event & 0x7f;
-      this.synthesizer.event(chid, opcode, a, b);
+      this.synthesizer.event(chid, opcode, a, b, this.delay);
       
       if (opcode === 0x90) this.notes.push([chid, a]);
       else if (opcode === 0x80) {

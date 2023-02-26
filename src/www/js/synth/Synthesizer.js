@@ -102,15 +102,16 @@ export class Synthesizer {
    * Some exceptions:
    *  - Channel 0x0f is reserved for sound effects. a=MSB, b=LSB. Note Off not necessary.
    *  - Songs and the game contend for the same 16 channels. No independent sub-busses.
+   * Optional (delay) in ms, to schedule an event in the future. Only applicable for Note On and Note Off.
    */
-  event(chid, opcode, a, b) {
+  event(chid, opcode, a, b, delay) {
     //console.log(`Synthesizer event chid=${chid} opcode=${opcode} a=${a} b=${b}`);
     
     // Channel 15 is special, it's for sound effects.
     if (chid === 0x0f) {
       if (opcode !== 0x90) return;
       if (!this.context) return;
-      this.startSoundEffect(a, b);
+      this.startSoundEffect(a, b, delay);
       return;
     }
   
@@ -128,12 +129,12 @@ export class Synthesizer {
     
     // Note Off is managed at this level; channels not involved.
     } else if (opcode === 0x80) {
-      this.releaseNote(chid, a, b);
+      this.releaseNote(chid, a, b, delay);
     
     // Most commands, eg Note On, get processed by the channel.
     } else {
       const channel = this.requireChannel(chid);
-      channel.event(opcode, a, b);
+      channel.event(opcode, a, b, delay);
     }
   }
   
@@ -192,11 +193,11 @@ export class Synthesizer {
     return channel;
   }
   
-  releaseNote(chid, noteId, velocity) {
+  releaseNote(chid, noteId, velocity, delay) {
     for (const voice of this.voices) {
       if (voice.chid !== chid) continue;
       if (voice.noteId !== noteId) continue;
-      voice.release(velocity);
+      voice.release(velocity, delay);
     }
   }
   
@@ -211,7 +212,7 @@ export class Synthesizer {
     this.channels = [];
   }
   
-  startSoundEffect(note, velocity) {
+  startSoundEffect(note, velocity, delay) {
     if (!this.context) return;
     const sfx = this.dataService.getSound(note);
     if (!sfx) return;
@@ -222,7 +223,7 @@ export class Synthesizer {
     const gain = new GainNode(this.context, { gain: velocity / 0x7f });
     node.connect(gain);
     gain.connect(this.context.destination);
-    node.start();
+    node.start(this.context.currentTime + ((delay > 0) ? (delay / 1000) : 0));
   }
   
   // For fiddle. If (pid) nonzero, every channel will use it and Program Change will be ignored.

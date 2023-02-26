@@ -16,20 +16,24 @@ export class AudioVoice {
     this.modulator = null;
     this.modOscillator = null;
     this.releaseTime = 0;
+    this.sustainTime = 0; // Absolute context time when we enter sustain -- minimum time to begin release.
+    this.sustainLevel = 0;
     this.modulatorReleaseTime = 0;
     this.modulatorReleaseLevel = 0;
+    this.modulatorSustainLevel = 0;
     this.oscillators = [];
     this.frequencyTargets = []; // for bending
     this.unbentFrequency = 0;
     this.unbentModFrequency = 0;
   }
   
-  setup(instrument, noteId, velocity) {
+  setup(instrument, noteId, velocity, delayMs) {
     if (this.node) throw new Error(`Multiple calls to AudioVoice.setup`);
     this.instrument = instrument;
     this.noteId = noteId;
     const frequency = 440 * 2 ** ((this.noteId - 0x45) / 12);
     const ctx = this.synthesizer.context;
+    const startTime = ctx.currentTime + ((delayMs > 0) ? (delayMs / 1000) : 0);
     
     // The three modes (Bandpass, Oscillator, FM):
     if (instrument.bpq) {
@@ -37,11 +41,11 @@ export class AudioVoice {
     } else {
       this._initOscillator(ctx, instrument, frequency);
       if (instrument.modRange) {
-        this._initFm(ctx, instrument, frequency, velocity);
+        this._initFm(ctx, instrument, frequency, velocity, startTime);
       }
     }
     
-    this._initEnvelope(ctx, instrument, velocity);
+    this._initEnvelope(ctx, instrument, velocity, startTime);
     if (this.channel.bend !== 1) this.bend(this.channel.bend);
   }
   
@@ -120,7 +124,7 @@ export class AudioVoice {
     this.frequencyTargets.push(this.oscillator);
   }
   
-  _initFm(ctx, ins, frequency, velocity) {
+  _initFm(ctx, ins, frequency, velocity, startTime) {
     this.unbentModFrequency = ins.modAbsoluteRate || (frequency * ins.modRate);
     const modOscillator = new OscillatorNode(ctx, {
       frequency: this.unbentModFrequency,
@@ -132,11 +136,13 @@ export class AudioVoice {
       const { startLevel, attackLevel, sustainLevel, attackTime, decayTime, releaseTime, endLevel } = ins.modEnv.apply(velocity / 0x7f);
       this.modulatorReleaseTime = releaseTime;
       this.modulatorReleaseLevel = r * endLevel;
-      modGain.gain.setValueAtTime(r * startLevel, ctx.currentTime);
-      modGain.gain.linearRampToValueAtTime(r * attackLevel, ctx.currentTime + attackTime);
-      modGain.gain.linearRampToValueAtTime(r * sustainLevel, ctx.currentTime + attackTime + decayTime);
+      this.modulatorSustainLevel = r * sustainLevel;
+      modGain.gain.value = r * startLevel;
+      modGain.gain.setValueAtTime(r * startLevel, startTime);
+      modGain.gain.linearRampToValueAtTime(r * attackLevel, startTime + attackTime);
+      modGain.gain.linearRampToValueAtTime(r * sustainLevel, startTime + attackTime + decayTime);
     } else {
-      modGain.gain.setValueAtTime(r, ctx.currentTime);
+      modGain.gain.setValueAtTime(r, startTime);
     }
     if (ins.modRangeLfoRate) {
       const modLfoOscillator = new OscillatorNode(ctx, {
@@ -147,7 +153,7 @@ export class AudioVoice {
       modLfoScaleUp.gain.value = r;
       modLfoOscillator.connect(modLfoScaleUp);
       modLfoScaleUp.connect(modGain.gain);
-      modLfoOscillator.start();
+      modLfoOscillator.start(); // Should delay until startTime... Does it matter?
       this.oscillators.push(modLfoOscillator);
     }
     modOscillator.connect(modGain);
@@ -158,15 +164,18 @@ export class AudioVoice {
     this.modulator = modGain;
   }
   
-  _initEnvelope(ctx, ins, velocity) {
+  _initEnvelope(ctx, ins, velocity, startTime) {
     let { attackLevel, sustainLevel, attackTime, decayTime, releaseTime } = ins.env.apply(velocity / 0x7f);
     attackLevel *= this.channel.volume;
     sustainLevel *= this.channel.volume;
+    this.sustainTime = startTime + attackTime + decayTime;
+    this.sustainLevel = sustainLevel;
     this.releaseTime = releaseTime;
     this.node = new GainNode(ctx);
-    this.node.gain.setValueAtTime(0, ctx.currentTime);
-    this.node.gain.linearRampToValueAtTime(attackLevel, ctx.currentTime + attackTime);
-    this.node.gain.linearRampToValueAtTime(sustainLevel, ctx.currentTime + attackTime + decayTime);
+    this.node.gain.value = 0;
+    this.node.gain.setValueAtTime(0, startTime);
+    this.node.gain.linearRampToValueAtTime(attackLevel, startTime + attackTime);
+    this.node.gain.linearRampToValueAtTime(sustainLevel, startTime + attackTime + decayTime);
     this.oscillator.connect(this.node);
     this.node.connect(ctx.destination);
   }
@@ -188,29 +197,34 @@ export class AudioVoice {
     return true;
   }
   
-  release(velocity) {
+  release(velocity, delayMs) {
+    if (this.finishTime) return;
+    let releaseTime = this.synthesizer.context.currentTime + ((delayMs > 0) ? (delayMs / 1000) : 0);
+    if (releaseTime < this.sustainTime) {
+      releaseTime = this.sustainTime;
+    }
+    this.finishTime = releaseTime + this.releaseTime + 0.010;
+    if (this.node) {
+      // Important to stake the current time, otherwise the ramp goes from the start of sustain, way in the past.
+      this.node.gain.setValueAtTime(this.sustainLevel, releaseTime);
+      this.node.gain.linearRampToValueAtTime(0, releaseTime + this.releaseTime);
+    }
+    if (this.modulator && this.modulatorReleaseTime) {
+      this.modulator.gain.setValueAtTime(this.modulatorSustainLevel, releaseTime);
+      this.modulator.gain.linearRampToValueAtTime(this.modulatorReleaseLevel, releaseTime + this.modulatorReleaseTime);
+    }
     this.chid = -1;
     this.noteId = -1;
     this.channel = null;
-    if (this.finishTime) return;
-    this.finishTime = this.synthesizer.context.currentTime + this.releaseTime + 0.010;
-    if (this.node) {
-      // Important to stake the current time, otherwise the ramp goes from the start of sustain, way in the past.
-      this.node.gain.setValueAtTime(this.node.gain.value, this.synthesizer.context.currentTime);
-      this.node.gain.linearRampToValueAtTime(0, this.synthesizer.context.currentTime + this.releaseTime);
-    }
-    if (this.modulator && this.modulatorReleaseTime) {
-      this.modulator.gain.setValueAtTime(this.modulator.gain.value, this.synthesizer.context.currentTime);
-      this.modulator.gain.linearRampToValueAtTime(this.modulatorReleaseLevel, this.synthesizer.context.currentTime + this.modulatorReleaseTime);
-    }
   }
   
-  bend(multiplier) {
+  bend(multiplier, delayMs) {
+    const when = this.synthesizer.context.currentTime + ((delayMs > 0) ? (delayMs / 1000) : 0);
     for (const node of this.frequencyTargets) {
-      node.frequency.value = this.unbentFrequency * multiplier;
+      node.frequency.setValueAtTime(this.unbentFrequency * multiplier, when);
     }
     if (this.modOscillator) {
-      this.modOscillator.frequency.value = this.unbentModFrequency * multiplier;
+      this.modOscillator.setValueAtTime(this.unbentModFrequency * multiplier, when);
     }
     // modLfoOscillator is not impacted; that's pegged to real time.
   }

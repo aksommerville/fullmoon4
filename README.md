@@ -23,7 +23,23 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [x] Fire nozzle
 - [x] Treadle-n-gate
 - [x] Quickie touch input, just for verification on mobile.
-- [ ] Music timing is not tolerable. It's worse on mobile than desktop. Find a better way.
+- [x] Music timing is not tolerable. It's worse on mobile than desktop. Find a better way.
+- - duh! We can schedule note starts in the future, they don't have to be at (context.currentTime).
+- - [x] Reproduce the problem reliably.
+- - Oh hey, we were also failing to apply sound effect velocity as level. oops
+- - [x] Occasional loud notes, what the hell...
+- - - Not the same notes every time. Eye of Newt rhythm guitar does it reliably (due to so many notes).
+- - - Due to reading (gain.value) in the same pass where we set it with setValueAtTime -- it hadn't been committed yet.
+- - [x] Still hearing noise sometimes on note releases. Most apparent in Tangled Vine.
+- - - [x] I bet this is due to attack and release ramps overlapping. Confirm.
+- - - - That does happen (esp Eye of Newt), but it's not most of the faulty notes.
+- - - Important to stake at the predetermined sustain level, not node.gain.value. (it might not be there yet)
+- - [x] Short notes are now cutting off a little funny.
+- - - [x] Toil and Trouble
+- - - [x] Eye of Newt, i think i'm hearing it in the bass. 
+- - xxx Eye of Newt, bump up drums
+- - xxx Tangled Vine, ''
+- - [x] No, dipshit! Drum levels are low because you deferred their gain but not their start time.
 - [ ] Round-off jitter has returned: Try walking east into the west octopus tree in the eye-of-newt map.
 - [ ] treasure: Sound when picking up an already-have item
 - [ ] treadle: sounds
@@ -61,6 +77,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Persist plants and sketches across map loads.
 - [ ] UI for saved game management.
 - [ ] Physics flag to control whether chalk is allowed? Consider the black octopus tree, chalk looks weird like it's floating in air.
+- [ ] Fine-tune song endings so they loop seamlessly.
 
 ### May
 
