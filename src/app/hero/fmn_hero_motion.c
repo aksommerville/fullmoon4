@@ -222,7 +222,13 @@ static void fmn_hero_attempt_valid_position() {
   uint8_t col=hero->x,row=hero->y;
   uint8_t tile=fmn_global.map[row*FMN_COLC+col];
   uint8_t physics=fmn_global.cellphysics[tile];
-  if (!(physics&0x03)) return;
+  switch (physics) {
+    case FMN_CELLPHYSICS_SOLID:
+    case FMN_CELLPHYSICS_HOLE:
+    case FMN_CELLPHYSICS_UNCHALKABLE:
+      break;
+    default: return; // "unknown" means vacant
+  }
   
   // Fan out from current position along the edge we're on.
   // Abort if we're not actually on an edge.
@@ -230,27 +236,36 @@ static void fmn_hero_attempt_valid_position() {
   // Abort if nothing is vacant on this edge.
   // Otherwise take the nearest vacant tile.
   // If we're on a corner, both edges are valid.
-  #define CHECKCELL(_x,_y) { \
-    if (!(fmn_global.cellphysics[fmn_global.map[_y*FMN_COLC+_x]]&3)) { \
-      hero->x=_x+0.5f; \
-      hero->y=_y+0.5f; \
-      return; \
+  #define CHECKCELL(_x,_y,okflag) { \
+    switch (fmn_global.cellphysics[fmn_global.map[_y*FMN_COLC+_x]]) { \
+      case FMN_CELLPHYSICS_SOLID: \
+      case FMN_CELLPHYSICS_UNCHALKABLE: { \
+          /* solid, stop searching in this direction */ \
+          okflag=0; \
+        } break; \
+      default: { /* vacant */ \
+          hero->x=_x+0.5f; \
+          hero->y=_y+0.5f; \
+          return; \
+        } \
     } \
   }
   if ((col==0)||(col==FMN_COLC-1)) {
+    uint8_t upok=1,downok=1;
     int8_t d=1; for (;d<FMN_ROWC;d++) {
       int8_t qrow=row+d;
-      if (qrow<FMN_ROWC) CHECKCELL(col,qrow)
+      if (upok&&(qrow<FMN_ROWC)) CHECKCELL(col,qrow,upok)
       qrow=row-d;
-      if (qrow>=0) CHECKCELL(col,qrow)
+      if (downok&&(qrow>=0)) CHECKCELL(col,qrow,downok)
     }
   }
   if ((row==0)||(row==FMN_ROWC-1)) {
+    uint8_t leftok=1,rightok=1;
     int8_t d=1; for (;d<FMN_COLC;d++) {
       int8_t qcol=col+d;
-      if (qcol<FMN_COLC) CHECKCELL(qcol,row)
+      if (leftok&&(qcol<FMN_COLC)) CHECKCELL(qcol,row,leftok)
       qcol=col-d;
-      if (qcol>=0) CHECKCELL(qcol,row)
+      if (rightok&&(qcol>=0)) CHECKCELL(qcol,row,rightok)
     }
   }
   #undef CHECKCELL

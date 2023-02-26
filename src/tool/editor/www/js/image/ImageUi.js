@@ -179,10 +179,12 @@ export class ImageUi {
         
       case "physics": {
           render = (x, y, v) => {
-            switch (v) {
+            switch (v) { // FMN_CELLPHYSICS
               case 0: context.fillStyle = "#0f0"; break; // vacant, green
               case 1: context.fillStyle = "#000"; break; // solid, black
               case 2: context.fillStyle = "#00f"; break; // hole, blue
+              case 3: context.fillStyle = "#080"; break; // unshovellable, basically vacant
+              case 4: context.fillStyle = "#446"; break; // unchalkable, basically solid
               default: context.fillStyle = "#f00"; break; // unknown, red
               // It's entirely possible we'll add more, but I expect simple colors will work forever.
             }

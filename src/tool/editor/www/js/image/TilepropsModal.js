@@ -104,11 +104,12 @@ export class TilepropsModal {
       
         case "physics": {
             const select = this.dom.spawn(tdInput, "SELECT", { name: key });
+            // FMN_CELLPHYSICS
             this.dom.spawn(select, "OPTION", { value: "0" }, "Vacant");
             this.dom.spawn(select, "OPTION", { value: "1" }, "Solid");
             this.dom.spawn(select, "OPTION", { value: "2" }, "Hole");
-            this.dom.spawn(select, "OPTION", { value: "3" }, "3");
-            this.dom.spawn(select, "OPTION", { value: "4" }, "4");
+            this.dom.spawn(select, "OPTION", { value: "3" }, "Unshovellable (vacant)");
+            this.dom.spawn(select, "OPTION", { value: "4" }, "Unchalkable (solid)");
             this.dom.spawn(select, "OPTION", { value: "5" }, "5");
             this.dom.spawn(select, "OPTION", { value: "6" }, "6");
             this.dom.spawn(select, "OPTION", { value: "7" }, "7");

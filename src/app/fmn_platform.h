@@ -153,6 +153,12 @@ int rand();
 
 #define FMN_GS_SIZE 64 /* General global persistent state size in bytes. */
 
+#define FMN_CELLPHYSICS_VACANT 0
+#define FMN_CELLPHYSICS_SOLID 1
+#define FMN_CELLPHYSICS_HOLE 2
+#define FMN_CELLPHYSICS_UNSHOVELLABLE 3
+#define FMN_CELLPHYSICS_UNCHALKABLE 4
+
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
  */

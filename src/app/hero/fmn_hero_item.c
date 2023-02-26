@@ -133,7 +133,7 @@ static void fmn_hero_shovel_begin() {
     uint8_t tilep=fmn_global.shovely*FMN_COLC+fmn_global.shovelx;
     uint8_t pvtile=fmn_global.map[tilep];
     uint8_t pvphysics=fmn_global.cellphysics[pvtile];
-    if ((pvphysics==0x00)&&(pvtile!=0x0f)) {
+    if (pvphysics==FMN_CELLPHYSICS_VACANT) {
     
       fmn_global.map[tilep]=0x0f;
       fmn_map_dirty();
@@ -181,7 +181,7 @@ static uint8_t fmn_hero_broom_ok_to_end() {
   uint8_t tilep=fmn_hero.celly*FMN_COLC+fmn_hero.cellx;
   uint8_t tile=fmn_global.map[tilep];
   uint8_t physics=fmn_global.cellphysics[tile];
-  if (physics&0x02) return 0;
+  if (physics==FMN_CELLPHYSICS_HOLE) return 0;
   // Everything else is fine.
   return 1;
 }
@@ -201,7 +201,7 @@ static void fmn_hero_broom_update(float elapsed) {
       uint8_t tilep=fmn_hero.celly*FMN_COLC+fmn_hero.cellx;
       uint8_t tile=fmn_global.map[tilep];
       uint8_t physics=fmn_global.cellphysics[tile];
-      if (!(physics&0x02)) {
+      if (physics!=FMN_CELLPHYSICS_HOLE) {
         fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
         fmn_global.active_item=0;
         return;
@@ -320,14 +320,14 @@ static void fmn_hero_violin_motion(uint8_t bit,uint8_t value) {
 static void fmn_hero_chalk_begin() {
   int8_t x=fmn_hero.sprite->x;
   int8_t y=fmn_hero.sprite->y-1.0f;
-  if ((x<0)||(y<0)||(x>=FMN_COLC)||(y>=FMN_ROWC)) {
+  if ((x<0)||(y<0)||(x>=FMN_COLC)||(y>=FMN_ROWC)||(fmn_global.facedir!=FMN_DIR_N)) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
   uint8_t tilep=y*FMN_COLC+x;
   uint8_t pvtile=fmn_global.map[tilep];
   uint8_t pvphysics=fmn_global.cellphysics[pvtile];
-  if (!(pvphysics&0x01)) {
+  if (pvphysics!=FMN_CELLPHYSICS_SOLID) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }

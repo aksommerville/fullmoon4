@@ -44,7 +44,9 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - ...both octopus trees actually, which happen to be at x=8 and x=16.
 - [x] treasure: Sound when picking up an already-have item
 - [x] treadle: sounds
-- [ ] Need a better solution for shovel holes. eg dig in the packed earth in the village, it shows a grass outline
+- [x] Need a better solution for shovel holes. eg dig in the packed earth in the village, it shows a grass outline
+- - Making it work on disparate backgrounds, we'd need some external list of holes. It can't be done directly on the map or cellphysics.
+- - For now, I'll just forbid digging on the packed earth.
 
 ### March
 
@@ -77,7 +79,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [ ] Persist plants and sketches across map loads.
 - [ ] UI for saved game management.
-- [ ] Physics flag to control whether chalk is allowed? Consider the black octopus tree, chalk looks weird like it's floating in air.
+- [x] Physics flag to control whether chalk is allowed? Consider the black octopus tree, chalk looks weird like it's floating in air.
 - [ ] Fine-tune song endings so they loop seamlessly.
 
 ### May
@@ -107,6 +109,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
 - [ ] ^ or if not all that, we at least need a repository of named `gs` fields.
 - [ ] verify: Check neighbor edges cell by cell
+- [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
 - [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js

@@ -8,10 +8,13 @@ Each tile has 4 properties: physics, family, neighbors, weight.
 #### physics
 
 8-bit enum describing how the tile should behave when used in a map.
+`FMN_CELLPHYSICS_`
 
  - 0: vacant
  - 1: solid
  - 2: hole
+ - 3: vacant, unshovellable
+ - 4: solid, unchalkable
  
 #### family
 
