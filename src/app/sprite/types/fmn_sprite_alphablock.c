@@ -162,10 +162,22 @@ static void _alphablock_update(struct fmn_sprite *sprite,float elapsed) {
   }
 }
 
+/* Interact.
+ */
+ 
+static int16_t _alphablock_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {
+  if ((sprite->tileid==AB_MODE_MU)&&(itemid==FMN_ITEM_PITCHER)&&(qualifier==FMN_PITCHER_CONTENT_MILK)) {
+    fmn_sound_effect(FMN_SFX_MOO);
+    return 1;
+  }
+  return 0;
+}
+
 /* Type definition.
  */
 
 const struct fmn_sprite_controller fmn_sprite_controller_alphablock={
   .init=_alphablock_init,
   .update=_alphablock_update,
+  .interact=_alphablock_interact,
 };

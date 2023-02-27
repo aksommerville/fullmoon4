@@ -118,6 +118,7 @@ int rand();
 #define FMN_SFX_TREADLE_RELEASE 17
 #define FMN_SFX_PUSHBLOCK_ENCHANT 18
 #define FMN_SFX_BLOCK_EXPLODE 19
+#define FMN_SFX_MOO 20
 // Available space here. Skipping forward to GM drums.
 #define FMN_SFX_KICK_1 35
 #define FMN_SFX_KICK_2 36

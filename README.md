@@ -18,7 +18,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [x] We need another layer of safety net around reset-map, when you enter on a broom.
 - - eg enter first map from the west and get killed
-- [ ] Mu block should do something funny when you pour milk on it. ("moo")
+- [x] Mu block should do something funny when you pour milk on it. ("moo")
 
 ### March
 

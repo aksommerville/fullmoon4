@@ -571,11 +571,14 @@ sound BLOCK_EXPLODE
   norm 0 0.200
 end
 
-# Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 20
-  len 0.001
-  noise 0
+sound MOO
+  len 0.600
+  fm 0 ( 200 100 200 200 250 * 200 ) 0.5 ( 0 100 1 200 0.7 * 1 ) sine
+  env 0 ( 0 100 0xffff * 0 )
+  norm 0 0.300
 end
+
+# Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
 sound 21
   len 0.001
   noise 0
