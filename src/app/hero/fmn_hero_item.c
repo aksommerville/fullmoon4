@@ -1,4 +1,5 @@
 #include "fmn_hero_internal.h"
+#include "app/sprite/fmn_physics.h"
 #include "app/fmn_game.h"
 
 /* Bell.
@@ -51,15 +52,50 @@ static void fmn_hero_seed_begin() {
 /* Coin.
  */
  
+static int fmn_hero_coin_collision_1(struct fmn_sprite *sprite,void *userdata) {
+  struct fmn_sprite *coin=userdata;
+  if (sprite==coin) return 0;
+  if (!(sprite->physics&FMN_PHYSICS_SPRITES)) return 0;
+  if (sprite->radius<=0.0f) return 0;
+  if (fmn_physics_check_sprites(0,0,coin,sprite)) return 1;
+  return 0;
+}
+ 
+static uint8_t fmn_hero_coin_collision(struct fmn_sprite *coin) {
+  return fmn_sprites_for_each(fmn_hero_coin_collision_1,coin);
+}
+ 
 static void fmn_hero_coin_begin() {
+  struct fmn_sprite *hero=fmn_hero.sprite;
   fmn_global.active_item=0;
   if (!fmn_global.itemqv[FMN_ITEM_COIN]) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
-  fmn_log("ok throw coin");
+  
   fmn_global.itemqv[FMN_ITEM_COIN]--;
-  //TODO throw coin
+  float dx,dy;
+  fmn_vector_from_dir(&dx,&dy,fmn_global.facedir);
+  uint8_t cmdv[]={
+    0x42,FMN_SPRCTL_coin>>8,FMN_SPRCTL_coin,
+  };
+  struct fmn_sprite *coin=fmn_sprite_spawn(hero->x+dx,hero->y+dy,0,cmdv,sizeof(cmdv),0,0);
+  if (!coin) return;
+  coin->velx*=dx;
+  coin->vely*=dy;
+  
+  
+  // Before we commit to it, confirm that there is no collision.
+  // If there is one, kill this sprite and put the coin back in your pocket.
+  if (
+    fmn_physics_check_grid(0,0,coin,coin->physics)||
+    fmn_hero_coin_collision(coin)
+  ) {
+    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+    fmn_sprite_kill(coin);
+    fmn_global.itemqv[FMN_ITEM_COIN]++;
+    return;
+  }
 }
 
 /* Cheese.

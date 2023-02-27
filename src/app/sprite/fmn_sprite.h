@@ -27,6 +27,7 @@ struct fmn_sprite {
    * This will be called after all 'update' hooks, during physics resolution.
    */
   void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
+  void (*static_pressure)(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir);
   
   void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
   
@@ -83,6 +84,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_firenozzle     7
 #define FMN_SPRCTL_treadle        8
 #define FMN_SPRCTL_gate           9
+#define FMN_SPRCTL_coin          10
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -94,12 +96,14 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(soulball) \
   _(firenozzle) \
   _(treadle) \
-  _(gate)
+  _(gate) \
+  _(coin)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
   void (*update)(struct fmn_sprite *sprite,float elapsed);
   void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
+  void (*static_pressure)(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir);
   void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
 };
 

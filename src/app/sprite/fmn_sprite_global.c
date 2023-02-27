@@ -80,6 +80,7 @@ static void fmn_sprite_apply_controller(struct fmn_sprite *sprite) {
   
   sprite->update=sprctl->update;
   sprite->pressure=sprctl->pressure;
+  sprite->static_pressure=sprctl->static_pressure;
   sprite->hero_collision=sprctl->hero_collision;
   
   if (sprctl->init) sprctl->init(sprite);
@@ -191,6 +192,7 @@ static void fmn_sprite_physics_update(float elapsed) {
     if ((a->physics&FMN_PHYSICS_EDGE)&&fmn_physics_check_edges(&cx,&cy,a)) {
       a->x+=cx;
       a->y+=cy;
+      if (a->static_pressure) a->static_pressure(a,0,fmn_dir_from_vector(cx,cy));
     }
     if ((a->physics&FMN_PHYSICS_GRID)&&fmn_physics_check_grid(&cx,&cy,a,a->physics)) {
       a->x+=cx;
@@ -200,6 +202,7 @@ static void fmn_sprite_physics_update(float elapsed) {
       else if (cx>0.0f) a->x=roundf(a->x-a->radius)+a->radius;
       else if (cy<0.0f) a->y=roundf(a->y+a->radius)-a->radius;
       else if (cy>0.0f) a->y=roundf(a->y-a->radius)+a->radius;
+      if (a->static_pressure) a->static_pressure(a,0,fmn_dir_from_vector(cx,cy));
     }
     
     if (a->physics&FMN_PHYSICS_SPRITES) {
