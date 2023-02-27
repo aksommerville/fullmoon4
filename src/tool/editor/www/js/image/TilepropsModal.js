@@ -110,9 +110,9 @@ export class TilepropsModal {
             this.dom.spawn(select, "OPTION", { value: "2" }, "Hole");
             this.dom.spawn(select, "OPTION", { value: "3" }, "Unshovellable (vacant)");
             this.dom.spawn(select, "OPTION", { value: "4" }, "Unchalkable (solid)");
-            this.dom.spawn(select, "OPTION", { value: "5" }, "5");
-            this.dom.spawn(select, "OPTION", { value: "6" }, "6");
-            this.dom.spawn(select, "OPTION", { value: "7" }, "7");
+            this.dom.spawn(select, "OPTION", { value: "5" }, "Sap");
+            this.dom.spawn(select, "OPTION", { value: "6" }, "Sap, unchalkable");
+            this.dom.spawn(select, "OPTION", { value: "7" }, "Water");
             this.dom.spawn(select, "OPTION", { value: "8" }, "8");
             this.dom.spawn(select, "OPTION", { value: "9" }, "9");
             select.value = value.toString();

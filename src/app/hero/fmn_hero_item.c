@@ -2,13 +2,55 @@
 #include "app/sprite/fmn_physics.h"
 #include "app/fmn_game.h"
 
+/* Trigger (interact) for all sprites in our focus zone, returning the first nonzero result.
+ */
+ 
+struct fmn_hero_interact_locally_context {
+  uint8_t itemid;
+  uint8_t qualifier;
+  float x;
+  float y;
+};
+
+static int fmn_hero_interact_locally_1(struct fmn_sprite *sprite,void *userdata) {
+  struct fmn_hero_interact_locally_context *ctx=userdata;
+  if (!sprite->interact) return 0;
+  if (sprite->x-sprite->radius>ctx->x) return 0;
+  if (sprite->x+sprite->radius<ctx->x) return 0;
+  if (sprite->y-sprite->radius>ctx->y) return 0;
+  if (sprite->y+sprite->radius<ctx->y) return 0;
+  return sprite->interact(sprite,ctx->itemid,ctx->qualifier);
+}
+ 
+static int16_t fmn_hero_interact_locally(uint8_t itemid,uint8_t qualifier) {
+  struct fmn_hero_interact_locally_context ctx={
+    .itemid=itemid,
+    .qualifier=qualifier,
+    .x=fmn_hero.sprite->x,
+    .y=fmn_hero.sprite->y,
+  };
+  float dx,dy;
+  fmn_vector_from_dir(&dx,&dy,fmn_global.facedir);
+  ctx.x+=dx*0.5f;
+  ctx.y+=dy*0.5f;
+  return fmn_sprites_for_each(fmn_hero_interact_locally_1,&ctx);
+}
+
 /* Bell.
  */
+ 
+static int fmn_bell_1(struct fmn_sprite *sprite,void *userdata) {
+  if (sprite->interact) {
+    sprite->interact(sprite,FMN_ITEM_BELL,0);
+  }
+  return 0;
+}
  
 static void fmn_hero_bell_begin() {
   fmn_sound_effect(FMN_SFX_BELL);
   fmn_hero.bell_count=1;
-  //TODO whatever bells do
+  //TODO non-sprite global hooks for bell?
+  fmn_sprites_for_each(fmn_bell_1,0);
 }
 
 static void fmn_hero_bell_update(float elapsed) {
@@ -18,21 +60,6 @@ static void fmn_hero_bell_update(float elapsed) {
     fmn_sound_effect(FMN_SFX_BELL);
     fmn_hero.bell_count=current;
   }
-}
-
-/* Corn.
- */
- 
-static void fmn_hero_corn_begin() {
-  fmn_global.active_item=0;
-  if (!fmn_global.itemqv[FMN_ITEM_CORN]) {
-    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
-    return;
-  }
-  fmn_log("ok corn it");
-  fmn_global.itemqv[FMN_ITEM_CORN]--;
-  //TODO corn sprite
-  //TODO attract a bird
 }
 
 /* Seed. TODO I'm pretty sure Corn and Seed are the same thing... play it out and consider combining to one item
@@ -46,7 +73,12 @@ static void fmn_hero_seed_begin() {
   }
   fmn_log("ok plant seed");
   fmn_global.itemqv[FMN_ITEM_SEED]--;
-  //TODO plant seed
+  int16_t result=fmn_hero_interact_locally(FMN_ITEM_SEED,0);
+  if (result) {
+    // Somebody ate the corn, we're done.
+    return;
+  }
+  //TODO create seed sprite. It will decide whether to create a plant or attract a bird or whatever else.
 }
 
 /* Coin.
@@ -72,8 +104,13 @@ static void fmn_hero_coin_begin() {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
-  
   fmn_global.itemqv[FMN_ITEM_COIN]--;
+  
+  // Anything that collects coins might do so via collision with the missile, but we'll also fire it as an interaction.
+  // This is important because we're going to reject coin toss if it collides initially.
+  // And we'd like to encourage the witch to politely hand coins to merchants instead of throwing them.
+  if (fmn_hero_interact_locally(FMN_ITEM_COIN,0)) return;
+  
   float dx,dy;
   fmn_vector_from_dir(&dx,&dy,fmn_global.facedir);
   uint8_t cmdv[]={
@@ -116,35 +153,48 @@ static void fmn_hero_cheese_begin() {
 /* Pitcher.
  */
  
-static uint8_t XXX_pitcher_next=FMN_PITCHER_CONTENT_WATER;
- 
 static uint8_t fmn_hero_pitcher_pickup_from_environment() {
-  uint8_t result=XXX_pitcher_next;//XXX very temporary
-  switch (XXX_pitcher_next) {
-    case FMN_PITCHER_CONTENT_WATER: XXX_pitcher_next=FMN_PITCHER_CONTENT_MILK; break;
-    case FMN_PITCHER_CONTENT_MILK: XXX_pitcher_next=FMN_PITCHER_CONTENT_HONEY; break;
-    case FMN_PITCHER_CONTENT_HONEY: XXX_pitcher_next=FMN_PITCHER_CONTENT_SAP; break;
-    case FMN_PITCHER_CONTENT_SAP: XXX_pitcher_next=FMN_PITCHER_CONTENT_BLOOD; break;
-    default: XXX_pitcher_next=FMN_PITCHER_CONTENT_WATER; break;
+  int16_t result=fmn_hero_interact_locally(FMN_ITEM_PITCHER,0);
+  if (result) return result;
+  
+  float x,y;
+  fmn_vector_from_dir(&x,&y,fmn_global.facedir);
+  x*=0.5f;
+  y*=0.5f;
+  x+=fmn_hero.sprite->x;
+  y+=fmn_hero.sprite->y;
+  if ((x<0.0f)||(y<0.0f)||(x>=FMN_COLC)||(y>=FMN_ROWC)) return 0;
+  uint8_t cellp=((uint8_t)y)*FMN_COLC+(uint8_t)x;
+  uint8_t tileid=fmn_global.map[cellp];
+  uint8_t physics=fmn_global.cellphysics[tileid];
+  
+  switch (physics) {
+    case FMN_CELLPHYSICS_SAP: return FMN_PITCHER_CONTENT_SAP;
+    case FMN_CELLPHYSICS_SAP_NOCHALK: return FMN_PITCHER_CONTENT_SAP;
+    case FMN_CELLPHYSICS_WATER: return FMN_PITCHER_CONTENT_WATER;
   }
-  return result;
+  
+  return 0;
 }
  
 static void fmn_hero_pitcher_begin() {
   // Item stays "active", for visual purposes only.
+  fmn_global.wand_dir=0;
   if (fmn_global.itemqv[FMN_ITEM_PITCHER]==FMN_PITCHER_CONTENT_EMPTY) {
     if (fmn_global.itemqv[FMN_ITEM_PITCHER]=fmn_hero_pitcher_pickup_from_environment()) {
       fmn_sound_effect(FMN_SFX_PITCHER_PICKUP);
-      fmn_log("pitcher pickup %d",fmn_global.itemqv[FMN_ITEM_PITCHER]);
-      //TODO visual feedback. show what we picked up
+      fmn_global.show_off_item=FMN_ITEM_PITCHER|(fmn_global.itemqv[FMN_ITEM_PITCHER]<<4);
+      fmn_global.show_off_item_time=0xff;
     } else {
       fmn_sound_effect(FMN_SFX_PITCHER_NO_PICKUP);
     }
   } else {
     fmn_sound_effect(FMN_SFX_PITCHER_POUR);
-    fmn_log("pitcher pour %d",fmn_global.itemqv[FMN_ITEM_PITCHER]);
-    //TODO locate target, do the thing....
+    uint8_t content=fmn_global.itemqv[FMN_ITEM_PITCHER];
     fmn_global.itemqv[FMN_ITEM_PITCHER]=FMN_PITCHER_CONTENT_EMPTY;
+    fmn_hero_interact_locally(FMN_ITEM_PITCHER,content);
+    fmn_global.wand_dir=content;
+    //TODO water plants
   }
 }
 
@@ -218,6 +268,7 @@ static uint8_t fmn_hero_broom_ok_to_end() {
   uint8_t tile=fmn_global.map[tilep];
   uint8_t physics=fmn_global.cellphysics[tile];
   if (physics==FMN_CELLPHYSICS_HOLE) return 0;
+  if (physics==FMN_CELLPHYSICS_WATER) return 0;
   // Everything else is fine.
   return 1;
 }
@@ -237,7 +288,7 @@ static void fmn_hero_broom_update(float elapsed) {
       uint8_t tilep=fmn_hero.celly*FMN_COLC+fmn_hero.cellx;
       uint8_t tile=fmn_global.map[tilep];
       uint8_t physics=fmn_global.cellphysics[tile];
-      if (physics!=FMN_CELLPHYSICS_HOLE) {
+      if ((physics!=FMN_CELLPHYSICS_HOLE)&&(physics!=FMN_CELLPHYSICS_WATER)) {
         fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
         fmn_global.active_item=0;
         return;
@@ -428,7 +479,7 @@ static void fmn_hero_chalk_begin() {
   uint8_t tilep=y*FMN_COLC+x;
   uint8_t pvtile=fmn_global.map[tilep];
   uint8_t pvphysics=fmn_global.cellphysics[pvtile];
-  if (pvphysics!=FMN_CELLPHYSICS_SOLID) {
+  if ((pvphysics!=FMN_CELLPHYSICS_SOLID)&&(pvphysics!=FMN_CELLPHYSICS_SAP)) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
@@ -469,7 +520,6 @@ void fmn_hero_item_begin() {
   fmn_hero.item_active_time=0;
   switch (fmn_global.active_item) {
     case FMN_ITEM_BELL: fmn_hero_bell_begin(); break;
-    case FMN_ITEM_CORN: fmn_hero_corn_begin(); break;
     case FMN_ITEM_SEED: fmn_hero_seed_begin(); break;
     case FMN_ITEM_COIN: fmn_hero_coin_begin(); break;
     case FMN_ITEM_CHEESE: fmn_hero_cheese_begin(); break;

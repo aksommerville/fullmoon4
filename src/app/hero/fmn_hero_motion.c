@@ -226,6 +226,9 @@ static void fmn_hero_attempt_valid_position() {
     case FMN_CELLPHYSICS_SOLID:
     case FMN_CELLPHYSICS_HOLE:
     case FMN_CELLPHYSICS_UNCHALKABLE:
+    case FMN_CELLPHYSICS_SAP:
+    case FMN_CELLPHYSICS_SAP_NOCHALK:
+    case FMN_CELLPHYSICS_WATER:
       break;
     default: return; // "unknown" means vacant
   }
@@ -239,11 +242,14 @@ static void fmn_hero_attempt_valid_position() {
   #define CHECKCELL(_x,_y,okflag) { \
     switch (fmn_global.cellphysics[fmn_global.map[_y*FMN_COLC+_x]]) { \
       case FMN_CELLPHYSICS_SOLID: \
-      case FMN_CELLPHYSICS_UNCHALKABLE: { \
+      case FMN_CELLPHYSICS_UNCHALKABLE: \
+      case FMN_CELLPHYSICS_SAP: \
+      case FMN_CELLPHYSICS_SAP_NOCHALK: { \
           /* solid, stop searching in this direction */ \
           okflag=0; \
         } break; \
       case FMN_CELLPHYSICS_HOLE: break; \
+      case FMN_CELLPHYSICS_WATER: break; \
       default: { /* vacant */ \
           hero->x=_x+0.5f; \
           hero->y=_y+0.5f; \

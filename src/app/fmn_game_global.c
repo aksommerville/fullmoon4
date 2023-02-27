@@ -139,8 +139,16 @@ void fmn_game_update(float elapsed) {
 /* Cast spell or song.
  */
  
+static int fmn_spell_cast_1(struct fmn_sprite *sprite,void *userdata) {
+  uint8_t spellid=(uint8_t)(uintptr_t)userdata;
+  if (!sprite->interact) return 0;
+  sprite->interact(sprite,FMN_ITEM_WAND,spellid);
+  return 0;
+}
+ 
 void fmn_spell_cast(uint8_t spellid) {
-  fmn_log("TODO %s %d",__func__,spellid);
+  fmn_log("TODO %s %d",__func__,spellid); // TODO global hooks for spells, eg weather, teleport...
+  fmn_sprites_for_each(fmn_spell_cast_1,(void*)(uintptr_t)spellid);
 }
 
 /* GS listeners.

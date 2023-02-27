@@ -151,7 +151,8 @@ int rand();
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4
-#define FMN_SPRITE_FV_SIZE 4
+#define FMN_SPRITE_FV_SIZE 8
+#define FMN_SPRITE_PV_SIZE 1
 
 #define FMN_GS_SIZE 64 /* General global persistent state size in bytes. */
 
@@ -160,6 +161,9 @@ int rand();
 #define FMN_CELLPHYSICS_HOLE 2
 #define FMN_CELLPHYSICS_UNSHOVELLABLE 3
 #define FMN_CELLPHYSICS_UNCHALKABLE 4
+#define FMN_CELLPHYSICS_SAP 5 /* SOLID and also supplies sap (chalkable) */
+#define FMN_CELLPHYSICS_SAP_NOCHALK 6
+#define FMN_CELLPHYSICS_WATER 7 /* HOLE and also supplies water */
 
 /* Size of the violin input buffer.
  * The longest song must be shorter than this. (not equal)
@@ -179,7 +183,8 @@ int rand();
   uint16_t pad1; \
   uint8_t bv[FMN_SPRITE_BV_SIZE]; \
   int16_t sv[FMN_SPRITE_SV_SIZE]; \
-  float fv[FMN_SPRITE_FV_SIZE];
+  float fv[FMN_SPRITE_FV_SIZE]; \
+  void *pv[FMN_SPRITE_PV_SIZE];
 struct fmn_sprite_header { FMN_SPRITE_HEADER };
 
 struct fmn_plant {
@@ -251,7 +256,7 @@ extern struct fmn_global {
    */
   uint8_t selected_item;
   uint8_t active_item;
-  uint8_t show_off_item; // Item ID to display as "just collected"
+  uint8_t show_off_item; // Item ID to display as "just collected". Or (FMN_ITEM_PITCHER|(FMN_PITCHER_CONTENT_*<<4))
   uint8_t show_off_item_time; // Counts down from 0xff, not necessarily contiguous
   uint8_t itemv[16]; // nonzero if possessed
   uint8_t itemqv[16]; // qualifier eg count or enum
@@ -261,7 +266,7 @@ extern struct fmn_global {
   uint8_t facedir; // FMN_DIR_*, cardinals only.
   uint8_t walking;
   uint8_t last_horz_dir; // FMN_DIR_W or FMN_DIR_E
-  uint8_t wand_dir; // current direction while encoding on wand or violin
+  uint8_t wand_dir; // current direction while encoding on wand or violin. also borrowed by other items (pitcher)
   float injury_time;
   float illumination_time;
   uint8_t cheesing;

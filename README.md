@@ -18,6 +18,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [x] We need another layer of safety net around reset-map, when you enter on a broom.
 - - eg enter first map from the west and get killed
+- [ ] Mu block should do something funny when you pour milk on it. ("moo")
 
 ### March
 
@@ -39,9 +40,9 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Wand: repudiation
 - - [ ] Seed: Sprite on actuation, and summon the bird or create a plant.
 - - [x] Coin: throw
-- - [ ] Pitcher: pickup from environment
-- - [ ] Pitcher: advance plants when poured. And put out fires. and what else?
-- - [ ] Pitcher: visual feedback on pickup
+- - [x] Pitcher: pickup from environment
+- - [ ] Pitcher: advance plants when poured
+- - [x] Pitcher: visual feedback on pickup
 - - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - - [ ] Shovel: Needs a new face tile, show some effort.
 - [ ] Sprites:

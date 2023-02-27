@@ -68,7 +68,6 @@ function rewriteInput_xform(src) {
 }
 
 function rewriteInput_style(src) {
-  // style hidden|hero|tile|fourframe
   if (src.length !== 2) throw new Error(`Expected 1 argument after 'style', found ${src.length - 1}`);
   let v = src[1];
   switch (v) {

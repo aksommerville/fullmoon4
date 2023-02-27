@@ -182,9 +182,12 @@ export class ImageUi {
             switch (v) { // FMN_CELLPHYSICS
               case 0: context.fillStyle = "#0f0"; break; // vacant, green
               case 1: context.fillStyle = "#000"; break; // solid, black
-              case 2: context.fillStyle = "#00f"; break; // hole, blue
+              case 2: context.fillStyle = "#008"; break; // hole, blue
               case 3: context.fillStyle = "#080"; break; // unshovellable, basically vacant
               case 4: context.fillStyle = "#446"; break; // unchalkable, basically solid
+              case 5: context.fillStyle = "#ff0"; break; // sap
+              case 6: context.fillStyle = "#f80"; break; // sap, no chalk
+              case 7: context.fillStyle = "#00f"; break; // water
               default: context.fillStyle = "#f00"; break; // unknown, red
               // It's entirely possible we'll add more, but I expect simple colors will work forever.
             }

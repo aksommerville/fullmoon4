@@ -286,11 +286,15 @@ export class RenderHero {
   }
   
   _animatePitcher() {
+    let tileId = 0x65;
+    if (this.globals.g_wand_dir[0]) {
+      tileId = 0xe6 + this.globals.g_wand_dir[0];
+    }
     switch (this.globals.g_facedir[0]) {
-      case this.constants.DIR_N: return [0x65, 0, -5, this.constants.XFORM_XREV | this.constants.XFORM_SWAP];
-      case this.constants.DIR_S: return [0x65, -1, -1, this.constants.XFORM_XREV];
+      case this.constants.DIR_N: return [tileId, 0, -5, this.constants.XFORM_XREV | this.constants.XFORM_SWAP];
+      case this.constants.DIR_S: return [tileId, -1, -1, this.constants.XFORM_XREV];
       // E or W, defaults are good.
-      default: return [0x65, -5, -3, null];
+      default: return [tileId, -5, -3, null];
     }
   }
   
@@ -346,10 +350,15 @@ export class RenderHero {
         if (!sprite) return;
         const srcImage = this.dataService.getImage(sprite.imageid);
         if (!srcImage) return;
+        const itemId = this.globals.g_show_off_item[0];
+        let tileId = 0xf0 + itemId;
+        if (((itemId & 0x0f) === this.constants.ITEM_PITCHER) && (itemId & 0xf0)) {
+          tileId = 0xe2 + (itemId >> 4);
+        }
         this.renderBasics.tile(ctx,
           sprite.x * this.constants.TILESIZE,
           sprite.y * this.constants.TILESIZE - this.constants.TILESIZE * 1.5,
-          srcImage, 0xf0 + this.globals.g_show_off_item[0], 0
+          srcImage, tileId, 0
         );
       }
     }

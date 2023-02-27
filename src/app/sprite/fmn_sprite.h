@@ -19,6 +19,9 @@
 struct fmn_sprite {
   FMN_SPRITE_HEADER
   
+  //TODO Why are we copying out all the callbacks instead of pointing to a controller?
+  // There must have been a reason for that, but now I forget. -aks 2023-02-27
+  
   // Called each master update, if set.
   void (*update)(struct fmn_sprite *sprite,float elapsed);
   
@@ -30,6 +33,17 @@ struct fmn_sprite {
   void (*static_pressure)(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir);
   
   void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
+  
+  /* Notify sprite that the hero has done something, possibly scoped to this sprite specifically.
+   * FMN_ITEM_WAND for both spells and songs. (qualifier) is the spellid. All sprites onscreen get notified.
+   * FMN_ITEM_PITCHER if the pitcher is used with this sprite in focus.
+   *   (qualifier) is a nonzero FMN_PITCHER_CONTENT_* if we're pouring.
+   *   If zero, we're collecting. Return zero or a content to provide.
+   * FMN_ITEM_BELL broadcast, no qualifier or return.
+   * FMN_ITEM_SEED local, no qualifier. Return nonzero to consume it.
+   * FMN_ITEM_COIN ''. You make a sound effect if warranted.
+   */
+  int16_t (*interact)(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier);
   
   // Reference data recorded at spawn point.
   uint16_t spriteid;
@@ -85,6 +99,9 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_treadle        8
 #define FMN_SPRCTL_gate           9
 #define FMN_SPRCTL_coin          10
+#define FMN_SPRCTL_cow           11
+#define FMN_SPRCTL_beehive       12
+#define FMN_SPRCTL_bee           13
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -97,7 +114,10 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(firenozzle) \
   _(treadle) \
   _(gate) \
-  _(coin)
+  _(coin) \
+  _(cow) \
+  _(beehive) \
+  _(bee)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
@@ -105,6 +125,7 @@ struct fmn_sprite_controller {
   void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
   void (*static_pressure)(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir);
   void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
+  int16_t (*interact)(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier);
 };
 
 #define _(tag) extern const struct fmn_sprite_controller fmn_sprite_controller_##tag;

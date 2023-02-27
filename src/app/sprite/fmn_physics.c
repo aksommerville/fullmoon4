@@ -56,10 +56,13 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
       uint8_t physics=fmn_global.cellphysics[*cellp];
       switch (physics) {
         case FMN_CELLPHYSICS_SOLID:
-        case FMN_CELLPHYSICS_UNCHALKABLE: {
+        case FMN_CELLPHYSICS_UNCHALKABLE:
+        case FMN_CELLPHYSICS_SAP:
+        case FMN_CELLPHYSICS_SAP_NOCHALK: {
             if (!(features&FMN_PHYSICS_SOLID)) continue;
           } break;
-        case FMN_CELLPHYSICS_HOLE: {
+        case FMN_CELLPHYSICS_HOLE:
+        case FMN_CELLPHYSICS_WATER: {
             if (!(features&FMN_PHYSICS_HOLE)) continue;
           } break;
         // If we add new tile physics, they go here.

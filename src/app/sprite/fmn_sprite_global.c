@@ -82,6 +82,7 @@ static void fmn_sprite_apply_controller(struct fmn_sprite *sprite) {
   sprite->pressure=sprctl->pressure;
   sprite->static_pressure=sprctl->static_pressure;
   sprite->hero_collision=sprctl->hero_collision;
+  sprite->interact=sprctl->interact;
   
   if (sprctl->init) sprctl->init(sprite);
 }
