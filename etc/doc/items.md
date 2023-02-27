@@ -93,9 +93,8 @@ Pour liquids:
 Liquids:
  - Water. From rivers etc. Plants will yield seed. Generally behaves the same as the rain spell. Don't let water do anything too interesting.
  - Milk. From cows. Plants yield cheese.
- - Honey. From hives. Plants yield matches.
- - Sap. From trees (abundant). Plants yield corn.
- - Blood. TODO Where from? The witch is not going to kill animals. Plants yield coins.
+ - Honey. From hives. Plants yield coins.
+ - Sap. From trees (abundant). Plants yield matches.
 
 ### Seed
 

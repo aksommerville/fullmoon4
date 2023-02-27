@@ -235,17 +235,7 @@ static void fmn_hero_wand_end() {
   if (spellid) {
     fmn_spell_cast(spellid);
   } else {
-    //TODO spell repudiation
-    //this is for debug only:
-    if (fmn_hero.spellc>FMN_HERO_SPELL_LIMIT) fmn_hero.spellc=FMN_HERO_SPELL_LIMIT;
-    int i=fmn_hero.spellc; while (i-->0) switch (fmn_hero.spellv[i]) {
-      case FMN_DIR_W: fmn_hero.spellv[i]='W'; break;
-      case FMN_DIR_E: fmn_hero.spellv[i]='E'; break;
-      case FMN_DIR_N: fmn_hero.spellv[i]='N'; break;
-      case FMN_DIR_S: fmn_hero.spellv[i]='S'; break;
-      default: fmn_hero.spellv[i]='?'; break;
-    }
-    fmn_log("Not a valid spell: %.*s",fmn_hero.spellc,fmn_hero.spellv);
+    fmn_global.spell_repudiation=0xff;
   }
 }
  
@@ -313,6 +303,9 @@ static void fmn_violin_check_song() {
         fmn_synth_event(0x0e,0x80,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
       }
       fmn_global.active_item=0;
+      if (!fmn_hero_facedir_agrees()) {
+        fmn_hero_reset_facedir();
+      }
     }
   }
 }

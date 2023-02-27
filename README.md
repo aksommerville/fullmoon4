@@ -19,8 +19,21 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 ### March
 
 - [ ] Spells.
+- - [ ] Rain
+- - [ ] Wind
+- - [ ] Slow motion
+- - [ ] Teleport home
+- - [ ] 4 or 5 other teleport spells? Depends what the world looks like.
+- - [ ] Opening
+- - [ ] Invisibility
+- - [ ] (song) Reveille
+- - [ ] (song) Lullabye
+- - [ ] (song) Bloom
+- - [ ] (song) Revelations
+- - [ ] (song) Come Hither
+- - [ ] (song) Go Thither
 - [ ] Refine items.
-- - [ ] Wand: repudiation
+- - [x] Wand: repudiation
 - - [ ] Seed: Sprite on actuation, and summon the bird or create a plant.
 - - [ ] Coin: throw
 - - [ ] Pitcher: pickup from environment
@@ -34,6 +47,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Chalk-aware sentinel
 - - [ ] Raccoon, throws acorns
 - - [ ] Rat, pounce and bite. He'll miss if you're flying.
+- - [ ] Rabbit that teaches you a song.
 
 ### April
 

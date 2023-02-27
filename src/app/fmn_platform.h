@@ -265,7 +265,7 @@ extern struct fmn_global {
   float injury_time;
   float illumination_time;
   uint8_t cheesing;
-  uint8_t pad2;
+  uint8_t spell_repudiation; // app sets to 0xff to begin repudiation (upon ending the wand action). platform handles from there.
   
   // Relative position of the secret the compass should point to.
   // (0,0) is special, it means "nothing".

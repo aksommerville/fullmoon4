@@ -63,7 +63,6 @@ export class RenderHero {
     const facedir = this.globals.g_facedir[0];
     
     // When injured, we do something entirely different, and all other state can be ignored.
-    //TODO Does the carrying item matter for this?
     if (this.globals.g_injury_time[0] > 0) {
       const tileId = (this.frameCount & 4) ? 0x03 : 0x33;
       let hatDisplacement = 0;
@@ -73,6 +72,12 @@ export class RenderHero {
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId + 0x20, 0);
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, tileId + 0x10, 0);
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12 - hatDisplacement, srcImage, tileId, 0);
+      return;
+    }
+    
+    // Repudiating a spell is its own thing.
+    if (this.globals.g_spell_repudiation[0]) {
+      this._renderSpellRepudiation(ctx, midx, midy, srcImage);
       return;
     }
     
@@ -146,6 +151,18 @@ export class RenderHero {
   _renderHat(ctx, midx, midy, facedir, srcImage, col, xform) {
     const tilesize = this.constants.TILESIZE;
     this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
+  }
+  
+  _renderSpellRepudiation(ctx, midx, midy, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    if (this.globals.g_spell_repudiation[0] > 111) { // total run time in frames. should be 15 mod 16.
+      this.globals.g_spell_repudiation[0] = 111;
+    }
+    this.globals.g_spell_repudiation[0]--;
+    const frame = (this.globals.g_spell_repudiation[0] & 16) ? 1 : 0;
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, 0x20, 0);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, 0x2b + frame, 0);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x1b + frame, 0);
   }
   
   _renderBroom(ctx, midx, midy, facedir, srcImage) {

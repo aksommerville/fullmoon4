@@ -61,6 +61,11 @@ int fmn_hero_reset() {
  */
  
 void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
+
+  // Spell repudiation is highly transient; drop on any keypress.
+  if (state) {
+    fmn_global.spell_repudiation=0;
+  }
   
   if (bit&(FMN_INPUT_LEFT|FMN_INPUT_RIGHT|FMN_INPUT_UP|FMN_INPUT_DOWN)) {
     if (!fmn_hero_item_motion(bit,value)) {
