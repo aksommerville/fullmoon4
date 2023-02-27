@@ -243,6 +243,7 @@ static void fmn_hero_attempt_valid_position() {
           /* solid, stop searching in this direction */ \
           okflag=0; \
         } break; \
+      case FMN_CELLPHYSICS_HOLE: break; \
       default: { /* vacant */ \
           hero->x=_x+0.5f; \
           hero->y=_y+0.5f; \
@@ -269,6 +270,14 @@ static void fmn_hero_attempt_valid_position() {
     }
   }
   #undef CHECKCELL
+  
+  // Panic! Drop whatever is happening and put her back on the broom.
+  // It's fair to assume that she has one; that's the only way she could get here.
+  // But even if not, this will be less weird than getting stuck on an edge. The fake broom is gone once she lands.
+  fmn_global.selected_item=FMN_ITEM_BROOM;
+  fmn_global.active_item=FMN_ITEM_BROOM;
+  fmn_hero.sprite->physics&=~FMN_PHYSICS_HOLE;
+  fmn_hero.landing_pending=1;
 }
 
 /* Return to map entry.

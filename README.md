@@ -16,7 +16,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### February
 
-- [ ] We need another layer of safety net around reset-map, when you enter on a broom.
+- [x] We need another layer of safety net around reset-map, when you enter on a broom.
 - - eg enter first map from the west and get killed
 
 ### March
