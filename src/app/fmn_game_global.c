@@ -77,7 +77,7 @@ static void fmn_game_navigate(int8_t dx,int8_t dy) {
   fmn_commit_transition();
 }
 
-static void fmn_game_check_doors(uint8_t x,uint8_t y) {
+static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
   struct fmn_door *door=fmn_global.doorv;
   uint32_t i=fmn_global.doorc;
   for (;i-->0;door++) {
@@ -101,6 +101,50 @@ static void fmn_game_check_doors(uint8_t x,uint8_t y) {
     fmn_hero_kill_velocity();
     
     fmn_commit_transition();
+    return 1;
+  }
+  return 0;
+}
+
+/* If we've stepped on a flowered plant, collect it.
+ */
+
+static void cb_modal_dummy() {
+}
+ 
+static void fmn_game_check_plant_collection(uint8_t x,uint8_t y) {
+  struct fmn_plant *plant=fmn_global.plantv;
+  uint8_t i=fmn_global.plantc;
+  for (;i-->0;plant++) {
+    if (plant->x!=x) continue;
+    if (plant->y!=y) continue;
+    if (plant->state!=FMN_PLANT_STATE_FLOWER) continue;
+    uint8_t itemid=0,quantity=5;
+    switch (plant->fruit) {
+      case FMN_PLANT_FRUIT_SEED: itemid=FMN_ITEM_SEED; break;
+      case FMN_PLANT_FRUIT_MATCH: itemid=FMN_ITEM_MATCH; break;
+      case FMN_PLANT_FRUIT_CHEESE: itemid=FMN_ITEM_CHEESE; break;
+      case FMN_PLANT_FRUIT_COIN: itemid=FMN_ITEM_COIN; break;
+    }
+    if (itemid) {
+      // Abort if we are completely full; leave it on the vine.
+      if (fmn_global.itemqv[itemid]>=0xff) continue;
+      if (fmn_global.itemqv[itemid]>0xff-quantity) fmn_global.itemqv[itemid]=0xff;
+      else fmn_global.itemqv[itemid]+=quantity;
+      plant->state=FMN_PLANT_STATE_DEAD;
+      fmn_map_dirty();
+      if (fmn_global.itemv[itemid]) {
+        fmn_global.show_off_item=itemid;
+        fmn_global.show_off_item_time=0xff;
+        fmn_sound_effect(FMN_SFX_ITEM_MINOR);
+      } else {
+        fmn_global.itemv[itemid]=1;
+        fmn_global.selected_item=itemid;
+        fmn_sound_effect(FMN_SFX_ITEM_MAJOR);
+        fmn_begin_menu(FMN_MENU_TREASURE,itemid,cb_modal_dummy);
+        fmn_hero_kill_velocity();
+      }
+    }
     return;
   }
 }
@@ -127,13 +171,31 @@ void fmn_game_update(float elapsed) {
 
   int8_t x,y;
   if (fmn_hero_get_quantized_position(&x,&y)) {
-    //fmn_log("hero at %d,%d",x,y);
     if (x<0) fmn_game_navigate(-1,0);
     else if (x>=FMN_COLC) fmn_game_navigate(1,0);
     else if (y<0) fmn_game_navigate(0,-1);
     else if (y>=FMN_ROWC) fmn_game_navigate(0,1);
-    else fmn_game_check_doors(x,y);
+    else {
+      if (fmn_game_check_doors(x,y)) return;
+      fmn_game_check_plant_collection(x,y);
+    }
   }
+}
+
+/* Force all plants to bloom.
+ */
+ 
+static void fmn_bloom_plants() {
+  uint8_t changed=0;
+  struct fmn_plant *plant=fmn_global.plantv;
+  uint8_t i=fmn_global.plantc;
+  for (;i-->0;plant++) {
+    if (plant->state==FMN_PLANT_STATE_GROW) {
+      plant->state=FMN_PLANT_STATE_FLOWER;
+      changed=1;
+    }
+  }
+  if (changed) fmn_map_dirty();
 }
 
 /* Cast spell or song.
@@ -147,8 +209,16 @@ static int fmn_spell_cast_1(struct fmn_sprite *sprite,void *userdata) {
 }
  
 void fmn_spell_cast(uint8_t spellid) {
-  fmn_log("TODO %s %d",__func__,spellid); // TODO global hooks for spells, eg weather, teleport...
   fmn_sprites_for_each(fmn_spell_cast_1,(void*)(uintptr_t)spellid);
+  switch (spellid) {
+    case FMN_SPELLID_BLOOM: fmn_bloom_plants(); break;
+    //TODO rain
+    //TODO wind
+    //TODO slowmo
+    //TODO teleport (5 spells)
+    //TODO invisible
+    //TODO revelations
+  }
 }
 
 /* GS listeners.

@@ -578,23 +578,27 @@ sound MOO
   norm 0 0.300
 end
 
+sound PLANT #TODO
+  len 0.001
+  noise 0
+end
+
+sound SEED_DROP #TODO
+  len 0.001
+  noise 0
+end
+
+sound SPROUT #TODO
+  len 0.001
+  noise 0
+end
+
+sound BLOOM #TODO
+  len 0.001
+  noise 0
+end
+
 # Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 21
-  len 0.001
-  noise 0
-end
-sound 22
-  len 0.001
-  noise 0
-end
-sound 23
-  len 0.001
-  noise 0
-end
-sound 24
-  len 0.001
-  noise 0
-end
 sound 25
   len 0.001
   noise 0

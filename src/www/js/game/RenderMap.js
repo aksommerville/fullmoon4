@@ -123,6 +123,21 @@ export class RenderMap {
         ctx.stroke();
       }
     });
+    
+    if (this.globals.g_plantc[0]) {
+      const plantImage = this.dataService.getImage(2);
+      if (plantImage && plantImage.complete) {
+        this.globals.forEachPlant(plant => {
+          const dstx = plant.x * this.constants.TILESIZE + (this.constants.TILESIZE >> 1);
+          const dsty = plant.y * this.constants.TILESIZE + (this.constants.TILESIZE >> 1);
+          let tileId = 0x3a + 0x10 * plant.state;
+          this.renderBasics.tile(ctx, dstx, dsty, plantImage, tileId, 0);
+          if ((plant.state === this.constants.PLANT_STATE_FLOWER) && plant.fruit) {
+            this.renderBasics.tile(ctx, dstx, dsty, plantImage, 0x2b + 0x10 * plant.fruit, 0);
+          }
+        });
+      }
+    }
   }
 }
 

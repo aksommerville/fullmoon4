@@ -224,7 +224,63 @@ export class Globals {
   
   forEachSketch(cb) {
     const count = this.g_sketchc[0];
-    for (let i=0; i<count; i++) cb(this.getSketchByIndex(i));
+    for (let i=0; i<count; i++) {
+      const result = cb(this.getSketchByIndex(i));
+      if (result) return result;
+    }
+  }
+  
+  getPlantByIndex(p) {
+    if ((p < 0) || (p >= this.g_plantc[0])) return null;
+    p *= this.constants.PLANT_SIZE;
+    const plant = {
+      x: this.g_plantv[p],
+      y: this.g_plantv[p + 1],
+      state: this.g_plantv[p + 2],
+      fruit: this.g_plantv[p + 3],
+      flower_time: this.g_plantv[p + 4] | (this.g_plantv[p + 5] << 8) | (this.g_plantv[p + 6] << 16) | (this.g_plantv[p + 7] << 24),
+    };
+    return plant;
+  }
+  
+  forEachPlant(cb) {
+    const count = this.g_plantc[0];
+    for (let i=0; i<count; i++) {
+      const result = cb(this.getPlantByIndex(i));
+      if (result) return result;
+    }
+  }
+  
+  addPlant(x, y, reuse) {
+    if (this.g_plantc[0] >= this.constants.PLANT_LIMIT) {
+      if (reuse) {
+        for (let i=this.g_plantc[0], p=0; i-->0; p+=this.constants.PLANT_SIZE) {
+          if (this.g_plantv[p + 2] === this.constants.PLANT_STATE_DEAD) {
+            this.g_plantv[p++] = x;
+            this.g_plantv[p++] = y;
+            this.g_plantv[p++] = this.constants.PLANT_STATE_SEED;
+            this.g_plantv[p++] = 0; // fruit
+            this.g_plantv[p++] = 0; // flower_time
+            this.g_plantv[p++] = 0; // flower_time
+            this.g_plantv[p++] = 0; // flower_time
+            this.g_plantv[p++] = 0; // flower_time
+            return { x, y, state: 0, fruit: 0, flower_time: 0 };
+          }
+        }
+      }
+      return null;
+    }
+    const i = this.g_plantc[0]++;
+    let p = this.constants.PLANT_SIZE * i;
+    this.g_plantv[p++] = x;
+    this.g_plantv[p++] = y;
+    this.g_plantv[p++] = this.constants.PLANT_STATE_SEED;
+    this.g_plantv[p++] = 0; // fruit
+    this.g_plantv[p++] = 0; // flower_time
+    this.g_plantv[p++] = 0; // flower_time
+    this.g_plantv[p++] = 0; // flower_time
+    this.g_plantv[p++] = 0; // flower_time
+    return { x, y, state: 0, fruit: 0, flower_time: 0 };
   }
 }
 

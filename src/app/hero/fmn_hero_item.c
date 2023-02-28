@@ -62,7 +62,7 @@ static void fmn_hero_bell_update(float elapsed) {
   }
 }
 
-/* Seed. TODO I'm pretty sure Corn and Seed are the same thing... play it out and consider combining to one item
+/* Seed.
  */
  
 static void fmn_hero_seed_begin() {
@@ -71,14 +71,56 @@ static void fmn_hero_seed_begin() {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
-  fmn_log("ok plant seed");
   fmn_global.itemqv[FMN_ITEM_SEED]--;
+  
+  // If somebody eats the corn immediately, we're done.
   int16_t result=fmn_hero_interact_locally(FMN_ITEM_SEED,0);
-  if (result) {
-    // Somebody ate the corn, we're done.
+  if (result) return;
+  
+  // Check the focus tile, can we plant there?
+  // If it's solid, hole, or oob, put it back in your pocket and reject.
+  if ((fmn_global.shovelx<0)||(fmn_global.shovely<0)||(fmn_global.shovelx>=FMN_COLC)||(fmn_global.shovely>=FMN_ROWC)) {
+    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+    fmn_global.itemqv[FMN_ITEM_SEED]++;
     return;
   }
-  //TODO create seed sprite. It will decide whether to create a plant or attract a bird or whatever else.
+  uint8_t tilep=fmn_global.shovely*FMN_COLC+fmn_global.shovelx;
+  uint8_t tileid=fmn_global.map[tilep];
+  if (tileid==0x0f) { // plantable dirt
+    int8_t result=fmn_add_plant(fmn_global.shovelx,fmn_global.shovely);
+    if (result>=0) { // planted!
+      fmn_sound_effect(FMN_SFX_PLANT);
+      return;
+    }
+    // If creating the plant rejected, we might still be ok to create the sprite.
+  }
+  uint8_t physics=fmn_global.cellphysics[tileid];
+  switch (physics) {
+    case FMN_CELLPHYSICS_SOLID:
+    case FMN_CELLPHYSICS_HOLE:
+    case FMN_CELLPHYSICS_UNCHALKABLE:
+    case FMN_CELLPHYSICS_SAP:
+    case FMN_CELLPHYSICS_SAP_NOCHALK:
+    case FMN_CELLPHYSICS_WATER: {
+        fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+        fmn_global.itemqv[FMN_ITEM_SEED]++;
+        return;
+      }
+  }
+  
+  // Create a seed sprite. Hero can pick it back up, or wait for it to attract a bird. Or whatever.
+  float x,y;
+  fmn_vector_from_dir(&x,&y,fmn_global.facedir);
+  x+=fmn_hero.sprite->x;
+  y+=fmn_hero.sprite->y;
+  const uint8_t cmdv[]={0x42,FMN_SPRCTL_seed>>8,FMN_SPRCTL_seed};
+  struct fmn_sprite *sprite=fmn_sprite_spawn(x,y,0,cmdv,sizeof(cmdv),0,0);
+  if (!sprite) {
+    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+    fmn_global.itemqv[FMN_ITEM_SEED]++;
+    return;
+  }
+  fmn_sound_effect(FMN_SFX_SEED_DROP);
 }
 
 /* Coin.
@@ -176,6 +218,24 @@ static uint8_t fmn_hero_pitcher_pickup_from_environment() {
   
   return 0;
 }
+
+static void fmn_hero_water_plants(uint8_t liquid) {
+  if (fmn_global.shovelx<0) return;
+  if (fmn_global.shovelx>=FMN_COLC) return;
+  if (fmn_global.shovely<0) return;
+  if (fmn_global.shovely>=FMN_ROWC) return;
+  struct fmn_plant *plant=fmn_global.plantv;
+  uint8_t i=fmn_global.plantc;
+  for (;i-->0;plant++) {
+    if (plant->x!=fmn_global.shovelx) continue;
+    if (plant->y!=fmn_global.shovely) continue;
+    if (plant->state!=FMN_PLANT_STATE_SEED) continue;
+    plant->fruit=liquid;
+    plant->state=FMN_PLANT_STATE_GROW;
+    fmn_map_dirty();
+    return;
+  }
+}
  
 static void fmn_hero_pitcher_begin() {
   // Item stays "active", for visual purposes only.
@@ -194,7 +254,7 @@ static void fmn_hero_pitcher_begin() {
     fmn_global.itemqv[FMN_ITEM_PITCHER]=FMN_PITCHER_CONTENT_EMPTY;
     fmn_hero_interact_locally(FMN_ITEM_PITCHER,content);
     fmn_global.wand_dir=content;
-    //TODO water plants
+    fmn_hero_water_plants(content);
   }
 }
 

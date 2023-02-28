@@ -106,18 +106,17 @@ void fmn_hero_update(float elapsed) {
   fmn_hero.velx=fmn_hero.sprite->velx;
   fmn_hero.vely=fmn_hero.sprite->vely;
   
-  if (fmn_global.selected_item==FMN_ITEM_SHOVEL) {
-    float x=fmn_hero.sprite->x;
-    float y=fmn_hero.sprite->y;
-    switch (fmn_global.facedir) {
-      case FMN_DIR_W: x-=0.5f; break;
-      case FMN_DIR_E: x+=0.5f; break;
-      case FMN_DIR_N: y-=0.5f; break;
-      case FMN_DIR_S: y+=0.5f; break;
-    }
-    fmn_global.shovelx=x; if (x<0.0f) fmn_global.shovelx--;
-    fmn_global.shovely=y; if (y<0.0f) fmn_global.shovely--;
+  // Update (shovelx,shovely) regardless of selected item. eg seed also uses it.
+  float x=fmn_hero.sprite->x;
+  float y=fmn_hero.sprite->y;
+  switch (fmn_global.facedir) {
+    case FMN_DIR_W: x-=0.5f; break;
+    case FMN_DIR_E: x+=0.5f; break;
+    case FMN_DIR_N: y-=0.5f; break;
+    case FMN_DIR_S: y+=0.5f; break;
   }
+  fmn_global.shovelx=x; if (x<0.0f) fmn_global.shovelx--;
+  fmn_global.shovely=y; if (y<0.0f) fmn_global.shovely--;
 }
 
 /* Quantize position.

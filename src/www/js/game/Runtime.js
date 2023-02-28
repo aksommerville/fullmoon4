@@ -54,7 +54,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_cancel_transition = () => this.renderer.cancelTransition();
     this.wasmLoader.env.fmn_load_map = (mapId, cbSpawn) => this.loadMap(mapId, cbSpawn);
     this.wasmLoader.env.fmn_map_dirty = () => this.renderer.mapDirty();
-    this.wasmLoader.env.fmn_add_plant = (x, y) => {};//TODO
+    this.wasmLoader.env.fmn_add_plant = (x, y) => this.addPlant(x, y);
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
     this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
@@ -222,6 +222,18 @@ export class Runtime {
     if (menu instanceof ChalkMenu) {
       menu.setup(sketch);
     }
+  }
+  
+  addPlant(x, y) {
+    if ((x < 0) || (y < 0) || (x >= this.globals.COLC) || (y >= this.globals.ROWC)) return -1;
+    if (this.globals.forEachPlant(plant => {
+      return ((plant.x === x) && (plant.y === y));
+    })) return -1;
+    const plant = this.globals.addPlant(x, y, true);
+    if (!plant) return -1;
+    this.globals.g_map[y * this.constants.COLC + x] = 0x00;
+    this.renderer.mapDirty();
+    return 0;
   }
   
   debugPauseToggle() {

@@ -55,6 +55,18 @@ export class Constants {
     this.ITEM_CHEESE = 15;
     this.ITEM_COUNT = 16;
     
+    this.PLANT_STATE_NONE = 0;
+    this.PLANT_STATE_SEED = 1;
+    this.PLANT_STATE_GROW = 2;
+    this.PLANT_STATE_FLOWER = 3;
+    this.PLANT_STATE_DEAD = 4;
+    
+    this.PLANT_FRUIT_NONE = 0;
+    this.PLANT_FRUIT_SEED = 1;
+    this.PLANT_FRUIT_CHEESE = 2;
+    this.PLANT_FRUIT_COIN = 3;
+    this.PLANT_FRUIT_MATCH = 4;
+    
     this.TRANSITION_TIME_MS = 600;
     
     this.TRANSITION_CUT = 0;

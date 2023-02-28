@@ -28,13 +28,13 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Invisibility
 - - [ ] (song) Reveille
 - - [ ] (song) Lullabye
-- - [ ] (song) Bloom
+- - [x] (song) Bloom
 - - [ ] (song) Revelations
 - - [ ] (song) Come Hither
 - - [ ] (song) Go Thither
 - [ ] Refine items.
-- - [ ] Seed: Sprite on actuation, and summon the bird or create a plant.
-- - [ ] Pitcher: advance plants when poured
+- - [ ] Seed: Summon a bird.
+- - [x] Pitcher: advance plants when poured
 - - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - - [ ] Shovel: Needs a new face tile, show some effort.
 - [ ] Sprites:
@@ -44,6 +44,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Raccoon, throws acorns
 - - [ ] Rat, pounce and bite. He'll miss if you're flying.
 - - [ ] Rabbit that teaches you a song.
+- [ ] Bloom plants on a timer.
+- [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
 
 ### April
 

@@ -12,7 +12,7 @@ const verifyString = require("./verifyString.js");
 const verifyWebAudioInstrument = require("./verifyWebAudioInstrument.js");
 const verifyWebAudioSound = require("./verifyWebAudioSound.js");
 
-const HIGHEST_DEFINED_SOUND_ID = 19; // BLOCK_EXPLODE
+const HIGHEST_DEFINED_SOUND_ID = 24; // BLOOM
 
 const RESTYPE_IMAGE = 1;
 const RESTYPE_SONG = 2;

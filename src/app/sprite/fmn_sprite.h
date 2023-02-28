@@ -102,6 +102,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_cow           11
 #define FMN_SPRCTL_beehive       12
 #define FMN_SPRCTL_bee           13
+#define FMN_SPRCTL_seed          14
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -117,7 +118,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(coin) \
   _(cow) \
   _(beehive) \
-  _(bee)
+  _(bee) \
+  _(seed)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

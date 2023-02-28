@@ -68,17 +68,15 @@ int rand();
 // PLANT_FRUIT corresponds to PITCHER_CONTENT, what you get by watering a plant with the given liquid.
 #define FMN_PLANT_FRUIT_NONE    0
 #define FMN_PLANT_FRUIT_SEED    1
-#define FMN_PLANT_FRUIT_NITRO   2
-#define FMN_PLANT_FRUIT_MATCH   3
-#define FMN_PLANT_FRUIT_CORN    4
-#define FMN_PLANT_FRUIT_COIN    5
+#define FMN_PLANT_FRUIT_CHEESE  2
+#define FMN_PLANT_FRUIT_COIN    3
+#define FMN_PLANT_FRUIT_MATCH   4
 
 #define FMN_PITCHER_CONTENT_EMPTY 0
 #define FMN_PITCHER_CONTENT_WATER 1
 #define FMN_PITCHER_CONTENT_MILK  2
 #define FMN_PITCHER_CONTENT_HONEY 3
 #define FMN_PITCHER_CONTENT_SAP   4
-#define FMN_PITCHER_CONTENT_BLOOD 5
 
 #define FMN_ITEM_NONE            0
 #define FMN_ITEM_CORN            1
@@ -119,6 +117,10 @@ int rand();
 #define FMN_SFX_PUSHBLOCK_ENCHANT 18
 #define FMN_SFX_BLOCK_EXPLODE 19
 #define FMN_SFX_MOO 20
+#define FMN_SFX_PLANT 21
+#define FMN_SFX_SEED_DROP 22
+#define FMN_SFX_SPROUT 23
+#define FMN_SFX_BLOOM 24
 // Available space here. Skipping forward to GM drums.
 #define FMN_SFX_KICK_1 35
 #define FMN_SFX_KICK_2 36
@@ -170,6 +172,26 @@ int rand();
  * The longest song must be shorter than this. (not equal)
  */
 #define FMN_VIOLIN_SONG_LENGTH 20
+
+#define FMN_SPELLID_BLOOM 1
+#define FMN_SPELLID_RAIN 2
+#define FMN_SPELLID_WIND_W 3
+#define FMN_SPELLID_WIND_E 4
+#define FMN_SPELLID_WIND_N 5
+#define FMN_SPELLID_WIND_S 6
+#define FMN_SPELLID_SLOWMO 7
+#define FMN_SPELLID_HOME 8
+#define FMN_SPELLID_TELE1 9
+#define FMN_SPELLID_TELE2 10
+#define FMN_SPELLID_TELE3 11
+#define FMN_SPELLID_TELE4 12
+#define FMN_SPELLID_OPEN 13
+#define FMN_SPELLID_INVISIBLE 14
+#define FMN_SPELLID_REVEILLE 15
+#define FMN_SPELLID_LULLABYE 16
+#define FMN_SPELLID_HITHER 17
+#define FMN_SPELLID_THITHER 18
+#define FMN_SPELLID_REVELATIONS 19
 
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
@@ -359,6 +381,7 @@ int8_t fmn_load_map(
 );
 
 // Call if you change map tiles. You don't need to track which ones.
+// Plants too.
 void fmn_map_dirty();
 
 /* Plant a seed or begin editing a sketch.
