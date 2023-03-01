@@ -209,6 +209,7 @@ static int fmn_spell_cast_1(struct fmn_sprite *sprite,void *userdata) {
 }
  
 void fmn_spell_cast(uint8_t spellid) {
+  fmn_log("%s %d",__func__,spellid);
   fmn_sprites_for_each(fmn_spell_cast_1,(void*)(uintptr_t)spellid);
   switch (spellid) {
     case FMN_SPELLID_BLOOM: fmn_bloom_plants(); break;

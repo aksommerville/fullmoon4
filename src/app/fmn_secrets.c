@@ -34,24 +34,24 @@ static const struct fmn_spell {
 #define SONG(name,...) {FMN_SPELLID_##name,1,{__VA_ARGS__},sizeof((uint8_t[]){__VA_ARGS__})},
 
   SONG(BLOOM,W,E,W,_,W,E,W,_,N,_,N,_,S)
-  SPELL(RAIN,_,_,_,_) //TODO
-  SPELL(WIND_W,_,_,_,_) //TODO
-  SPELL(WIND_E,_,_,_,_) //TODO
-  SPELL(WIND_N,_,_,_,_) //TODO
-  SPELL(WIND_S,_,_,_,_) //TODO
-  SPELL(SLOWMO,_,_,_,_) //TODO
-  SPELL(HOME,_,_,_,_) //TODO
-  SPELL(TELE1,_,_,_,_) //TODO
-  SPELL(TELE2,_,_,_,_) //TODO
-  SPELL(TELE3,_,_,_,_) //TODO
-  SPELL(TELE4,_,_,_,_) //TODO
+  SPELL(RAIN,N,S,S,S)
+  SPELL(WIND_W,E,N,W,S,E,W,S,W)
+  SPELL(WIND_E,E,N,W,S,E,W,S,E)
+  SPELL(WIND_N,E,N,W,S,E,W,S,N)
+  SPELL(WIND_S,E,N,W,S,E,W,S,S)
+  SPELL(SLOWMO,E,W,W,E,W,W,S,W)
+  SPELL(HOME,E,S,N,W,S,N)
+  SPELL(TELE1,S,W,E,N,W,E)
+  SPELL(TELE2,W,N,S,E,N,S)
+  SPELL(TELE3,N,E,W,S,E,W)
+  SPELL(TELE4,W,E,W,E,S,N,N)
   SPELL(OPEN,W,E,W,N,N)
-  SPELL(INVISIBLE,_,_,_,_)//TODO
-  SONG(REVEILLE,_,_,_,_)//TODO
-  SONG(LULLABYE,_,_,_,_)//TODO
-  SONG(HITHER,_,_,_,_)//TODO
-  SONG(THITHER,_,_,_,_)//TODO
-  SONG(REVELATIONS,_,_,_,_)//TODO
+  SPELL(INVISIBLE,W,N,S,E,W,W,E,E)
+  SONG(REVEILLE,S,_,N,N,E,_,N,_,N,_,_,E,N)
+  SONG(LULLABYE,W,_,_,_,S,_,_,_,W,_,S,_,E)
+  SONG(HITHER,W,W,E,W,N,_,_,_,W,W,E,W,N,_,N)
+  SONG(THITHER,N,E,W,S,E,E,W,S)
+  SONG(REVELATIONS,S,_,W,_,S,W,E,W,S,_,N,_,N)
 
 #undef SPELL
 #undef SONG

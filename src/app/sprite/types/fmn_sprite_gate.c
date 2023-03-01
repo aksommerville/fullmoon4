@@ -38,9 +38,25 @@ static void _gate_init(struct fmn_sprite *sprite) {
   }
 }
 
+/* Interact.
+ */
+ 
+static int16_t _gate_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {
+  fmn_log("%s %d:%d",__func__,itemid,qualifier);
+  switch (itemid) {
+    case FMN_ITEM_WAND: switch (qualifier) {
+        case FMN_SPELLID_OPEN: {
+            if (!state) _gate_cb_changed(sprite,gsbit,1);
+          } break;
+      } break;
+  }
+  return 0;
+}
+
 /* Type definition.
  */
  
 const struct fmn_sprite_controller fmn_sprite_controller_gate={
   .init=_gate_init,
+  .interact=_gate_interact,
 };

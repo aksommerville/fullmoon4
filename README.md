@@ -24,7 +24,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Slow motion
 - - [ ] Teleport home
 - - [ ] 4 or 5 other teleport spells? Depends what the world looks like.
-- - [ ] Opening
+- - [x] Opening
 - - [ ] Invisibility
 - - [ ] (song) Reveille
 - - [ ] (song) Lullabye
