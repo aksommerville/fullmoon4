@@ -61,6 +61,19 @@ function decodeCommand_singleU16(opcode, args, resType) {
   return dst;
 }
 
+function decodeCommand_xy(opcode, args) {
+  if (args.length !== 2) throw new Error(`Expected X Y`);
+  const x = +args[0];
+  const y = +args[1];
+  if (isNaN(x) || isNaN(y) || (x < 0) || (x >= COLC) || (y < 0) || (y >= ROWC)) {
+    throw new Error(`Map coordinates invalid or out of range: ${JSON.stringify(args)}`);
+  }
+  const dst = Buffer.alloc(2);
+  dst[0] = opcode;
+  dst[1] = y * COLC + x;
+  return dst;
+}
+
 /* door X Y MAPID DSTX DSTY
  */
  
@@ -119,6 +132,7 @@ function decodeCommand(words) {
     case "door": return decodeCommand_door(words.slice(1));
     case "sprite": return decodeCommand_sprite(words.slice(1));
     case "dark": return decodeCommand_noarg(0x01, words.slice(1));
+    case "hero": return decodeCommand_xy(0x22, words.slice(1));
   }
   return null;
 }

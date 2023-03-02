@@ -2,6 +2,6 @@ controller pushblock
 image 3
 tile 0
 style tile
-physics edge sprites solid hole
+physics edge sprites solid hole blowable
 radius 0.5
 invmass 0

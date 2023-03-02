@@ -121,6 +121,11 @@ int rand();
 #define FMN_SFX_SEED_DROP 22
 #define FMN_SFX_SPROUT 23
 #define FMN_SFX_BLOOM 24
+#define FMN_SFX_TELEPORT 25
+#define FMN_SFX_SLOWMO_BEGIN 26
+#define FMN_SFX_SLOWMO_END 27
+#define FMN_SFX_RAIN 28
+#define FMN_SFX_WIND 29
 // Available space here. Skipping forward to GM drums.
 #define FMN_SFX_KICK_1 35
 #define FMN_SFX_KICK_2 36
@@ -258,7 +263,7 @@ extern struct fmn_global {
   uint16_t neighborn;
   uint16_t neighbors;
   uint8_t mapdark;
-  uint8_t pad1;
+  uint8_t herostartp;
   uint8_t cellphysics[256];
   uint8_t sprite_storage[FMN_SPRITE_STORAGE_SIZE];
   struct fmn_door doorv[FMN_DOOR_LIMIT];
@@ -314,7 +319,12 @@ extern struct fmn_global {
   float violin_clock; // 0..1, counts up to the next beat transition.
   uint8_t violin_songp;
   uint8_t pad4;
-  uint16_t pad5;
+  uint8_t pad5;
+  
+  uint8_t wind_dir;
+  float wind_time;
+  float rain_time;
+  float slowmo_time;
   
 } fmn_global;
 

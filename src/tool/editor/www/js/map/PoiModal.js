@@ -54,6 +54,7 @@ export class PoiModal {
     this.dom.spawn(typeSelect, "OPTION", { value: "exit" }, "door");
     // Can't select "entrance" type this way. You have to create doors from their exit map, where they live ultimately.
     this.dom.spawn(typeSelect, "OPTION", { value: "sprite" }, "sprite");
+    this.dom.spawn(typeSelect, "OPTION", { value: "hero" }, "hero");
     
     this.dom.spawn(permanentForm, "INPUT", {
       type: "number",
@@ -126,6 +127,7 @@ export class PoiModal {
     switch (type) {
       case "exit": this.buildExitForm(table); break;
       case "sprite": this.buildSpriteForm(table); break;
+      case "hero": break;
     }
   }
   
@@ -231,6 +233,10 @@ export class PoiModal {
           if (isNaN(poi.arg1) || (poi.arg1 < 0) || (poi.arg1 > 0xff)) return null;
           if (isNaN(poi.arg2) || (poi.arg2 < 0) || (poi.arg2 > 0xff)) return null;
           return ["sprite", poi.x.toString(), poi.y.toString(), poi.spriteId.toString(), poi.arg0.toString(), poi.arg1.toString(), poi.arg2.toString()];
+        }
+        
+      case "hero": {
+          return ["hero", poi.x.toString(), poi.y.toString()];
         }
     }
     return null;

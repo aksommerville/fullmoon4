@@ -42,7 +42,6 @@ static void _gate_init(struct fmn_sprite *sprite) {
  */
  
 static int16_t _gate_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {
-  fmn_log("%s %d:%d",__func__,itemid,qualifier);
   switch (itemid) {
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_OPEN: {

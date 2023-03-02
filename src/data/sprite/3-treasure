@@ -4,3 +4,4 @@ tile 0x30
 xform 0
 style tile
 radius 0.5
+physics solid hole blowable

@@ -26,6 +26,7 @@ neighbors MAPID
 door X Y MAPID DSTX DSTY
 sprite X Y SPRITEID ARG0 ARG1 ARG2
 dark
+hero X Y
 ```
 
 Resource IDs may be name or number.
@@ -54,6 +55,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 
 0x20 (u8 songid) SONG
 0x21 (u8 imageid) TILESHEET
+0x22 (u8 cellp) HERO
 
 0x40 (u16 mapid) NEIGHBORW
 0x41 (u16 mapid) NEIGHBORE

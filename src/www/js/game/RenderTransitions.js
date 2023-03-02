@@ -197,11 +197,11 @@ export class RenderTransitions {
     ctx.fill();
   }
   
-  /* Warp: Crossfade.
+  /* Warp.
    *************************************************/
    
   _renderWarp(dst, t) {
-    this._renderCrossfade(dst, t);
+    this._renderFadeBlack(dst, t);
   }
 }
 

@@ -9,12 +9,13 @@
 
 #define FMN_SPRITE_ARGV_SIZE 4
 
-#define FMN_PHYSICS_MOTION  0x01 /* Automatic motion per (velx,vely,veldecay) */
-#define FMN_PHYSICS_EDGE    0x02 /* Collide against screen edges. */
-#define FMN_PHYSICS_SPRITES 0x04 /* Collide against other sprites, if they also have this flag. */
-#define FMN_PHYSICS_SOLID   0x10 /* Collide against SOLID (1) grid cells. */
-#define FMN_PHYSICS_HOLE    0x20 /* '' HOLE (2) */
+#define FMN_PHYSICS_MOTION   0x01 /* Automatic motion per (velx,vely,veldecay) */
+#define FMN_PHYSICS_EDGE     0x02 /* Collide against screen edges. */
+#define FMN_PHYSICS_SPRITES  0x04 /* Collide against other sprites, if they also have this flag. */
+#define FMN_PHYSICS_SOLID    0x10 /* Collide against SOLID (1) grid cells. */
+#define FMN_PHYSICS_HOLE     0x20 /* '' HOLE (2) */
 #define FMN_PHYSICS_GRID (FMN_PHYSICS_SOLID|FMN_PHYSICS_HOLE)
+#define FMN_PHYSICS_BLOWABLE 0x40 /* Wind can move it. */
 
 struct fmn_sprite {
   FMN_SPRITE_HEADER
@@ -44,6 +45,11 @@ struct fmn_sprite {
    * FMN_ITEM_COIN ''. You make a sound effect if warranted.
    */
   int16_t (*interact)(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier);
+  
+  /* For normal wind interaction, just add FMN_PHYSICS_BLOWABLE to (physics).
+   * Implement this if you need to react to wind in some peculiar way.
+   */
+  void (*wind)(struct fmn_sprite *sprite,float dx,float dy);
   
   // Reference data recorded at spawn point.
   uint16_t spriteid;
@@ -76,7 +82,7 @@ struct fmn_sprite *fmn_sprite_spawn(
 
 int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),void *userdata);
 
-void fmn_sprites_update(float elapsed);
+void fmn_sprites_update(float elapsed,float hero_elapsed);
 
 void fmn_sprite_apply_force(struct fmn_sprite *sprite,float dx,float dy);
 
@@ -128,6 +134,7 @@ struct fmn_sprite_controller {
   void (*static_pressure)(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir);
   void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
   int16_t (*interact)(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier);
+  void (*wind)(struct fmn_sprite *sprite,float dx,float dy);
 };
 
 #define _(tag) extern const struct fmn_sprite_controller fmn_sprite_controller_##tag;

@@ -83,6 +83,7 @@ static void fmn_sprite_apply_controller(struct fmn_sprite *sprite) {
   sprite->static_pressure=sprctl->static_pressure;
   sprite->hero_collision=sprctl->hero_collision;
   sprite->interact=sprctl->interact;
+  sprite->wind=sprctl->wind;
   
   if (sprctl->init) sprctl->init(sprite);
 }
@@ -164,9 +165,9 @@ struct fmn_sprite *fmn_sprite_spawn(
  */
  
 int fmn_sprites_for_each(int (*cb)(struct fmn_sprite *sprite,void *userdata),void *userdata) {
-  struct fmn_sprite **p=fmn_spritepv;
   int i=fmn_global.spritec;
-  for (;i-->0;p++) {
+  struct fmn_sprite **p=fmn_spritepv+i-1;
+  for (;i-->0;p--) {
     struct fmn_sprite *sprite=*p;
     int err=cb(sprite,userdata);
     if (err) return err;
@@ -299,11 +300,13 @@ static void fmn_sprite_physics_update(float elapsed) {
 /* Update all sprites.
  */
  
-void fmn_sprites_update(float elapsed) {
+void fmn_sprites_update(float elapsed,float hero_elapsed) {
   struct fmn_sprite **p=fmn_spritepv;
   int i=fmn_global.spritec;
   for (;i-->0;p++) {
     struct fmn_sprite *sprite=*p;
+    float timerestore=elapsed;
+    if (sprite->style==FMN_SPRITE_STYLE_HERO) elapsed=hero_elapsed;
     
     if (sprite->physics&FMN_PHYSICS_MOTION) {
       // Linear decay of velocity.
@@ -338,6 +341,7 @@ void fmn_sprites_update(float elapsed) {
     if (sprite->update) {
       sprite->update(sprite,elapsed);
     }
+    elapsed=timerestore;
   }
   fmn_sprite_physics_update(elapsed);
 }

@@ -2,6 +2,6 @@ controller cow
 image 3
 tile 0x31
 style tile
-physics sprites
+physics sprites solid hole
 radius 0.5
 invmass 0

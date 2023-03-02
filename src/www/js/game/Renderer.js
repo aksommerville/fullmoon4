@@ -98,6 +98,7 @@ export class Renderer {
     if (true||withOverlay) this.renderHero.renderUnderlay(canvas, ctx);
     this.renderSprites.render(canvas, ctx);
     if (withOverlay) this.renderHero.renderOverlay(canvas, ctx);
+    this.renderMap.renderWeather(canvas, ctx);
   }
 }
 

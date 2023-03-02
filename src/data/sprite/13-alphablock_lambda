@@ -2,6 +2,6 @@ controller alphablock
 image 3
 tile 0x03
 style tile
-physics motion edge sprites solid
+physics motion edge sprites solid blowable
 radius 0.5
 invmass 0

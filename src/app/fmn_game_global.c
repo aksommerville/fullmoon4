@@ -1,5 +1,6 @@
 #include "fmn_game.h"
 #include "sprite/fmn_sprite.h"
+#include "sprite/fmn_physics.h"
 #include "hero/fmn_hero.h"
 
 /* Init.
@@ -8,7 +9,6 @@
 int fmn_game_init() {
   fmn_global.itemv[FMN_ITEM_NONE]=1; // let it show an icon in the inventory, so it doesn't look like an item not found yet
   if (fmn_game_load_map(1)<1) return -1;
-  fmn_hero_set_position(FMN_COLC*0.5f,FMN_ROWC*0.5f);
   return 0;
 }
 
@@ -20,16 +20,10 @@ static void cb_spawn(
   uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3,
   const uint8_t *cmdv,uint16_t cmdc
 ) {
-  //fmn_log("%s (%d,%d) #%d [%d,%d,%d,%d] cmdv=%p cmdc=%d",__func__,x,y,spriteid,arg0,arg1,arg2,arg3,cmdv,cmdc);
   uint8_t argv[]={arg0,arg1,arg2,arg3};
   struct fmn_sprite *sprite=fmn_sprite_spawn(x+0.5f,y+0.5f,spriteid,cmdv,cmdc,argv,sizeof(argv));
   if (!sprite) {
-    /* This is actually normal; a sprite controller can decide it's not needed, eg treasure chest.
-    fmn_log(
-      "Failed to spawn sprite %d at (%d,%d), argv=[%d,%d,%d,%d]",
-      spriteid,x,y,arg0,arg1,arg2,arg3
-    );
-    /**/
+    // This is actually normal; a sprite controller can decide it's not needed, eg treasure chest.
     return;
   }
 }
@@ -149,6 +143,66 @@ static void fmn_game_check_plant_collection(uint8_t x,uint8_t y) {
   }
 }
 
+/* Update weather.
+ * Returns the new elapsed time to report to sprites, in case there's a slowstorm in progress.
+ */
+ 
+struct fmn_wind_context {
+  float dx;
+  float dy;
+  float others_time;
+  float hero_time;
+};
+
+static int fmn_wind_blow_1(struct fmn_sprite *sprite,void *userdata) {
+  struct fmn_wind_context *ctx=userdata;
+  if (sprite->style==FMN_SPRITE_STYLE_HERO) {
+    sprite->x+=ctx->dx*ctx->hero_time;
+    sprite->y+=ctx->dy*ctx->hero_time;
+  } else if (sprite->physics&FMN_PHYSICS_BLOWABLE) {
+    sprite->x+=ctx->dx*ctx->others_time;
+    sprite->y+=ctx->dy*ctx->others_time;
+    if (sprite->wind) sprite->wind(sprite,ctx->dx*ctx->others_time,ctx->dy*ctx->others_time);
+  }
+  return 0;
+}
+ 
+static void fmn_wind_blow(uint8_t dir,float others_time,float hero_time) {
+  struct fmn_wind_context ctx={
+    .others_time=others_time,
+    .hero_time=hero_time,
+  };
+  fmn_vector_from_dir(&ctx.dx,&ctx.dy,dir);
+  ctx.dx*=FMN_WIND_RATE;
+  ctx.dy*=FMN_WIND_RATE;
+  fmn_sprites_for_each(fmn_wind_blow_1,&ctx);
+}
+ 
+static float fmn_weather_update(float elapsed) {
+  float adjusted=elapsed;
+  if (fmn_global.slowmo_time>0.0f) {
+    if ((fmn_global.slowmo_time-=elapsed)<=0.0f) {
+      fmn_sound_effect(FMN_SFX_SLOWMO_END);
+      fmn_global.slowmo_time=0.0f;
+    } else {
+      adjusted*=FMN_SLOWMO_RATE;
+    }
+  }
+  if (fmn_global.rain_time>0.0f) {
+    if ((fmn_global.rain_time-=elapsed)<=0.0f) {
+      fmn_global.rain_time=0.0f;
+    }
+  }
+  if (fmn_global.wind_time>0.0f) {
+    if ((fmn_global.wind_time-=elapsed)<=0.0f) {
+      fmn_global.wind_time=0.0f;
+    } else {
+      fmn_wind_blow(fmn_global.wind_dir,adjusted,elapsed);
+    }
+  }
+  return adjusted;
+}
+
 /* Update.
  */
  
@@ -165,7 +219,8 @@ void fmn_game_update(float elapsed) {
     else fmn_global.show_off_item_time-=drop_time;
   }
 
-  fmn_sprites_update(elapsed);
+  float weather_adjusted_time=fmn_weather_update(elapsed);
+  fmn_sprites_update(weather_adjusted_time,elapsed);
   fmn_hero_update(elapsed);
   fmn_sprites_sort_partial();
 
@@ -198,6 +253,70 @@ static void fmn_bloom_plants() {
   if (changed) fmn_map_dirty();
 }
 
+/* Teleport to another map, or the same one.
+ */
+ 
+static void fmn_teleport(uint16_t mapid) {
+  fmn_log("%s %d",__func__,mapid);
+  fmn_prepare_transition(FMN_TRANSITION_WARP);
+  if (fmn_game_load_map(mapid)<1) {
+    fmn_cancel_transition();
+    return;
+  }
+  fmn_sound_effect(FMN_SFX_TELEPORT);
+  int8_t dumx,dumy;
+  fmn_hero_get_quantized_position(&dumx,&dumy);
+  fmn_hero_kill_velocity();
+  fmn_commit_transition();
+}
+
+/* Weather control spells.
+ * Yes, slow-motion is a weather phenomenon, you just haven't been listening close enough to the weather reports.
+ */
+ 
+static int fmn_rain_begin_1(struct fmn_sprite *sprite,void *dummy) {
+  if (!sprite->interact) return 0;
+  sprite->interact(sprite,FMN_ITEM_PITCHER,FMN_PITCHER_CONTENT_WATER);
+  return 0;
+}
+ 
+static void fmn_rain_begin() {
+  fmn_sound_effect(FMN_SFX_RAIN);
+  fmn_global.rain_time=FMN_RAIN_TIME;
+  fmn_sprites_for_each(fmn_rain_begin_1,0);
+  struct fmn_plant *plant=fmn_global.plantv;
+  uint8_t i=fmn_global.plantc;
+  uint8_t dirty=0;
+  for (;i-->0;plant++) {
+    if (plant->state!=FMN_PLANT_STATE_SEED) continue;
+    plant->fruit=FMN_PITCHER_CONTENT_WATER;
+    plant->state=FMN_PLANT_STATE_GROW;
+    dirty=1;
+  }
+  if (dirty) fmn_map_dirty();
+}
+ 
+static void fmn_wind_begin(uint8_t dir) {
+  
+  // If wind is already blowing, and she selected the opposite direction, cancel it.
+  // This will be important for maps with initial wind, if we ever do that.
+  if (fmn_global.wind_time>0.0f) {
+    if (dir==fmn_dir_reverse(fmn_global.wind_dir)) {
+      fmn_global.wind_time=0.0f;
+      return;
+    }
+  }
+  
+  fmn_sound_effect(FMN_SFX_WIND);
+  fmn_global.wind_dir=dir;
+  fmn_global.wind_time=FMN_WIND_TIME;
+}
+ 
+static void fmn_slowmo_begin() {
+  fmn_sound_effect(FMN_SFX_SLOWMO_BEGIN);
+  fmn_global.slowmo_time=FMN_SLOWMO_TIME;
+}
+
 /* Cast spell or song.
  */
  
@@ -213,12 +332,20 @@ void fmn_spell_cast(uint8_t spellid) {
   fmn_sprites_for_each(fmn_spell_cast_1,(void*)(uintptr_t)spellid);
   switch (spellid) {
     case FMN_SPELLID_BLOOM: fmn_bloom_plants(); break;
-    //TODO rain
-    //TODO wind
-    //TODO slowmo
-    //TODO teleport (5 spells)
+    case FMN_SPELLID_RAIN: fmn_rain_begin(); break;
+    case FMN_SPELLID_WIND_W: fmn_wind_begin(FMN_DIR_W); break;
+    case FMN_SPELLID_WIND_E: fmn_wind_begin(FMN_DIR_E); break;
+    case FMN_SPELLID_WIND_N: fmn_wind_begin(FMN_DIR_N); break;
+    case FMN_SPELLID_WIND_S: fmn_wind_begin(FMN_DIR_S); break;
+    case FMN_SPELLID_SLOWMO: fmn_slowmo_begin(); break;
     //TODO invisible
     //TODO revelations
+    case FMN_SPELLID_HOME: fmn_teleport(1); break;
+    //TODO mapid for TELE(n) should be stored in the archive somehow.
+    case FMN_SPELLID_TELE1: fmn_teleport(6); break;
+    case FMN_SPELLID_TELE2: fmn_teleport(13); break;
+    case FMN_SPELLID_TELE3: fmn_teleport(11); break;
+    case FMN_SPELLID_TELE4: fmn_teleport(21); break;
   }
 }
 

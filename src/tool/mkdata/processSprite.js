@@ -90,10 +90,11 @@ function rewriteInput_physics(src) {
     else if (token === "sprites") physics |= 0x04;
     else if (token === "solid") physics |= 0x10;
     else if (token === "hole") physics |= 0x20;
+    else if (token === "blowable") physics |= 0x40;
     else {
       const v = +token;
       if (isNaN(v) || (v < 0) || (v > 0xff)) {
-        throw new Error(`Expected 'motion', 'edge', 'sprites', 'solid', 'hole', or integer in 0..255, found ${JSON.stringify(token)}`);
+        throw new Error(`Expected 'motion', 'edge', 'sprites', 'solid', 'hole', 'blowable', or integer in 0..255, found ${JSON.stringify(token)}`);
       }
       physics |= v;
     }

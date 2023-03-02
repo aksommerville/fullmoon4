@@ -45,6 +45,7 @@ export class Globals {
     this.p_hero = this.p_sketchv_end + 40;
     this.p_gs = this.p_hero + 24;
     this.p_violin_song = this.p_gs + this.constants.GS_SIZE;
+    this.p_weather = this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH + 7;
     
     // "g_" Make a bunch of TypedArrays pointing to individual variables.
     this.g_spritev = new Uint32Array(this.memU8.buffer, this.p_fmn_global, 1);
@@ -57,6 +58,7 @@ export class Globals {
     this.g_neighborn = new Uint16Array(this.memU8.buffer, this.p_map_end + 6, 1);
     this.g_neighbors = new Uint16Array(this.memU8.buffer, this.p_map_end + 8, 1);
     this.g_mapdark = new Uint8Array(this.memU8.buffer, this.p_map_end + 10, 1);
+    this.g_herostartp = new Uint8Array(this.memU8.buffer, this.p_map_end + 11, 1);
     this.g_cellphysics = new Uint8Array(this.memU8.buffer, this.p_cellphysics, 256);
     this.g_sprite_storage = new Uint8Array(this.memU8.buffer, this.p_sprite_storage, this.constants.SPRITE_STORAGE_SIZE);
     this.g_doorv = new Uint8Array(this.memU8.buffer, this.p_sprite_storage_end, this.constants.DOOR_SIZE * this.constants.DOOR_LIMIT);
@@ -85,6 +87,10 @@ export class Globals {
     this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, this.constants.VIOLIN_SONG_LENGTH);
     this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH, 1);
     this.g_violin_songp = new Uint8Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH + 4, 1);
+    this.g_wind_dir = new Uint8Array(this.memU8.buffer, this.p_weather, 1);
+    this.g_wind_time = new Float32Array(this.memU8.buffer, this.p_weather + 1, 1);
+    this.g_rain_time = new Float32Array(this.memU8.buffer, this.p_weather + 5, 1);
+    this.g_slowmo_time = new Float32Array(this.memU8.buffer, this.p_weather + 9, 1);
   }
   
   /* Higher-level logical access with structured models.
@@ -131,6 +137,7 @@ export class Globals {
     this.g_neighborn[0] = map.neighborn;
     this.g_neighbors[0] = map.neighbors;
     this.g_mapdark[0] = map.dark;
+    this.g_herostartp[0] = map.herostartp;
     if (map.doors && map.doors.length) {
       const doorc = Math.min(map.doors.length, this.constants.DOOR_LIMIT);
       this.g_doorc[0] = doorc;
@@ -155,6 +162,9 @@ export class Globals {
     this.g_sketchc[0] = 0;
     this.g_plantc[0] = 0;
     //TODO fetch sketches and plants?
+    this.g_rain_time[0] = 0;
+    this.g_wind_time[0] = 0;//TODO maps should be allowed initial wind
+    this.g_slowmo_time[0] = 0;//TODO should slowmo reset like other weather?
   }
   
   getSketch(x, y, create) {

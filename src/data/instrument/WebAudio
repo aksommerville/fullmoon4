@@ -598,27 +598,32 @@ sound BLOOM #TODO
   noise 0
 end
 
+sound TELEPORT #TODO
+  len 0.001
+  noise 0
+end
+
+sound SLOWMO_BEGIN #TODO
+  len 0.001
+  noise 0
+end
+
+sound SLOWMO_END #TODO
+  len 0.001
+  noise 0
+end
+
+sound RAIN #TODO
+  len 0.001
+  noise 0
+end
+
+sound WIND #TODO
+  len 0.001
+  noise 0
+end
+
 # Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 25
-  len 0.001
-  noise 0
-end
-sound 26
-  len 0.001
-  noise 0
-end
-sound 27
-  len 0.001
-  noise 0
-end
-sound 28
-  len 0.001
-  noise 0
-end
-sound 29
-  len 0.001
-  noise 0
-end
 sound 30
   len 0.001
   noise 0

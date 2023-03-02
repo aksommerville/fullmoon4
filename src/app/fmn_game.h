@@ -7,6 +7,12 @@
 
 #include "fmn_platform.h"
 
+#define FMN_WIND_TIME 4.0f
+#define FMN_WIND_RATE 2.0f
+#define FMN_RAIN_TIME 4.0f
+#define FMN_SLOWMO_TIME 4.0f
+#define FMN_SLOWMO_RATE 0.25f
+
 int fmn_game_init();
 int fmn_game_load_map(int mapid);
 void fmn_game_input(uint8_t bit,uint8_t value,uint8_t state);

@@ -29,6 +29,8 @@ export class RenderMap {
       height: this.constants.COLC * this.constants.TILESIZE,
     });
     this.illuminationPhase = ~~(this.ILLUMINATION_PERIOD * 0.25);
+    this.rain = null;
+    this.wind = null;
   }
   
   setDirty() {
@@ -65,6 +67,24 @@ export class RenderMap {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.globalAlpha = 1;
+  }
+  
+  /* Rain, wind, and slowmo effects, as dictated by globals.
+   */
+  renderWeather(canvas, ctx) {
+    if (this.globals.g_rain_time[0] > 0) {
+      if (!this.rain) this.rain = this._initRain(canvas);
+      this._renderRain(canvas, ctx, this.rain);
+    } else {
+      this.rain = null;
+    }
+    if (this.globals.g_wind_time[0] > 0) {
+      if (!this.wind) this.wind = this._initWind(canvas, this.globals.g_wind_dir[0]);
+      this._renderWind(canvas, ctx, this.wind);
+    } else {
+      this.wind = null;
+    }
+    // nothing special for slowmo, but if we want to, here is the place
   }
   
   /* Private.
@@ -138,6 +158,88 @@ export class RenderMap {
         });
       }
     }
+  }
+  
+  _initRain(canvas) {
+    const rain = {
+      particles: [],
+    };
+    for (let i=400; i-->0; ) {
+      rain.particles.push({
+        x: Math.floor(Math.random() * canvas.width) + 0.5,
+        y: Math.floor(Math.random() * canvas.height) + 0.5
+      });
+    }
+    return rain;
+  }
+  
+  _renderRain(canvas, ctx, rain) {
+    ctx.beginPath();
+    for (const particle of rain.particles) {
+      particle.y += 2;
+      if (particle.y >= canvas.height) {
+        particle.y = -2;
+        particle.x = Math.floor(Math.random() * canvas.width) + 0.5;
+      }
+      ctx.moveTo(particle.x, particle.y);
+      ctx.lineTo(particle.x, particle.y + 2);
+    }
+    ctx.strokeStyle = "#008";
+    ctx.globalAlpha = 0.5;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  
+  _initWind(canvas, dir) {
+    const wind = {
+      dir,
+      dx: 0,
+      dy: 0,
+      particles: [],
+    }
+    const speed = 4;
+    switch (dir) {
+      case 0x40: wind.dy = -speed; break;
+      case 0x10: wind.dx = -speed; break;
+      case 0x08: wind.dx = speed; break;
+      case 0x02: wind.dy = speed; break;
+    }
+    for (let i=200; i-->0; ) {
+      wind.particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+      });
+    }
+    return wind;
+  }
+  
+  _renderWind(canvas, ctx, wind) {
+    ctx.beginPath();
+    const linex = wind.dx ? 6 : 0;
+    const liney = wind.dy ? 6 : 0;
+    for (const particle of wind.particles) {
+      particle.x += wind.dx;
+      particle.y += wind.dy;
+      if (particle.x < 0) {
+        particle.x = canvas.width;
+        particle.y = Math.random() * canvas.height;
+      } else if (particle.y < 0) {
+        particle.x = Math.random() * canvas.width;
+        particle.y = canvas.height;
+      } else if (particle.x >= canvas.width) {
+        particle.x = 0;
+        particle.y = Math.random() * canvas.height;
+      } else if (particle.y >= canvas.height) {
+        particle.x = Math.random() * canvas.width;
+        particle.y = 0;
+      }
+      ctx.moveTo(particle.x, particle.y);
+      ctx.lineTo(particle.x + linex, particle.y + liney);
+    }
+    ctx.strokeStyle = "#ccc";
+    ctx.globalAlpha = 0.7;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
   }
 }
 

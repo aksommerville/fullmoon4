@@ -19,11 +19,11 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 ### March
 
 - [ ] Spells.
-- - [ ] Rain
-- - [ ] Wind
-- - [ ] Slow motion
-- - [ ] Teleport home
-- - [ ] 4 or 5 other teleport spells? Depends what the world looks like.
+- - [x] Rain
+- - [x] Wind
+- - [x] Slow motion
+- - [x] Teleport home
+- - [x] 4 or 5 other teleport spells? Depends what the world looks like.
 - - [x] Opening
 - - [ ] Invisibility
 - - [ ] (song) Reveille
@@ -59,6 +59,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
 - - Would it help to scale up only by integers? That's probably a good idea in any case.
 - - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
+- [ ] Finalize sound effects.
+- [ ] Bonfire: Fizzle and smoke when extinguished.
 
 ### May
 
@@ -89,6 +91,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] verify: Check neighbor edges cell by cell
 - [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
 - [ ] verify: Song channel 14 reserved for violin, songs must not use.
+- [ ] verify: Teleport targets must set song.
+- [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
