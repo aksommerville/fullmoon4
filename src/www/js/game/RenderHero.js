@@ -55,6 +55,11 @@ export class RenderHero {
   render(ctx, srcImage, sprite) {
     this.frameCount++;
     
+    // Invisibility is nice and simple: Skip every other frame.
+    if (this.globals.g_invisibility_time > 0) {
+      if (this.frameCount & 1) return;
+    }
+    
     const midx = sprite.x;
     const midy = sprite.y;
     const tilesize = this.constants.TILESIZE;

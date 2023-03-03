@@ -200,6 +200,12 @@ static float fmn_weather_update(float elapsed) {
       fmn_wind_blow(fmn_global.wind_dir,adjusted,elapsed);
     }
   }
+  if (fmn_global.invisibility_time>0.0f) {
+    if ((fmn_global.invisibility_time-=adjusted)<=0.0f) {
+      fmn_sound_effect(FMN_SFX_INVISIBILITY_END);
+      fmn_global.invisibility_time=0.0f;
+    }
+  }
   return adjusted;
 }
 
@@ -316,6 +322,28 @@ static void fmn_slowmo_begin() {
   fmn_global.slowmo_time=FMN_SLOWMO_TIME;
 }
 
+static void fmn_invisibility_begin() {
+  fmn_sound_effect(FMN_SFX_INVISIBILITY_BEGIN);
+  fmn_global.invisibility_time=FMN_INVISIBILITY_TIME;
+}
+
+/* Cast the Song of Revelations.
+ */
+ 
+static void fmn_cast_revelations() {
+  uint8_t *v=fmn_global.map;
+  uint8_t i=FMN_COLC*FMN_ROWC;
+  uint8_t dirty=0;
+  for (;i-->0;v++) {
+    if (fmn_global.cellphysics[*v]==FMN_CELLPHYSICS_REVELABLE) {
+      //TODO should there be some fireworks?
+      (*v)+=0x10;
+      dirty=1;
+    }
+  }
+  if (dirty) fmn_map_dirty();
+}
+
 /* Cast spell or song.
  */
  
@@ -337,8 +365,8 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_WIND_N: fmn_wind_begin(FMN_DIR_N); break;
     case FMN_SPELLID_WIND_S: fmn_wind_begin(FMN_DIR_S); break;
     case FMN_SPELLID_SLOWMO: fmn_slowmo_begin(); break;
-    //TODO invisible
-    //TODO revelations
+    case FMN_SPELLID_INVISIBLE: fmn_invisibility_begin(); break;
+    case FMN_SPELLID_REVELATIONS: fmn_cast_revelations(); break;
     case FMN_SPELLID_HOME: fmn_teleport(1); break;
     //TODO mapid for TELE(n) should be stored in the archive somehow.
     case FMN_SPELLID_TELE1: fmn_teleport(6); break;

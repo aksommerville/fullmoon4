@@ -15,6 +15,10 @@ Each tile has 4 properties: physics, family, neighbors, weight.
  - 2: hole
  - 3: vacant, unshovellable
  - 4: solid, unchalkable
+ - 5: sap (solid)
+ - 6: sap, unchalkable
+ - 7: water (hole)
+ - 8: revelable (solid, chalkable)
  
 #### family
 

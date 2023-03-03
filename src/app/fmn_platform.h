@@ -126,6 +126,8 @@ int rand();
 #define FMN_SFX_SLOWMO_END 27
 #define FMN_SFX_RAIN 28
 #define FMN_SFX_WIND 29
+#define FMN_SFX_INVISIBILITY_BEGIN 30
+#define FMN_SFX_INVISIBILITY_END 31
 // Available space here. Skipping forward to GM drums.
 #define FMN_SFX_KICK_1 35
 #define FMN_SFX_KICK_2 36
@@ -172,6 +174,7 @@ int rand();
 #define FMN_CELLPHYSICS_SAP 5 /* SOLID and also supplies sap (chalkable) */
 #define FMN_CELLPHYSICS_SAP_NOCHALK 6
 #define FMN_CELLPHYSICS_WATER 7 /* HOLE and also supplies water */
+#define FMN_CELLPHYSICS_REVELABLE 8
 
 /* Size of the violin input buffer.
  * The longest song must be shorter than this. (not equal)
@@ -299,6 +302,8 @@ extern struct fmn_global {
   float illumination_time;
   uint8_t cheesing;
   uint8_t spell_repudiation; // app sets to 0xff to begin repudiation (upon ending the wand action). platform handles from there.
+  uint16_t pad3;
+  float invisibility_time;
   
   // Relative position of the secret the compass should point to.
   // (0,0) is special, it means "nothing".
@@ -308,7 +313,7 @@ extern struct fmn_global {
   // Current cell focussed for shovel.
   int8_t shovelx;
   int8_t shovely;
-  uint32_t pad3;
+  uint16_t pad3_5;
   
   // General-purpose global state.
   // The whole thing gets persisted on saves.

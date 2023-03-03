@@ -18,20 +18,20 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### March
 
-- [ ] Spells.
+- [x] Spells.
 - - [x] Rain
 - - [x] Wind
 - - [x] Slow motion
 - - [x] Teleport home
 - - [x] 4 or 5 other teleport spells? Depends what the world looks like.
 - - [x] Opening
-- - [ ] Invisibility
-- - [ ] (song) Reveille
-- - [ ] (song) Lullabye
+- - [x] Invisibility
+- - [x] (song) Reveille
+- - [x] (song) Lullabye
 - - [x] (song) Bloom
-- - [ ] (song) Revelations
-- - [ ] (song) Come Hither
-- - [ ] (song) Go Thither
+- - [x] (song) Revelations
+- - [x] (song) Come Hither
+- - [x] (song) Go Thither
 - [ ] Refine items.
 - - [ ] Seed: Summon a bird.
 - - [x] Pitcher: advance plants when poured

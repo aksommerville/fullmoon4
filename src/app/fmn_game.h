@@ -12,6 +12,7 @@
 #define FMN_RAIN_TIME 4.0f
 #define FMN_SLOWMO_TIME 4.0f
 #define FMN_SLOWMO_RATE 0.25f
+#define FMN_INVISIBILITY_TIME 5.0f
 
 int fmn_game_init();
 int fmn_game_load_map(int mapid);

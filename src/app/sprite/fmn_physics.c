@@ -58,7 +58,8 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
         case FMN_CELLPHYSICS_SOLID:
         case FMN_CELLPHYSICS_UNCHALKABLE:
         case FMN_CELLPHYSICS_SAP:
-        case FMN_CELLPHYSICS_SAP_NOCHALK: {
+        case FMN_CELLPHYSICS_SAP_NOCHALK:
+        case FMN_CELLPHYSICS_REVELABLE: {
             if (!(features&FMN_PHYSICS_SOLID)) continue;
           } break;
         case FMN_CELLPHYSICS_HOLE:

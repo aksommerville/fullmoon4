@@ -403,3 +403,13 @@ void fmn_sprite_generate_soulballs(float x,float y,uint8_t c) {
     struct fmn_sprite *sprite=fmn_sprite_spawn(x,y,0,cmdv,sizeof(cmdv),argv,sizeof(argv));
   }
 }
+
+/* Generate the "zzz" decoration for sleeping animals.
+ */
+ 
+void fmn_sprite_generate_zzz(float x,float y) {
+  uint8_t cmdv[]={
+    0x42,FMN_SPRCTL_zzz>>8,FMN_SPRCTL_zzz,
+  };
+  struct fmn_sprite *sprite=fmn_sprite_spawn(x,y,0,cmdv,sizeof(cmdv),0,0);
+}

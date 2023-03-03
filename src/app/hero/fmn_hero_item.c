@@ -101,7 +101,8 @@ static void fmn_hero_seed_begin() {
     case FMN_CELLPHYSICS_UNCHALKABLE:
     case FMN_CELLPHYSICS_SAP:
     case FMN_CELLPHYSICS_SAP_NOCHALK:
-    case FMN_CELLPHYSICS_WATER: {
+    case FMN_CELLPHYSICS_WATER:
+    case FMN_CELLPHYSICS_REVELABLE: {
         fmn_sound_effect(FMN_SFX_REJECT_ITEM);
         fmn_global.itemqv[FMN_ITEM_SEED]++;
         return;
@@ -539,7 +540,7 @@ static void fmn_hero_chalk_begin() {
   uint8_t tilep=y*FMN_COLC+x;
   uint8_t pvtile=fmn_global.map[tilep];
   uint8_t pvphysics=fmn_global.cellphysics[pvtile];
-  if ((pvphysics!=FMN_CELLPHYSICS_SOLID)&&(pvphysics!=FMN_CELLPHYSICS_SAP)) {
+  if ((pvphysics!=FMN_CELLPHYSICS_SOLID)&&(pvphysics!=FMN_CELLPHYSICS_SAP)&&(pvphysics!=FMN_CELLPHYSICS_REVELABLE)) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }

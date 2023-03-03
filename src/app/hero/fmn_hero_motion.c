@@ -229,6 +229,7 @@ static void fmn_hero_attempt_valid_position() {
     case FMN_CELLPHYSICS_SAP:
     case FMN_CELLPHYSICS_SAP_NOCHALK:
     case FMN_CELLPHYSICS_WATER:
+    case FMN_CELLPHYSICS_REVELABLE:
       break;
     default: return; // "unknown" means vacant
   }
@@ -244,7 +245,8 @@ static void fmn_hero_attempt_valid_position() {
       case FMN_CELLPHYSICS_SOLID: \
       case FMN_CELLPHYSICS_UNCHALKABLE: \
       case FMN_CELLPHYSICS_SAP: \
-      case FMN_CELLPHYSICS_SAP_NOCHALK: { \
+      case FMN_CELLPHYSICS_SAP_NOCHALK: \
+      case FMN_CELLPHYSICS_REVELABLE: { \
           /* solid, stop searching in this direction */ \
           okflag=0; \
         } break; \

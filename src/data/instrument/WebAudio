@@ -623,15 +623,17 @@ sound WIND #TODO
   noise 0
 end
 
+sound INVISIBILITY_BEGIN #TODO
+  len 0.001
+  noise 0
+end
+
+sound INVISIBILITY_END #TODO
+  len 0.001
+  noise 0
+end
+
 # Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 30
-  len 0.001
-  noise 0
-end
-sound 31
-  len 0.001
-  noise 0
-end
 sound 32
   len 0.001
   noise 0

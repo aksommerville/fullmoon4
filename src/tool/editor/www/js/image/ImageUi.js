@@ -188,6 +188,7 @@ export class ImageUi {
               case 5: context.fillStyle = "#ff0"; break; // sap
               case 6: context.fillStyle = "#f80"; break; // sap, no chalk
               case 7: context.fillStyle = "#00f"; break; // water
+              case 8: context.fillStyle = "#fff"; break; // revelable
               default: context.fillStyle = "#f00"; break; // unknown, red
               // It's entirely possible we'll add more, but I expect simple colors will work forever.
             }
