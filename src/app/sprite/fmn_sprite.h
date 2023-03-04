@@ -110,6 +110,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_bee           13
 #define FMN_SPRCTL_seed          14
 #define FMN_SPRCTL_zzz           15
+#define FMN_SPRCTL_crow          16
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -127,7 +128,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(beehive) \
   _(bee) \
   _(seed) \
-  _(zzz)
+  _(zzz) \
+  _(crow)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
@@ -146,6 +148,6 @@ FMN_FOR_EACH_SPRCTL
 const struct fmn_sprite_controller *fmn_sprite_controller_by_id(uint16_t id);
 
 void fmn_sprite_generate_soulballs(float x,float y,uint8_t c);
-void fmn_sprite_generate_zzz(float x,float y);
+void fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y);
 
 #endif

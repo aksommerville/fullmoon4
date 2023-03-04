@@ -17,12 +17,27 @@ static void _seed_init(struct fmn_sprite *sprite) {
 /* Update.
  */
  
+static int seed_search_crow(struct fmn_sprite *sprite,void *dummy) {
+  if (sprite->controller==FMN_SPRCTL_crow) return 1;
+  return 0;
+}
+ 
 static void _seed_update(struct fmn_sprite *sprite,float elapsed) {
   bird_clock+=elapsed;
   if (bird_clock<SEED_BIRD_TIME) return;
   sprite->update=0;
   bird_summoned=1;
-  fmn_log("TODO %s:%d summon bird",__FILE__,__LINE__);
+  
+  // If there is already a crow, forget it.
+  if (fmn_sprites_for_each(seed_search_crow,0)) return;
+  
+  // Crow starts centered vertically, and just offscreen, whichever horizontal edge is further.
+  // We don't introduce ourselves to the crow; let it find us on its own.
+  fmn_sprite_generate_noparam(
+    FMN_SPRCTL_crow,
+    (sprite->x<(FMN_COLC>>1))?(FMN_COLC+1.0f):(-1.0f),
+    FMN_ROWC>>1
+  );
 }
 
 /* Collision.

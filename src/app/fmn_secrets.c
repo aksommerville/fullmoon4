@@ -16,6 +16,26 @@ void fmn_secrets_refresh_for_map() {
   fmn_global.compassy=-(FMN_ROWC>>1);
 }
 
+/* Get the guidance direction, eg for crows.
+ */
+ 
+uint8_t fmn_secrets_get_guide_dir() {
+  fmn_log("%s Making up a random guidance direction.",__func__);//TODO
+  switch (rand()&3) {
+    case 0: return FMN_DIR_N;
+    case 1: return FMN_DIR_W;
+    case 2: return FMN_DIR_E;
+  }
+  return FMN_DIR_S;
+  //TODO should come first:
+  if (fmn_global.compassx||fmn_global.compassy) {
+    if ((fmn_global.compassx<0)&&(fmn_global.compassx<fmn_global.compassy)) return FMN_DIR_W;
+    if ((fmn_global.compassy<0)&&(fmn_global.compassy<fmn_global.compassx)) return FMN_DIR_N;
+    if ((fmn_global.compassx>0)&&(fmn_global.compassx>fmn_global.compassy)) return FMN_DIR_E;
+    if ((fmn_global.compassy>0)&&(fmn_global.compassy>fmn_global.compassx)) return FMN_DIR_S;
+  }
+}
+
 /* Decode spells and songs.
  */
  

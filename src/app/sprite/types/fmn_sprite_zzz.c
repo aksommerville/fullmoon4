@@ -48,6 +48,7 @@ static int16_t _zzz_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qu
             return 0;
           }
       } break;
+    case FMN_ITEM_BELL: fmn_sprite_kill(sprite); return 0;
   }
   return 0;
 }

@@ -24,6 +24,9 @@ void fmn_game_update(float elapsed);
  */
 void fmn_secrets_refresh_for_map();
 
+// Points the direction of the secret, or we make something up. Always a valid cardinal direction.
+uint8_t fmn_secrets_get_guide_dir();
+
 /* Songs and spells use the same namespace.
  * Both 'eval' return zero if invalid.
  * Caller must trim leading and trailing space.
