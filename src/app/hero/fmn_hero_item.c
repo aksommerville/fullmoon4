@@ -297,6 +297,7 @@ static void fmn_hero_shovel_begin() {
       return;
     }
   }
+  fmn_hero.item_active_time+=0.300f; // cheat the active time forward to shorten the animation.
   fmn_sound_effect(FMN_SFX_REJECT_DIG);
 }
 
@@ -446,14 +447,7 @@ static void fmn_violin_check_song() {
   if (dstc) {
     uint8_t spellid=fmn_song_eval(song,dstc);
     if (spellid) {
-      fmn_spell_cast(spellid);
-      if (fmn_global.wand_dir) {
-        fmn_synth_event(0x0e,0x80,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
-      }
-      fmn_global.active_item=0;
-      if (!fmn_hero_facedir_agrees()) {
-        fmn_hero_reset_facedir();
-      }
+      fmn_hero.violin_spellid=spellid;
     }
   }
 }
@@ -464,6 +458,7 @@ static void fmn_hero_violin_begin() {
   fmn_global.violin_clock=0.0f;
   fmn_global.violin_songp=0;
   fmn_hero.next_metronome_songp=0;
+  fmn_hero.violin_spellid=0;
   fmn_synth_event(0x0e,0x0c,1,0); // load violin program in channel 14
 }
 
@@ -471,9 +466,19 @@ static void fmn_hero_violin_end() {
   if (fmn_global.wand_dir) {
     fmn_synth_event(0x0e,0x80,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
   }
+  if (fmn_hero.violin_spellid) {
+      fmn_spell_cast(fmn_hero.violin_spellid);
+      if (!fmn_hero_facedir_agrees()) {
+        fmn_hero_reset_facedir();
+      }
+      fmn_global.walking=0; // force-stop walking
+      fmn_hero.walkdx=0;
+      fmn_hero.walkdy=0;
+  }
 }
 
 static void fmn_hero_violin_update(float elapsed) {
+  if (fmn_hero.violin_spellid) return;
   fmn_global.violin_clock+=elapsed*FMN_VIOLIN_BEATS_PER_SEC;
   
   // Metronome sounds halfway thru each beat, not at the transitions.
@@ -520,9 +525,11 @@ static void fmn_hero_violin_motion(uint8_t bit,uint8_t value) {
   }
   fmn_global.wand_dir=ndir;
   if (ndir) {
-    int8_t p=fmn_global.violin_songp-1;
-    if (p<0) p=FMN_VIOLIN_SONG_LENGTH-1;
-    fmn_global.violin_song[p]=ndir;
+    if (!fmn_hero.violin_spellid) {
+      int8_t p=fmn_global.violin_songp-1;
+      if (p<0) p=FMN_VIOLIN_SONG_LENGTH-1;
+      fmn_global.violin_song[p]=ndir;
+    }
     fmn_synth_event(0x0e,0x90,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
   }
 }

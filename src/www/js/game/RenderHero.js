@@ -150,7 +150,18 @@ export class RenderHero {
   
   _renderHead(ctx, midx, midy, facedir, srcImage, col, xform) {
     const tilesize = this.constants.TILESIZE;
-    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, 0x10 + col, xform);
+    
+    let tileId = 0x10 + col;
+    switch (this.globals.g_active_item[0]) {
+      case this.constants.ITEM_SHOVEL: switch (this.globals.g_facedir[0]) {
+          case this.constants.DIR_W:
+          case this.constants.DIR_E: tileId = 0x69; break;
+          case this.constants.DIR_S: tileId = 0x68; break;
+          // N, no shovelling face tile.
+        } break;
+    }
+    
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, tileId, xform);
   }
   
   _renderHat(ctx, midx, midy, facedir, srcImage, col, xform) {

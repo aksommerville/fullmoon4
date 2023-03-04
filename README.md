@@ -32,12 +32,11 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] (song) Revelations
 - - [x] (song) Come Hither
 - - [x] (song) Go Thither
-- [ ] Refine items.
+- [x] Refine items.
 - - [x] Seed: Summon a bird.
 - - [x] Pitcher: advance plants when poured
-- - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
-- - [ ] Shovel: Needs a new face tile, show some effort.
-- - [ ] Violin: Should linger a bit after completion, and I think nix the input so she doesn't start walking.
+- - [x] Shovel: Needs a new face tile, show some effort.
+- - [x] Violin: Should linger a bit after completion, and I think nix the input so she doesn't start walking.
 - [ ] Sprites:
 - - [ ] Sawblades like v1
 - - [ ] Firewall
@@ -50,6 +49,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
 - [ ] Prevent wind and rain from happening indoors.
 - [ ] Initial wind per map.
+- [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 
 ### April
 
