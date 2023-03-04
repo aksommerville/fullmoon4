@@ -38,7 +38,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Shovel: Needs a new face tile, show some effort.
 - - [x] Violin: Should linger a bit after completion, and I think nix the input so she doesn't start walking.
 - [ ] Sprites:
-- - [ ] Sawblades like v1
+- - [x] Sawblades like v1
 - - [ ] Firewall
 - - [ ] Chalk-aware sentinel
 - - [ ] Raccoon, throws acorns

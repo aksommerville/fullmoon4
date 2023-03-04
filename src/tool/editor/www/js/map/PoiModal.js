@@ -114,7 +114,8 @@ export class PoiModal {
             const res = this.resService.toc.find(r => r.type === "sprite" && r.name === value);
             if (res) return res.id;
           }
-        } break;
+          return value; // let it be a string if it doesn't resolve
+        }
     }
     return +value;
   }
@@ -228,11 +229,12 @@ export class PoiModal {
         }
       
       case "sprite": {
-          if (isNaN(poi.spriteId) || (poi.spriteId < 1) || (poi.spriteId > 0xffff)) return null;
+          let spriteId = +poi.spriteId;
+          if (isNaN(spriteId) || (spriteId < 1) || (spriteId > 0xffff)) spriteId = poi.spriteId;
           if (isNaN(poi.arg0) || (poi.arg0 < 0) || (poi.arg0 > 0xff)) return null;
           if (isNaN(poi.arg1) || (poi.arg1 < 0) || (poi.arg1 > 0xff)) return null;
           if (isNaN(poi.arg2) || (poi.arg2 < 0) || (poi.arg2 > 0xff)) return null;
-          return ["sprite", poi.x.toString(), poi.y.toString(), poi.spriteId.toString(), poi.arg0.toString(), poi.arg1.toString(), poi.arg2.toString()];
+          return ["sprite", poi.x.toString(), poi.y.toString(), spriteId, poi.arg0.toString(), poi.arg1.toString(), poi.arg2.toString()];
         }
         
       case "hero": {
