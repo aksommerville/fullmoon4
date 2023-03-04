@@ -83,6 +83,12 @@ export class Constants {
     this.SPRITE_STYLE_HERO = 2;
     this.SPRITE_STYLE_FOURFRAME = 3;
     this.SPRITE_STYLE_FIRENOZZLE = 4;
+    this.SPRITE_STYLE_FIREWALL = 5;
+    
+    this.SPRITE_BV_SIZE = 8;
+    this.SPRITE_SV_SIZE = 4;
+    this.SPRITE_FV_SIZE = 8;
+    this.SPRITE_PV_SIZE = 1;
     
     this.GS_SIZE = 64;
     

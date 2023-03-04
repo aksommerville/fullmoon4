@@ -158,6 +158,7 @@ int rand();
 #define FMN_SPRITE_STYLE_HERO       2 /* special */
 #define FMN_SPRITE_STYLE_FOURFRAME  3 /* 4 tiles arranged horizontally, automatic animation */
 #define FMN_SPRITE_STYLE_FIRENOZZLE 4 /* special */
+#define FMN_SPRITE_STYLE_FIREWALL   5 /* special */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4
@@ -174,7 +175,7 @@ int rand();
 #define FMN_CELLPHYSICS_SAP 5 /* SOLID and also supplies sap (chalkable) */
 #define FMN_CELLPHYSICS_SAP_NOCHALK 6
 #define FMN_CELLPHYSICS_WATER 7 /* HOLE and also supplies water */
-#define FMN_CELLPHYSICS_REVELABLE 8
+#define FMN_CELLPHYSICS_REVELABLE 8 /* SOLID */
 
 /* Size of the violin input buffer.
  * The longest song must be shorter than this. (not equal)

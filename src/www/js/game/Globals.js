@@ -105,17 +105,40 @@ export class Globals {
   
   getSpriteByAddress(p) {
     const sprite = {
+      address: p,
       x: this.memF32[p >> 2],
       y: this.memF32[(p >> 2) + 1],
       style: this.memU8[p + 8],
       imageid: this.memU8[p + 9],
       tileid: this.memU8[p + 10],
       xform: this.memU8[p + 11],
-      b0: this.memU8[p + 16],
+      b0: this.memU8[p + 16], // this was probably a mistake; use getSpriteBv() if you need them
       b1: this.memU8[p + 17],
       b2: this.memU8[p + 18],
     };
     return sprite;
+  }
+  
+  getSpriteBv(p) {
+    return new Uint8Array(this.memU8.buffer, p + 16, this.constants.SPRITE_BV_SIZE);
+  }
+  getSpriteSv(p) {
+    return new Int16Array(this.memU8.buffer,
+      p + 16 + this.constants.SPRITE_BV_SIZE,
+      this.constants.SPRITE_SV_SIZE
+    );
+  }
+  getSpriteFv(p) {
+    return new Float32Array(this.memU8.buffer,
+      p + 16 + this.constants.SPRITE_BV_SIZE + this.constants.SPRITE_SV_SIZE * 2,
+      this.constants.SPRITE_FV_SIZE
+    );
+  }
+  getSpritePv(p) {
+    return new Uint32Array(this.memU8.buffer,
+      p + 16 + this.constants.SPRITE_BV_SIZE + this.constants.SPRITE_SV_SIZE * 2 + this.constants.SPRITE_FV_SIZE * 4,
+      this.constants.SPRITE_PV_SIZE
+    );
   }
   
   getHeroSprite() {

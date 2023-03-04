@@ -39,12 +39,18 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Violin: Should linger a bit after completion, and I think nix the input so she doesn't start walking.
 - [ ] Sprites:
 - - [x] Sawblades like v1
-- - [ ] Firewall
+- - [x] Firewall
 - - [ ] Chalk-aware sentinel
 - - [ ] Raccoon, throws acorns
 - - [ ] Rat, pounce and bite. He'll miss if you're flying.
 - - [ ] Rabbit that teaches you a song.
 - - [ ] Farmer that plants and waters a seed.
+- - [ ] Rival witch that turns you into a pumpkin.
+- - - ...by casting The Pumpkin Spell, which you can too.
+- - [ ] Automatic pitchfork
+- - [ ] Lobster
+- - [ ] Toll troll
+- - [ ] Little fire-breathing lizard
 - [ ] Bloom plants on a timer.
 - [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
 - [ ] Prevent wind and rain from happening indoors.
@@ -92,10 +98,11 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - - Consider using `verify` instead of `editor` for this.
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
 - [ ] ^ or if not all that, we at least need a repository of named `gs` fields.
-- [ ] verify: Check neighbor edges cell by cell
+- [ ] verify: Check neighbor edges cell by cell (be mindful of firewall)
 - [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
 - [ ] verify: Song channel 14 reserved for violin, songs must not use.
 - [ ] verify: Teleport targets must set song.
+- [ ] verify: Firewall must be on edge, with at least two vacant cells, and a solid on both ends.
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.
