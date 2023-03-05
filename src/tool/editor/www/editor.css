@@ -169,6 +169,25 @@ body {
 /* PaletteModal.
  ****************************************/
  
+.PaletteModal {
+  position: relative;
+  width: 512px;
+  height: 512px;
+}
+
+.PaletteModal > * {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.PaletteModal > img {
+  image-rendering: pixelated;
+}
+.PaletteModal > canvas {
+  image-rendering: pixelated;
+}
+ 
 .PaletteModal td {
   width: 2em;
   height: 2em;
@@ -241,6 +260,34 @@ body {
 
 .ImageUi .grid {
   flex: 1;
+}
+
+/* ImageSelectModal.
+ ***********************************************/
+ 
+.ImageSelectModal > .scroller {
+  min-width: 50vw;
+  max-height: 90vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.ImageSelectModal .row {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 1em;
+  border-bottom: 1px solid #000;
+  margin-bottom: 1em;
+}
+.ImageSelectModal .row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+  margin-bottom: 0;
+}
+
+.ImageSelectModal .preview {
+  margin-right: 1em;
 }
 
 /* TilepropsModal.
@@ -376,8 +423,16 @@ body {
   text-align: right;
 }
 
-.SpriteUi td.value input {
-  width: 97%; /* 100% it extends a little into the comment column. $@#! why? */
+.SpriteUi td.value {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+}
+.SpriteUi td.value > input.field {
+  flex: 1;
+}
+.SpriteUi td.value > input[type="button"] {
+  flex: 0;
 }
 
 .SpriteUi td.comment {

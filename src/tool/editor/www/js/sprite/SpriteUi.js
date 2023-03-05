@@ -5,6 +5,8 @@
 import { Dom } from "/js/util/Dom.js";
 import { ResService } from "/js/util/ResService.js";
 import { SpriteService } from "./SpriteService.js";
+import { ImageSelectModal } from "../image/ImageSelectModal.js";
+import { PaletteModal, PaletteModalConfig } from "../map/PaletteModal.js";
 
 export class SpriteUi {
   static getDependencies() {
@@ -21,7 +23,7 @@ export class SpriteUi {
     /* We'll show a few fields in a predictable order, whether they're defined or not.
      * The format is new as I'm writing this, and it's small enough we might as well include all of them.
      */
-    this.fieldsAlways = ["controller", "image", "tile", "xform", "style", "physics", "decay", "radius", "layer"];
+    this.fieldsAlways = ["controller", "image", "tile", "xform", "style", "layer", "physics", "decay", "radius", "invmass"];
     
     this.spriteId = 0;
     this.sprite = null;
@@ -112,9 +114,21 @@ export class SpriteUi {
       // If a particular command has a datalist, or needs entirely special handling, call that out here.
       // Most fields will be plain old text inputs.
       case "controller": datalistId = `SpriteUi-${this.discriminator}-controllers`; break;
+      case "image": return this.populateValueCellImage(td, command.slice(1).join(" "));
+      case "tile": return this.populateValueCellTile(td, command.slice(1).join(" "));
     }
     const input = this.dom.spawn(td, "INPUT", ["field"], { type: "text", name: command[0], value: command.slice(1).join(" ") });
     if (datalistId) input.setAttribute("list", datalistId);
+  }
+  
+  populateValueCellImage(td, arg) {
+    const input = this.dom.spawn(td, "INPUT", ["field"], { type: "text", name: "image", value: arg });
+    const button = this.dom.spawn(td, "INPUT", { type: "button", value: "Browse", "on-click": () => this.onBrowseImage() });
+  }
+  
+  populateValueCellTile(td, arg) {
+    const input = this.dom.spawn(td, "INPUT", ["field"], { type: "text", name: "tile", value: arg });
+    const button = this.dom.spawn(td, "INPUT", { type: "button", value: "Browse", "on-click": () => this.onBrowseTile() });
   }
   
   rebuildModelFromUi() {
@@ -128,6 +142,22 @@ export class SpriteUi {
       this.sprite.setCommand(key, value);
     }
     return true;
+  }
+  
+  readImageId() {
+    const field = this.element.querySelector("input.field[name='image']");
+    if (!field) return 0;
+    // Can be, and usually is, a name rather than id. That's no problem.
+    return field.value;
+  }
+  
+  readTileId() {
+    const field = this.element.querySelector("input.field[name='tile']");
+    if (!field) return -1;
+    if (!field.value) return -1;
+    const id = +field.value;
+    if (isNaN(id) || (id < 0) || (id > 0xff)) return -1;
+    return id;
   }
   
   /* Events.
@@ -176,5 +206,32 @@ export class SpriteUi {
   onChange() {
     if (!this.rebuildModelFromUi()) return;
     this.resService.dirty("sprite", this.spriteId, this.sprite);
+  }
+  
+  onBrowseImage() {
+    const modal = this.dom.spawnModal(ImageSelectModal);
+    modal.onChoose = res => {
+      const field = this.element.querySelector("input.field[name='image']");
+      if (field) {
+        field.value = res.name || res.id;
+        this.onChange();
+      }
+    };
+  }
+  
+  onBrowseTile() {
+    const imageId = this.readImageId();
+    const tileId = this.readTileId();
+    const modal = this.dom.spawnModal(PaletteModal, [new PaletteModalConfig(true, tileId => {
+      const field = this.element.querySelector("input.field[name='tile']");
+      if (field) {
+        // Any integer 0..255 is ok, but I prefer to format hexadecimal so it reads like "row,column".
+        const v = "0x" +
+          "0123456789abcdef"[(tileId >> 4) & 15] +
+          "0123456789abcdef"[tileId & 15];
+        field.value = v;
+        this.onChange();
+      }
+    }, imageId, tileId)]);
   }
 }

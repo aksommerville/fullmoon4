@@ -161,12 +161,14 @@ void fmn_hero_motion_update(float elapsed) {
  */
  
 static uint8_t fmn_hero_suppress_injury(
-  struct fmn_sprite *hero,float x,float y,struct fmn_sprite *assailant
+  struct fmn_sprite *hero,float x,float y,struct fmn_sprite *assailant,uint8_t injury_dir
 ) {
   
   // First escape the collision. If we find now that no collision exists, allow the injury to proceed.
   float cx,cy;
-  if (!fmn_physics_check_sprites(&cx,&cy,hero,assailant)) return 0;
+  if (!fmn_physics_check_sprites(&cx,&cy,hero,assailant)) {
+    return 0;
+  }
   hero->x+=cx;
   hero->y+=cy;
   
@@ -188,9 +190,12 @@ static uint8_t fmn_hero_suppress_injury(
   hero->velx+=nx*FMN_HERO_INJURY_SUPPRESSION_BOUNCEBACK;
   hero->vely+=ny*FMN_HERO_INJURY_SUPPRESSION_BOUNCEBACK;
   
+  // Let the assailant react too.
+  if (assailant&&assailant->interact) assailant->interact(assailant,FMN_ITEM_UMBRELLA,injury_dir);
+  
   fmn_sound_effect(FMN_SFX_INJURY_DEFLECTED);
   
-  return 1;
+  return injury_dir;
 }
  
 static uint8_t fmn_hero_suppress_injury_if_applicable(
@@ -200,7 +205,7 @@ static uint8_t fmn_hero_suppress_injury_if_applicable(
   
   if (fmn_global.active_item==FMN_ITEM_UMBRELLA) {
     uint8_t injury_dir=fmn_dir_from_vector_cardinal(x-hero->x,y-hero->y);
-    if (injury_dir==fmn_global.facedir) return fmn_hero_suppress_injury(hero,x,y,assailant);
+    if (injury_dir==fmn_global.facedir) return fmn_hero_suppress_injury(hero,x,y,assailant,injury_dir);
   }
 
   return 0;
@@ -311,21 +316,18 @@ void fmn_hero_return_to_map_entry() {
 /* Begin injury.
  */
  
-void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
+uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   struct fmn_sprite *hero=fmn_hero.sprite;
   
-  if (fmn_hero_suppress_injury_if_applicable(hero,x,y,assailant)) {
-    //TODO feedback to assailant, eg missiles should bounce off umbrella
-    return;
-  }
+  if (fmn_hero_suppress_injury_if_applicable(hero,x,y,assailant)) return 0;
   
   if (fmn_global.injury_time>0.0f) {
     float time_since=FMN_HERO_INJURY_TIME-fmn_global.injury_time;
     if (time_since<FMN_HERO_INJURY_BLANK_TIME) {
-      return;
+      return 0;
     } else if (time_since<FMN_HERO_DOUBLE_INJURY_TIME) {
       fmn_hero_return_to_map_entry();
-      return;
+      return 1;
     }
   }
   
@@ -386,4 +388,5 @@ void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
 
   fmn_sound_effect(FMN_SFX_HURT);
+  return 1;
 }

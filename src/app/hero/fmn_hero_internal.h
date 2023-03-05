@@ -44,6 +44,7 @@ extern struct fmn_hero {
   uint8_t next_metronome_songp;
   uint8_t violin_spellid; // nonzero if the song is complete
   uint8_t chalking; // platform doesn't notify when a chalk session completes, so we track here
+  struct fmn_sprite *feather_target;
 } fmn_hero;
 
 void fmn_hero_motion_event(uint8_t bit,uint8_t value); // dpad changes

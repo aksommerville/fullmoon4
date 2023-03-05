@@ -195,7 +195,7 @@ static int16_t _crow_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t q
   switch (itemid) {
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_REVEILLE: sleeping=0; break;
-        case FMN_SPELLID_LULLABYE: sleeping=1; fmn_sprite_generate_noparam(FMN_SPRCTL_zzz,sprite->x,sprite->y-0.5f); break;
+        case FMN_SPELLID_LULLABYE: if (!sleeping) { sleeping=1; fmn_sprite_generate_zzz(sprite); } break;
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
   }

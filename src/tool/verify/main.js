@@ -12,7 +12,7 @@ const verifyString = require("./verifyString.js");
 const verifyWebAudioInstrument = require("./verifyWebAudioInstrument.js");
 const verifyWebAudioSound = require("./verifyWebAudioSound.js");
 
-const HIGHEST_DEFINED_SOUND_ID = 31; // INVISIBILITY_END
+const HIGHEST_DEFINED_SOUND_ID = 33; // ENCHANT_ANIMAL
 
 const RESTYPE_IMAGE = 1;
 const RESTYPE_SONG = 2;
@@ -22,6 +22,23 @@ const RESTYPE_SPRITE = 5;
 const RESTYPE_STRING = 6;
 const RESTYPE_INSTRUMENT = 7;
 const RESTYPE_SOUND = 8;
+
+function resTypeRepr(t) {
+  switch (t) {
+    case RESTYPE_IMAGE: return "image";
+    case RESTYPE_SONG: return "song";
+    case RESTYPE_MAP: return "map";
+    case RESTYPE_TILEPROPS: return "tileprops";
+    case RESTYPE_SPRITE: return "sprite";
+    case RESTYPE_STRING: return "string";
+    case RESTYPE_INSTRUMENT: return "instrument";
+    case RESTYPE_SOUND: return "sound";
+  }
+  return t.toString();
+}
+function resRepr(res) {
+  return `${resTypeRepr(res)}:${res.qualifier}:${res.id}`;
+}
  
 let archivePath = "";
 let dirPath = "";
@@ -123,7 +140,7 @@ if (archivePath) {
   if (resources.length > 0) {
     const res = resources[resources.length - 1];
     const len = src.length - res.offset;
-    if (len <= 0) throw new Error(`${archivePath}: Final resource ${res.type}:${res.qualifier}:${res.id} should have a nonzero length (total size ${src.length})`);
+    if (len <= 0) throw new Error(`${archivePath}: Final resource ${resRepr(res)} should have a nonzero length (total size ${src.length})`);
     res.serial = src.slice(res.offset);
   }
   
@@ -139,7 +156,7 @@ if (archivePath) {
     const next = resources[i+1];
     const len = next.offset - res.offset;
     if (len < 0) {
-      throw new Error(`${archivePath}: ${res.type}:${res.qualifier}:${res.id} at ${res.offset} followed by ${next.type}:${next.qualifier}:${next.id} at ${next.offset}. Offsets out of order.`);
+      throw new Error(`${archivePath}: ${resRepr(res)} at ${res.offset} followed by ${resRepr(next)} at ${next.offset}. Offsets out of order.`);
     }
     if (!len) {
       if (res.type !== RESTYPE_TILEPROPS) { // TILEPROPS are expected to be sparse, don't report it
@@ -158,7 +175,7 @@ if (archivePath) {
     console.log(`${archivePath}:WARNING: Missing ${missing.length} resources:`);
     for (let i=missing.length; i-->0; ) { // we captured them backward, and with good cause. just reverse it again.
       const res = missing[i];
-      console.log(`  ${res.type}:${res.qualifier}:${res.id}`);
+      console.log(`  ${resRepr(res)}`);
     }
   }
 }
@@ -200,7 +217,7 @@ for (const res of resources) {
       default: throw new Error(`Unknown type`);
     }
   } catch (e) {
-    e.message = `${type}:${qualifier}:${id}: ${e.message}`;
+    e.message = `${resTypeRepr(type)}:${qualifier}:${id}: ${e.message}`;
     throw e;
   }
 }
@@ -222,7 +239,7 @@ for (const type of listUniqueProperties(r => r.type)) {
   for (const id of ids) {
     for (const qualifier of qualifiers) {
       if (!resources.find(r => r.type === type && r.qualifier === qualifier && r.id === id)) {
-        console.log(`${archivePath}:WARNING: Missing ${type}:${qualifier}:${id}, but that type::id is used by other qualifiers.`);
+        console.log(`${archivePath}:WARNING: Missing ${resTypeRepr(type)}:${qualifier}:${id}, but that type::id is used by other qualifiers.`);
         warningCount++;
       }
     }
@@ -264,7 +281,7 @@ if (unreachable.length) {
   if (unreachable.length < 30) {
     for (let i=0; i<unreachable.length; i++) {
       const res = unreachable[i];
-      console.log(`  ${res.type}:${res.qualifier}:${res.id}`);
+      console.log(`  ${resRepr(res)}`);
     }
   // Too many, summarize by type.
   } else {
@@ -273,7 +290,7 @@ if (unreachable.length) {
       if (!rs.length) continue;
       let ids = JSON.stringify(rs.slice(0, 5).map(r => r.id));
       if (rs.length > 5) ids += "...";
-      console.log(`  ${type}: ${rs.length} ${ids}`);
+      console.log(`  ${resTypeRepr(type)}: ${rs.length} ${ids}`);
     }
   }
 }

@@ -128,6 +128,7 @@ int rand();
 #define FMN_SFX_WIND 29
 #define FMN_SFX_INVISIBILITY_BEGIN 30
 #define FMN_SFX_INVISIBILITY_END 31
+#define FMN_SFX_ENCHANT_ANIMAL 32
 // Available space here. Skipping forward to GM drums.
 #define FMN_SFX_KICK_1 35
 #define FMN_SFX_KICK_2 36

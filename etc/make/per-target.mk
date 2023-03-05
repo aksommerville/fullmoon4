@@ -59,6 +59,7 @@ $1_DATA_IN:=$(filter-out src/data/chalk/%,$(filter src/data/%,$(SRCFILES)))
 $1_DATA_MID:=$$(patsubst src/data/%,$($1_MIDDIR)/data/%,$$($1_DATA_IN))
 
 $2:$$($1_DATA_MID) $$(MKDATA_SOURCES);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --archive -o$$@ $$($1_DATA_MID)
-$($1_MIDDIR)/data/%:src/data/% $$(MKDATA_SOURCES);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
+# No PRECMD for this one, because it's helpful to see the last directory in addition to the basename:
+$($1_MIDDIR)/data/%:src/data/% $$(MKDATA_SOURCES);echo "  $1 $$*" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
 
 endef

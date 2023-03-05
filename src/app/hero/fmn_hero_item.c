@@ -558,6 +558,50 @@ static void fmn_hero_chalk_begin() {
   fmn_hero.chalking=2; // there will be one update between here and the modal; ignore it
 }
 
+/* Feather.
+ */
+ 
+static void fmn_hero_feather_begin() {
+  fmn_hero.feather_target=0;
+  // Don't bother looking for a target; we'll get him at the next update.
+}
+
+struct fmn_hero_feather_find_target_context {
+  float x,y;
+  struct fmn_sprite *target;
+};
+
+static int fmn_hero_feather_find_target_1(struct fmn_sprite *sprite,void *userdata) {
+  struct fmn_hero_feather_find_target_context *ctx=userdata;
+  if (!sprite->interact) return 0;
+  if (sprite->x-sprite->radius>=ctx->x) return 0;
+  if (sprite->x+sprite->radius<=ctx->x) return 0;
+  if (sprite->y-sprite->radius>=ctx->y) return 0;
+  if (sprite->y+sprite->radius<=ctx->y) return 0;
+  ctx->target=sprite;
+  return 1;
+}
+
+static struct fmn_sprite *fmn_hero_feather_find_target() {
+  struct fmn_hero_feather_find_target_context ctx={0};
+  fmn_vector_from_dir(&ctx.x,&ctx.y,fmn_global.facedir);
+  ctx.x*=0.6f;
+  ctx.y*=0.6f;
+  ctx.x+=fmn_hero.sprite->x;
+  ctx.y+=fmn_hero.sprite->y;
+  fmn_sprites_for_each(fmn_hero_feather_find_target_1,&ctx);
+  return ctx.target;
+}
+ 
+static void fmn_hero_feather_update() {
+  // Re-tickle the target sprite when it comes in range, but don't tickle at each update.
+  // So don't use fmn_hero_interact_locally.
+  struct fmn_sprite *target=fmn_hero_feather_find_target();
+  if (target==fmn_hero.feather_target) return;
+  fmn_hero.feather_target=target;
+  if (target&&target->interact) target->interact(target,FMN_ITEM_FEATHER,0);
+}
+
 /* Dispatch on item type.
  */
  
@@ -599,6 +643,7 @@ void fmn_hero_item_begin() {
     case FMN_ITEM_WAND: fmn_hero_wand_begin(); break;
     case FMN_ITEM_VIOLIN: fmn_hero_violin_begin(); break;
     case FMN_ITEM_CHALK: fmn_hero_chalk_begin(); break;
+    case FMN_ITEM_FEATHER: fmn_hero_feather_begin(); break;
   }
 }
 
@@ -634,6 +679,7 @@ void fmn_hero_item_update(float elapsed) {
     case FMN_ITEM_SHOVEL: fmn_hero_shovel_update(elapsed); break;
     case FMN_ITEM_BROOM: fmn_hero_broom_update(elapsed); break;
     case FMN_ITEM_VIOLIN: fmn_hero_violin_update(elapsed); break;
+    case FMN_ITEM_FEATHER: fmn_hero_feather_update(); break;
   }
 }
 

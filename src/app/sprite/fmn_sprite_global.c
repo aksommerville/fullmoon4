@@ -404,6 +404,17 @@ void fmn_sprite_generate_soulballs(float x,float y,uint8_t c) {
   }
 }
 
+/* Generate the "zzz" sprite for a sleeping animal.
+ */
+ 
+struct fmn_sprite *fmn_sprite_generate_zzz(struct fmn_sprite *source) {
+  struct fmn_sprite *zzz=fmn_sprite_generate_noparam(FMN_SPRCTL_zzz,source->x,source->y-0.5f);
+  if (zzz) {
+    zzz->pv[0]=source;
+  }
+  return zzz;
+}
+
 /* Generate a sprite with no parameters.
  */
  

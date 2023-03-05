@@ -25,9 +25,11 @@ void fmn_hero_set_position(float x,float y);
 void fmn_hero_kill_velocity();
 
 /* Begin an injury, focussed at (x,y), typically (assailant)'s location.
- * (assailant) is optional and currently superfluous.
+ * (assailant) is optional.
+ * Nonzero if an injury happened.
+ * Can be zero if deflected by umbrella, ignored due to previous injury, or whatever.
  */
-void fmn_hero_injure(float x,float y,struct fmn_sprite *assailant);
+uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant);
 
 uint8_t fmn_hero_feet_on_ground();
 

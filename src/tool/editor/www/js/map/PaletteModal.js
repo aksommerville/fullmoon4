@@ -7,17 +7,38 @@ import { Dom } from "/js/util/Dom.js";
 import { ResService } from "/js/util/ResService.js";
 import { MapService } from "/js/map/MapService.js";
 
+/* OK actually, having PaletteModal interact with the global MapService was probably a mistake.
+ * SpriteUi needs it too, and who knows, there might be other use cases in the future.
+ * When instantiating, you can provide an override PaletteModalConfig to turn off that global interaction.
+ */
+export class PaletteModalConfig {
+  constructor(isolated, callback, imageId, tileId) {
+    this.isolated = isolated ?? false;
+    this.callback = callback || (() => {});
+    this.imageId = imageId || 0;
+    this.tileId = tileId ?? -1;
+  }
+}
+
 export class PaletteModal {
   static getDependencies() {
-    return [HTMLElement, Dom, ResService, MapService];
+    return [HTMLElement, Dom, ResService, MapService, PaletteModalConfig];
   }
-  constructor(element, dom, resService, mapService) {
+  constructor(element, dom, resService, mapService, config) {
     this.element = element;
     this.dom = dom;
     this.resService = resService;
     this.mapService = mapService;
     
-    this.imageId = this.mapService.paletteImageId;
+    this.config = config;
+    if (this.config.isolated) {
+      this.imageId = this.config.imageId;
+      this.tileId = this.config.tileId;
+    } else {
+      this.imageId = this.mapService.paletteImageId;
+      this.tileId = this.mapService.selectedTile;
+    }
+    
     this.image = this.resService.getResourceObject("image", this.imageId);
     
     this.buildUi();
@@ -38,11 +59,26 @@ export class PaletteModal {
         }
       }
     }
+    if ((this.tileId >= 0) && (this.tileId <= 0xff)) {
+      const canvas = this.dom.spawn(this.element, "CANVAS");
+      canvas.width = 16;
+      canvas.height = 16;
+      const ctx = canvas.getContext("2d");
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = "#ff0";
+      ctx.fillRect(this.tileId & 15, (this.tileId >> 4) & 15, 1, 1);
+    }
   }
   
   onClick(e) {
     const tileId = this.tileIdFromEvent(e);
-    if (tileId >= 0) this.mapService.setSelectedTile(tileId);
+    if (tileId >= 0) {
+      if (this.config.isolated) {
+        this.config.callback(tileId);
+      } else {
+        this.mapService.setSelectedTile(tileId);
+      }
+    }
     this.dom.popModal(this);
   }
   

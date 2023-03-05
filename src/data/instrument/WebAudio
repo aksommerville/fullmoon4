@@ -633,11 +633,40 @@ sound INVISIBILITY_END #TODO
   noise 0
 end
 
-# Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 32
-  len 0.001
-  noise 0
+sound ENCHANT_ANIMAL # Same as PUSHBLOCK_ENCHANT, for now at least
+  len 0.430
+  
+  wave 0 600 sine
+  env 0 ( 0 15 0xffff 20 0x2000 100 0 )
+  
+  wave 1 750 sine
+  env 1 ( 0 50 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 900 sine
+  env 1 ( 0 100 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 1200 sine
+  env 1 ( 0 150 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 1500 sine
+  env 1 ( 0 200 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 1800 sine
+  env 1 ( 0 250 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  wave 1 2400 sine
+  env 1 ( 0 300 0 15 0xffff 20 0x2000 100 0 )
+  mix 0 1
+  
+  norm 0 0.200
 end
+
+# Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
 sound 33
   len 0.001
   noise 0
