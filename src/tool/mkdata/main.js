@@ -52,6 +52,7 @@ function guessOperationName(dst, src) {
     case "string": return "./copyVerbatim.js"; // will always be verbatim; processed at packing
     case "instrument": return "./copyVerbatim.js"; // ''
     case "sound": return "./copyVerbatim.js"; // '', but there shouldn't be any, they live with instruments
+    case "chalk": return "IGNORE";
   }
   return "./copyVerbatim.js";
 }
@@ -60,6 +61,9 @@ let op;
 if (mode === "--archive") op = require("./packArchive.js")(srcpaths);
 else {
   const opName = guessOperationName(dstpath, srcpaths[0]);
+  if (opName === "IGNORE") {
+    process.exit(0);
+  }
   if (!opName) {
     throw new Error(`Unable to determine operation for output=${dstpath} and input=${srcpaths[0]}`);
   }

@@ -40,7 +40,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Sprites:
 - - [x] Sawblades like v1
 - - [x] Firewall
-- - [ ] Chalk-aware sentinel
+- - [x] Chalk-aware sentinel
 - - [ ] Raccoon, throws acorns
 - - [ ] Rat, pounce and bite. He'll miss if you're flying.
 - - [ ] Rabbit that teaches you a song.
@@ -56,6 +56,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Prevent wind and rain from happening indoors.
 - [ ] Initial wind per map.
 - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
+- [ ] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
 
 ### April
 
@@ -103,6 +104,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] verify: Song channel 14 reserved for violin, songs must not use.
 - [ ] verify: Teleport targets must set song.
 - [ ] verify: Firewall must be on edge, with at least two vacant cells, and a solid on both ends.
+- [ ] verify: Chalk duplicates
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.

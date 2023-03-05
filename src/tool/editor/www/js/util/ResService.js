@@ -18,7 +18,7 @@ export class ResService {
     
     this.DIRTY_DEBOUNCE_TIME = 5000;
     
-    this.types = ["image", "tileprops", "map", "song", "string", "sprite"];
+    this.types = ["image", "tileprops", "map", "song", "string", "sprite", "chalk"];
     this.toc = []; // {type, id, name, q, lang, path, serial, object}
     this.dirties = []; // {type, id} The named TOC entries should have a fresh (object) and no (serial).
     this.dirtyDebounce = null;
@@ -142,6 +142,7 @@ export class ResService {
       case "map": return this.loadText(type, base, (src, id) => this.mapService.decode(src, id));
       case "song": return this.loadTocOnly(type, base);
       case "sprite": return this.loadText(type, base, (src, id) => this.spriteService.decode(src, id));
+      case "chalk": return this.loadText(type, base, (src, id) => src);
       default: return this.loadUnknown(type, base);
     }
   }
@@ -328,8 +329,12 @@ export class ResService {
         if (!res) return reject(`Resource ${type}:${id} disappeared from TOC between dirty and save.`);
         if (!res.serial) {
           if (!res.object) return reject(`Resource ${type}:${id} has no object in TOC.`);
-          if (!res.object.encode) return reject(`Unable to encode resource ${type}:${id}.`);
-          if (!(res.serial = res.object.encode())) return reject(`Failed to encode resource ${type}:${id}`);
+          if (typeof(res.object) === "string") {
+            res.serial = res.object;
+          } else {
+            if (!res.object.encode) return reject(`Unable to encode resource ${type}:${id}.`);
+            if (!(res.serial = res.object.encode())) return reject(`Failed to encode resource ${type}:${id}`);
+          }
         }
         this.window.fetch(res.path, { method: "PUT", body: res.serial })
           .then(rsp => { if (!rsp.ok) throw rsp; return rsp.text(); })

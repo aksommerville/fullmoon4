@@ -43,6 +43,7 @@ extern struct fmn_hero {
   uint8_t landing_pending; // broom flight ended over a hole, will end when clear
   uint8_t next_metronome_songp;
   uint8_t violin_spellid; // nonzero if the song is complete
+  uint8_t chalking; // platform doesn't notify when a chalk session completes, so we track here
 } fmn_hero;
 
 void fmn_hero_motion_event(uint8_t bit,uint8_t value); // dpad changes

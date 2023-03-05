@@ -11,3 +11,4 @@
 | `#image/{id}`  | Tileprops editor.
 | `#sprite/all`  | List of sprites.
 | `#sprite/{id}` | Sprite editor.
+| `#chalk`       | Chalk glyph definitions.

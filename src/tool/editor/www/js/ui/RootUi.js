@@ -10,6 +10,7 @@ import { ImageUi } from "/js/image/ImageUi.js";
 import { ImageAllUi } from "/js/image/ImageAllUi.js";
 import { SpriteUi } from "/js/sprite/SpriteUi.js";
 import { SpriteAllUi } from "/js/sprite/SpriteAllUi.js";
+import { ChalkUi } from "/js/chalk/ChalkUi.js";
 
 export class RootUi {
   static getDependencies() {
@@ -63,6 +64,7 @@ export class RootUi {
       case "map": this.navigateMap(words.slice(1)); break;
       case "image": this.navigateImage(words.slice(1)); break;
       case "sprite": this.navigateSprite(words.slice(1)); break;
+      case "chalk": this.navigateChalk(words.slice(1)); break;
       default: {
           console.error(`Unexpected hash ${JSON.stringify(hash)}. Routing to Home instead.`);
           this.navigateHome();
@@ -132,5 +134,10 @@ export class RootUi {
   navigateSpriteAll(args) {
     const content = this.clearContent();
     this.contentController = this.dom.spawnController(content, SpriteAllUi);
+  }
+  
+  navigateChalk(args) {
+    const content = this.clearContent();
+    this.contentController = this.dom.spawnController(content, ChalkUi);
   }
 }

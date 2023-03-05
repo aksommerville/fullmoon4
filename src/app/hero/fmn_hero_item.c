@@ -555,6 +555,7 @@ static void fmn_hero_chalk_begin() {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
+  fmn_hero.chalking=2; // there will be one update between here and the modal; ignore it
 }
 
 /* Dispatch on item type.
@@ -615,7 +616,18 @@ void fmn_hero_item_end() {
   }
 }
 
+static int fmn_hero_notify_chalk(struct fmn_sprite *sprite,void *dummy) {
+  if (sprite->interact) sprite->interact(sprite,FMN_ITEM_CHALK,0);
+  return 0;
+}
+
 void fmn_hero_item_update(float elapsed) {
+  if (fmn_hero.chalking==2) {
+    fmn_hero.chalking=1;
+  } else if (fmn_hero.chalking) {
+    fmn_hero.chalking=0;
+    fmn_sprites_for_each(fmn_hero_notify_chalk,0);
+  }
   fmn_hero.item_active_time+=elapsed;
   switch (fmn_global.active_item) {
     case FMN_ITEM_BELL: fmn_hero_bell_update(elapsed); break;

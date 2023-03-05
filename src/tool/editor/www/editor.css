@@ -385,3 +385,58 @@ body {
   font-style: italic;
 }
 
+/* ChalkUi.
+ *************************************************/
+ 
+.ChalkUi {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.ChalkUi > .card {
+  background-color: #eee;
+  border: 1px solid #000;
+  border-radius: 0.5em;
+  margin: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ChalkUi > .card .topRow {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ChalkUi > .card .bitsPicture {
+  width: 96px;
+  height: 96px;
+}
+ 
+/* ChalkModal.
+ **************************************************/
+ 
+.ChalkModal .bitsContainer {
+  min-width: 200px;
+  min-height: 200px;
+  position: relative;
+}
+
+.ChalkModal .lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.ChalkModal .buttonsTable {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.ChalkModal .buttonsTable td {
+  text-align: center;
+}

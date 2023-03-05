@@ -18,21 +18,25 @@ all:$1-all
 #--------------------------------------------------------
 # Discover input files, compile code, link the executable...
 
-$1_SRCPAT:=src/app/% $(foreach U,$($1_OPT_ENABLE),src/opt/$U/%)
-$1_SRCFILES:=$$(filter $$($1_SRCPAT),$(SRCFILES))
+$1_SRCPAT:=src/app/% $$($1_MIDDIR)/generated/% $(foreach U,$($1_OPT_ENABLE),src/opt/$U/%)
+$1_SRCFILES:=$$(filter $$($1_SRCPAT),$(SRCFILES) $$(addprefix $$($1_MIDDIR)/generated/,$(GENERATED_FILES)))
 
 $1_CFILES:=$$(filter %.c %.m %.cpp %.S,$$($1_SRCFILES))
-$1_OFILES:=$$(patsubst src/%,$($1_MIDDIR)/%.o,$$(basename $$($1_CFILES)))
+$1_OFILES:=$$(addsuffix .o,$$(patsubst src/%,$$($1_MIDDIR)/%,$$(basename $$($1_CFILES))))
 -include $$($1_OFILES:.o=.d)
 
+$$($1_MIDDIR)/generated/%.o:$$($1_MIDDIR)/generated/%.c;$$(call PRECMD,$1) $$($1_CC) -o$$@ $$<
 $$($1_MIDDIR)/%.o:src/%.c;$$(call PRECMD,$1) $$($1_CC) -o$$@ $$<
 ifneq (,$(strip $($1_CXX)))
+  $$($1_MIDDIR)/%.o:$($1_MIDDIR)/%.cpp;$$(call PRECMD,$1) $$($1_CXX) -o$$@ $$<
   $$($1_MIDDIR)/%.o:src/%.cpp;$$(call PRECMD,$1) $$($1_CXX) -o$$@ $$<
 endif
 ifneq (,$(strip $($1_AS)))
+  $$($1_MIDDIR)/%.o:$$($1_MIDDIR)/%.S;$$(call PRECMD,$1) $$($1_AS) -o$$@ $$<
   $$($1_MIDDIR)/%.o:src/%.S;$$(call PRECMD,$1) $$($1_AS) -o$$@ $$<
 endif
 ifneq (,$(strip $($1_OBJC)))
+  $$($1_MIDDIR)/%.o:$$($1_MIDDIR)/%.m;$$(call PRECMD,$1) $$($1_OBJC) -o$$@ $$<
   $$($1_MIDDIR)/%.o:src/%.m;$$(call PRECMD,$1) $$($1_OBJC) -o$$@ $$<
 endif
 
@@ -51,7 +55,7 @@ endef
 define SINGLE_DATA_ARCHIVE
 
 MKDATA_SOURCES:=$(filter src/tool/mkdata/% src/tool/common/%,$(SRCFILES))
-$1_DATA_IN:=$(filter src/data/%,$(SRCFILES))
+$1_DATA_IN:=$(filter-out src/data/chalk/%,$(filter src/data/%,$(SRCFILES)))
 $1_DATA_MID:=$$(patsubst src/data/%,$($1_MIDDIR)/data/%,$$($1_DATA_IN))
 
 $2:$$($1_DATA_MID) $$(MKDATA_SOURCES);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --archive -o$$@ $$($1_DATA_MID)

@@ -1,6 +1,8 @@
 #include "fmn_game.h"
 #include <string.h>
 
+extern const int fmn_chalk_glyphs[];
+
 /* Rebuild secrets.
  */
  
@@ -104,5 +106,83 @@ uint8_t fmn_song_eval(const uint8_t *v,uint8_t c) {
     if (spell->c>c) continue;
     if (!memcmp(spell->v,v+c-spell->c,spell->c)) return spell->spellid;
   }
+  return 0;
+}
+
+/* Read sketches as text.
+ */
+ 
+static int8_t fmn_sketch_cmp(const struct fmn_sketch *a,const struct fmn_sketch *b) {
+  if (a->y<b->y) return -1;
+  if (a->y>b->y) return 1;
+  if (a->x<b->x) return -1;
+  if (a->x>b->x) return 1;
+  return 0;
+}
+ 
+static void fmn_sort_sketches(struct fmn_sketch *v,uint8_t c) {
+  if (c<1) return;
+  uint8_t lo=0,hi=c-1;
+  int8_t d=1;
+  while (lo<hi) {
+    uint8_t first,last,i,done=1;
+    if (d<0) { first=hi; last=lo; } else { first=lo; last=hi; }
+    struct fmn_sketch *p=v+first;
+    for (i=first;i!=last;i+=d,p+=d) {
+      if (fmn_sketch_cmp(p,p+d)==d) {
+        done=0;
+        struct fmn_sketch tmp=*p;
+        *p=p[d];
+        p[d]=tmp;
+      }
+    }
+    if (done) return;
+    if (d<0) {
+      lo++;
+      d=1;
+    } else {
+      hi--;
+      d=-1;
+    }
+  }
+}
+
+static char fmn_char_from_sketch(uint32_t bits) {
+  if (!bits) return '?';
+  const int *q=fmn_chalk_glyphs;
+  for (;*q;q+=2) if (q[1]==bits) return q[0];
+  return '?';
+}
+ 
+int8_t fmn_for_each_sketch_word(int8_t (*cb)(const char *src,uint8_t srcc,void *userdata),void *userdata) {
+  if (!fmn_global.sketchc) return 0;
+
+  // Copy sketches, then sort by position.
+  struct fmn_sketch sketchv[FMN_SKETCH_LIMIT];
+  memcpy(sketchv,fmn_global.sketchv,sizeof(struct fmn_sketch)*fmn_global.sketchc);
+  fmn_sort_sketches(sketchv,fmn_global.sketchc);
+  
+  // Now connecting the strings is trivial.
+  const struct fmn_sketch *sketch=sketchv;
+  uint8_t c=fmn_global.sketchc;
+  while (c>0) {
+    char word[FMN_SKETCH_LIMIT+1];
+    uint8_t wordc=0;
+    word[wordc++]=fmn_char_from_sketch(sketch->bits);
+    uint8_t nextx=sketch->x+1;
+    uint8_t nexty=sketch->y;
+    sketch++;
+    c--;
+    while (c&&(sketch->x==nextx)&&(sketch->y==nexty)) {
+      word[wordc++]=fmn_char_from_sketch(sketch->bits);
+      nextx++;
+      sketch++;
+      c--;
+    }
+    word[wordc]=0;
+    int8_t err=cb(word,wordc,userdata);
+    if (err) return err;
+  }
+  
   return 0;
 }

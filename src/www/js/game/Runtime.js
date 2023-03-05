@@ -58,6 +58,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
     this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
+    this.wasmLoader.env.fmn_get_string = (dst, dsta, id) => this.getString(dst, dsta, id);
     
     // Fetch the data archive and wasm asap. This doesn't start the game or anything.
     this.preloadAtConstruction = Promise.all([
@@ -254,6 +255,13 @@ export class Runtime {
   debugStep() {
     if (!this.debugging) return;
     this.update(true);
+  }
+  
+  getString(dst, dsta, id) {
+    const src = this.dataService.getString(id) || "";
+    const cpc = Math.min(dsta, src.length);
+    for (let i=cpc; i-->0; ) this.wasmLoader.memU8[dst + i] = src.charCodeAt(i);
+    return cpc;
   }
 }
 

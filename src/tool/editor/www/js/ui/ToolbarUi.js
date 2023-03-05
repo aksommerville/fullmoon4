@@ -89,6 +89,7 @@ export class ToolbarUi {
     this.dom.spawn(shortcutsMenu, "OPTION", { value: "#map/all" }, "Maps");
     this.dom.spawn(shortcutsMenu, "OPTION", { value: "#sprite/all" }, "Sprites");
     this.dom.spawn(shortcutsMenu, "OPTION", { value: "#image/all" }, "Images");
+    this.dom.spawn(shortcutsMenu, "OPTION", { value: "#chalk" }, "Chalk");
     shortcutsMenu.value = "";
     
     this.dom.spawn(this.element, "DIV", ["saveIndicator", "clean"]);

@@ -46,4 +46,13 @@ uint16_t fmn_gs_listen_bit(uint16_t p,void (*cb)(void *userdata,uint16_t p,uint8
 void fmn_gs_unlisten(uint16_t id);
 void fmn_gs_drop_listeners();
 
+/* If you want raw sketches, read them straight off fmn_global.sketchv.
+ * "word" gives you each horizontally-contiguous range of sketches, interpretted as roman letters.
+ * (src) will contain:
+ *   A..Z
+ *   0..9
+ *   ?    For anything else.
+ */
+int8_t fmn_for_each_sketch_word(int8_t (*cb)(const char *src,uint8_t srcc,void *userdata),void *userdata);
+
 #endif

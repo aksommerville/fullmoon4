@@ -43,6 +43,7 @@ struct fmn_sprite {
    * FMN_ITEM_BELL broadcast, no qualifier or return.
    * FMN_ITEM_SEED local, no qualifier. Return nonzero to consume it.
    * FMN_ITEM_COIN ''. You make a sound effect if warranted.
+   * FMN_ITEM_CHALK broadcast, no qualifier or return, after the chalk modal dismisses.
    */
   int16_t (*interact)(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier);
   
@@ -113,6 +114,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_crow          16
 #define FMN_SPRCTL_saw           17
 #define FMN_SPRCTL_firewall      18
+#define FMN_SPRCTL_chalkguard    19
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -133,7 +135,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(zzz) \
   _(crow) \
   _(saw) \
-  _(firewall)
+  _(firewall) \
+  _(chalkguard)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
@@ -152,6 +155,6 @@ FMN_FOR_EACH_SPRCTL
 const struct fmn_sprite_controller *fmn_sprite_controller_by_id(uint16_t id);
 
 void fmn_sprite_generate_soulballs(float x,float y,uint8_t c);
-void fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y);
+struct fmn_sprite *fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y);
 
 #endif

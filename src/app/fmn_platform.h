@@ -410,4 +410,7 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y);
 void fmn_sound_effect(uint16_t sfxid);
 void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
 
+// Platform is not required to terminate strings, and probably won't.
+uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id);
+
 #endif
