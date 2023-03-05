@@ -44,7 +44,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Raccoon, throws acorns
 - - [x] Rat. Push the hero when in line of sight.
 - - [x] Invisibility for rat and raccoon, you forgot!
-- - [ ] Rabbit that teaches you a song.
+- - [x] Rabbit that teaches you a song.
 - - [ ] Farmer that plants and waters a seed.
 - - [ ] Rival witch that turns you into a pumpkin.
 - - - ...by casting The Pumpkin Spell, which you can too.
@@ -52,6 +52,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] Lobster
 - - [ ] Toll troll
 - - [ ] Little fire-breathing lizard
+- - [ ] Decorative blooming plants? Would help to explain the rabbit's deal.
 - [ ] Bloom plants on a timer.
 - [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
 - [ ] Prevent wind and rain from happening indoors.
