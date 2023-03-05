@@ -118,6 +118,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_chalkguard    19
 #define FMN_SPRCTL_raccoon       20
 #define FMN_SPRCTL_missile       21
+#define FMN_SPRCTL_rat           22
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -141,7 +142,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(firewall) \
   _(chalkguard) \
   _(raccoon) \
-  _(missile)
+  _(missile) \
+  _(rat)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

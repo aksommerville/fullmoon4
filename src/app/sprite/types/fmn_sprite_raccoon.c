@@ -118,7 +118,8 @@ static void raccoon_update_WAIT(struct fmn_sprite *sprite,float elapsed) {
   animclock+=elapsed;
   if (animclock>=1.5f) {
     // If enchanted, we don't throw things at our true love the witch. Just start walking again.
-    if (enchanted) {
+    // Same deal if she's invisible, albeit not due to good intentions.
+    if (enchanted||(fmn_global.invisibility_time>0.0f)) {
       stage=RACCOON_STAGE_CHOOSE_DESTINATION;
       animclock=0.0f;
     } else {
@@ -168,6 +169,11 @@ static void raccoon_update_BRANDISH(struct fmn_sprite *sprite,float elapsed) {
     animclock=0.0f;
     struct fmn_sprite *acorn=raccoon_find_acorn(sprite);
     if (acorn) {
+      if (enchanted||(fmn_global.invisibility_time>0.0f)) {
+        fmn_sprite_kill(acorn);
+        stage=RACCOON_STAGE_CHOOSE_DESTINATION;
+        return;
+      }
       acorn->pv[0]=0; // unset acorn's owner; it figures out the rest.
     }
   } else {

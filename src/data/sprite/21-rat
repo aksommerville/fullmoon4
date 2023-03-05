@@ -1,0 +1,7 @@
+controller rat
+image 3
+tile 0x0e
+style doublewide
+physics edge solid hole blowable sprites
+radius 0.300
+invmass 128

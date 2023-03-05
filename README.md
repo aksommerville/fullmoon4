@@ -42,7 +42,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Firewall
 - - [x] Chalk-aware sentinel
 - - [x] Raccoon, throws acorns
-- - [ ] Rat, pounce and bite. He'll miss if you're flying.
+- - [x] Rat. Push the hero when in line of sight.
+- - [x] Invisibility for rat and raccoon, you forgot!
 - - [ ] Rabbit that teaches you a song.
 - - [ ] Farmer that plants and waters a seed.
 - - [ ] Rival witch that turns you into a pumpkin.

@@ -160,6 +160,7 @@ int rand();
 #define FMN_SPRITE_STYLE_FOURFRAME  3 /* 4 tiles arranged horizontally, automatic animation */
 #define FMN_SPRITE_STYLE_FIRENOZZLE 4 /* special */
 #define FMN_SPRITE_STYLE_FIREWALL   5 /* special */
+#define FMN_SPRITE_STYLE_DOUBLEWIDE 6 /* renders a second tile (id+1) to the right of the named one, and cheats left to stay centered */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4

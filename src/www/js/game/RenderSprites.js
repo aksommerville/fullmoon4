@@ -58,6 +58,14 @@ export class RenderSprites {
             const frame = (this.frameCount >> 3) & 3;
             this.renderBasics.tile(ctx, sprite.x * tilesize, sprite.y * tilesize, srcImage, sprite.tileid + frame, sprite.xform);
           } break;
+
+        case this.constants.SPRITE_STYLE_DOUBLEWIDE: if (sprite.xform & this.constants.XFORM_XREV) {
+            this.renderBasics.tile(ctx, sprite.x * tilesize - (tilesize >> 1), sprite.y * tilesize, srcImage, sprite.tileid + 1, sprite.xform);
+            this.renderBasics.tile(ctx, (sprite.x + 1) * tilesize - (tilesize >> 1), sprite.y * tilesize, srcImage, sprite.tileid, sprite.xform);
+          } else {
+            this.renderBasics.tile(ctx, sprite.x * tilesize - (tilesize >> 1), sprite.y * tilesize, srcImage, sprite.tileid, sprite.xform);
+            this.renderBasics.tile(ctx, (sprite.x + 1) * tilesize - (tilesize >> 1), sprite.y * tilesize, srcImage, sprite.tileid + 1, sprite.xform);
+          } break;
           
         case this.constants.SPRITE_STYLE_FIRENOZZLE: this._renderFirenozzle(ctx, sprite, srcImage); break;
         case this.constants.SPRITE_STYLE_FIREWALL: this._renderFirewall(ctx, sprite, srcImage); break;
