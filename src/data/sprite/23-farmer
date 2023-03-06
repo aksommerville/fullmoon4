@@ -1,0 +1,7 @@
+controller farmer
+image 3
+tile 0x62
+style hidden
+physics edge sprites solid hole blowable
+radius 0.5
+invmass 64

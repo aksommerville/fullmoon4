@@ -154,13 +154,13 @@ int rand();
 #define FMN_SFX_COWBELL 56
 // There's more GM, thru 81, but I'm sure we won't need all that.
 
-#define FMN_SPRITE_STYLE_HIDDEN     0 /* don't render */
-#define FMN_SPRITE_STYLE_TILE       1 /* single tile */
-#define FMN_SPRITE_STYLE_HERO       2 /* special */
-#define FMN_SPRITE_STYLE_FOURFRAME  3 /* 4 tiles arranged horizontally, automatic animation */
-#define FMN_SPRITE_STYLE_FIRENOZZLE 4 /* special */
-#define FMN_SPRITE_STYLE_FIREWALL   5 /* special */
-#define FMN_SPRITE_STYLE_DOUBLEWIDE 6 /* renders a second tile (id+1) to the right of the named one, and cheats left to stay centered */
+#define FMN_SPRITE_STYLE_HIDDEN     1 /* don't render */
+#define FMN_SPRITE_STYLE_TILE       2 /* single tile */
+#define FMN_SPRITE_STYLE_HERO       3 /* special */
+#define FMN_SPRITE_STYLE_FOURFRAME  4 /* 4 tiles arranged horizontally, automatic animation */
+#define FMN_SPRITE_STYLE_FIRENOZZLE 5 /* special */
+#define FMN_SPRITE_STYLE_FIREWALL   6 /* special */
+#define FMN_SPRITE_STYLE_DOUBLEWIDE 7 /* renders a second tile (id+1) to the right of the named one, and cheats left to stay centered */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4

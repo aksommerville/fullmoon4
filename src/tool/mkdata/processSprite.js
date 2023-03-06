@@ -71,13 +71,13 @@ function rewriteInput_style(src) {
   if (src.length !== 2) throw new Error(`Expected 1 argument after 'style', found ${src.length - 1}`);
   let v = src[1];
   switch (v) {
-    case "hidden": v = 0; break;
-    case "tile": v = 1; break;
-    case "hero": v = 2; break;
-    case "fourframe": v = 3; break;
-    case "firenozzle": v = 4; break;
-    case "firewall": v = 5; break;
-    case "doublewide": v = 6; break;
+    case "hidden": v = 1; break;
+    case "tile": v = 2; break;
+    case "hero": v = 3; break;
+    case "fourframe": v = 4; break;
+    case "firenozzle": v = 5; break;
+    case "firewall": v = 6; break;
+    case "doublewide": v = 7; break;
   }
   return ["style", v];
 }

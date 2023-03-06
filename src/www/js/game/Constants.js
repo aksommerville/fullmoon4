@@ -78,13 +78,13 @@ export class Constants {
     this.TRANSITION_DOOR = 6;
     this.TRANSITION_WARP = 7;
     
-    this.SPRITE_STYLE_HIDDEN = 0;
-    this.SPRITE_STYLE_TILE = 1;
-    this.SPRITE_STYLE_HERO = 2;
-    this.SPRITE_STYLE_FOURFRAME = 3;
-    this.SPRITE_STYLE_FIRENOZZLE = 4;
-    this.SPRITE_STYLE_FIREWALL = 5;
-    this.SPRITE_STYLE_DOUBLEWIDE = 6;
+    this.SPRITE_STYLE_HIDDEN = 1;
+    this.SPRITE_STYLE_TILE = 2;
+    this.SPRITE_STYLE_HERO = 3;
+    this.SPRITE_STYLE_FOURFRAME = 4;
+    this.SPRITE_STYLE_FIRENOZZLE = 5;
+    this.SPRITE_STYLE_FIREWALL = 6;
+    this.SPRITE_STYLE_DOUBLEWIDE = 7;
     
     this.SPRITE_BV_SIZE = 8;
     this.SPRITE_SV_SIZE = 4;

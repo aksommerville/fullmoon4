@@ -27,7 +27,7 @@ static int8_t fmn_sprites_sortdir=1;
 void fmn_sprites_clear() {
   struct fmn_sprite *sprite=fmn_spritev;
   int i=FMN_SPRITE_LIMIT;
-  for (;i-->0;sprite++) sprite->style=FMN_SPRITE_STYLE_HIDDEN;
+  for (;i-->0;sprite++) sprite->style=0;
   fmn_global.spritec=0;
   fmn_global.spritev=(struct fmn_sprite_header**)fmn_spritepv;
 }

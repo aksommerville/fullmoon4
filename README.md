@@ -45,7 +45,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Rat. Push the hero when in line of sight.
 - - [x] Invisibility for rat and raccoon, you forgot!
 - - [x] Rabbit that teaches you a song.
-- - [ ] Farmer that plants and waters a seed.
+- - [x] Farmer that plants and waters a seed.
 - - [ ] Rival witch that turns you into a pumpkin.
 - - - ...by casting The Pumpkin Spell, which you can too.
 - - [ ] Automatic pitchfork
