@@ -78,6 +78,7 @@ function rewriteInput_style(src) {
     case "firenozzle": v = 5; break;
     case "firewall": v = 6; break;
     case "doublewide": v = 7; break;
+    case "pitchfork": v = 8; break;
   }
   return ["style", v];
 }

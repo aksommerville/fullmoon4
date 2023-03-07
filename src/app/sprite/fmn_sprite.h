@@ -123,6 +123,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_toast         24
 #define FMN_SPRCTL_farmer        25
 #define FMN_SPRCTL_moonsong      26
+#define FMN_SPRCTL_pitchfork     27
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -151,7 +152,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(rabbit) \
   _(toast) \
   _(farmer) \
-  _(moonsong)
+  _(moonsong) \
+  _(pitchfork)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

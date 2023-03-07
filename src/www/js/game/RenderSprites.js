@@ -69,6 +69,7 @@ export class RenderSprites {
           
         case this.constants.SPRITE_STYLE_FIRENOZZLE: this._renderFirenozzle(ctx, sprite, srcImage); break;
         case this.constants.SPRITE_STYLE_FIREWALL: this._renderFirewall(ctx, sprite, srcImage); break;
+        case this.constants.SPRITE_STYLE_PITCHFORK: this._renderPitchfork(ctx, sprite, srcImage); break;
       }
     }
   }
@@ -151,6 +152,23 @@ export class RenderSprites {
       }
       tileRow = 0;
     }
+  }
+  
+  _renderPitchfork(ctx, sprite, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    const fv = this.globals.getSpriteFv(sprite.address);
+    const dsty = sprite.y * tilesize;
+    const bodydstx = sprite.x * tilesize;
+    const dx = tilesize * ((sprite.xform & this.constants.XFORM_XREV) ? 1 : -1);
+    let dstx = ~~(bodydstx + dx * (1 + fv[0]));
+    this.renderBasics.tile(ctx, dstx, dsty, srcImage, sprite.tileid - 4, sprite.xform); // head
+    for (;;) {
+      dstx -= dx;
+      if ((dx > 0) && (dstx <= bodydstx)) break;
+      if ((dx < 0) && (dstx >= bodydstx)) break;
+      this.renderBasics.tile(ctx, dstx, dsty, srcImage, sprite.tileid - 2, sprite.xform);
+    }
+    this.renderBasics.tile(ctx, bodydstx, dsty, srcImage, sprite.tileid - (fv[0] ? 0 : 1), sprite.xform); // body
   }
 }
 

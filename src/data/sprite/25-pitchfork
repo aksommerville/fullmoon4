@@ -1,0 +1,7 @@
+controller pitchfork
+image 3
+tile 0x09
+style pitchfork
+physics sprites
+radius 0.5
+invmass 0

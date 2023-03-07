@@ -15,7 +15,7 @@ We validate the payload length generically (see binary format below).
 image ID
 tile ID
 xform [xrev] [yrev] [swap]
-style hidden|tile|hero|fourframe|firenozzle|firewall|doublewide
+style hidden|tile|hero|fourframe|firenozzle|firewall|doublewide|pitchfork
 physics [motion] [edge] [sprites] [solid] [hole]
 decay (FLOAT 0..255)
 radius (FLOAT 0..255)

@@ -48,7 +48,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Farmer that plants and waters a seed.
 - - [x] Rival witch that turns you into a pumpkin.
 - - - ...by casting The Pumpkin Spell, which you can too.
-- - [ ] Automatic pitchfork
+- - [x] Automatic pitchfork
 - - [ ] Lobster
 - - [ ] Toll troll
 - - [ ] Little fire-breathing lizard
