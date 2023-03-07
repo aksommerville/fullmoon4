@@ -52,6 +52,10 @@ static void _coin_pressure(struct fmn_sprite *sprite,struct fmn_sprite *presser,
   } else {
     uint8_t movedir=fmn_dir_from_vector(sprite->velx,sprite->vely);
     if (movedir==fmn_dir_reverse(dir)) {
+      if (presser&&presser->interact&&presser->interact(presser,FMN_ITEM_COIN,0)) {
+        fmn_sprite_kill(sprite);
+        return;
+      }
       sprite->tileid=0x2a;
       sprite->velx=0.0f;
       sprite->vely=0.0f;

@@ -20,7 +20,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [ ] Sprites:
 - - [x] Lobster
-- - [ ] Toll troll
+- - [x] Toll troll
 - - [ ] Little fire-breathing lizard
 - - [ ] Decorative blooming plants? Would help to explain the rabbit's deal.
 - - [ ] Conveyor belt

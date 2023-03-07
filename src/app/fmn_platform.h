@@ -131,7 +131,7 @@ int rand();
 #define FMN_SFX_ENCHANT_ANIMAL 32
 #define FMN_SFX_PUMPKIN 33
 #define FMN_SFX_UNPUMPKIN 34
-#define FMN_SFX_KICK_1 35
+#define FMN_SFX_KICK_1 35 /* begin GM... */
 #define FMN_SFX_KICK_2 36
 #define FMN_SFX_SIDE_STICK 37
 #define FMN_SFX_SNARE_1 38
@@ -152,8 +152,8 @@ int rand();
 #define FMN_SFX_RIDE_2 53
 #define FMN_SFX_TAMBOURINE 54
 #define FMN_SFX_SPLASH_1 55
-#define FMN_SFX_COWBELL 56
-// There's more GM, thru 81, but I'm sure we won't need all that.
+#define FMN_SFX_COWBELL 56 /* ...end GM */
+#define FMN_SFX_PAYMENT 57
 
 #define FMN_SPRITE_STYLE_HIDDEN     1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE       2 /* single tile */

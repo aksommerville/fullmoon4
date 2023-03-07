@@ -675,3 +675,8 @@ sound UNPUMPKIN #TODO
   len 0.001
   noise 0
 end
+
+sound PAYMENT #TODO
+  len 0.001
+  noise 0
+end

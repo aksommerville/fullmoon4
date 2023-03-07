@@ -11,7 +11,7 @@ function requireToc() {
     linewise(src, (line, lineno) => {
       if (line.startsWith("#define FMN_SFX_")) {
         const words = line.substring(16).trim().split(/\s+/);
-        if (words.length === 2) {
+        if (words.length >= 2) { // sic '>=' not '==='; there can be a comment
           const id = +words[1];
           if (!isNaN(id) && (id > 0) && (id < 128)) {
             toc.push([words[0].toUpperCase(), id]);

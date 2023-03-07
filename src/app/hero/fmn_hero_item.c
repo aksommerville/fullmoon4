@@ -127,17 +127,30 @@ static void fmn_hero_seed_begin() {
 /* Coin.
  */
  
+struct fmn_hero_coin_collision_context {
+  struct fmn_sprite *coin;
+  struct fmn_sprite *blockage;
+};
+ 
 static int fmn_hero_coin_collision_1(struct fmn_sprite *sprite,void *userdata) {
-  struct fmn_sprite *coin=userdata;
-  if (sprite==coin) return 0;
+  struct fmn_hero_coin_collision_context *ctx=userdata;
+  if (sprite==ctx->coin) return 0;
   if (!(sprite->physics&FMN_PHYSICS_SPRITES)) return 0;
   if (sprite->radius<=0.0f) return 0;
-  if (fmn_physics_check_sprites(0,0,coin,sprite)) return 1;
+  if (fmn_physics_check_sprites(0,0,ctx->coin,sprite)) {
+    ctx->blockage=sprite;
+    return 1;
+  }
   return 0;
 }
  
-static uint8_t fmn_hero_coin_collision(struct fmn_sprite *coin) {
-  return fmn_sprites_for_each(fmn_hero_coin_collision_1,coin);
+static struct fmn_sprite *fmn_hero_coin_collision(struct fmn_sprite *coin) {
+  struct fmn_hero_coin_collision_context ctx={
+    .coin=coin,
+    .blockage=0,
+  };
+  fmn_sprites_for_each(fmn_hero_coin_collision_1,&ctx);
+  return ctx.blockage;
 }
  
 static void fmn_hero_coin_begin() {
@@ -167,10 +180,16 @@ static void fmn_hero_coin_begin() {
   
   // Before we commit to it, confirm that there is no collision.
   // If there is one, kill this sprite and put the coin back in your pocket.
+  // Plus one last chance to hand it over politely.
+  struct fmn_sprite *blockage;
   if (
-    fmn_physics_check_grid(0,0,coin,coin->physics)||
-    fmn_hero_coin_collision(coin)
+    (blockage=fmn_hero_coin_collision(coin))||
+    fmn_physics_check_grid(0,0,coin,coin->physics)
   ) {
+    if (blockage&&blockage->interact&&blockage->interact(blockage,FMN_ITEM_COIN,0)) {
+      fmn_sprite_kill(coin);
+      return;
+    }
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     fmn_sprite_kill(coin);
     fmn_global.itemqv[FMN_ITEM_COIN]++;

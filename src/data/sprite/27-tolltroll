@@ -1,0 +1,7 @@
+controller tolltroll
+image 3
+tile 0x19
+style tile
+physics edge sprites solid hole
+radius 0.5
+invmass 0
