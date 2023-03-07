@@ -67,6 +67,12 @@ export class RenderHero {
     const left = ~~(midx * tilesize - halftile);
     const facedir = this.globals.g_facedir[0];
     
+    // Special handling for pumpkins.
+    if (this.globals.g_transmogrification[0] === 1) {
+      this._renderPumpkin(ctx, midx, midy, tilesize, srcImage);
+      return;
+    }
+    
     // When injured, we do something entirely different, and all other state can be ignored.
     if (this.globals.g_injury_time[0] > 0) {
       const tileId = (this.frameCount & 4) ? 0x03 : 0x33;
@@ -136,6 +142,33 @@ export class RenderHero {
     } else {
       this.cheesePhase = 0;
     }
+  }
+  
+  _renderPumpkin(ctx, midx, midy, tilesize, srcImage) {
+    let xform = 0;
+    if (this.globals.g_last_horz_dir[0] === this.constants.DIR_W) xform = this.constants.XFORM_XREV;
+    let tileId = 0x1d;
+    let hatTileId = 0x00;
+    let hatDisplacement = 6;
+    if (this.globals.g_injury_time[0] > 0) {
+      if (this.frameCount & 4) {
+        tileId = 0x2e;
+        hatTileId = 0x33;
+      } else {
+        tileId = 0x2d;
+        hatTileId = 0x03;
+      }
+      if (this.globals.g_injury_time[0] >= 0.8) ;
+      else if (this.globals.g_injury_time[0] >= 0.4) hatDisplacement += Math.floor((0.8 - this.globals.g_injury_time[0]) * 20);
+      else hatDisplacement += Math.floor(this.globals.g_injury_time[0] * 20);
+    } else if (this.globals.g_walking[0]) {
+      switch (this.frameCount & 0x18) {
+        case 0x08: tileId += 1; break;
+        case 0x18: tileId += 2; break;
+      }
+    }
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId, xform);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - hatDisplacement, srcImage, hatTileId, xform);
   }
   
   _renderBody(ctx, midx, midy, facedir, srcImage, col, xform) {

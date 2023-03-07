@@ -81,6 +81,7 @@ export class Globals {
     this.g_illumination_time = new Float32Array(this.memU8.buffer, this.p_hero + 8, 1);
     this.g_cheesing = new Uint8Array(this.memU8.buffer, this.p_hero + 12, 1);
     this.g_spell_repudiation = new Uint8Array(this.memU8.buffer, this.p_hero + 13, 1);
+    this.g_transmogrification = new Uint8Array(this.memU8.buffer, this.p_hero + 14, 1);
     this.g_invisibility_time = new Uint8Array(this.memU8.buffer, this.p_hero + 16, 1);
     this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 20, 2); // [x,y]
     this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 24, 2); // [x,y]

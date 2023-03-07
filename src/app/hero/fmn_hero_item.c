@@ -613,6 +613,12 @@ void fmn_hero_item_begin() {
     return;
   }
   
+  // No actions while transformed.
+  if (fmn_global.transmogrification) {
+    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+    return;
+  }
+  
   // We do allow unpossessed items to be selected. Must verify first that we actually have it.
   if ((fmn_global.selected_item>=FMN_ITEM_COUNT)||!fmn_global.itemv[fmn_global.selected_item]) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
@@ -659,6 +665,10 @@ void fmn_hero_item_end() {
   if (!fmn_hero_facedir_agrees()) {
     fmn_hero_reset_facedir();
   }
+}
+
+void fmn_hero_cancel_item() {
+  fmn_hero_item_end();
 }
 
 static int fmn_hero_notify_chalk(struct fmn_sprite *sprite,void *dummy) {

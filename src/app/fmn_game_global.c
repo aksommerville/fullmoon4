@@ -71,12 +71,36 @@ static void fmn_game_navigate(int8_t dx,int8_t dy) {
   fmn_commit_transition();
 }
 
+static void fmn_transmogrify(uint8_t mode,uint8_t state) {
+  if (fmn_global.transmogrification==state) {
+    if (!(mode&0x40)) return;
+    fmn_global.transmogrification=0;
+    fmn_sound_effect(FMN_SFX_UNPUMPKIN);
+  } else {
+    if (!(mode&0x80)) return;
+    fmn_global.transmogrification=state;
+    fmn_sound_effect(FMN_SFX_PUMPKIN);
+  }
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  fmn_sprite_generate_soulballs(herox,heroy,7);
+}
+
 static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
   struct fmn_door *door=fmn_global.doorv;
   uint32_t i=fmn_global.doorc;
   for (;i-->0;door++) {
     if (door->x!=x) continue;
     if (door->y!=y) continue;
+    
+    // Some things masquerade as doors, but are in fact something very else.
+    if (!door->mapid) {
+      if ((door->dsty>0)&&(door->dsty<0x40)&&(door->dstx&0xc0)&&!(door->dstx&0x3f)) {
+        fmn_transmogrify(door->dstx,door->dsty);
+        continue;
+      }
+      continue;
+    }
     
     float dstx=door->dstx+0.5f;
     float dsty=door->dsty+0.5f;

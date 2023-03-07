@@ -46,19 +46,21 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Invisibility for rat and raccoon, you forgot!
 - - [x] Rabbit that teaches you a song.
 - - [x] Farmer that plants and waters a seed.
-- - [ ] Rival witch that turns you into a pumpkin.
+- - [x] Rival witch that turns you into a pumpkin.
 - - - ...by casting The Pumpkin Spell, which you can too.
 - - [ ] Automatic pitchfork
 - - [ ] Lobster
 - - [ ] Toll troll
 - - [ ] Little fire-breathing lizard
 - - [ ] Decorative blooming plants? Would help to explain the rabbit's deal.
+- - [ ] Conveyor belt
 - [ ] Bloom plants on a timer.
 - [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
 - [ ] Prevent wind and rain from happening indoors.
 - [ ] Initial wind per map.
 - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
+- [ ] Registry of gsbit usage. Let us use symbolic names, avoid conflict, etc.
 
 ### April
 

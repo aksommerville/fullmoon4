@@ -27,6 +27,7 @@ door X Y MAPID DSTX DSTY
 sprite X Y SPRITEID ARG0 ARG1 ARG2
 dark
 hero X Y
+transmogrify X Y MODE STATE # STATE=[1:pumpkin], MODE=[to,from,toggle]
 ```
 
 Resource IDs may be name or number.
@@ -61,6 +62,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x41 (u16 mapid) NEIGHBORE
 0x42 (u16 mapid) NEIGHBORN
 0x43 (u16 mapid) NEIGHBORS
+0x44 (u8 cellp,u8 0x80:to 0x40:from 0x3f:state) TRANSMOGRIFY
 
 0x60 (u8 cellp,u16 mapid,u8 dstcellp) DOOR
 

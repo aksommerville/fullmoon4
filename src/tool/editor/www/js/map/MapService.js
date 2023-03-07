@@ -150,6 +150,13 @@ export class MapService {
                 x, y,
               });
             } break;
+          case "transmogrify": {
+              const x = +command[1], y = +command[2], mode = command[3], state = command[4];
+              pois.push({
+                type: "transmogrify",
+                x, y, mode, state,
+              });
+            } break;
         }
       }
     }
@@ -192,6 +199,7 @@ export class MapService {
       case "exit": command[1] = x.toString(); command[2] = y.toString(); break;
       case "sprite": command[1] = x.toString(); command[2] = y.toString(); break;
       case "hero": command[1] = x.toString(); command[2] = y.toString(); break;
+      case "transmogrify": command[1] = x.toString(); command[2] = y.toString(); break;
     }
     if (remoteMapHandle[0]) {
       // dirtying resources is really not our job, but we don't have any other way to tell our caller that it happened.
@@ -249,6 +257,15 @@ export class MapService {
       case "hero": {
           for (const command of map.commands) {
             if (command[0] !== "hero") continue;
+            if (+command[1] !== poi.x) continue;
+            if (+command[2] !== poi.y) continue;
+            return command;
+          }
+        } break;
+        
+      case "transmogrify": {
+          for (const command of map.commands) {
+            if (command[0] !== "transmogrify") continue;
             if (+command[1] !== poi.x) continue;
             if (+command[2] !== poi.y) continue;
             return command;

@@ -33,4 +33,6 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant);
 
 uint8_t fmn_hero_feet_on_ground();
 
+void fmn_hero_cancel_item();
+
 #endif

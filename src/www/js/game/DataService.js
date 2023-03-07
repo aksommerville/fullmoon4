@@ -257,7 +257,14 @@ export class DataService {
       case 0x41: map.neighbore = (src[p] << 8) | src[p + 1]; break;
       case 0x42: map.neighborn = (src[p] << 8) | src[p + 1]; break;
       case 0x43: map.neighbors = (src[p] << 8) | src[p + 1]; break;
-      case 0x60: map.doors.push({
+      case 0x44: map.doors.push({ // transmogrify
+          x: src[p] % this.constants.COLC,
+          y: Math.floor(src[p] / this.constants.COLC),
+          mapId: 0,
+          dstx: src[p + 1] & 0xc0,
+          dsty: src[p + 1] & 0x3f,
+        }); break;
+      case 0x60: map.doors.push({ // regular door
           x: src[p] % this.constants.COLC,
           y: Math.floor(src[p] / this.constants.COLC),
           mapId: (src[p + 1] << 8) | src[p + 2],

@@ -666,12 +666,12 @@ sound ENCHANT_ANIMAL # Same as PUSHBLOCK_ENCHANT, for now at least
   norm 0 0.200
 end
 
-# Sound effect placeholders (there is an unavoidable gap between our defined sound effects and GM drums)
-sound 33
+sound PUMPKIN #TODO
   len 0.001
   noise 0
 end
-sound 34
+
+sound UNPUMPKIN #TODO
   len 0.001
   noise 0
 end

@@ -117,6 +117,30 @@ function decodeCommand_sprite(args) {
   return dst;
 }
 
+/* transmogrify X Y MODE STATE
+ */
+ 
+function decodeCommand_transmogrify(args) {
+  const originalMode = args[2];
+  switch (args[2]) {
+    case "to": args[2] = 0x80; break;
+    case "from": args[2] = 0x40; break;
+    case "toggle": args[2] = 0xc0; break;
+  }
+  const [x, y, mode, state] = assertIntArgs(args,
+    ["x", 0, COLC - 1],
+    ["y", 0, ROWC - 1],
+    ["mode", 0x40, 0xc0],
+    ["state", 0, 0x3f],
+  );
+  if (mode & 0x3f) throw new Error(`Invalid transmogify mode ${JSON.stringify(originalMode)}, must be "to", "from", or "toggle"`);
+  const dst = Buffer.alloc(3);
+  dst[0] = 0x44;
+  dst[1] = y * COLC + x;
+  dst[2] = mode | state;
+  return dst;
+}
+
 /* Main entry point, command TOC.
  */
 
@@ -133,6 +157,7 @@ function decodeCommand(words) {
     case "sprite": return decodeCommand_sprite(words.slice(1));
     case "dark": return decodeCommand_noarg(0x01, words.slice(1));
     case "hero": return decodeCommand_xy(0x22, words.slice(1));
+    case "transmogrify": return decodeCommand_transmogrify(words.slice(1));
   }
   return null;
 }

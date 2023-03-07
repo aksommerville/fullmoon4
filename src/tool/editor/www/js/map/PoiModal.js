@@ -55,6 +55,7 @@ export class PoiModal {
     // Can't select "entrance" type this way. You have to create doors from their exit map, where they live ultimately.
     this.dom.spawn(typeSelect, "OPTION", { value: "sprite" }, "sprite");
     this.dom.spawn(typeSelect, "OPTION", { value: "hero" }, "hero");
+    this.dom.spawn(typeSelect, "OPTION", { value: "transmogrify" }, "transmogrify");
     
     this.dom.spawn(permanentForm, "INPUT", {
       type: "number",
@@ -117,7 +118,9 @@ export class PoiModal {
           return value; // let it be a string if it doesn't resolve
         }
     }
-    return +value;
+    const nvalue = +value;
+    if (isNaN(nvalue)) return value;
+    return nvalue;
   }
   
   onTypeChanged() {
@@ -129,6 +132,7 @@ export class PoiModal {
       case "exit": this.buildExitForm(table); break;
       case "sprite": this.buildSpriteForm(table); break;
       case "hero": break;
+      case "transmogrify": this.buildTransmogrifyForm(table); break;
     }
   }
   
@@ -145,6 +149,11 @@ export class PoiModal {
     this.addNumberRow(table, "arg0", 0, 255, this.poi ? this.poi.argv[0] : 0);
     this.addNumberRow(table, "arg1", 0, 255, this.poi ? this.poi.argv[1] : 0);
     this.addNumberRow(table, "arg2", 0, 255, this.poi ? this.poi.argv[2] : 0);
+  }
+  
+  buildTransmogrifyForm(table) {
+    this.addEnumRow(table, "mode", this.poi ? this.poi.mode : "toggle", ["to", "from", "toggle"]);
+    this.addNumberRow(table, "state", 0, 63, this.poi ? this.poi.state : 1, "1=pumpkin");
   }
   
   reprSpriteId(id) {
@@ -190,6 +199,18 @@ export class PoiModal {
       name: key,
     });
     return input;
+  }
+  
+  addEnumRow(table, key, value, options) {
+    const tr = this.dom.spawn(table, "TR");
+    this.dom.spawn(tr, "TD", ["key"], key);
+    const td = this.dom.spawn(tr, "TD", ["value"]);
+    const select = this.dom.spawn(td, "SELECT", {
+      name: key,
+    });
+    for (const option of options) this.dom.spawn(select, "OPTION", { value: option }, option);
+    select.value = value;
+    return select;
   }
   
   onSubmit() {
@@ -239,6 +260,10 @@ export class PoiModal {
         
       case "hero": {
           return ["hero", poi.x.toString(), poi.y.toString()];
+        }
+        
+      case "transmogrify": {
+          return ["transmogrify", poi.x.toString(), poi.y.toString(), poi.mode, poi.state.toString()];
         }
     }
     return null;

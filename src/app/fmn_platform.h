@@ -129,7 +129,8 @@ int rand();
 #define FMN_SFX_INVISIBILITY_BEGIN 30
 #define FMN_SFX_INVISIBILITY_END 31
 #define FMN_SFX_ENCHANT_ANIMAL 32
-// Available space here. Skipping forward to GM drums.
+#define FMN_SFX_PUMPKIN 33
+#define FMN_SFX_UNPUMPKIN 34
 #define FMN_SFX_KICK_1 35
 #define FMN_SFX_KICK_2 36
 #define FMN_SFX_SIDE_STICK 37
@@ -203,6 +204,7 @@ int rand();
 #define FMN_SPELLID_HITHER 17
 #define FMN_SPELLID_THITHER 18
 #define FMN_SPELLID_REVELATIONS 19
+#define FMN_SPELLID_PUMPKIN 21
 
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
@@ -244,6 +246,10 @@ struct fmn_door {
   uint8_t dstx;
   uint8_t dsty;
   uint16_t pad;
+  /* Use as a door, pretty obvious.
+   * Can also be abused for other purposes:
+   *  - transmogrify: mapid==0, dstx=0x80(to),0x40(from),0xc0(toggle), dsty=state(nonzero)
+   */
 };
 
 /* App must define this.
@@ -305,7 +311,8 @@ extern struct fmn_global {
   float illumination_time;
   uint8_t cheesing;
   uint8_t spell_repudiation; // app sets to 0xff to begin repudiation (upon ending the wand action). platform handles from there.
-  uint16_t pad3;
+  uint8_t transmogrification; // 0=normal, 1=pumpkin
+  uint8_t pad3;
   float invisibility_time;
   
   // Relative position of the secret the compass should point to.

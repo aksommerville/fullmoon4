@@ -25,7 +25,7 @@ export class MapRenderer {
     
     this.poiImages = {};
     const poiImagePromises = [];
-    for (const name of ["sprite", "exit", "entrance", "hero"]) {
+    for (const name of ["sprite", "exit", "entrance", "hero", "transmogrify"]) {
       const promise = new Promise((resolve, reject) => {
         const image = new Image();
         image.onload = resolve;
