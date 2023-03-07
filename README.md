@@ -18,38 +18,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 ### March
 
-- [x] Spells.
-- - [x] Rain
-- - [x] Wind
-- - [x] Slow motion
-- - [x] Teleport home
-- - [x] 4 or 5 other teleport spells? Depends what the world looks like.
-- - [x] Opening
-- - [x] Invisibility
-- - [x] (song) Reveille
-- - [x] (song) Lullabye
-- - [x] (song) Bloom
-- - [x] (song) Revelations
-- - [x] (song) Come Hither
-- - [x] (song) Go Thither
-- [x] Refine items.
-- - [x] Seed: Summon a bird.
-- - [x] Pitcher: advance plants when poured
-- - [x] Shovel: Needs a new face tile, show some effort.
-- - [x] Violin: Should linger a bit after completion, and I think nix the input so she doesn't start walking.
 - [ ] Sprites:
-- - [x] Sawblades like v1
-- - [x] Firewall
-- - [x] Chalk-aware sentinel
-- - [x] Raccoon, throws acorns
-- - [x] Rat. Push the hero when in line of sight.
-- - [x] Invisibility for rat and raccoon, you forgot!
-- - [x] Rabbit that teaches you a song.
-- - [x] Farmer that plants and waters a seed.
-- - [x] Rival witch that turns you into a pumpkin.
-- - - ...by casting The Pumpkin Spell, which you can too.
-- - [x] Automatic pitchfork
-- - [ ] Lobster
+- - [x] Lobster
 - - [ ] Toll troll
 - - [ ] Little fire-breathing lizard
 - - [ ] Decorative blooming plants? Would help to explain the rabbit's deal.

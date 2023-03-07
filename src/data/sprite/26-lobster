@@ -1,0 +1,7 @@
+controller lobster
+image 3
+tile 0x0b
+style tile
+physics motion edge sprites solid hole blowable
+radius 0.4
+invmass 128

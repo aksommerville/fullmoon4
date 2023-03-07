@@ -33,6 +33,10 @@ struct fmn_sprite {
   void (*pressure)(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir);
   void (*static_pressure)(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir);
   
+  /* Should only be used by non-physical sprites.
+   * If you have FMN_PHYSICS_SPRITES, you'll get these calls unpredictably, since regular collision detection might escape them.
+   * Use (pressure) and check (presser->style).
+   */
   void (*hero_collision)(struct fmn_sprite *sprite,struct fmn_sprite *hero);
   
   /* Notify sprite that the hero has done something, possibly scoped to this sprite specifically.
@@ -124,6 +128,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_farmer        25
 #define FMN_SPRCTL_moonsong      26
 #define FMN_SPRCTL_pitchfork     27
+#define FMN_SPRCTL_lobster       28
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -153,7 +158,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(toast) \
   _(farmer) \
   _(moonsong) \
-  _(pitchfork)
+  _(pitchfork) \
+  _(lobster)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

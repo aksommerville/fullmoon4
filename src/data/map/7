@@ -17,3 +17,6 @@ neighborn 9
 song 3
 neighborw 21
 sprite 8 11 firewall 0 0 0
+sprite 10 6 26 0 0 0
+sprite 9 2 26 0 0 0
+sprite 16 6 26 0 0 0
