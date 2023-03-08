@@ -32,6 +32,7 @@ int fmn_hero_reset() {
       FMN_PHYSICS_SPRITES|
       FMN_PHYSICS_SOLID|
       ((fmn_global.active_item==FMN_ITEM_BROOM)?0:FMN_PHYSICS_HOLE)|
+      FMN_PHYSICS_BLOWABLE|
     0;
     fmn_hero.sprite->radius=0.250f;
     fmn_hero.sprite->veldecay=0.0f; // We override velocity management completely; veldecay is irrelevant.

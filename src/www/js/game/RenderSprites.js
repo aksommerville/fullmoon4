@@ -62,6 +62,10 @@ export class RenderSprites {
             const frame = (this.frameCount >> 3) & 1;
             this.renderBasics.tile(ctx, sprite.x * tilesize, sprite.y * tilesize, srcImage, sprite.tileid + frame, sprite.xform);
           } break;
+        case this.constants.SPRITE_STYLE_EIGHTFRAME: {
+            const frame = (this.frameCount >> 1) & 7;
+            this.renderBasics.tile(ctx, sprite.x * tilesize, sprite.y * tilesize, srcImage, sprite.tileid + frame, sprite.xform);
+          } break;
 
         case this.constants.SPRITE_STYLE_DOUBLEWIDE: if (sprite.xform & this.constants.XFORM_XREV) {
             this.renderBasics.tile(ctx, sprite.x * tilesize - (tilesize >> 1), sprite.y * tilesize, srcImage, sprite.tileid + 1, sprite.xform);

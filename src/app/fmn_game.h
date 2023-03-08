@@ -41,10 +41,29 @@ void fmn_gs_set_bit(uint16_t p,uint8_t v);
 
 /* Game will call whenever this gs bit changes.
  * All listeners are blindly dropped at each map transition.
+ * Sprites don't normally unlisten themselves. (but if you can be destroyed, you must)
  */
 uint16_t fmn_gs_listen_bit(uint16_t p,void (*cb)(void *userdata,uint16_t p,uint8_t v),void *userdata);
 void fmn_gs_unlisten(uint16_t id);
 void fmn_gs_drop_listeners();
+
+/* Extra mechanism for arbitrary update logic.
+ * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.
+ * Any map_singleton registration with a (discriminator) already in use is presumed redundant and will be ignored.
+ * Use the address of the function where you call this, or something similarly unique.
+ * (cb_update) will be called once per global update, just like sprites. But after all sprite updates.
+ * (cb_cleanup) will be called once, as the map unloads.
+ * (cb_cleanup) is NOT called if you unregister manually.
+ */
+uint16_t fmn_game_register_map_singleton(
+  void *discriminator,
+  void (*cb_update)(void *userdata,float elapsed),
+  void (*cb_cleanup)(void *userdata),
+  void *userdata
+);
+void fmn_game_unregister_map_singleton(uint16_t id);
+void fmn_game_drop_map_singletons();
+void fmn_game_update_map_singletons(float elapsed);
 
 /* If you want raw sketches, read them straight off fmn_global.sketchv.
  * "word" gives you each horizontally-contiguous range of sketches, interpretted as roman letters.

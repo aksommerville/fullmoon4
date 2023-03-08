@@ -33,7 +33,7 @@ export class SpriteService {
       case "image": return "Image ID";
       case "tile": return "0..255";
       case "xform": return "Multi: xrev, yrev, swap";
-      case "style": return "One: hidden, tile, hero, fourframe, firenozzle, firewall, pitchfork, twoframe";
+      case "style": return "One: hidden, tile, hero, fourframe, firenozzle, firewall, pitchfork, twoframe, eightframe";
       case "physics": return "Multi: motion, edge, sprites, solid, hole, blowable";
       case "decay": return "0.0 <= n < 256.0";
       case "radius": return "0.0 <= n < 256.0";

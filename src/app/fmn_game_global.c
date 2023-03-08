@@ -34,6 +34,7 @@ static void cb_spawn(
 int fmn_game_load_map(int mapid) {
   fmn_sprites_clear();
   fmn_gs_drop_listeners();
+  fmn_game_drop_map_singletons();
   int err=fmn_load_map(mapid,cb_spawn);
   if (err<=0) return err;
   if (fmn_hero_reset()<0) return -1;
@@ -253,6 +254,7 @@ void fmn_game_update(float elapsed) {
   fmn_sprites_update(weather_adjusted_time,elapsed);
   fmn_hero_update(elapsed);
   fmn_sprites_sort_partial();
+  fmn_game_update_map_singletons(elapsed);
 
   int8_t x,y;
   if (fmn_hero_get_quantized_position(&x,&y)) {
@@ -478,5 +480,70 @@ void fmn_gs_set_bit(uint16_t p,uint8_t v) {
     const struct fmn_gs_listener *listener=fmn_gs_listenerv+i;
     if (listener->p!=p) continue;
     listener->cb(listener->userdata,p,v);
+  }
+}
+
+/* Map singletons.
+ */
+ 
+#define FMN_MAP_SINGLETON_LIMIT 16
+static struct fmn_map_singleton {
+  uint16_t id;
+  void *discriminator;
+  void *userdata;
+  void (*cb_update)(void *userdata,float elapsed);
+  void (*cb_cleanup)(void *userdata);
+} fmn_map_singletonv[FMN_MAP_SINGLETON_LIMIT];
+static uint8_t fmn_map_singletonc=0;
+static uint16_t fmn_map_singleton_next_id=1;
+
+uint16_t fmn_game_register_map_singleton(
+  void *discriminator,
+  void (*cb_update)(void *userdata,float elapsed),
+  void (*cb_cleanup)(void *userdata),
+  void *userdata
+) {
+  const struct fmn_map_singleton *v=fmn_map_singletonv;
+  uint8_t i=fmn_map_singletonc;
+  for (;i-->0;v++) {
+    if (v->discriminator==discriminator) return v->id;
+  }
+  if (fmn_map_singletonc>=FMN_MAP_SINGLETON_LIMIT) return 0;
+  struct fmn_map_singleton *singleton=fmn_map_singletonv+fmn_map_singletonc++;
+  singleton->id=fmn_map_singleton_next_id++;
+  if (!fmn_map_singleton_next_id) fmn_map_singleton_next_id=1;
+  singleton->discriminator=discriminator;
+  singleton->userdata=userdata;
+  singleton->cb_update=cb_update;
+  singleton->cb_cleanup=cb_cleanup;
+  return singleton->id;
+}
+
+void fmn_game_unregister_map_singleton(uint16_t id) {
+  if (!id) return;
+  uint8_t i=fmn_map_singletonc;
+  while (i-->0) {
+    if (fmn_map_singletonv[i].id==id) {
+      fmn_map_singletonc--;
+      memmove(fmn_map_singletonv+i,fmn_map_singletonv+i+1,sizeof(struct fmn_map_singleton)*(fmn_map_singletonc-i));
+      return;
+    }
+  }
+}
+
+void fmn_game_drop_map_singletons() {
+  struct fmn_map_singleton *v=fmn_map_singletonv;
+  uint8_t i=fmn_map_singletonc;
+  for (;i-->0;v++) {
+    if (v->cb_cleanup) v->cb_cleanup(v->userdata);
+  }
+  fmn_map_singletonc=0;
+}
+
+void fmn_game_update_map_singletons(float elapsed) {
+  struct fmn_map_singleton *v=fmn_map_singletonv;
+  uint8_t i=fmn_map_singletonc;
+  for (;i-->0;v++) {
+    if (v->cb_update) v->cb_update(v->userdata,elapsed);
   }
 }

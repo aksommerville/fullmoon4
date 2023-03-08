@@ -155,15 +155,16 @@ int rand();
 #define FMN_SFX_COWBELL 56 /* ...end GM */
 #define FMN_SFX_PAYMENT 57
 
-#define FMN_SPRITE_STYLE_HIDDEN     1 /* don't render */
-#define FMN_SPRITE_STYLE_TILE       2 /* single tile */
-#define FMN_SPRITE_STYLE_HERO       3 /* special */
-#define FMN_SPRITE_STYLE_FOURFRAME  4 /* 4 tiles arranged horizontally, automatic animation */
-#define FMN_SPRITE_STYLE_FIRENOZZLE 5 /* special */
-#define FMN_SPRITE_STYLE_FIREWALL   6 /* special */
-#define FMN_SPRITE_STYLE_DOUBLEWIDE 7 /* renders a second tile (id+1) to the right of the named one, and cheats left to stay centered */
-#define FMN_SPRITE_STYLE_PITCHFORK  8 /* special */
-#define FMN_SPRITE_STYLE_TWOFRAME   9 /* 2 tiles arranged horizontally, automatic animation */
+#define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
+#define FMN_SPRITE_STYLE_TILE        2 /* single tile */
+#define FMN_SPRITE_STYLE_HERO        3 /* special */
+#define FMN_SPRITE_STYLE_FOURFRAME   4 /* 4 tiles arranged horizontally, automatic animation */
+#define FMN_SPRITE_STYLE_FIRENOZZLE  5 /* special */
+#define FMN_SPRITE_STYLE_FIREWALL    6 /* special */
+#define FMN_SPRITE_STYLE_DOUBLEWIDE  7 /* renders a second tile (id+1) to the right of the named one, and cheats left to stay centered */
+#define FMN_SPRITE_STYLE_PITCHFORK   8 /* special */
+#define FMN_SPRITE_STYLE_TWOFRAME    9 /* 2 tiles arranged horizontally, automatic animation */
+#define FMN_SPRITE_STYLE_EIGHTFRAME 10 /* 8 tiles arranged horizontally, automatic animation */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4
