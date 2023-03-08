@@ -326,12 +326,13 @@ void fmn_sprites_update(float elapsed,float hero_elapsed) {
       // ie, limit one half-tile per update.
       // This is a safety mechanism to prevent walking through walls and such.
       // (as i'm writing this, the hero's speed when broom and cheese in play actually does exceed the nyquist at 60 Hz (32 m/s)).
+      // ...actually instead of a half-tile, it makes more sense to clamp to the sprite's radius i think.
       float dx=sprite->velx*elapsed;
       float dy=sprite->vely*elapsed;
-      if (dx<=-0.5f) dx=-0.499f;
-      else if (dx>=0.5f) dx=0.499f;
-      if (dy<=-0.5f) dy=-0.499f;
-      else if (dy>=0.5f) dy=0.499f;
+      if (dx<=-sprite->radius) dx=-sprite->radius+0.001f;
+      else if (dx>=sprite->radius) dx=sprite->radius-0.001f;
+      if (dy<=-sprite->radius) dy=-sprite->radius+0.001f;
+      else if (dy>=sprite->radius) dy=sprite->radius-0.001f;
       
       // Apply velocity.
       sprite->x+=dx;

@@ -60,14 +60,13 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
         case FMN_CELLPHYSICS_SAP:
         case FMN_CELLPHYSICS_SAP_NOCHALK:
         case FMN_CELLPHYSICS_REVELABLE: {
-            if (!(features&FMN_PHYSICS_SOLID)) continue;
+            if (!(features&FMN_PHYSICS_SOLID)) goto _vacant_;
           } break;
         case FMN_CELLPHYSICS_HOLE:
         case FMN_CELLPHYSICS_WATER: {
-            if (!(features&FMN_PHYSICS_HOLE)) continue;
+            if (!(features&FMN_PHYSICS_HOLE)) goto _vacant_;
           } break;
-        // If we add new tile physics, they go here.
-        default: vacantx=col; vacanty=row; continue;
+        default: _vacant_: vacantx=col; vacanty=row; continue;
       }
       
       if (!cx||!cy) return 1;
@@ -108,6 +107,38 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
    */
   if ((*cx<=-1.0f)||(*cx>=1.0f)||(*cy<=-1.0f)||(*cy>=1.0f)) {
     if (vacantx>=0) {
+    
+      // Double-check (vacant). If the cell containing the hero's center is vacant, that's the one we want.
+      // Failing to do this means the hero can skip thru southern corners of a checkerboard.
+      int8_t midx=(int8_t)a->x;
+      int8_t midy=(int8_t)a->y;
+      if (
+        ((midx!=vacantx)||(midy!=vacanty))&&
+        (midx>=0)&&(midy>=0)&&(midx<FMN_COLC)&&(midy<FMN_ROWC)
+      ) {
+        uint8_t physics=fmn_global.cellphysics[fmn_global.map[midy*FMN_COLC+midx]];
+        switch (physics) {
+          case FMN_CELLPHYSICS_SOLID:
+          case FMN_CELLPHYSICS_UNCHALKABLE:
+          case FMN_CELLPHYSICS_SAP:
+          case FMN_CELLPHYSICS_SAP_NOCHALK:
+          case FMN_CELLPHYSICS_REVELABLE: {
+              if (!(features&FMN_PHYSICS_SOLID)) {
+                vacantx=midx;
+                vacanty=midy;
+              }
+            } break;
+          case FMN_CELLPHYSICS_HOLE:
+          case FMN_CELLPHYSICS_WATER: {
+              if (!(features&FMN_PHYSICS_HOLE)) {
+                vacantx=midx;
+                vacanty=midy;
+              }
+            } break;
+          default: vacantx=midx; vacanty=midy;
+        }
+      }
+    
       float vmx=vacantx+0.5f,vmy=vacanty+0.5f;
       if (a->x>=vmx) *cx=vacantx+1.0f-a->x-a->radius;
       else *cx=vacantx-a->x+a->radius;

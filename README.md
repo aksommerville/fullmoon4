@@ -23,7 +23,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Prevent wind and rain from happening indoors.
 - [ ] Initial wind per map.
 - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
-- [ ] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
+- [x] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
 - [ ] Registry of gsbit usage. Let us use symbolic names, avoid conflict, etc.
 - [ ] illumination_time can now be set by things other than matches -- we're rendering the match as lit incorrectly
 
