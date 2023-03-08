@@ -79,6 +79,7 @@ function rewriteInput_style(src) {
     case "firewall": v = 6; break;
     case "doublewide": v = 7; break;
     case "pitchfork": v = 8; break;
+    case "twoframe": v = 9; break;
   }
   return ["style", v];
 }

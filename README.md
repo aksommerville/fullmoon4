@@ -21,7 +21,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Sprites:
 - - [x] Lobster
 - - [x] Toll troll
-- - [ ] Little fire-breathing lizard
+- - [x] Little fire-breathing lizard
 - - [ ] Decorative blooming plants? Would help to explain the rabbit's deal.
 - - [ ] Conveyor belt
 - [ ] Bloom plants on a timer.
@@ -31,6 +31,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
 - [ ] Registry of gsbit usage. Let us use symbolic names, avoid conflict, etc.
+- [ ] illumination_time can now be set by things other than matches -- we're rendering the match as lit incorrectly
 
 ### April
 

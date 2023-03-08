@@ -18,3 +18,5 @@ song 2
 neighborw 22
 sprite 6 3 pitchfork 1 0 0
 sprite 12 2 pitchfork 0 0 0
+sprite 9 6 lizard 0 0 0
+sprite 14 7 lizard 0 0 0

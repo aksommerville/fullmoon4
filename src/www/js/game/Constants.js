@@ -86,6 +86,7 @@ export class Constants {
     this.SPRITE_STYLE_FIREWALL = 6;
     this.SPRITE_STYLE_DOUBLEWIDE = 7;
     this.SPRITE_STYLE_PITCHFORK = 8;
+    this.SPRITE_STYLE_TWOFRAME = 9;
     
     this.SPRITE_BV_SIZE = 8;
     this.SPRITE_SV_SIZE = 4;

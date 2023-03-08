@@ -163,6 +163,7 @@ int rand();
 #define FMN_SPRITE_STYLE_FIREWALL   6 /* special */
 #define FMN_SPRITE_STYLE_DOUBLEWIDE 7 /* renders a second tile (id+1) to the right of the named one, and cheats left to stay centered */
 #define FMN_SPRITE_STYLE_PITCHFORK  8 /* special */
+#define FMN_SPRITE_STYLE_TWOFRAME   9 /* 2 tiles arranged horizontally, automatic animation */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4

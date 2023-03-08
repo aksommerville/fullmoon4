@@ -1,0 +1,7 @@
+controller lizard
+image 3
+tile 0x46
+style tile
+physics motion edge sprites solid hole blowable
+radius 0.25
+invmass 128
