@@ -25,6 +25,7 @@ static const uint8_t rabbit_song[]={
 #define tileid0 sprite->bv[0]
 #define sleeping sprite->bv[1]
 #define songp sprite->bv[2]
+#define applaud sprite->bv[3]
 #define clock sprite->fv[0]
 #define songclock sprite->fv[1]
 
@@ -77,6 +78,11 @@ static void _rabbit_update(struct fmn_sprite *sprite,float elapsed) {
     songp=0;
     return;
   }
+  if (applaud) {
+    clock+=elapsed;
+    sprite->tileid=tileid0+0x55+(((int)(clock*8.0f))&1);
+    return;
+  }
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   if (herox<sprite->x) sprite->xform=0;
@@ -101,6 +107,7 @@ static int16_t _rabbit_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: if (!sleeping) { sleeping=1; fmn_sprite_generate_zzz(sprite); } break;
         case FMN_SPELLID_REVEILLE: sleeping=0; break;
+        case FMN_SPELLID_BLOOM: applaud=1; break;
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
   }

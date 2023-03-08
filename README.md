@@ -22,7 +22,8 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [x] Lobster
 - - [x] Toll troll
 - - [x] Little fire-breathing lizard
-- - [ ] Decorative blooming plants? Would help to explain the rabbit's deal.
+- - [x] Decorative blooming plants? Would help to explain the rabbit's deal.
+- - [x] Make the rabbit stop playing and applaud, if you play The Song of Blooming.
 - - [ ] Conveyor belt
 - [ ] Bloom plants on a timer.
 - [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
