@@ -35,7 +35,7 @@ export class Globals {
     
     // "p_" Record some pointers into fmn_global.
     this.p_map_end = this.p_fmn_global + 8 + this.constants.COLC * this.constants.ROWC;
-    this.p_cellphysics = this.p_map_end + 12;
+    this.p_cellphysics = this.p_map_end + 16;
     this.p_cellphysics_end = this.p_cellphysics + 256;
     this.p_sprite_storage = this.p_cellphysics_end;
     this.p_sprite_storage_end = this.p_sprite_storage + this.constants.SPRITE_STORAGE_SIZE;
@@ -58,7 +58,8 @@ export class Globals {
     this.g_neighborn = new Uint16Array(this.memU8.buffer, this.p_map_end + 6, 1);
     this.g_neighbors = new Uint16Array(this.memU8.buffer, this.p_map_end + 8, 1);
     this.g_mapdark = new Uint8Array(this.memU8.buffer, this.p_map_end + 10, 1);
-    this.g_herostartp = new Uint8Array(this.memU8.buffer, this.p_map_end + 11, 1);
+    this.g_indoors = new Uint8Array(this.memU8.buffer, this.p_map_end + 11, 1);
+    this.g_herostartp = new Uint8Array(this.memU8.buffer, this.p_map_end + 15, 1);
     this.g_cellphysics = new Uint8Array(this.memU8.buffer, this.p_cellphysics, 256);
     this.g_sprite_storage = new Uint8Array(this.memU8.buffer, this.p_sprite_storage, this.constants.SPRITE_STORAGE_SIZE);
     this.g_doorv = new Uint8Array(this.memU8.buffer, this.p_sprite_storage_end, this.constants.DOOR_SIZE * this.constants.DOOR_LIMIT);
@@ -162,6 +163,7 @@ export class Globals {
     this.g_neighborn[0] = map.neighborn;
     this.g_neighbors[0] = map.neighbors;
     this.g_mapdark[0] = map.dark;
+    this.g_indoors[0] = map.indoors;
     this.g_herostartp[0] = map.herostartp;
     if (map.doors && map.doors.length) {
       const doorc = Math.min(map.doors.length, this.constants.DOOR_LIMIT);

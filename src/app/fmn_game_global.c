@@ -312,6 +312,10 @@ static int fmn_rain_begin_1(struct fmn_sprite *sprite,void *dummy) {
 }
  
 static void fmn_rain_begin() {
+  if (fmn_global.indoors) {
+    //TODO repudiation?
+    return;
+  }
   fmn_sound_effect(FMN_SFX_RAIN);
   fmn_global.rain_time=FMN_RAIN_TIME;
   fmn_sprites_for_each(fmn_rain_begin_1,0);
@@ -328,6 +332,10 @@ static void fmn_rain_begin() {
 }
  
 static void fmn_wind_begin(uint8_t dir) {
+  if (fmn_global.indoors) {
+    //TODO repudiation?
+    return;
+  }
   
   // If wind is already blowing, and she selected the opposite direction, cancel it.
   // This will be important for maps with initial wind, if we ever do that.

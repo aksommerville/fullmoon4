@@ -219,6 +219,7 @@ export class DataService {
       sprites: [],
       cellphysics: null,
       dark: 0,
+      indoors: 0,
       herostartp: (this.constants.ROWC >> 1) * this.constants.COLC + (this.constants.COLC >> 1),
     };
     map.cells.set(new Uint8Array(src.buffer, src.byteOffset + p, cellsLength));
@@ -250,6 +251,7 @@ export class DataService {
   _decodeMapCommand(map, opcode, src, p, c) {
     switch (opcode) {
       case 0x01: map.dark = 1; break;
+      case 0x02: map.indoors = 1; break;
       case 0x20: map.songId = src[p]; break;
       case 0x21: map.bgImageId = src[p]; break;
       case 0x22: map.herostartp = src[p]; break;

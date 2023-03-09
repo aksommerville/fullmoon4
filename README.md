@@ -20,7 +20,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 - [ ] Bloom plants on a timer.
 - [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
-- [ ] Prevent wind and rain from happening indoors.
+- [x] Prevent wind and rain from happening indoors.
 - [ ] Initial wind per map.
 - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - [x] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
@@ -76,6 +76,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] verify: Firewall must be on edge, with at least two vacant cells, and a solid on both ends.
 - [ ] verify: Chalk duplicates
 - [ ] verify: Resources named by sprite config, eg chalkguard strings
+- [ ] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.

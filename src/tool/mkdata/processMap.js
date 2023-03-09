@@ -158,6 +158,7 @@ function decodeCommand(words) {
     case "dark": return decodeCommand_noarg(0x01, words.slice(1));
     case "hero": return decodeCommand_xy(0x22, words.slice(1));
     case "transmogrify": return decodeCommand_transmogrify(words.slice(1));
+    case "indoors": return decodeCommand_noarg(0x02, words.slice(1));
   }
   return null;
 }
