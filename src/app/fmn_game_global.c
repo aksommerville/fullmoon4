@@ -125,11 +125,55 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
   return 0;
 }
 
-/* If we've stepped on a flowered plant, collect it.
+/* Collect item.
  */
+ 
+const uint8_t fmn_item_default_quantities[FMN_ITEM_COUNT]={
+  [FMN_ITEM_SEED]=5,
+  [FMN_ITEM_COIN]=5,
+  [FMN_ITEM_MATCH]=5,
+  [FMN_ITEM_CHEESE]=5,
+};
 
 static void cb_modal_dummy() {
 }
+ 
+uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
+
+  // Get out if invalid, or we can't pick up more of it. Establish quantity.
+  if (itemid>=FMN_ITEM_COUNT) return 0;
+  if (fmn_item_default_quantities[itemid]) {
+    if (!quantity) quantity=fmn_item_default_quantities[itemid];
+  } else {
+    quantity=0;
+  }
+  if (fmn_global.itemv[itemid]&&!quantity) return 0;
+  if (quantity) {
+    if (fmn_global.itemqv[itemid]==0xff) return 0;
+    if (fmn_global.itemqv[itemid]>0xff-quantity) fmn_global.itemqv[itemid]=0xff;
+    else fmn_global.itemqv[itemid]+=quantity;
+  }
+  
+  // First time picking something up, do the bells and whistles.
+  if (!fmn_global.itemv[itemid]) {
+    fmn_global.itemv[itemid]=1;
+    fmn_global.selected_item=itemid;
+    fmn_sound_effect(FMN_SFX_ITEM_MAJOR);
+    fmn_begin_menu(FMN_MENU_TREASURE,itemid,cb_modal_dummy);
+    fmn_hero_kill_velocity();
+    
+  // Subsequent pick-ups, do a more passive celebration.
+  } else {
+    fmn_global.show_off_item=itemid;
+    fmn_global.show_off_item_time=0xff;
+    fmn_sound_effect(FMN_SFX_ITEM_MINOR);
+  }
+  
+  return 1;
+}
+
+/* If we've stepped on a flowered plant, collect it.
+ */
  
 static void fmn_game_check_plant_collection(uint8_t x,uint8_t y) {
   struct fmn_plant *plant=fmn_global.plantv;
@@ -146,23 +190,11 @@ static void fmn_game_check_plant_collection(uint8_t x,uint8_t y) {
       case FMN_PLANT_FRUIT_COIN: itemid=FMN_ITEM_COIN; break;
     }
     if (itemid) {
-      // Abort if we are completely full; leave it on the vine.
-      if (fmn_global.itemqv[itemid]>=0xff) continue;
-      if (fmn_global.itemqv[itemid]>0xff-quantity) fmn_global.itemqv[itemid]=0xff;
-      else fmn_global.itemqv[itemid]+=quantity;
+      if (!fmn_collect_item(itemid,quantity)) {
+        continue;
+      }
       plant->state=FMN_PLANT_STATE_DEAD;
       fmn_map_dirty();
-      if (fmn_global.itemv[itemid]) {
-        fmn_global.show_off_item=itemid;
-        fmn_global.show_off_item_time=0xff;
-        fmn_sound_effect(FMN_SFX_ITEM_MINOR);
-      } else {
-        fmn_global.itemv[itemid]=1;
-        fmn_global.selected_item=itemid;
-        fmn_sound_effect(FMN_SFX_ITEM_MAJOR);
-        fmn_begin_menu(FMN_MENU_TREASURE,itemid,cb_modal_dummy);
-        fmn_hero_kill_velocity();
-      }
     }
     return;
   }

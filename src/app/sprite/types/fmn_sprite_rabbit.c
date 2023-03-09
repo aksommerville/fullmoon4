@@ -78,15 +78,15 @@ static void _rabbit_update(struct fmn_sprite *sprite,float elapsed) {
     songp=0;
     return;
   }
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  if (herox<sprite->x) sprite->xform=0;
+  else sprite->xform=FMN_XFORM_XREV;
   if (applaud) {
     clock+=elapsed;
     sprite->tileid=tileid0+0x55+(((int)(clock*8.0f))&1);
     return;
   }
-  float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  if (herox<sprite->x) sprite->xform=0;
-  else sprite->xform=FMN_XFORM_XREV;
   clock+=elapsed;
   sprite->tileid=tileid0+((int)(clock*4.0f))%4;
   songclock+=elapsed;

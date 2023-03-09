@@ -14,6 +14,9 @@
 #define FMN_SLOWMO_RATE 0.25f
 #define FMN_INVISIBILITY_TIME 5.0f
 
+// Zero for non-quantity items, or the quantity to collect by default.
+extern const uint8_t fmn_item_default_quantities[FMN_ITEM_COUNT];
+
 int fmn_game_init();
 int fmn_game_load_map(int mapid);
 void fmn_game_input(uint8_t bit,uint8_t value,uint8_t state);
@@ -35,6 +38,12 @@ uint8_t fmn_secrets_get_guide_dir();
 uint8_t fmn_spell_eval(const uint8_t *v,uint8_t c);
 uint8_t fmn_song_eval(const uint8_t *v,uint8_t c);
 void fmn_spell_cast(uint8_t spellid);
+
+/* (quantity) zero for default, and we ignore it if irrelevant.
+ * Returns nonzero if player's inventory actually changed.
+ * If not, we do perform whatever rejection is warranted.
+ */
+uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity);
 
 uint8_t fmn_gs_get_bit(uint16_t p);
 void fmn_gs_set_bit(uint16_t p,uint8_t v);

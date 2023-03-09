@@ -1,4 +1,5 @@
 #include "app/sprite/fmn_sprite.h"
+#include "app/fmn_game.h"
 
 #define bird_summoned sprite->bv[0]
 #define bird_clock sprite->fv[0]
@@ -47,12 +48,8 @@ static void _seed_update(struct fmn_sprite *sprite,float elapsed) {
  */
  
 static void _seed_hero_collision(struct fmn_sprite *sprite,struct fmn_sprite *hero) {
-  if (fmn_global.itemqv[FMN_ITEM_SEED]>=0xff) return;
+  if (!fmn_collect_item(FMN_ITEM_SEED,1)) return;
   fmn_sprite_kill(sprite);
-  fmn_global.itemqv[FMN_ITEM_SEED]++;
-  fmn_global.show_off_item=FMN_ITEM_SEED;
-  fmn_global.show_off_item_time=0xff;
-  fmn_sound_effect(FMN_SFX_ITEM_MINOR);
 }
 
 /* Type definition.

@@ -14,33 +14,27 @@ There will be a "platform" layer in Javascript, and an "app" layer in C compiled
 
 I want this thing ready to show off at GDEX 2023. Anything not necessary for demoing there can wait.
 
-### February
+And tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
 ### March
 
-- [ ] Bloom plants on a timer.
-- [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
-- [x] Prevent wind and rain from happening indoors.
-- [x] Initial wind per map.
 - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
-- [x] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
-- [x] Registry of gsbit usage. Let us use symbolic names, avoid conflict, etc.
-- [x] illumination_time can now be set by things other than matches -- we're rendering the match as lit incorrectly
+- [ ] Persist plants and sketches across map loads.
+- [ ] Bloom plants on a timer.
+- [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
+- [ ] Bonfire: Fizzle and smoke when extinguished.
+- [ ] Fine-tune song endings so they loop seamlessly.
 
 ### April
 
 - [ ] Graphics.
 - [ ] Maps for demo.
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
-- [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
-- [ ] Persist plants and sketches across map loads.
 - [ ] UI for saved game management.
-- [ ] Fine-tune song endings so they loop seamlessly.
 - [ ] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
 - - Would it help to scale up only by integers? That's probably a good idea in any case.
 - - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
 - [ ] Finalize sound effects.
-- [ ] Bonfire: Fizzle and smoke when extinguished.
 - [ ] Hero's shadow when flying goes under the conveyor belts, but over would look more natural. Can anything be done?
 
 ### May
@@ -64,10 +58,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] MapAllUi: Point out neighbor mismatches.
 - - [ ] MapAllUi: Populate tattle.
 - - [ ] Delete maps (and resources in general)
-- - [x] SpriteUi: Helper to browse for image and tile. (eg ImageAllUi in a modal)
-- - - Consider using `verify` instead of `editor` for this.
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
-- [ ] ^ or if not all that, we at least need a repository of named `gs` fields.
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] verify: Check neighbor edges cell by cell (be mindful of firewall)
 - [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
@@ -103,7 +94,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Other platforms:
 - - [ ] Web wrapper eg Electron
 - - [ ] Linux
-- - [ ] Tiny
+- - [ ] Tiny. I don't think it will work, but prove it.
 - - [ ] MacOS
 - - [ ] Windows
 - - [ ] iOS
@@ -116,7 +107,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - - [ ] 68k Mac
 - - [ ] Wii
 - - [ ] Modern consoles?
-- - [ ] SNES? I know it won't happen but you got to try
 - - [ ] node or deno? Shame to write all this Javascript and use it for just one platform...
 
 ### Disambiguation

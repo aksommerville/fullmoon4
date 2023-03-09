@@ -1,6 +1,7 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/sprite/fmn_physics.h"
 #include "app/hero/fmn_hero.h"
+#include "app/fmn_game.h"
 
 #define COIN_SPEED 12.0f
 
@@ -42,13 +43,7 @@ static void _coin_update(struct fmn_sprite *sprite,float elapsed) {
  
 static void _coin_pressure(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir) {
   if (presser&&(presser->style==FMN_SPRITE_STYLE_HERO)) {
-    fmn_sprite_kill(sprite);
-    if (fmn_global.itemqv[FMN_ITEM_COIN]<0xff) {
-      fmn_global.itemqv[FMN_ITEM_COIN]++;
-      fmn_global.show_off_item=FMN_ITEM_COIN;
-      fmn_global.show_off_item_time=0xff;
-      fmn_sound_effect(FMN_SFX_ITEM_MINOR);
-    }
+    if (fmn_collect_item(FMN_ITEM_COIN,1)) fmn_sprite_kill(sprite);
   } else {
     uint8_t movedir=fmn_dir_from_vector(sprite->velx,sprite->vely);
     if (movedir==fmn_dir_reverse(dir)) {
