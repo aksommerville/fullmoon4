@@ -621,6 +621,13 @@ static void fmn_hero_feather_update() {
   if (target&&target->interact) target->interact(target,FMN_ITEM_FEATHER,0);
 }
 
+/* Compass: When "used", refresh the secret location.
+ */
+ 
+static void fmn_hero_compass_begin() {
+  fmn_secrets_refresh_for_map();
+}
+
 /* Dispatch on item type.
  */
  
@@ -669,6 +676,7 @@ void fmn_hero_item_begin() {
     case FMN_ITEM_VIOLIN: fmn_hero_violin_begin(); break;
     case FMN_ITEM_CHALK: fmn_hero_chalk_begin(); break;
     case FMN_ITEM_FEATHER: fmn_hero_feather_begin(); break;
+    case FMN_ITEM_COMPASS: fmn_hero_compass_begin(); break;
   }
 }
 

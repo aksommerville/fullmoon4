@@ -34,6 +34,7 @@ import { Constants } from "./Constants.js";
 import { Song } from "../synth/Song.js";
 import { Instrument } from "../synth/Instrument.js";
 import { Sound } from "../synth/Sound.js";
+import { FullmoonMap } from "./FullmoonMap.js";
 
 const RESTYPE_IMAGE = 0x01;
 const RESTYPE_SONG = 0x02;
@@ -206,84 +207,11 @@ export class DataService {
     return image;
   }
   
-  //TODO Maps deserve a proper class.
-  _decodeMap(src, mapId) {
-    let p = 0, c = src.length;
-    const cellsLength = this.constants.COLC * this.constants.ROWC;
-    if (c < cellsLength) {
-      throw new Error(`Illegal length ${c} for map ${mapId}`);
-    }
-    const map = {
-      cells: new Uint8Array(cellsLength),
-      doors: [],
-      sprites: [],
-      cellphysics: null,
-      dark: 0,
-      indoors: 0,
-      wind: 0,
-      herostartp: (this.constants.ROWC >> 1) * this.constants.COLC + (this.constants.COLC >> 1),
-    };
-    map.cells.set(new Uint8Array(src.buffer, src.byteOffset + p, cellsLength));
-    p += cellsLength;
-    c -= cellsLength;
-    while (c > 0) {
-      const opcode = src[p++]; c--;
-      if (!opcode) break; // Explicit commands terminator.
-      let paylen = 0;
-      switch (opcode & 0xe0) {
-        case 0x00: paylen = 0; break;
-        case 0x20: paylen = 1; break;
-        case 0x40: paylen = 2; break;
-        case 0x60: paylen = 4; break;
-        case 0x80: paylen = 6; break;
-        case 0xa0: paylen = 8; break;
-        case 0xc0: if (!c) throw new Error(`Unexpected EOF in map ${mapId}`); paylen = src[p++]; c--; break;
-        case 0xe0: throw new Error(`Unknown opcode 0x${opcode.toString(16)} in map ${mapId}`);
-      }
-      if (paylen > c) throw new Error(`Unexpected EOF in map ${mapId}`);
-      this._decodeMapCommand(map, opcode, src, p, paylen);
-      p += paylen;
-      c -= paylen;
-    }
+  _decodeMap(src, id) {
+    const map = new FullmoonMap(src, this.constants);
+    map.id = id;
     map.cellphysics = this.getTileprops(map.bgImageId);
     return map;
-  }
-  
-  _decodeMapCommand(map, opcode, src, p, c) {
-    switch (opcode) {
-      case 0x01: map.dark = 1; break;
-      case 0x02: map.indoors = 1; break;
-      case 0x20: map.songId = src[p]; break;
-      case 0x21: map.bgImageId = src[p]; break;
-      case 0x22: map.herostartp = src[p]; break;
-      case 0x23: map.wind = src[p]; break;
-      case 0x40: map.neighborw = (src[p] << 8) | src[p + 1]; break;
-      case 0x41: map.neighbore = (src[p] << 8) | src[p + 1]; break;
-      case 0x42: map.neighborn = (src[p] << 8) | src[p + 1]; break;
-      case 0x43: map.neighbors = (src[p] << 8) | src[p + 1]; break;
-      case 0x44: map.doors.push({ // transmogrify
-          x: src[p] % this.constants.COLC,
-          y: Math.floor(src[p] / this.constants.COLC),
-          mapId: 0,
-          dstx: src[p + 1] & 0xc0,
-          dsty: src[p + 1] & 0x3f,
-        }); break;
-      case 0x60: map.doors.push({ // regular door
-          x: src[p] % this.constants.COLC,
-          y: Math.floor(src[p] / this.constants.COLC),
-          mapId: (src[p + 1] << 8) | src[p + 2],
-          dstx: src[p + 3] % this.constants.COLC,
-          dsty: Math.floor(src[p + 3] / this.constants.COLC),
-        }); break;
-      case 0x80: map.sprites.push({
-          x: src[p] % this.constants.COLC,
-          y: Math.floor(src[p] / this.constants.COLC),
-          spriteId: (src[p + 1] << 8) | src[p + 2],
-          arg0: src[p + 3],
-          arg1: src[p + 4],
-          arg2: src[p + 5],
-        }); break;
-    }
   }
   
   _decodeSprite(src, id) {

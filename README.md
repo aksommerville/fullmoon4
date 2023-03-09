@@ -18,15 +18,16 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] Persist plants and sketches across map loads.
 - [ ] Bloom plants on a timer.
 - [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [ ] Bonfire: Fizzle and smoke when extinguished.
 - [ ] Fine-tune song endings so they loop seamlessly.
+- [ ] Make the stubbed sound effects.
 
 ### April
 
+- [ ] Compass and crow: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] Graphics.
 - [ ] Maps for demo.
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
@@ -85,7 +86,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
 - [ ] Finish everything by Halloween. (to this point in the list at least)
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
-- [ ] Move Map decoding out of DataService into a class of its own.
+- [x] Move Map decoding out of DataService into a class of its own.
 - [ ] Unit tests.
 - - [ ] General-purpose test runner.
 - - [ ] C tests

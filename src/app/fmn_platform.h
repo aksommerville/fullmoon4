@@ -323,7 +323,7 @@ extern struct fmn_global {
   float invisibility_time;
   
   // Relative position of the secret the compass should point to.
-  // (0,0) is special, it means "nothing".
+  // (0,0) is special, it means "nothing". (zero is a valid cell, you just can't put a secret there).
   int16_t compassx;
   int16_t compassy;
   
@@ -428,5 +428,16 @@ void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
 
 // Platform is not required to terminate strings, and probably won't.
 uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id);
+
+/* Find a command in any map matching (v) according to (mask).
+ * If found, the relative position in local meters is written to (xy), and we return nonzero.
+ * Up to 8 bytes of a command can be considered, including the opcode.
+ * mask 0x01 is the opcode, 0x02 is the first payload byte, etc.
+ * (v) must contain dummies for the skipped bytes.
+ * eg to find a depumpkinning transmogrifier: mask=0x05, v=[0x44,0,0x41]
+ * Platforms are not expected to search very far.
+ * They are expected to search at least the current map and cardinal neighbors.
+ */
+uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v);
 
 #endif

@@ -59,6 +59,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
     this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
     this.wasmLoader.env.fmn_get_string = (dst, dsta, id) => this.getString(dst, dsta, id);
+    this.wasmLoader.env.fmn_find_map_command = (dstp, mask, vp) => this.findMapCommand(dstp, mask, vp);
     
     // Fetch the data archive and wasm asap. This doesn't start the game or anything.
     this.preloadAtConstruction = Promise.all([
@@ -262,6 +263,63 @@ export class Runtime {
     const cpc = Math.min(dsta, src.length);
     for (let i=cpc; i-->0; ) this.wasmLoader.memU8[dst + i] = src.charCodeAt(i);
     return cpc;
+  }
+  
+  findMapCommand(dstp, mask, vp) {
+    if (!this.map) return 0;
+    let vc = 0;
+         if (mask & 0x80) vc = 8;
+    else if (mask & 0x40) vc = 7;
+    else if (mask & 0x20) vc = 6;
+    else if (mask & 0x10) vc = 5;
+    else if (mask & 0x08) vc = 4;
+    else if (mask & 0x04) vc = 3;
+    else if (mask & 0x02) vc = 2;
+    else if (mask & 0x01) vc = 1;
+    else return 0; // logically, this should be "any command", but that's a stupid request.
+    const v = new Uint8Array(this.wasmLoader.memU8.buffer, vp, vc);
+    
+    const checkMap = (map, dx, dy) => {
+      if (!map) return 0;
+      return map.forEachCommand((opcode, argv, argp, argc) => {
+        if ((mask & 0x01) && (v[0] !== opcode)) return;
+        if (argc < vc - 1) return;
+        let match = true;
+        for (let vi=1, argi=argp, bit=0x02; vi<vc; vi++, argi++, bit<<=1) {
+          if (!(bit & mask)) continue;
+          if (argv[argi] !== v[vi]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          const [x, y] = this.map.getCommandLocation(opcode, argv, argp, argc);
+          const dstv = new Int16Array(this.wasmLoader.memU8.buffer, dstp, 2);
+          dstv[0] = x;
+          dstv[1] = y;
+          if (typeof(dx) === "number") {
+            dstv[0] += this.constants.COLC * dx;
+            dstv[1] += this.constants.ROWC * dy;
+          } else { // (dx) is a door, and we point to it, rather than the actual focus
+            dstv[0] = dx.x;
+            dstv[1] = dx.y;
+          }
+          return 1;
+        }
+      });
+    };
+    
+    if (checkMap(this.map, 0, 0)) return 1;
+    if (this.map.neighborn && checkMap(this.dataService.getMap(this.map.neighborn), 0, -1)) return 1;
+    if (this.map.neighbors && checkMap(this.dataService.getMap(this.map.neighbors), 0, 1)) return 1;
+    if (this.map.neighborw && checkMap(this.dataService.getMap(this.map.neighborw), -1, 0)) return 1;
+    if (this.map.neighbore && checkMap(this.dataService.getMap(this.map.neighbore), 1, 0)) return 1;
+    for (const door of this.map.doors) {
+      if (!door.mapId) continue;
+      if (checkMap(this.dataService.getMap(door.mapId), door)) return 1;
+    }
+    
+    return 0;
   }
 }
 
