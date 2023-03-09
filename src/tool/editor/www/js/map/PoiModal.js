@@ -146,9 +146,9 @@ export class PoiModal {
   buildSpriteForm(table) {
     //TODO Sprite metadata, get meaningful labels instead of "arg0" etc.
     this.addTextRow(table, "spriteId", this.poi ? this.reprSpriteId(this.poi.spriteId) : "", `PoiModal-${this.discriminator}-spriteList`);
-    this.addNumberRow(table, "arg0", 0, 255, this.poi ? this.poi.argv[0] : 0);
-    this.addNumberRow(table, "arg1", 0, 255, this.poi ? this.poi.argv[1] : 0);
-    this.addNumberRow(table, "arg2", 0, 255, this.poi ? this.poi.argv[2] : 0);
+    this.addTextRow(table, "arg0", this.poi ? this.poi.argv[0] : 0);
+    this.addTextRow(table, "arg1", this.poi ? this.poi.argv[1] : 0);
+    this.addTextRow(table, "arg2", this.poi ? this.poi.argv[2] : 0);
   }
   
   buildTransmogrifyForm(table) {
@@ -252,9 +252,9 @@ export class PoiModal {
       case "sprite": {
           let spriteId = +poi.spriteId;
           if (isNaN(spriteId) || (spriteId < 1) || (spriteId > 0xffff)) spriteId = poi.spriteId;
-          if (isNaN(poi.arg0) || (poi.arg0 < 0) || (poi.arg0 > 0xff)) return null;
-          if (isNaN(poi.arg1) || (poi.arg1 < 0) || (poi.arg1 > 0xff)) return null;
-          if (isNaN(poi.arg2) || (poi.arg2 < 0) || (poi.arg2 > 0xff)) return null;
+          //if (isNaN(poi.arg0) || (poi.arg0 < 0) || (poi.arg0 > 0xff)) return null;
+          //if (isNaN(poi.arg1) || (poi.arg1 < 0) || (poi.arg1 > 0xff)) return null;
+          //if (isNaN(poi.arg2) || (poi.arg2 < 0) || (poi.arg2 > 0xff)) return null;
           return ["sprite", poi.x.toString(), poi.y.toString(), spriteId, poi.arg0.toString(), poi.arg1.toString(), poi.arg2.toString()];
         }
         

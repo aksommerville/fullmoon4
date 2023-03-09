@@ -349,9 +349,9 @@ export class RenderHero {
   
   _animateMatch() {
     let tileId = 0x06;
-    // Our animation is not based on active_item, but rather on illumination_time.
+    // Our animation is not based on active_item, but rather on match_illumination_time.
     // And we do show her holding a lit match when quantity is zero, her arm only disappears when the illumination ends
-    if (this.globals.g_illumination_time[0] <= 0) {
+    if (this.globals.g_match_illumination_time[0] <= 0) {
       if (this.globals.g_itemqv[this.constants.ITEM_MATCH]) return [tileId, -5, -3, null];
       return null;
     }

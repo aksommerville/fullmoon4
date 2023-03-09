@@ -314,7 +314,8 @@ extern struct fmn_global {
   uint8_t last_horz_dir; // FMN_DIR_W or FMN_DIR_E
   uint8_t wand_dir; // current direction while encoding on wand or violin. also borrowed by other items (pitcher)
   float injury_time;
-  float illumination_time;
+  float illumination_time; // From non-match sources. Both illumination_times count down concurrently, and renderer uses the larger.
+  float match_illumination_time; // From the match only.
   uint8_t cheesing;
   uint8_t spell_repudiation; // app sets to 0xff to begin repudiation (upon ending the wand action). platform handles from there.
   uint8_t transmogrification; // 0=normal, 1=pumpkin

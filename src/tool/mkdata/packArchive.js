@@ -233,6 +233,7 @@ function encode(files) {
 }
 
 function packArchive(paths) {
+  paths = paths.filter(p => !p.endsWith("/gsbit"));
   return Promise.all(paths.map(path => fs.readFile(path).then(serial => ({ path, serial }))))
     .then(files => encode(files));
 }

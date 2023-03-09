@@ -15,12 +15,12 @@ neighborw 7
 neighbors 5
 neighbore 3
 neighborn 1
-sprite 7 4 10 1 0 0
-sprite 14 7 8 1 0 0
+sprite 7 4 10 gs:donkey 0 0
+sprite 14 7 8 gs:donkey 0 0
 sprite 15 4 1 0 0 0
 sprite 5 5 3 15 0 0
-sprite 16 8 9 2 0 0
-sprite 7 7 10 2 0 0
+sprite 16 8 9 gs:kong 0 0
+sprite 7 7 10 gs:kong 0 0
 transmogrify 11 3 from 1
 sprite 9 3 30 2 0 0
 sprite 9 4 30 2 0 0

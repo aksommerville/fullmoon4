@@ -286,7 +286,7 @@ static void fmn_hero_match_begin() {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
-  fmn_global.illumination_time+=FMN_HERO_MATCH_ILLUMINATION_TIME;
+  fmn_global.match_illumination_time+=FMN_HERO_MATCH_ILLUMINATION_TIME;
   fmn_global.itemqv[FMN_ITEM_MATCH]--;
   fmn_sound_effect(FMN_SFX_MATCH);
 }

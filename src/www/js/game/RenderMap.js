@@ -51,7 +51,7 @@ export class RenderMap {
    */
   renderDarkness(canvas, ctx) {
     if (!this.globals.g_mapdark[0]) return;
-    const countdown = this.globals.g_illumination_time[0];
+    const countdown = Math.max(this.globals.g_illumination_time[0], this.globals.g_match_illumination_time[0]);
     if (!countdown) {
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, canvas.width, canvas.height);

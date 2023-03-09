@@ -140,7 +140,7 @@ export class MapService {
                 x, y,
                 index: pois.filter(p => p.x === x && p.y === y).length,
                 spriteId: +command[3] || command[3],
-                argv: [+command[4] || 0, +command[5] || 0, +command[6] || 0],
+                argv: [command[4] || 0, command[5] || 0, command[6] || 0],
               });
             } break;
           case "hero": {
@@ -246,10 +246,9 @@ export class MapService {
             if (command[0] !== "sprite") continue;
             if (+command[1] !== poi.x) continue;
             if (+command[2] !== poi.y) continue;
-            //if (+command[3] !== poi.spriteId) continue;
-            if (+command[4] !== poi.argv[0]) continue;
-            if (+command[5] !== poi.argv[1]) continue;
-            if (+command[6] !== poi.argv[2]) continue;
+            if (command[4] !== poi.argv[0]) continue;
+            if (command[5] !== poi.argv[1]) continue;
+            if (command[6] !== poi.argv[2]) continue;
             return command;
           }
         } break;

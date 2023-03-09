@@ -242,6 +242,9 @@ void fmn_game_update(float elapsed) {
   if ((fmn_global.illumination_time-=elapsed)<=0.0f) {
     fmn_global.illumination_time=0.0f;
   }
+  if ((fmn_global.match_illumination_time-=elapsed)<=0.0f) {
+    fmn_global.match_illumination_time=0.0f;
+  }
   
   if (fmn_global.show_off_item_time) {
     uint8_t drop_time=elapsed * 128; // about 2 seconds total
