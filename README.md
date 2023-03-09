@@ -20,7 +20,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [ ] Persist plants and sketches across map loads.
 - [ ] Bloom plants on a timer.
-- [ ] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
+- [x] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [ ] Bonfire: Fizzle and smoke when extinguished.
 - [ ] Fine-tune song endings so they loop seamlessly.
 - [ ] Make the stubbed sound effects.

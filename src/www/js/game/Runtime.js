@@ -38,6 +38,8 @@ export class Runtime {
     this.synthesizer = synthesizer;
     this.soundEffects = soundEffects;
     
+    this.onError = e => console.error(e); // RootUi should replace.
+    
     this.debugging = false; // when true, updates only happen explicitly via debugStep()
     this.running = false;
     this.animationFramePending = false;
@@ -133,24 +135,29 @@ export class Runtime {
     if (!this.running) return;
     if (!this.wasmLoader.instance) return;
     if (this.debugging && !viaExplicitDebugger) return;
+    try {
     
-    this.inputManager.update();
-    if (!this.debugging) this.synthesizer.update();
+      this.inputManager.update();
+      if (!this.debugging) this.synthesizer.update();
     
-    if (this.gameShouldUpdate()) {
-      const time = this.clock.update();
-      this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
-    } else {
-      this.clock.skip();
-      if (this.menus.length > 0) {
-        const menu = this.menus[this.menus.length - 1];
-        menu.update(this.inputManager.state);
+      if (this.gameShouldUpdate()) {
+        const time = this.clock.update();
+        this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
+      } else {
+        this.clock.skip();
+        if (this.menus.length > 0) {
+          const menu = this.menus[this.menus.length - 1];
+          menu.update(this.inputManager.state);
+        }
       }
+    
+      this.renderer.render(this.menus);
+    
+      if (!this.debugging) this.scheduleUpdate();
+    } catch (e) {
+      this.pause();
+      this.onError(e);
     }
-    
-    this.renderer.render(this.menus);
-    
-    if (!this.debugging) this.scheduleUpdate();
   }
   
   gameShouldUpdate() {
@@ -197,8 +204,6 @@ export class Runtime {
     if (map.songId) {
       const song = this.dataService.getSong(map.songId);
       this.synthesizer.playSong(song);
-      //if (song) console.log(`playing song:${map.songId}`);
-      //else console.log(`song:${map.songId} not found, playing silence`);
     }
     return 1;
   }

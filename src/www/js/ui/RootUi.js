@@ -33,6 +33,8 @@ export class RootUi {
     this.runtime.preloadAtConstruction
       .then(() => this.dataLoaded())
       .catch(e => this.onError(e));
+      
+    this.runtime.onError = e => this.onError(e);
   }
   
   buildUi() {
@@ -73,7 +75,7 @@ export class RootUi {
   
   onError(e) {
     this.game.setRunning(false);
-    console.log(`RootUi.onError`, e);
+    console.error(`RootUi.onError`, e);
     const modal = this.dom.spawnModal(ErrorModal);
     modal.setup(e);
   }
