@@ -87,6 +87,11 @@ export class RenderMap {
     // nothing special for slowmo, but if we want to, here is the place
   }
   
+  resetWeather() {
+    this.rain = null;
+    this.wind = null;
+  }
+  
   /* Private.
    *********************************************************************/
    

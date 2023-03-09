@@ -29,6 +29,7 @@ dark
 hero X Y
 transmogrify X Y MODE STATE # STATE=[1:pumpkin], MODE=[to,from,toggle]
 indoors
+wind N|E|S|W # direction it blows *to*, opposite the meterological convention
 ```
 
 Resource IDs may be name or number.
@@ -59,6 +60,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x20 (u8 songid) SONG
 0x21 (u8 imageid) TILESHEET
 0x22 (u8 cellp) HERO
+0x23 (u8 dir) WIND
 
 0x40 (u16 mapid) NEIGHBORW
 0x41 (u16 mapid) NEIGHBORE

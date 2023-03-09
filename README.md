@@ -21,7 +21,7 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 - [ ] Bloom plants on a timer.
 - [ ] Move the collect-item logic somewhere shareable, it's already duped in a few places.
 - [x] Prevent wind and rain from happening indoors.
-- [ ] Initial wind per map.
+- [x] Initial wind per map.
 - [ ] Compass: How to decide on target location? see src/app/fmn_secrets.c
 - [x] ! Able to slip thru a gap diagonally. Eye of Newt map, SE corner of the teleport platform.
 - [ ] Registry of gsbit usage. Let us use symbolic names, avoid conflict, etc.

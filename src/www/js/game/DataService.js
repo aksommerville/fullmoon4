@@ -220,6 +220,7 @@ export class DataService {
       cellphysics: null,
       dark: 0,
       indoors: 0,
+      wind: 0,
       herostartp: (this.constants.ROWC >> 1) * this.constants.COLC + (this.constants.COLC >> 1),
     };
     map.cells.set(new Uint8Array(src.buffer, src.byteOffset + p, cellsLength));
@@ -255,6 +256,7 @@ export class DataService {
       case 0x20: map.songId = src[p]; break;
       case 0x21: map.bgImageId = src[p]; break;
       case 0x22: map.herostartp = src[p]; break;
+      case 0x23: map.wind = src[p]; break;
       case 0x40: map.neighborw = (src[p] << 8) | src[p + 1]; break;
       case 0x41: map.neighbore = (src[p] << 8) | src[p + 1]; break;
       case 0x42: map.neighborn = (src[p] << 8) | src[p + 1]; break;

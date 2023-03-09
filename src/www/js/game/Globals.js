@@ -190,8 +190,11 @@ export class Globals {
     this.g_plantc[0] = 0;
     //TODO fetch sketches and plants?
     this.g_rain_time[0] = 0;
-    this.g_wind_time[0] = 0;//TODO maps should be allowed initial wind
-    this.g_slowmo_time[0] = 0;//TODO should slowmo reset like other weather?
+    this.g_wind_time[0] = 0;
+    if (map.wind) {
+      this.g_wind_dir[0] = map.wind;
+      this.g_wind_time[0] = 86400.0; // just wait one day and it will stop, easy.
+    }
   }
   
   getSketch(x, y, create) {

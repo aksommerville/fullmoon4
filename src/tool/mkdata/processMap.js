@@ -141,6 +141,28 @@ function decodeCommand_transmogrify(args) {
   return dst;
 }
 
+/* wind DIR
+ */
+ 
+function decodeCommand_wind(args) {
+  switch (args[0]) {
+    case "N": args[0] = 0x40; break;
+    case "W": args[0] = 0x10; break;
+    case "E": args[0] = 0x08; break;
+    case "S": args[0] = 0x02; break;
+  }
+  const [dir] = assertIntArgs(args,
+    ["dir", 0, 255],
+  );
+  if ((dir !== 0x40) && (dir !== 0x10) && (dir !== 0x08) && (dir !== 0x02)) {
+    throw new Error(`Invalid wind direction ${JSON.stringify(args[0])}, must be one of: N W E S`);
+  }
+  const dst = Buffer.alloc(2);
+  dst[0] = 0x23;
+  dst[1] = dir;
+  return dst;
+}
+
 /* Main entry point, command TOC.
  */
 
@@ -159,6 +181,7 @@ function decodeCommand(words) {
     case "hero": return decodeCommand_xy(0x22, words.slice(1));
     case "transmogrify": return decodeCommand_transmogrify(words.slice(1));
     case "indoors": return decodeCommand_noarg(0x02, words.slice(1));
+    case "wind": return decodeCommand_wind(words.slice(1));
   }
   return null;
 }

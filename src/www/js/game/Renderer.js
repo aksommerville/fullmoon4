@@ -59,6 +59,7 @@ export class Renderer {
   
   commitTransition() {
     this.renderTransitions.commit();
+    this.renderMap.resetWeather();
   }
   
   cancelTransition() {
