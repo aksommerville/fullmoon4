@@ -67,6 +67,8 @@ export class Constants {
     this.PLANT_FRUIT_COIN = 3;
     this.PLANT_FRUIT_MATCH = 4;
     
+    this.PLANT_FLOWER_TIME = 20;
+    
     this.TRANSITION_TIME_MS = 600;
     
     this.TRANSITION_CUT = 0;

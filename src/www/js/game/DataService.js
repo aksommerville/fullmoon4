@@ -1,5 +1,7 @@
 /* DataService.js
  * Provides static assets and saved state.
+ * Similar to saved state, we are also the live global repository for plants and sketches.
+ * (the game proper is only aware of plants and sketches on screen).
  *
  * Saved game:
  * null is valid, meaning no save file select.
@@ -14,6 +16,7 @@
  *   sketches: [mapid,x,y,bits,time][]
  *   pos: [mapid,x,y] // hero's position
  *   selectedItem: u8
+ *   TODO gs
  * }
  *
  * map: {
@@ -57,6 +60,8 @@ export class DataService {
     this.toc = null; // null, Array, Promise, or Error. Array: { type, id, q, ser, obj }
     this.savedGame = null;
     this.savedGameId = null;
+    this.plants = [];
+    this.sketches = [];
   }
   
   /* Access to resources.
@@ -299,6 +304,53 @@ export class DataService {
       ids.add(match[1]);
     }
     return Promise.resolve(Array.from(ids));
+  }
+  
+  /* Plants and sketches.
+   **************************************************************/
+   
+  updateSketch(sketch) {
+    for (let i=this.sketches.length; i-->0; ) {
+      const existing = this.sketches[i];
+      if (sketch.mapId !== existing[0]) continue;
+      if (sketch.x !== existing[1]) continue;
+      if (sketch.y !== existing[2]) continue;
+      if (sketch.bits) {
+        existing[3] = sketch.bits;
+      } else {
+        this.sketches.splice(i, 1);
+      }
+      return;
+    }
+    if (!sketch.bits) return;
+    const time = 0;//TODO
+    const record = [sketch.mapId, sketch.x, sketch.y, sketch.bits, time];
+    this.sketches.push(record);
+  }
+  
+  updatePlant(plant) {
+    for (const existing of this.plants) {
+      if (plant.mapId !== existing[0]) continue;
+      if (plant.x !== existing[1]) continue;
+      if (plant.y !== existing[2]) continue;
+      existing[3] = plant.flower_time;
+      existing[4] = plant.state;
+      existing[5] = plant.fruit;
+      return;
+    }
+    const record = [plant.mapId, plant.x, plant.y, plant.flower_time, plant.state, plant.fruit];
+    this.plants.push(record);
+  }
+  
+  removePlant(plant) {
+    for (let i=this.plants.length; i-->0; ) {
+      const existing = this.plants[i];
+      if (plant.mapId !== existing[0]) continue;
+      if (plant.x !== existing[1]) continue;
+      if (plant.y !== existing[2]) continue;
+      this.plants.splice(i, 1);
+      return;
+    }
   }
 }
 

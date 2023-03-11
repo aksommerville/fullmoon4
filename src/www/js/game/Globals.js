@@ -6,14 +6,16 @@
  
 import { WasmLoader } from "../util/WasmLoader.js";
 import { Constants } from "./Constants.js";
+import { DataService } from "./DataService.js";
  
 export class Globals {
   static getDependencies() {
-    return [WasmLoader, Constants];
+    return [WasmLoader, Constants, DataService];
   }
-  constructor(wasmLoader, constants) {
+  constructor(wasmLoader, constants, dataService) {
     this.wasmLoader = wasmLoader;
     this.constants = constants;
+    this.dataService = dataService;
     
     this.p_fmn_global = 0;
     this.memU8 = null;
@@ -155,7 +157,9 @@ export class Globals {
     return null;
   }
   
-  setMap(map) {
+  // Provide a nonzero (now) to automatically flower plants if they're ready.
+  // They won't update in DataService, only in Globals.
+  setMap(map, now) {
     this.g_map.set(map.cells);
     this.g_maptsid[0] = map.bgImageId;
     this.g_songid[0] = map.songId;
@@ -187,9 +191,22 @@ export class Globals {
     } else {
       for (let i=0; i<256; i++) this.g_cellphysics[i] = 0;
     }
+    
     this.g_sketchc[0] = 0;
+    for (const [mapid,x,y,bits,time] of this.dataService.sketches) {
+      if (mapid !== map.id) continue;
+      this.setSketch({ x, y, bits, time });
+    }
+    
     this.g_plantc[0] = 0;
-    //TODO fetch sketches and plants?
+    for (let [mapid,x,y,flowerTime,state,fruit] of this.dataService.plants) {
+      if (mapid !== map.id) continue;
+      if (now && flowerTime && (state === this.constants.PLANT_STATE_GROW) && (now >= flowerTime)) {
+        state = this.constants.PLANT_STATE_FLOWER;
+      }
+      this.addPlant(x, y, true, state, fruit, flowerTime);
+    }
+    
     this.g_rain_time[0] = 0;
     this.g_wind_time[0] = 0;
     if (map.wind) {
@@ -198,13 +215,18 @@ export class Globals {
     }
   }
   
-  getSketch(x, y, create) {
+  /* Plants and sketches.
+   * We are only concerned with the ones shared with wasm, ie the ones onscreen.
+   ***************************************************************************/
+  
+  getSketch(x, y, create, time) {
     if ((x < 0) || (y < 0) || (x >= this.constants.COLC) || (y >= this.constants.ROWC)) return null;
     const count = this.g_sketchc[0];
     for (let i=0, p=0; i<count; i++, p+=this.constants.SKETCH_SIZE) {
       if ((this.g_sketchv[p] === x) && (this.g_sketchv[p+1] === y)) return this.getSketchByIndex(i);
     }
     if (create && (count < this.constants.SKETCH_LIMIT)) {
+      if (!time) time = 0;
       this.g_sketchc[0] = count + 1;
       for (let i=this.constants.SKETCH_SIZE, p=count*this.constants.SKETCH_SIZE; i-->0; p++) {
         this.g_sketchv[p] = 0;
@@ -212,6 +234,11 @@ export class Globals {
       let p = count * this.constants.SKETCH_SIZE;
       this.g_sketchv[p++] = x;
       this.g_sketchv[p++] = y;
+      p += 6; // 2 bytes unused + 4 bytes bits
+      this.g_sketchv[p++] = time;
+      this.g_sketchv[p++] = time >> 8;
+      this.g_sketchv[p++] = time >> 16;
+      this.g_sketchv[p++] = time >> 24;
       return this.getSketchByIndex(count);
     }
     return null;
@@ -292,20 +319,23 @@ export class Globals {
     }
   }
   
-  addPlant(x, y, reuse) {
+  addPlant(x, y, reuse, state, fruit, flower_time) {
+    if (!state) state = this.constants.PLANT_STATE_SEED;
+    if (!fruit) fruit = 0;
+    if (!flower_time) flower_time = 0;
     if (this.g_plantc[0] >= this.constants.PLANT_LIMIT) {
       if (reuse) {
         for (let i=this.g_plantc[0], p=0; i-->0; p+=this.constants.PLANT_SIZE) {
           if (this.g_plantv[p + 2] === this.constants.PLANT_STATE_DEAD) {
             this.g_plantv[p++] = x;
             this.g_plantv[p++] = y;
-            this.g_plantv[p++] = this.constants.PLANT_STATE_SEED;
-            this.g_plantv[p++] = 0; // fruit
-            this.g_plantv[p++] = 0; // flower_time
-            this.g_plantv[p++] = 0; // flower_time
-            this.g_plantv[p++] = 0; // flower_time
-            this.g_plantv[p++] = 0; // flower_time
-            return { x, y, state: 0, fruit: 0, flower_time: 0 };
+            this.g_plantv[p++] = state;
+            this.g_plantv[p++] = fruit;
+            this.g_plantv[p++] = flower_time;
+            this.g_plantv[p++] = flower_time >> 8;
+            this.g_plantv[p++] = flower_time >> 16;
+            this.g_plantv[p++] = flower_time >> 24;
+            return { x, y, state, fruit, flower_time };
           }
         }
       }
@@ -315,13 +345,27 @@ export class Globals {
     let p = this.constants.PLANT_SIZE * i;
     this.g_plantv[p++] = x;
     this.g_plantv[p++] = y;
-    this.g_plantv[p++] = this.constants.PLANT_STATE_SEED;
-    this.g_plantv[p++] = 0; // fruit
-    this.g_plantv[p++] = 0; // flower_time
-    this.g_plantv[p++] = 0; // flower_time
-    this.g_plantv[p++] = 0; // flower_time
-    this.g_plantv[p++] = 0; // flower_time
-    return { x, y, state: 0, fruit: 0, flower_time: 0 };
+    this.g_plantv[p++] = state;
+    this.g_plantv[p++] = fruit;
+    this.g_plantv[p++] = flower_time;
+    this.g_plantv[p++] = flower_time >> 8;
+    this.g_plantv[p++] = flower_time >> 16;
+    this.g_plantv[p++] = flower_time >> 24;
+    return { x, y, state, fruit, flower_time };
+  }
+  
+  updatePlant(plant) {
+    for (let i=this.g_plantc[0], p=0; i-->0; p+=this.constants.PLANT_SIZE) {
+      if (this.g_plantv[p] !== plant.x) continue;
+      if (this.g_plantv[p + 1] !== plant.y) continue;
+      this.g_plantv[p + 2] = plant.state;
+      this.g_plantv[p + 3] = plant.fruit;
+      this.g_plantv[p + 4] = plant.flower_time;
+      this.g_plantv[p + 5] = plant.flower_time >> 8;
+      this.g_plantv[p + 6] = plant.flower_time >> 16;
+      this.g_plantv[p + 7] = plant.flower_time >> 24;
+      return;
+    }
   }
 }
 

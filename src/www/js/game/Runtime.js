@@ -55,7 +55,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_commit_transition = () => this.renderer.commitTransition();
     this.wasmLoader.env.fmn_cancel_transition = () => this.renderer.cancelTransition();
     this.wasmLoader.env.fmn_load_map = (mapId, cbSpawn) => this.loadMap(mapId, cbSpawn);
-    this.wasmLoader.env.fmn_map_dirty = () => this.renderer.mapDirty();
+    this.wasmLoader.env.fmn_map_dirty = () => this.mapDirty();
     this.wasmLoader.env.fmn_add_plant = (x, y) => this.addPlant(x, y);
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
@@ -193,12 +193,13 @@ export class Runtime {
   }
   
   loadMap(mapId, cbSpawn) {
+    this.dropWitheredPlants();
     const map = this.dataService.getMap(mapId);
     if (!map) return 0;
     cbSpawn = this.wasmLoader.instance.exports.__indirect_function_table.get(cbSpawn);
     this.map = map;
     this.mapId = mapId;
-    this.globals.setMap(this.map);
+    this.globals.setMap(this.map, this.clock.lastGameTime);
     this.triggerMapSetup(cbSpawn);
     this.renderer.mapDirty();
     if (map.songId) {
@@ -206,6 +207,17 @@ export class Runtime {
       this.synthesizer.playSong(song);
     }
     return 1;
+  }
+  
+  dropWitheredPlants() {
+    this.globals.forEachPlant(p => {
+      if (p.state === this.constants.PLANT_STATE_DEAD) {
+        this.dataService.removePlant({
+          ...p,
+          mapId: this.mapId,
+        });
+      }
+    });
   }
   
   triggerMapSetup(cbSpawn) {
@@ -222,12 +234,27 @@ export class Runtime {
     }
   }
   
+  mapDirty() {
+    this.renderer.mapDirty();
+    this.globals.forEachPlant(p => {
+      p.mapId = this.mapId;
+      if ((p.state === this.constants.PLANT_STATE_GROW) && !p.flower_time) {
+        p.flower_time = this.clock.lastGameTime + this.constants.PLANT_FLOWER_TIME * 1000;
+        this.globals.updatePlant(p);
+      }
+      this.dataService.updatePlant(p);
+    });
+  }
+  
   beginSketch(x, y) {
-    const sketch = this.globals.getSketch(x, y, true);
+    const sketch = this.globals.getSketch(x, y, true, this.clock.lastGameTime);
     if (!sketch) return -1;
     const menu = this.beginMenu(-2, null);
     if (menu instanceof ChalkMenu) {
-      menu.setup(sketch);
+      menu.setup(sketch, s => this.dataService.updateSketch({
+        ...s,
+        mapId: this.mapId,
+      }));
     }
   }
   
@@ -236,8 +263,18 @@ export class Runtime {
     if (this.globals.forEachPlant(plant => {
       return ((plant.x === x) && (plant.y === y));
     })) return -1;
-    const plant = this.globals.addPlant(x, y, true);
+    const plant = this.globals.addPlant(
+      x, y,
+      true,
+      this.constants.PLANT_STATE_SEED,
+      this.constants.PLANT_FRUIT_SEED,
+      0 // flowerTime (0=never, gets set when you water it)
+    );
     if (!plant) return -1;
+    this.dataService.updatePlant({
+      ...plant,
+      mapId: this.mapId,
+    });
     this.globals.g_map[y * this.constants.COLC + x] = 0x00;
     this.renderer.mapDirty();
     return 0;

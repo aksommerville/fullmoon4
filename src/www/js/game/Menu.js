@@ -125,6 +125,7 @@ export class ChalkMenu {
     this.globals = globals;
     this.constants = constants;
     
+    this.cbDirty = () => {};
     this.selx = 1;
     this.sely = 1;
     this.previousInput = 0xff;
@@ -135,10 +136,11 @@ export class ChalkMenu {
     this.y = -1;
   }
   
-  setup(sketch) {
+  setup(sketch, cbDirty) {
     this.sketch = sketch.bits;
     this.x = sketch.x;
     this.y = sketch.y;
+    this.cbDirty = cbDirty;
   }
   
   update(state) {
@@ -175,12 +177,16 @@ export class ChalkMenu {
     if (this.pendingLine) {
       this.sketch ^= this.pendingLine;
       this.pendingLine = 0;
+      this.cbDirty({
+        x: this.x,
+        y: this.y,
+        bits: this.sketch,
+      });
     }
     this.anchor = null;
   }
   
   submit() {
-    //TODO really need to prevent the B stroke that triggered this, from triggering anything else
     this.globals.setSketch({
       x: this.x,
       y: this.y,
