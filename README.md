@@ -22,10 +22,53 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Bloom plants on a timer.
 - [x] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
 - [x] Bonfire: Fizzle and smoke when extinguished.
-- [ ] Fine-tune song endings so they loop seamlessly.
-- [ ] Make the stubbed sound effects.
+- [x] Fine-tune song endings so they loop seamlessly.
+- [x] Make the stubbed sound effects, and review all
+- - [x] BELL
+- - [x] REJECT_ITEM
+- - [x] CHEESE
+- - [x] HURT -- more feminine?
+- - [x] PITCHER_NO_PICKUP. Same as REJECT_ITEM, that's right i think.
+- - [x] PITCHER_PICKUP, i hate this
+- - [x] PITCHER_POUR, i hate this
+- - [x] MATCH
+- - [x] DIG
+- - [x] REJECT_DIG
+- - [x] INJURY_DEFLECTED
+- - [x] GRIEVOUS_INJURY
+- - [x] UNCHEESE
+- - [x] ITEM_MAJOR
+- - [x] ITEM_MINOR
+- - [x] TREADLE_PRESS
+- - [x] TREADLE_RELEASE
+- - [x] PUSHBLOCK_ENCHANT
+- - [x] BLOCK_EXPLODE
+- - [x] MOO
+- - [x] PLANT
+- - [x] SEED_DROP
+- - [x] SPROUT
+- - [x] BLOOM
+- - [x] TELEPORT
+- - [x] SLOWMO_BEGIN
+- - [x] SLOWMO_END
+- - [x] RAIN
+- - [x] WIND
+- - [x] INVISIBILITY_BEGIN
+- - [x] INVISIBILITY_END
+- - [x] ENCHANT_ANIMAL
+- - [x] PUMPKIN
+- - [x] UNPUMPKIN
+- - [x] PAYMENT
+- - [x] FIZZLE
 - [x] Dig on an existing plant, destroy it.
 - [x] Show underlay like shovel, for pitcher and seed.
+- [ ] More sprites
+- - [ ] skyleton: Falls from the sky, charges with sword, breaks when he hits a wall.
+- - [ ] ghost: Spiral in to the hero, if you don't run away you get cursed. Reduce speed or something, for a short time.
+- - [ ] duck: Walk around, quack, throw ninja stars.
+- - [ ] seamonster
+- [ ] Initial sketch (eg with chalkguard)
+- [ ] Indoor plants: Never auto-bloom, require the Blooming Song?
 
 ### April
 
@@ -53,6 +96,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Pretty up the public web page.
 - [ ] Lively intro splash.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
+- [ ] The Cheat Book. A nice looking "WARNING SPOILERS" notebook we can leave out for demo players.
 
 ### After GDEX
 

@@ -252,6 +252,7 @@ static void fmn_hero_water_plants(uint8_t liquid) {
     if (plant->state!=FMN_PLANT_STATE_SEED) continue;
     plant->fruit=liquid;
     plant->state=FMN_PLANT_STATE_GROW;
+    fmn_sound_effect(FMN_SFX_SPROUT);
     fmn_map_dirty();
     return;
   }

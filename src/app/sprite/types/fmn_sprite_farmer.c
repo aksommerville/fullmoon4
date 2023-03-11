@@ -118,9 +118,9 @@ static void farmer_update_SOW(struct fmn_sprite *sprite,float elapsed) {
  */
  
 static void farmer_begin_WATER(struct fmn_sprite *sprite,struct fmn_plant *plant) {
+  fmn_sound_effect(FMN_SFX_SPROUT);
   plant->state=FMN_PLANT_STATE_GROW;
   plant->fruit=FMN_PLANT_FRUIT_SEED;
-  //TODO flower_time?
   fmn_map_dirty();
   clock=0.0f;
   stagetime=1.0f;

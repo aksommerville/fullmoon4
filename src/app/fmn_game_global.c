@@ -318,7 +318,10 @@ static void fmn_bloom_plants() {
       changed=1;
     }
   }
-  if (changed) fmn_map_dirty();
+  if (changed) {
+    fmn_sound_effect(FMN_SFX_BLOOM);
+    fmn_map_dirty();
+  }
 }
 
 /* Teleport to another map, or the same one.
@@ -360,6 +363,7 @@ static void fmn_rain_begin() {
   uint8_t dirty=0;
   for (;i-->0;plant++) {
     if (plant->state!=FMN_PLANT_STATE_SEED) continue;
+    fmn_sound_effect(FMN_SFX_SPROUT);
     plant->fruit=FMN_PITCHER_CONTENT_WATER;
     plant->state=FMN_PLANT_STATE_GROW;
     dirty=1;
