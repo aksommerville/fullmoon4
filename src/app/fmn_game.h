@@ -60,6 +60,7 @@ void fmn_gs_drop_listeners();
  * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.
  * Any map_singleton registration with a (discriminator) already in use is presumed redundant and will be ignored.
  * Use the address of the function where you call this, or something similarly unique.
+ * Returns zero if this discriminator is already registered.
  * (cb_update) will be called once per global update, just like sprites. But after all sprite updates.
  * (cb_cleanup) will be called once, as the map unloads.
  * (cb_cleanup) is NOT called if you unregister manually.

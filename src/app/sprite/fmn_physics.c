@@ -29,7 +29,10 @@ uint8_t fmn_physics_check_edges(float *cx,float *cy,const struct fmn_sprite *a) 
  
 uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,uint8_t features) {
 
-  int8_t cola=a->x-a->radius; // truncates (not floor), but that's fine because we're clamping to zero anyway.
+  // Important that we stop early and special, if the right or bottom edge is below zero.
+  if (a->x+a->radius<0.0f) return 0;
+  if (a->y+a->radius<0.0f) return 0;
+  int8_t cola=a->x-a->radius;
   int8_t colz=a->x+a->radius;
   if (cola<0) cola=0;
   if (colz>=FMN_COLC) colz=FMN_COLC-1;

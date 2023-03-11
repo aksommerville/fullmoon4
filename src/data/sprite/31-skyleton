@@ -1,0 +1,7 @@
+controller skyleton
+image 3
+tile 0xa0
+style tile
+physics solid hole sprites blowable motion
+radius 0.5
+invmass 128

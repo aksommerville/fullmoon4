@@ -551,10 +551,12 @@ uint16_t fmn_game_register_map_singleton(
   void (*cb_cleanup)(void *userdata),
   void *userdata
 ) {
-  const struct fmn_map_singleton *v=fmn_map_singletonv;
-  uint8_t i=fmn_map_singletonc;
-  for (;i-->0;v++) {
-    if (v->discriminator==discriminator) return v->id;
+  if (discriminator) {
+    const struct fmn_map_singleton *v=fmn_map_singletonv;
+    uint8_t i=fmn_map_singletonc;
+    for (;i-->0;v++) {
+      if (v->discriminator==discriminator) return 0;
+    }
   }
   if (fmn_map_singletonc>=FMN_MAP_SINGLETON_LIMIT) return 0;
   struct fmn_map_singleton *singleton=fmn_map_singletonv+fmn_map_singletonc++;
