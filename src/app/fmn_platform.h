@@ -154,6 +154,7 @@ int rand();
 #define FMN_SFX_SPLASH_1 55
 #define FMN_SFX_COWBELL 56 /* ...end GM */
 #define FMN_SFX_PAYMENT 57
+#define FMN_SFX_FIZZLE 58
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */

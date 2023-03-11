@@ -680,3 +680,10 @@ sound PAYMENT #TODO
   len 0.001
   noise 0
 end
+
+sound FIZZLE #TODO
+  len 0.600
+  fm 0 2000 6.3 ( 5 ) sine
+  env 0 ( 0 30 0xffff 50 0x2000 * 0 )
+  norm 0 0.200
+end

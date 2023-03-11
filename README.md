@@ -21,10 +21,11 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Persist plants and sketches across map loads.
 - [x] Bloom plants on a timer.
 - [x] Ensure audio doesn't get stuck on after an exception. like, actually handle exceptions nicely.
-- [ ] Bonfire: Fizzle and smoke when extinguished.
+- [x] Bonfire: Fizzle and smoke when extinguished.
 - [ ] Fine-tune song endings so they loop seamlessly.
 - [ ] Make the stubbed sound effects.
-- [ ] Dig on an existing plant, destroy it.
+- [x] Dig on an existing plant, destroy it.
+- [x] Show underlay like shovel, for pitcher and seed.
 
 ### April
 

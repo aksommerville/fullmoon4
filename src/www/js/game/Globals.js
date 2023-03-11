@@ -326,7 +326,10 @@ export class Globals {
     if (this.g_plantc[0] >= this.constants.PLANT_LIMIT) {
       if (reuse) {
         for (let i=this.g_plantc[0], p=0; i-->0; p+=this.constants.PLANT_SIZE) {
-          if (this.g_plantv[p + 2] === this.constants.PLANT_STATE_DEAD) {
+          if (
+            (this.g_plantv[p + 2] === this.constants.PLANT_STATE_DEAD) ||
+            (this.g_plantv[p + 2] === this.constants.PLANT_STATE_NONE)
+          ) {
             this.g_plantv[p++] = x;
             this.g_plantv[p++] = y;
             this.g_plantv[p++] = state;
@@ -341,8 +344,19 @@ export class Globals {
       }
       return null;
     }
-    const i = this.g_plantc[0]++;
-    let p = this.constants.PLANT_SIZE * i;
+    // If there's already a plant here, drop it and replace.
+    // This is important, for PLANT_STATE_NONE.
+    let index = null;
+    for (let i=0, p=0; i<this.g_plantc[0]; i++, p+=this.constants.PLANT_SIZE) {
+      if (this.g_plantv[0] !== x) continue;
+      if (this.g_plantv[1] !== y) continue;
+      index = i;
+      break;
+    }
+    if (index === null) {
+      index = this.g_plantc[0]++;
+    }
+    let p = this.constants.PLANT_SIZE * index;
     this.g_plantv[p++] = x;
     this.g_plantv[p++] = y;
     this.g_plantv[p++] = state;

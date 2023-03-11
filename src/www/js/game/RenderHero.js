@@ -469,6 +469,8 @@ export class RenderHero {
     if (this.globals.g_itemv[this.globals.g_selected_item[0]]) {
       switch (this.globals.g_selected_item[0]) {
         case this.constants.ITEM_SHOVEL: this._renderShovelUnderlay(dst, ctx); return;
+        case this.constants.ITEM_SEED: this._renderShovelUnderlay(dst, ctx); return;
+        case this.constants.ITEM_PITCHER: this._renderShovelUnderlay(dst, ctx); return;
       }
     }
     switch (this.globals.g_active_item[0]) {

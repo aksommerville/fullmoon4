@@ -301,6 +301,17 @@ static void fmn_hero_shovel_begin() {
     uint8_t pvphysics=fmn_global.cellphysics[pvtile];
     if (pvphysics==FMN_CELLPHYSICS_VACANT) {
     
+      // If there's a plant here, destroy it.
+      struct fmn_plant *plant=fmn_global.plantv;
+      uint8_t i=fmn_global.plantc;
+      for (;i-->0;plant++) {
+        if (plant->x!=fmn_global.shovelx) continue;
+        if (plant->y!=fmn_global.shovely) continue;
+        plant->state=FMN_PLANT_STATE_NONE;
+        fmn_map_dirty();
+        break;
+      }
+    
       fmn_global.map[tilep]=0x0f;
       fmn_map_dirty();
       fmn_sound_effect(FMN_SFX_DIG);

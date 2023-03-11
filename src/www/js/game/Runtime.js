@@ -238,6 +238,10 @@ export class Runtime {
     this.renderer.mapDirty();
     this.globals.forEachPlant(p => {
       p.mapId = this.mapId;
+      if (p.state === this.constants.PLANT_STATE_NONE) { // signal from app to delete plant
+        this.dataService.removePlant(p);
+        return;
+      }
       if ((p.state === this.constants.PLANT_STATE_GROW) && !p.flower_time) {
         p.flower_time = this.clock.lastGameTime + this.constants.PLANT_FLOWER_TIME * 1000;
         this.globals.updatePlant(p);
@@ -261,6 +265,7 @@ export class Runtime {
   addPlant(x, y) {
     if ((x < 0) || (y < 0) || (x >= this.globals.COLC) || (y >= this.globals.ROWC)) return -1;
     if (this.globals.forEachPlant(plant => {
+      if (plant.state === this.constants.PLANT_STATE_NONE) return 0;
       return ((plant.x === x) && (plant.y === y));
     })) return -1;
     const plant = this.globals.addPlant(

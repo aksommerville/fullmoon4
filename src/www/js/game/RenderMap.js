@@ -153,6 +153,7 @@ export class RenderMap {
       const plantImage = this.dataService.getImage(2);
       if (plantImage && plantImage.complete) {
         this.globals.forEachPlant(plant => {
+          if (plant.state === this.constants.PLANT_STATE_NONE) return;
           const dstx = plant.x * this.constants.TILESIZE + (this.constants.TILESIZE >> 1);
           const dsty = plant.y * this.constants.TILESIZE + (this.constants.TILESIZE >> 1);
           let tileId = 0x3a + 0x10 * plant.state;
