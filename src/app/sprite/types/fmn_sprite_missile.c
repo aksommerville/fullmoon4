@@ -75,16 +75,57 @@ static void _missile_update(struct fmn_sprite *sprite,float elapsed) {
   }
 }
 
+/* Reflect off the umbrella.
+ * (adj>0) to adjust according to position.
+ * (adj<0) to blindly reflect.
+ * (!adj) to leave that axis untouched.
+ */
+ 
+static void missile_reflect_umbrella(struct fmn_sprite *sprite,int8_t adjx,int8_t adjy) {
+  if (adjx<0) dx=-dx;
+  if (adjy<0) dy=-dy;
+  float xrrange=0.0f,yrrange=0.0f;
+  float reft;
+  if (adjx>0) {
+    if (dy<0.0f) {
+      xrrange=1.0f;
+      reft=0.0f;
+    } else {
+      xrrange=-1.0f;
+      reft=M_PI;
+    }
+  } else if (adjy>0) {
+    if (dx<0.0f) {
+      yrrange=-1.0f;
+      reft=M_PI*-0.5f;
+    } else {
+      yrrange=1.0f;
+      reft=M_PI*0.5f;
+    }
+  } else {
+    return; // simple adjustment only; we're done
+  }
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  heroy-=0.2f; // cheat her up a little; her center is near her feet
+  const float radius=0.5f;
+  float xn=(sprite->x-herox)/radius; if (xn<-1.0f) xn=-1.0f; else if (xn>1.0f) xn=1.0f;
+  float yn=(sprite->y-heroy)/radius; if (yn<-1.0f) yn=-1.0f; else if (yn>1.0f) yn=1.0f;
+  const float arc_range=0.3f;
+  float relt=(xn*xrrange+yn*yrrange)*M_PI*arc_range;
+  float t=reft+relt;
+  dx=sinf(t)*speed;
+  dy=-cosf(t)*speed;
+}
+
 /* Interact.
  */
  
 static int16_t _missile_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {
   switch (itemid) {
     case FMN_ITEM_UMBRELLA: switch (qualifier) {
-        case FMN_DIR_N:
-        case FMN_DIR_S: dy=-dy; break;
-        case FMN_DIR_W:
-        case FMN_DIR_E: dx=-dx; break;
+        case FMN_DIR_N: case FMN_DIR_S: missile_reflect_umbrella(sprite,1,-1); break;
+        case FMN_DIR_W: case FMN_DIR_E: missile_reflect_umbrella(sprite,-1,1); break;
         default: fmn_sprite_kill(sprite);
       } break;
   }

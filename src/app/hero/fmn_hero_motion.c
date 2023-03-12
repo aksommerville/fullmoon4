@@ -208,8 +208,13 @@ static uint8_t fmn_hero_suppress_injury_if_applicable(
   if (!assailant) return 0;
   
   if (fmn_global.active_item==FMN_ITEM_UMBRELLA) {
-    uint8_t injury_dir=fmn_dir_from_vector_cardinal(x-hero->x,y-hero->y);
-    if (injury_dir==fmn_global.facedir) return fmn_hero_suppress_injury(hero,x,y,assailant,injury_dir);
+    float myx=hero->x,myy=hero->y-0.2f; // cheat our reference position up a little
+    switch (fmn_global.facedir) {
+      case FMN_DIR_N: if (y<myy) return fmn_hero_suppress_injury(hero,x,y,assailant,FMN_DIR_N); break;
+      case FMN_DIR_S: if (y>myy) return fmn_hero_suppress_injury(hero,x,y,assailant,FMN_DIR_S); break;
+      case FMN_DIR_W: if (x<myx) return fmn_hero_suppress_injury(hero,x,y,assailant,FMN_DIR_W); break;
+      case FMN_DIR_E: if (x>myx) return fmn_hero_suppress_injury(hero,x,y,assailant,FMN_DIR_E); break;
+    }
   }
 
   return 0;
