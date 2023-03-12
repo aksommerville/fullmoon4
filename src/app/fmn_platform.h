@@ -159,6 +159,7 @@ int rand();
 #define FMN_SFX_BREAK_BONES 60
 #define FMN_SFX_CURSE 61
 #define FMN_SFX_UNCURSE 62
+#define FMN_SFX_QUACK 63
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */

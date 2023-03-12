@@ -1,0 +1,7 @@
+controller duck
+image 3
+tile 0x9a
+style tile
+physics edge sprites solid hole blowable
+radius 0.5
+invmass 128

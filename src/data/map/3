@@ -19,3 +19,5 @@ sprite 4 4 16 0 0 0
 neighbore 20
 sprite 15 5 27 4 0 0
 sprite 12 10 9 4 0 0
+sprite 12 7 duck 0 0 0
+sprite 6 3 duck 0 0 0

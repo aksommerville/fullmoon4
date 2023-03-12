@@ -33,7 +33,7 @@
 #define GHOST_PROXIMITY_LIMIT 2.0f /* m */
 #define GHOST_PROXIMITY_CORRECTION_LIMIT 4.0f /* m/s */
 #define GHOST_PROXIMITY_FLOOR 0.0625f /* m */
-#define GHOST_PROXIMITY_DISABLE_BY_MD 0.750f /* m manhattan distance. when so close to the hero, it doesn't participate in proximity correction */
+#define GHOST_PROXIMITY_DISABLE_BY_MD 1.0f /* m manhattan distance. when so close to the hero, it doesn't participate in proximity correction */
  
 static struct {
   uint8_t ghostc;

@@ -782,3 +782,9 @@ sound UNCURSE
   len 0.001
   noise 0
 end
+
+sound QUACK
+  #TODO
+  len 0.001
+  noise 0
+end
