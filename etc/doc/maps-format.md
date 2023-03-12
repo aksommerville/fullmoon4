@@ -30,6 +30,7 @@ hero X Y
 transmogrify X Y MODE STATE # STATE=[1:pumpkin], MODE=[to,from,toggle]
 indoors
 wind N|E|S|W # direction it blows *to*, opposite the meterological convention
+sketch X Y BITS # Creates sketch if there are none initially.
 ```
 
 Resource IDs may be name or number.
@@ -69,6 +70,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x44 (u8 cellp,u8 0x80:to 0x40:from 0x3f:state) TRANSMOGRIFY
 
 0x60 (u8 cellp,u16 mapid,u8 dstcellp) DOOR
+0x61 (u8 cellp,u24 bits) SKETCH
 
 0x80 (u8 cellp,u16 spriteid,u8 arg0,u8 arg1,u8 arg2) SPRITE
 ```

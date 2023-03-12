@@ -198,6 +198,12 @@ export class Globals {
       if (mapid !== map.id) continue;
       this.setSketch({ x, y, bits, time });
     }
+    if (!this.g_sketchc[0]) { // No existing sketches, so look for initials from the map.
+      for (const {x, y, bits} of map.sketches) {
+        this.setSketch({ x, y, bits, now });
+        this.dataService.updateSketch({ mapId: map.id, x, y, bits, time: now });
+      }
+    }
     
     this.g_plantc[0] = 0;
     for (let [mapid,x,y,flowerTime,state,fruit] of this.dataService.plants) {

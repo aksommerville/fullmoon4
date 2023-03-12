@@ -32,6 +32,7 @@ export class FullmoonMap {
       case 0x22: // HERO
       case 0x44: // TRANSMOGRIFY
       case 0x60: // DOOR
+      case 0x61: // SKETCH
       case 0x80: // SPRITE
           return [argv[argp] % 20, Math.floor(argv[argp] / 20)];
     }
@@ -43,6 +44,7 @@ export class FullmoonMap {
     this.commands = []; // Normally a Uint8Array pointing into the original source.
     this.doors = []; // {x,y,mapId,dstx,dsty}
     this.sprites = []; // {x,y,spriteId,arg0,arg1,arg2}
+    this.sketches = []; // {x,y,bits}. Should only be examined if no user sketches exist at load.
     this.cellphysics = null; // Uint8Array(256), but supplied by our owner
     this.dark = 0;
     this.indoors = 0;
@@ -59,8 +61,9 @@ export class FullmoonMap {
   _copy(src) {
     this.cells = new Uint8Array(src.cells);
     this.commands = new Uint8Array(src.commands);
-    this.doors = src.doors.map(d => d);
-    this.sprites = src.sprites.map(s => s);
+    this.doors = src.doors.map(d => ({ ...d }));
+    this.sprites = src.sprites.map(s => ({ ...s }));
+    this.sketches = src.sketches.map(s => ({ ...s }));
     this.cellphysics = src.cellphysics; // null or a globally shared Tileprops, no need to copy.
     this.dark = src.dark;
     this.indoors = src.indoors;
@@ -113,6 +116,13 @@ export class FullmoonMap {
             mapId: (v[argp + 1] << 8) | v[argp + 2],
             dstx: v[argp + 3] % constants.COLC,
             dsty: Math.floor(v[argp + 3] / constants.COLC),
+          });
+          break;
+          
+        case 0x61: this.sketches.push({
+            x: v[argp] % constants.COLC,
+            y: Math.floor(v[argp] / constants.COLC),
+            bits: (v[argp + 1] << 16) | (v[argp + 2] << 8) | v[argp + 3],
           });
           break;
           

@@ -165,6 +165,24 @@ function decodeCommand_wind(args) {
   return dst;
 }
 
+/* sketch X Y BITS
+ */
+ 
+function decodeCommand_sketch(args) {
+  const [x, y, bits] = assertIntArgs(args,
+    ["x", 0, COLC - 1],
+    ["y", 0, ROWC - 1],
+    ["bits", 1, 0x000fffff],
+  );
+  const dst = Buffer.alloc(5);
+  dst[0] = 0x61;
+  dst[1] = y * COLC + x;
+  dst[2] = bits >> 16;
+  dst[3] = bits >> 8;
+  dst[4] = bits;
+  return dst;
+}
+
 /* Main entry point, command TOC.
  */
 
@@ -184,6 +202,7 @@ function decodeCommand(words) {
     case "transmogrify": return decodeCommand_transmogrify(words.slice(1));
     case "indoors": return decodeCommand_noarg(0x02, words.slice(1));
     case "wind": return decodeCommand_wind(words.slice(1));
+    case "sketch": return decodeCommand_sketch(words.slice(1));
   }
   return null;
 }

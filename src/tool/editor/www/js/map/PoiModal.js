@@ -5,6 +5,7 @@ import { Dom } from "/js/util/Dom.js";
 import { ResService } from "/js/util/ResService.js";
 import { FullmoonMap } from "/js/map/FullmoonMap.js";
 import { MapService } from "./MapService.js";
+import { ChalkModal } from "../chalk/ChalkModal.js";
 
 export class PoiModal {
   static getDependencies() {
@@ -56,6 +57,7 @@ export class PoiModal {
     this.dom.spawn(typeSelect, "OPTION", { value: "sprite" }, "sprite");
     this.dom.spawn(typeSelect, "OPTION", { value: "hero" }, "hero");
     this.dom.spawn(typeSelect, "OPTION", { value: "transmogrify" }, "transmogrify");
+    this.dom.spawn(typeSelect, "OPTION", { value: "sketch" }, "sketch");
     
     this.dom.spawn(permanentForm, "INPUT", {
       type: "number",
@@ -133,6 +135,7 @@ export class PoiModal {
       case "sprite": this.buildSpriteForm(table); break;
       case "hero": break;
       case "transmogrify": this.buildTransmogrifyForm(table); break;
+      case "sketch": this.buildSketchForm(table); break;
     }
   }
   
@@ -154,6 +157,14 @@ export class PoiModal {
   buildTransmogrifyForm(table) {
     this.addEnumRow(table, "mode", this.poi ? this.poi.mode : "toggle", ["to", "from", "toggle"]);
     this.addNumberRow(table, "state", 0, 63, this.poi ? this.poi.state : 1, "1=pumpkin");
+  }
+  
+  buildSketchForm(table) {
+    this.addNumberRow(table, "bits", 1, 0x000fffff, this.poi ? this.poi.bits : 0);
+    const tr = this.dom.spawn(table, "TR");
+    this.dom.spawn(tr, "TD", "Edit in ChalkModal");
+    const td = this.dom.spawn(tr, "TD");
+    this.dom.spawn(td, "INPUT", { type: "button", value: "Open", "on-click": () => this.onEditChalk() });
   }
   
   reprSpriteId(id) {
@@ -213,6 +224,14 @@ export class PoiModal {
     return select;
   }
   
+  onEditChalk() {
+    const modal = this.dom.spawnModal(ChalkModal);
+    modal.setup(0, this.poi ? this.poi.bits : 0);
+    modal.onDirty = (codepoint, bits) => {
+      this.element.querySelector("input[name='bits']").value = bits;
+    };
+  }
+  
   onSubmit() {
     const poi = this.readPoiFromDom();
     const command = this.commandFromPoiModel(poi);
@@ -264,6 +283,10 @@ export class PoiModal {
         
       case "transmogrify": {
           return ["transmogrify", poi.x.toString(), poi.y.toString(), poi.mode, poi.state.toString()];
+        }
+        
+      case "sketch": {
+          return ["sketch", poi.x.toString(), poi.y.toString(), poi.bits.toString()];
         }
     }
     return null;

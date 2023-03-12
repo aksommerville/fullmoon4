@@ -23,7 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] ghost: Spiral in to the hero, if you don't run away you get cursed. Reduce speed or something, for a short time.
 - - [x] duck: Walk around, quack, throw ninja stars.
 - - [x] seamonster
-- [ ] Initial sketch (eg with chalkguard)
+- [x] Initial sketch (eg with chalkguard)
 - [ ] Indoor plants: Never auto-bloom, require the Blooming Song?
 - [ ] skyleton: sound effects
 - [ ] chalkguard: fireworks
