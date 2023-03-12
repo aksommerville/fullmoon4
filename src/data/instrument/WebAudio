@@ -760,31 +760,63 @@ sound FIZZLE
 end
 
 sound THUD
-  #TODO
-  len 0.001
-  noise 0
+  len 0.200
+  fm 0 ( 200 200 60 ) 0.5 ( 1 200 3 ) sine
+  env 0 ( 0 15 0xffff 20 0x4000 165 0 )
+  norm 0 0.300
 end
 
 sound BREAK_BONES
-  #TODO
-  len 0.001
+  len 0.700
   noise 0
+  bandpass 0 12000 3000
+  env 0 ( 0 20 0xffff 50 0x2000 600 0 )
+  
+  fm 1 ( 100 ) 9.3 ( 8 50 8 200 12 ) square
+  env 1 ( 0 50 0 20 0x6000 20 0x1800 160 0 )
+  mix 0 1
+  
+  fm 1 ( 97 ) 9.7 ( 8 130 8 200 12 ) square
+  env 1 ( 0 130 0 20 0x3000 20 0x0c00 160 0 )
+  mix 0 1
+  
+  fm 1 ( 91 ) 9.9 ( 12 180 12 200 4 ) square
+  env 1 ( 0 180 0 20 0x4000 20 0x1000 160 0 )
+  mix 0 1
+  
+  norm 0 0.200
 end
 
 sound CURSE
-  #TODO
-  len 0.001
-  noise 0
+  len 1.000
+  fm 0 ( 1000 100 2000 1 800 99 800 100 1600 1 600 99 600 100 1200 ) 1 ( 0 100 3 1 0 99 0 100 3 1 0 99 0 100 3 ) sine
+  env 0 ( 0 50 0xffff 50 0 100 0 50 0xc000 50 0 100 0 50 0x8000 50 0 )
+  delay 0 0.100 0.5 0.5 0.5 0.6
+  env 0 ( 0xffff 600 0xffff 400 0 )
+  norm 0 0.300
 end
 
 sound UNCURSE
-  #TODO
-  len 0.001
-  noise 0
+  len 0.650
+  fm 0 ( 40 500 2000 ) 0.5 ( 0 500 3 ) sine
+  env 0 ( 0 80 0xffff 100 0x4000 320 0 )
+  
+  wave 1 1000 sine
+  env 1 ( 0 400 0 20 0x8000 40 0x2000 200 0 )
+  mix 0 1
+  wave 1 1500 sine
+  env 1 ( 0 400 0 20 0x8000 40 0x2000 200 0 )
+  mix 0 1
+  wave 1 2000 sine
+  env 1 ( 0 400 0 20 0x8000 40 0x2000 200 0 )
+  mix 0 1
+  
+  norm 0 0.250
 end
 
 sound QUACK
-  #TODO
-  len 0.001
-  noise 0
+  len 0.300
+  fm 0 ( 100 150 200 150 190 ) 1.5 ( 0 20 4 30 2 100 3 150 5 ) sine
+  env 0 ( 0 40 0xffff 40 0x4000 220 0 )
+  norm 0 0.300
 end
