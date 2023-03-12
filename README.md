@@ -26,7 +26,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Initial sketch (eg with chalkguard)
 - [x] Indoor plants: Never auto-bloom, require the Blooming Song?
 - [x] skyleton: sound effects
-- [ ] chalkguard: fireworks
+- [x] chalkguard: fireworks
 - [ ] Ricochet missiles with the umbrella is fun. Do more with this.
 - - [ ] Influence ricochet direction according to collision position on the tangent axis.
 - - [ ] Gag where monsters are trying to destroy something and you're trying to protect it.

@@ -10,9 +10,13 @@ static int16_t _chalkguard_interact(struct fmn_sprite *sprite,uint8_t itemid,uin
 static char chalkguard_word_a[16];
 static char chalkguard_word_b[16];
 
+#define CHALKGUARD_HIGHLIGHT_TIME 1.0f
+
 #define stringid_a sprite->argv[0]
 #define stringid_b sprite->argv[1]
 #define tileid0 sprite->bv[0]
+#define match_state sprite->bv[1] /* 0=none, 1=left, 2=right */
+#define highlight_time sprite->fv[0]
 
 /* Init.
  */
@@ -38,6 +42,8 @@ static void _chalkguard_init(struct fmn_sprite *sprite) {
   bl->xform=FMN_XFORM_XREV;
 
   _chalkguard_interact(sprite,FMN_ITEM_CHALK,0); // read the initial chalk state
+  highlight_time=0.0f; // don't react to initial state
+  sprite->tileid=tileid0;
 }
 
 /* Raise or lower one blockade.
@@ -90,11 +96,22 @@ static void chalkguard_set_blockade(struct fmn_sprite *sprite,float dx,uint8_t b
 static void chalkguard_match(struct fmn_sprite *sprite,float dx) {
   chalkguard_set_blockade(sprite,dx,0);
   chalkguard_set_blockade(sprite,-dx,1);
+  uint8_t nstate=(dx>0.0f)?2:1;
+  if (match_state!=nstate) {
+    match_state=nstate;
+    highlight_time=CHALKGUARD_HIGHLIGHT_TIME;
+    sprite->tileid=tileid0+1;
+  }
 }
 
 static void chalkguard_match_none(struct fmn_sprite *sprite) {
   chalkguard_set_blockade(sprite,-1.0f,1);
   chalkguard_set_blockade(sprite,1.0f,1);
+  if (match_state!=0) {
+    match_state=0;
+    highlight_time=CHALKGUARD_HIGHLIGHT_TIME;
+    sprite->tileid=tileid0+1;
+  }
 }
 
 /* Check a sketched word.
@@ -131,11 +148,24 @@ static int16_t _chalkguard_interact(struct fmn_sprite *sprite,uint8_t itemid,uin
   return 0;
 }
 
+/* Update.
+ */
+ 
+static void _chalkguard_update(struct fmn_sprite *sprite,float elapsed) {
+  if (highlight_time>0.0f) {
+    if ((highlight_time-=elapsed)<=0.0f) {
+      highlight_time=0.0f;
+      sprite->tileid=tileid0;
+    }
+  }
+}
+
 /* Type definition.
  */
  
 const struct fmn_sprite_controller fmn_sprite_controller_chalkguard={
   .init=_chalkguard_init,
   .interact=_chalkguard_interact,
+  .update=_chalkguard_update,
 };
 
