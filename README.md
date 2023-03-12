@@ -18,15 +18,21 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [ ] More sprites
+- [x] More sprites
 - - [x] skyleton: Falls from the sky, charges with sword, breaks when he hits a wall.
 - - [x] ghost: Spiral in to the hero, if you don't run away you get cursed. Reduce speed or something, for a short time.
 - - [x] duck: Walk around, quack, throw ninja stars.
-- - [ ] seamonster
+- - [x] seamonster
 - [ ] Initial sketch (eg with chalkguard)
 - [ ] Indoor plants: Never auto-bloom, require the Blooming Song?
 - [ ] skyleton: sound effects
 - [ ] chalkguard: fireworks
+- [ ] Ricochet missiles with the umbrella is fun. Do more with this.
+- - [ ] Influence ricochet direction according to collision position on the tangent axis.
+- - [ ] Gag where monsters are trying to destroy something and you're trying to protect it.
+- - [ ] Anything that ejects a missile should get stunned when it gets sent back.
+- - - [ ] Or catch it! Raccoon should do this. "Oh it just wanted to play catch"
+- - [ ] Use ricochet to hit a switch or something.
 
 ### April
 

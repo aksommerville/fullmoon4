@@ -14,3 +14,5 @@ tilesheet 1
 neighborw 3
 neighborn 10
 sprite 17 2 3 6 0 0
+sprite 4 3 34 0 0 0
+sprite 11 9 34 0 0 0
