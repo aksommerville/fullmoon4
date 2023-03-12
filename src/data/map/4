@@ -14,3 +14,6 @@ tilesheet village
 neighborn 3
 neighborw 5
 sprite 1 3 10 0 0 0
+sprite 13 3 32 0 0 0
+sprite 6 8 32 0 0 0
+sprite 15 8 32 0 0 0

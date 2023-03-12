@@ -21,6 +21,8 @@
 #define FMN_HERO_SHOVEL_TIME               0.500f
 #define FMN_HERO_SPELL_LIMIT 12 /* Must be <=FMN_VIOLIN_SONG_LENGTH (20) */
 #define FMN_VIOLIN_BEATS_PER_SEC 4
+#define FMN_HERO_CURSE_TIME 10.0f
+#define FMN_HERO_CURSE_SPEED_PENALTY 0.5f
 
 extern struct fmn_hero {
   struct fmn_sprite *sprite;

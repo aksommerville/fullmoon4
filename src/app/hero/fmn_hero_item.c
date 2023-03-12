@@ -646,7 +646,8 @@ static void fmn_hero_compass_begin() {
 void fmn_hero_item_begin() {
 
   // No actions while injured, that's a firm rule, it's part of the injury penalty.
-  if (fmn_global.injury_time>0.0f) {
+  // Same deal for curses.
+  if ((fmn_global.injury_time>0.0f)||(fmn_global.curse_time>0.0f)) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }

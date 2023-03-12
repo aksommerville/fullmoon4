@@ -153,6 +153,7 @@ static void skyleton_sword_hero_collision(struct fmn_sprite *sprite,struct fmn_s
  */
  
 static void skyleton_begin_BOUNCE(struct fmn_sprite *sprite) {
+  fmn_sound_effect(FMN_SFX_THUD);
   sprite->tileid=skyleton_state.template.tileid+0x01;
   sprite->physics=skyleton_state.template.physics;
   sprite->layer=128;
@@ -198,6 +199,7 @@ static void skyleton_begin_CHARGE(struct fmn_sprite *sprite) {
  */
  
 static void skyleton_begin_BREAK(struct fmn_sprite *sprite) {
+  fmn_sound_effect(FMN_SFX_BREAK_BONES);
   sprite->physics=0;
   sclock=0.0f;
   sprite->tileid=skyleton_state.template.tileid+7;

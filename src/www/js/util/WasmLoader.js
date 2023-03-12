@@ -23,7 +23,8 @@ export class WasmLoader {
       rand: () => Math.floor(Math.random() * 0x10000),
       sinf: x => Math.sin(x),
       cosf: x => Math.cos(x),
-      roundf: x=> Math.round(x),
+      roundf: x => Math.round(x),
+      atan2f: (x, y) => Math.atan2(x, y),
     };
   }
   

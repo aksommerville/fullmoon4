@@ -141,6 +141,10 @@ void fmn_hero_motion_update(float elapsed) {
       tvx*=halfroot2;
       tvy*=halfroot2;
     }
+    if (fmn_global.curse_time>0.0f) {
+      tvx*=FMN_HERO_CURSE_SPEED_PENALTY;
+      tvy*=FMN_HERO_CURSE_SPEED_PENALTY;
+    }
   }
   
   // Accelerate toward the target with a maximum rate per axis.
@@ -388,5 +392,17 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
 
   fmn_sound_effect(FMN_SFX_HURT);
+  return 1;
+}
+
+/* Curse.
+ * Same idea as injury, but much simpler because no motion is involved.
+ */
+ 
+uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
+  if (fmn_global.curse_time>0.0f) return 0;
+  fmn_global.curse_time=FMN_HERO_CURSE_TIME;
+  fmn_sound_effect(FMN_SFX_CURSE);
+  fmn_hero_item_end();
   return 1;
 }

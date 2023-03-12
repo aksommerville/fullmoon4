@@ -45,7 +45,7 @@ export class Globals {
     this.p_plantv_end = this.p_door_end + 4 + this.constants.PLANT_LIMIT * this.constants.PLANT_SIZE;
     this.p_sketchv_end = this.p_plantv_end + 4 + this.constants.SKETCH_LIMIT * this.constants.SKETCH_SIZE;
     this.p_hero = this.p_sketchv_end + 40;
-    this.p_gs = this.p_hero + 32;
+    this.p_gs = this.p_hero + 36;
     this.p_violin_song = this.p_gs + this.constants.GS_SIZE;
     this.p_weather = this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH + 7;
     
@@ -86,9 +86,10 @@ export class Globals {
     this.g_cheesing = new Uint8Array(this.memU8.buffer, this.p_hero + 16, 1);
     this.g_spell_repudiation = new Uint8Array(this.memU8.buffer, this.p_hero + 17, 1);
     this.g_transmogrification = new Uint8Array(this.memU8.buffer, this.p_hero + 18, 1);
-    this.g_invisibility_time = new Uint8Array(this.memU8.buffer, this.p_hero + 20, 1);
-    this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 24, 2); // [x,y]
-    this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 28, 2); // [x,y]
+    this.g_invisibility_time = new Float32Array(this.memU8.buffer, this.p_hero + 20, 1);
+    this.g_curse_time = new Float32Array(this.memU8.buffer, this.p_hero + 24, 1);
+    this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 28, 2); // [x,y]
+    this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 32, 2); // [x,y]
     this.g_gs = new Uint8Array(this.memU8.buffer, this.p_gs, this.constants.GS_SIZE);
     this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, this.constants.VIOLIN_SONG_LENGTH);
     this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH, 1);

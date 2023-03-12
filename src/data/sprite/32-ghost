@@ -1,0 +1,6 @@
+controller ghost
+image 3
+tile 0x98
+style twoframe
+layer 140
+radius 0.5

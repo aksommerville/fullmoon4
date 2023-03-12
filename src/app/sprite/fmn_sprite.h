@@ -134,6 +134,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_wildflower    31
 #define FMN_SPRCTL_conveyor      32
 #define FMN_SPRCTL_skyleton      33
+#define FMN_SPRCTL_ghost         34
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -169,7 +170,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(lizard) \
   _(wildflower) \
   _(conveyor) \
-  _(skyleton)
+  _(skyleton) \
+  _(ghost)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

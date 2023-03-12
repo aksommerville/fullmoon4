@@ -155,6 +155,10 @@ int rand();
 #define FMN_SFX_COWBELL 56 /* ...end GM */
 #define FMN_SFX_PAYMENT 57
 #define FMN_SFX_FIZZLE 58
+#define FMN_SFX_THUD 59
+#define FMN_SFX_BREAK_BONES 60
+#define FMN_SFX_CURSE 61
+#define FMN_SFX_UNCURSE 62
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */
@@ -322,6 +326,7 @@ extern struct fmn_global {
   uint8_t transmogrification; // 0=normal, 1=pumpkin
   uint8_t pad3;
   float invisibility_time;
+  float curse_time;
   
   // Relative position of the secret the compass should point to.
   // (0,0) is special, it means "nothing". (zero is a valid cell, you just can't put a secret there).

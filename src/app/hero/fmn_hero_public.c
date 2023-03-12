@@ -105,6 +105,12 @@ void fmn_hero_update(float elapsed) {
       fmn_global.injury_time=0.0f;
     }
   }
+  if (fmn_global.curse_time>0.0f) {
+    if ((fmn_global.curse_time-=elapsed)<=0.0f) {
+      fmn_global.curse_time=0.0f;
+      fmn_sound_effect(FMN_SFX_UNCURSE);
+    }
+  }
   
   fmn_hero.velx=fmn_hero.sprite->velx;
   fmn_hero.vely=fmn_hero.sprite->vely;

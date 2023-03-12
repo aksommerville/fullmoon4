@@ -83,31 +83,21 @@ export class RenderHero {
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId + 0x20, 0);
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, tileId + 0x10, 0);
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12 - hatDisplacement, srcImage, tileId, 0);
+      if (this.globals.g_curse_time[0] > 0) {
+        this._renderCurse(ctx, midx, midy, srcImage);
+      }
       return;
     }
     
-    // Repudiating a spell is its own thing.
+    // A few active-item and similar states do their own thing entirely.
+    // These don't need to check curse_time, because you can't use items while cursed.
     if (this.globals.g_spell_repudiation[0]) {
-      this._renderSpellRepudiation(ctx, midx, midy, srcImage);
-      return;
+      return this._renderSpellRepudiation(ctx, midx, midy, srcImage);
     }
-    
-    // Riding the broom is different enough to get its own top-level handler here.
-    if (this.globals.g_active_item[0] === this.constants.ITEM_BROOM) {
-      this._renderBroom(ctx, midx, midy, facedir, srcImage);
-      return;
-    }
-    
-    // Ditto encoding the wand.
-    if (this.globals.g_active_item[0] === this.constants.ITEM_WAND) {
-      this._renderWand(ctx, midx, midy, facedir, srcImage);
-      return;
-    }
-    
-    // Ditto fiddling on the violin.
-    if (this.globals.g_active_item[0] === this.constants.ITEM_VIOLIN) {
-      this._renderViolin(ctx, midx, midy, facedir, srcImage);
-      return;
+    switch (this.globals.g_active_item[0]) {
+      case this.constants.ITEM_BROOM: return this._renderBroom(ctx, midx, midy, facedir, srcImage);
+      case this.constants.ITEM_WAND: return this._renderWand(ctx, midx, midy, facedir, srcImage);
+      case this.constants.ITEM_VIOLIN: return this._renderViolin(ctx, midx, midy, facedir, srcImage);
     }
     
     // The most common tiles are arranged in the first three columns: DOWN, UP, LEFT.
@@ -142,6 +132,10 @@ export class RenderHero {
     } else {
       this.cheesePhase = 0;
     }
+    
+    if (this.globals.g_curse_time[0] > 0) {
+      this._renderCurse(ctx, midx, midy, srcImage);
+    }
   }
   
   _renderPumpkin(ctx, midx, midy, tilesize, srcImage) {
@@ -169,6 +163,9 @@ export class RenderHero {
     }
     this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId, xform);
     this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - hatDisplacement, srcImage, hatTileId, xform);
+    if (this.globals.g_curse_time[0] > 0) {
+      this._renderCurse(ctx, midx, midy, srcImage);
+    }
   }
   
   _renderBody(ctx, midx, midy, facedir, srcImage, col, xform) {
@@ -185,7 +182,9 @@ export class RenderHero {
     const tilesize = this.constants.TILESIZE;
     
     let tileId = 0x10 + col;
-    switch (this.globals.g_active_item[0]) {
+    if (this.globals.g_curse_time[0] > 0) {
+      tileId = 0x70 + col;
+    } else switch (this.globals.g_active_item[0]) {
       case this.constants.ITEM_SHOVEL: switch (this.globals.g_facedir[0]) {
           case this.constants.DIR_W:
           case this.constants.DIR_E: tileId = 0x69; break;
@@ -313,6 +312,12 @@ export class RenderHero {
     ctx.globalAlpha = 1 - phase;
     ctx.fill();
     ctx.globalAlpha = 1;
+  }
+  
+  _renderCurse(ctx, midx, midy, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    const xform = (this.frameCount & 0x10) ? this.constants.XFORM_XREV : 0;
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 16, srcImage, 0x73, xform);
   }
   
   _animateFeather() {
