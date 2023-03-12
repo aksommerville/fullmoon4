@@ -208,8 +208,10 @@ export class Globals {
     this.g_plantc[0] = 0;
     for (let [mapid,x,y,flowerTime,state,fruit] of this.dataService.plants) {
       if (mapid !== map.id) continue;
-      if (now && flowerTime && (state === this.constants.PLANT_STATE_GROW) && (now >= flowerTime)) {
-        state = this.constants.PLANT_STATE_FLOWER;
+      if (!map.indoors) { // auto-bloom... kind of a lot of conditions...
+        if (now && flowerTime && (state === this.constants.PLANT_STATE_GROW) && (now >= flowerTime)) {
+          state = this.constants.PLANT_STATE_FLOWER;
+        }
       }
       this.addPlant(x, y, true, state, fruit, flowerTime);
     }

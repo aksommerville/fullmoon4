@@ -24,7 +24,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] duck: Walk around, quack, throw ninja stars.
 - - [x] seamonster
 - [x] Initial sketch (eg with chalkguard)
-- [ ] Indoor plants: Never auto-bloom, require the Blooming Song?
+- [x] Indoor plants: Never auto-bloom, require the Blooming Song?
 - [ ] skyleton: sound effects
 - [ ] chalkguard: fireworks
 - [ ] Ricochet missiles with the umbrella is fun. Do more with this.
