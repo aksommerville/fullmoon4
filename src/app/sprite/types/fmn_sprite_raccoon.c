@@ -206,6 +206,32 @@ static void raccoon_update_LOST(struct fmn_sprite *sprite,float elapsed) {
   }
 }
 
+/* Look for missiles we can catch.
+ */
+ 
+static int raccoon_check_catch_1(struct fmn_sprite *missile,void *userdata) {
+  struct fmn_sprite *sprite=userdata;
+  if (missile->controller!=FMN_SPRCTL_missile) return 0;
+  if (!missile->bv[1]) return 0; // reflected
+  if (missile->pv[0]) return 0; // holder
+  const float radius=0.75f;
+  float dx=missile->x-sprite->x;
+  if ((dx<-radius)||(dx>radius)) return 0;
+  float dy=missile->y-sprite->y;
+  if ((dy<-radius)||(dy>radius)) return 0;
+  
+  missile->pv[0]=sprite;
+  missile->bv[1]=0;
+  missile->bv[0]=0; // ready
+  stage=RACCOON_STAGE_BRANDISH;
+  animclock=0.0f;
+  return 1;
+}
+ 
+static void raccoon_check_catch(struct fmn_sprite *sprite) {
+  fmn_sprites_for_each(raccoon_check_catch_1,sprite);
+}
+
 /* Update.
  */
  
@@ -222,6 +248,11 @@ static void _raccoon_update(struct fmn_sprite *sprite,float elapsed) {
   fmn_hero_get_position(&herox,&heroy);
   if (herox<sprite->x) sprite->xform=0;
   else sprite->xform=FMN_XFORM_XREV;
+  
+  // In any stage except BRANDISH, try to catch flying acorns.
+  if (stage!=RACCOON_STAGE_BRANDISH) {
+    raccoon_check_catch(sprite);
+  }
 
   switch (stage) {
     case RACCOON_STAGE_CHOOSE_DESTINATION: raccoon_choose_destination(sprite); break;

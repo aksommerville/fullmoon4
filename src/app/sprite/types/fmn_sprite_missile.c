@@ -13,6 +13,7 @@
 #define dx sprite->fv[1]
 #define dy sprite->fv[2]
 #define ready sprite->bv[0]
+#define reflected sprite->bv[1]
 
 /* Init.
  */
@@ -116,6 +117,7 @@ static void missile_reflect_umbrella(struct fmn_sprite *sprite,int8_t adjx,int8_
   float t=reft+relt;
   dx=sinf(t)*speed;
   dy=-cosf(t)*speed;
+  reflected=1;
 }
 
 /* Interact.
