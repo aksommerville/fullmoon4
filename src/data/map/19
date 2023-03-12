@@ -12,5 +12,5 @@
 0202020202020202020202020202020202020202
 tilesheet villint
 door 11 8 5 3 3
-sprite 7 6 24 3 0 0
+sprite 7 6 24 gs:moonsong 0 0
 indoors

@@ -137,6 +137,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_ghost         34
 #define FMN_SPRCTL_duck          35
 #define FMN_SPRCTL_seamonster    36
+#define FMN_SPRCTL_throwswitch   37
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -175,7 +176,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(skyleton) \
   _(ghost) \
   _(duck) \
-  _(seamonster)
+  _(seamonster) \
+  _(throwswitch)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

@@ -23,7 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Gag where monsters are trying to destroy something and you're trying to protect it.
 - - xxx Anything that ejects a missile should get stunned when it gets sent back.
 - - - [x] Or catch it! Raccoon should do this. "Oh it just wanted to play catch"
-- - [ ] Use ricochet to hit a switch or something.
+- - [x] Use ricochet to hit a switch or something.
 - - [x] Make her less likely to get smacked in the face. ("could it be the umbrella'd edge?" as opposed to "which edge?")
 
 ### April
