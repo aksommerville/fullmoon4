@@ -189,7 +189,10 @@ static void seamonster_begin_SPIT(struct fmn_sprite *sprite) {
     0x23,FMN_SPRITE_STYLE_TILE,
   };
   const uint8_t argv[]={};
-  struct fmn_sprite *star=fmn_sprite_spawn(x,sprite->y,0,cmdv,sizeof(cmdv),argv,sizeof(argv));
+  struct fmn_sprite *missile=fmn_sprite_spawn(x,sprite->y,0,cmdv,sizeof(cmdv),argv,sizeof(argv));
+  if (missile) {
+    missile->xform=sprite->xform;
+  }
 }
 
 /* Init.

@@ -19,3 +19,4 @@ sprite 11 9 34 0 0 0
 sprite 18 2 10 gs:broomdoor 0 0
 sprite 0 5 throwswitch gs:broomdoor 0 0
 neighbore 27
+neighbors 30
