@@ -1,3 +1,5 @@
+const resolveItemName = require("./resolveItemName.js");
+const resolveGsbitName = require("./resolveGsbitName.js");
 const fs = require("fs");
 
 /* Keyed by resource type string, values are { [name]: id }
@@ -28,14 +30,22 @@ function getResourceIdByName(resType, name) {
   let id = +name;
   if (!isNaN(id)) return id;
   
+  // Allow a few string things that aren't resources but similar.
+  if (typeof(name) === "string") {
+         if (name.startsWith("gs:")) id = resolveGsbitName(name.substring(3));
+    else if (name.startsWith("item:")) id = resolveItemName(name.substring(5));
+    else id = null;
+    if (typeof(id) === "number") return id;
+  }
+  
   if (resType) {
     if (!toc[resType]) toc[resType] = generateToc(resType);
     const typeToc = toc[resType];
     const id = typeToc[name];
     if (!isNaN(id)) return id;
+    throw new Error(`Unknown ${resType} resource ${JSON.stringify(name)}`);
   }
-  
-  throw new Error(`Unknown ${resType} resource ${JSON.stringify(name)}`);
+  throw new Error(`Failed to evaluate ${JSON.stringify(name)}`);
 }
 
 module.exports = getResourceIdByName;

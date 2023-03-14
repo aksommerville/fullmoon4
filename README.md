@@ -18,19 +18,36 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [ ] Ricochet missiles with the umbrella is fun. Do more with this.
-- - [x] Influence ricochet direction according to collision position on the tangent axis.
-- - [ ] Gag where monsters are trying to destroy something and you're trying to protect it.
-- - xxx Anything that ejects a missile should get stunned when it gets sent back.
-- - - [x] Or catch it! Raccoon should do this. "Oh it just wanted to play catch"
-- - [x] Use ricochet to hit a switch or something.
-- - [x] Make her less likely to get smacked in the face. ("could it be the umbrella'd edge?" as opposed to "which edge?")
+- [ ] Maps for demo.
+- - [ ] Think on interiors, what should these walls look like?
+- - [ ] pitcher house: 4 pictures on the wall: river, tree, bee, cow
+- - [ ] violin house: challenge
+- - [ ] violin house: teach a song. Lullabye? ha ha yes, there should be people lingering around and they fall asleep
+- - [ ] moonsong's basement: teach Spell of Opening
+- - [ ] Put some matches down here too, because you have to learn the spell to get back out!
+- - [ ] building by graveyard: church
+- - [ ] church: teach the Wind Spell, and the chalkguard reference
+- - [ ] Some kind of excuse to dilly dally outside the church, so the ghosts can catch you
+- - [ ] forest: challenges
+- - [ ] forest: Song of Blooming
+- - [ ] forest: Beehive. By the rabbit?
+- [ ] Graphics.
+- - [ ] Village interiors
+- - [ ] Church
+- - [ ] Castle exterior
+- - [ ] Mountains exterior
+- - [ ] Desert
+- - [ ] Beach
+- [ ] Out-to-sea blowback maps.
+- [ ] farmer: shovel sound
+- [ ] farmer: tweak position
+- [ ] farmer: Sow and water on separate trips. Let the hero intervene.
+- [ ] Simplify the Home spell. Maybe "SSS", like clicking your heels three times?
+- [ ] Can we make like "song only if nothing yet" for map 1? It's jarring when you're just passing thru.
 
 ### April
 
 - [ ] Compass and crow: How to decide on target location? see src/app/fmn_secrets.c
-- [ ] Graphics.
-- [ ] Maps for demo.
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - [ ] UI for saved game management.
 - [ ] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
@@ -62,6 +79,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] MapAllUi: Point out neighbor mismatches.
 - - [ ] MapAllUi: Populate tattle.
 - - [ ] Delete maps (and resources in general)
+- - [ ] ImageAllUi: Show names
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] verify: Check neighbor edges cell by cell (be mindful of firewall)

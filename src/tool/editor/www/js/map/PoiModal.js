@@ -140,10 +140,10 @@ export class PoiModal {
   }
   
   buildExitForm(table) {
-    this.addNumberRow(table, "mapId", 0, 65535, this.poi ? this.poi.mapId : 1, "0 to create");
+    this.addNumberRow(table, "mapId", 0, 65535, this.poi ? this.poi.mapId : 0, "0 to create");
     this.addNumberRow(table, "dstx", 0, FullmoonMap.COLC - 1, this.poi ? this.poi.dstx : 0);
     this.addNumberRow(table, "dsty", 0, FullmoonMap.ROWC - 1, this.poi ? this.poi.dsty : 0);
-    if (!this.poi) this.addCheckboxRow(table, "createRemote");
+    if (!this.poi) this.addCheckboxRow(table, "createRemote", true);
   }
   
   buildSpriteForm(table) {
@@ -201,13 +201,14 @@ export class PoiModal {
     return input;
   }
   
-  addCheckboxRow(table, key) {
+  addCheckboxRow(table, key, checked) {
     const tr = this.dom.spawn(table, "TR");
     this.dom.spawn(tr, "TD", ["key"], key);
     const td = this.dom.spawn(tr, "TD", ["value"]);
     const input = this.dom.spawn(td, "INPUT", {
       type: "checkbox",
       name: key,
+      checked,
     });
     return input;
   }

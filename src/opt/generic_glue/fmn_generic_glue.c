@@ -53,3 +53,7 @@ void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
 uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id) {
   return 0;
 }
+
+uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v) {
+  return 0;
+}

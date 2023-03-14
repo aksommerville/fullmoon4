@@ -50,7 +50,8 @@ export class MapRenderer {
   }
   
   // Call when bounds, neighbors, or commands change for a full refresh.
-  setLayoutDirty() {
+  setLayoutDirty(tileprops) {
+    if (tileprops) this.tileprops = tileprops;
     this.pois = this.mapService.getPois(this.map, this.resService);
     this.layoutDirty = true;
     this.renderSoon();

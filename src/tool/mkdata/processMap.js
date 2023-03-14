@@ -1,6 +1,5 @@
 const fs = require("fs").promises;
 const getResourceIdByName = require("../common/getResourceIdByName.js");
-const resolveGsbitName = require("../common/resolveGsbitName.js");
 
 const COLC = 20;
 const ROWC = 12;
@@ -16,7 +15,6 @@ function assertIntArgs(args, ...schema) {
   const dst = [];
   for (let i=0; i<args.length; i++) {
     let v;
-    if (args[i].toString().startsWith("gs:")) args[i] = resolveGsbitName(args[i].substring(3));
     try {
       const resType = schema[i][3];
       v = getResourceIdByName(resType, args[i]);

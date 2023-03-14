@@ -189,9 +189,12 @@ export class MapUi {
     const modal = this.dom.spawnModal(MapCommandsModal);
     modal.setup(this.map);
     modal.onDirty = () => {
-      // We use the more expensive setLayoutDirty, not renderSoon: Changing commands could change the tilesheet or neighbors.
-      this.mapRenderer.setLayoutDirty();
       this.resService.dirty("map", this.map.id, this.map);
+      const imageId = this.resService.resolveId("image", this.map.getCommand("tilesheet"));
+      this.tileprops = this.resService.getResourceObject("tileprops", imageId);
+      this.mapRenderer.setLayoutDirty(this.tileprops);
+      this.mapEditor.setup(this.map, this.tileprops);
+      this.mapService.setPaletteImageId(imageId);
     };
   }
   
