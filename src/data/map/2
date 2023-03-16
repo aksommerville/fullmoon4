@@ -16,7 +16,7 @@ neighbors 1
 neighborn 4
 neighbore 5
 neighborw 9
-sprite 13 1 34 0 0 0
-sprite 9 1 1 0 0 0
-sprite 8 4 17 0 0 0
-sprite 7 3 4 3 30 0
+sprite 13 1 seamonster 0 0 0
+sprite 9 1 pushblock 0 0 0
+sprite 8 4 saw 0 0 0
+sprite 7 3 firenozzle_e 3 30 0

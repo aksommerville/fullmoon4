@@ -16,7 +16,7 @@ neighborw 5
 neighborn 7
 neighbors 18
 sprite 17 5 10 0 0 0
-sprite 13 8 32 0 0 0
-sprite 15 8 32 0 0 0
-sprite 17 8 32 0 0 0
+sprite 13 8 ghost 0 0 0
+sprite 15 8 ghost 0 0 0
+sprite 17 8 ghost 0 0 0
 door 10 6 32 10 9

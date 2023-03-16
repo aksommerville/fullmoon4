@@ -12,7 +12,7 @@
 0202020202020202020202020202020202020202
 tilesheet villint
 door 10 8 8 4 3
-sprite 7 5 24 gs:moonsong 0 0
-sprite 11 6 10 gs:mns_switch 0 0
-sprite 5 4 8 gs:mns_switch 0 0
+sprite 7 5 moonsong gs:moonsong 0 0
+sprite 11 6 gate gs:mns_switch 0 0
+sprite 5 4 treadle gs:mns_switch 0 0
 door 13 5 31 13 5

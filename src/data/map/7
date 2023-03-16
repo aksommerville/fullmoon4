@@ -14,5 +14,5 @@ tilesheet village
 song tangled_vine
 neighbors 6
 neighborw 8
-sprite 8 2 15 0 0 0
+sprite 8 2 cow 0 0 0
 door 12 3 28 10 8

@@ -15,7 +15,7 @@ song eye_of_newt
 neighbore 20
 neighborw 22
 neighborn 24
-sprite 10 0 18 0 0 0
-sprite 11 8 27 0 0 0
-sprite 15 5 26 0 0 0
-sprite 5 6 26 0 0 0
+sprite 10 0 firewall 0 0 0
+sprite 11 8 tolltroll 0 0 0
+sprite 15 5 lobster 0 0 0
+sprite 5 6 lobster 0 0 0

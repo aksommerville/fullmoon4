@@ -14,7 +14,7 @@ tilesheet beach
 song eye_of_newt
 neighbore 21
 neighborn 25
-sprite 1 8 34 0 0 0
-sprite 13 4 3 item:SHOVEL 0 0
-sprite 6 4 26 0 0 0
-sprite 16 6 26 0 0 0
+sprite 1 8 seamonster 0 0 0
+sprite 13 4 treasure item:SHOVEL 0 0
+sprite 6 4 lobster 0 0 0
+sprite 16 6 lobster 0 0 0

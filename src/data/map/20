@@ -15,11 +15,11 @@ song eye_of_newt
 neighborn 19
 neighbore 15
 neighborw 21
-sprite 16 3 34 0 0 0
-sprite 8 10 34 0 0 0
-sprite 17 8 1 0 0 0
-sprite 17 7 8 gs:windblockn 0 0
-sprite 17 9 8 gs:windblocks 0 0
-sprite 9 5 10 gs:windblockn 0 0
-sprite 11 4 10 gs:windblocks 0 0
-sprite 12 5 3 item:UMBRELLA 0 0
+sprite 16 3 seamonster 0 0 0
+sprite 8 10 seamonster 0 0 0
+sprite 17 8 pushblock 0 0 0
+sprite 17 7 treadle gs:windblockn 0 0
+sprite 17 9 treadle gs:windblocks 0 0
+sprite 9 5 gate gs:windblockn 0 0
+sprite 11 4 gate gs:windblocks 0 0
+sprite 12 5 treasure item:UMBRELLA 0 0

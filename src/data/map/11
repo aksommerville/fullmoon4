@@ -14,4 +14,4 @@ tilesheet mountains
 song seven_circles
 neighbors 10
 neighbore 12
-sprite 6 4 3 item:COMPASS 0 0
+sprite 6 4 treasure item:COMPASS 0 0

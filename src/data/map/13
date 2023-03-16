@@ -16,10 +16,10 @@ neighborw 1
 neighborn 5
 neighbors 14
 neighbore 18
-sprite 8 3 1 0 0 0
-sprite 12 1 3 item:WAND 0 0
-sprite 4 8 1 0 0 0
-sprite 4 7 1 0 0 0
-sprite 4 6 1 0 0 0
+sprite 8 3 pushblock 0 0 0
+sprite 12 1 treasure item:WAND 0 0
+sprite 4 8 pushblock 0 0 0
+sprite 4 7 pushblock 0 0 0
+sprite 4 6 pushblock 0 0 0
 sprite 6 8 7 3 25 0
-sprite 11 5 20 0 0 0
+sprite 11 5 raccoon 0 0 0

@@ -103,7 +103,6 @@ export class PoiModal {
       if (element.type === "checkbox") {
         poi[key] = element.checked;
       } else {
-        //poi[key] = +element.value;
         poi[key] = this.evalField(key, element.value);
       }
     }
@@ -111,15 +110,6 @@ export class PoiModal {
   }
   
   evalField(key, value) {
-    switch (key) {
-      case "spriteId": {
-          if (value) {
-            const res = this.resService.toc.find(r => r.type === "sprite" && r.name === value);
-            if (res) return res.id;
-          }
-          return value; // let it be a string if it doesn't resolve
-        }
-    }
     const nvalue = +value;
     if (isNaN(nvalue)) return value;
     return nvalue;

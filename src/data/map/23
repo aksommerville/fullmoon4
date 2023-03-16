@@ -16,4 +16,4 @@ neighbore 1
 neighborn 9
 neighbors 24
 neighborw 26
-sprite 8 5 3 item:BELL 0 0
+sprite 8 5 treasure item:BELL 0 0

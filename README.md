@@ -51,7 +51,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Simplify the Home spell. Maybe "SSS", like clicking your heels three times?
 - [ ] Can we make like "song only if nothing yet" for map 1? It's jarring when you're just passing thru.
 - [x] Forest entrance: bottom block stops moving a pixel or two short of flush.
-- [ ] Map editor: Use symbolic names for sprite controller in map "sprite" commands, will help finding them in the commands view.
+- [x] Map editor: Use symbolic names for sprite controller in map "sprite" commands, will help finding them in the commands view.
 - [x] Raccoons get mixed up if you bounce back an acorn and they're already holding one; have seen them stuck with an acorn.
 
 ### April
