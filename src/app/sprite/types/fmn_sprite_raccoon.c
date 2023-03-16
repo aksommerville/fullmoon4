@@ -35,7 +35,7 @@ static void raccoon_choose_destination(struct fmn_sprite *sprite) {
   stage=RACCOON_STAGE_LOST;
   animclock=0.0f;
   panic_clock=0.0f;
-
+  
   // We are not allowed offscreen. If that happened, all bets are off. Kill the sprite.
   int8_t col=(int8_t)sprite->x;
   int8_t row=(int8_t)sprite->y;
@@ -148,10 +148,7 @@ static int raccoon_find_acorn_1(struct fmn_sprite *sprite,void *userdata) {
   if (sprite->controller!=FMN_SPRCTL_missile) return 0;
   if (sprite->imageid!=ctx->raccoon->imageid) return 0;
   if (sprite->tileid!=0x61) return 0;
-  float d=sprite->x-ctx->raccoon->x;
-  if ((d<-1.0f)||(d>1.0f)) return 0;
-  d=sprite->y-ctx->raccoon->y;
-  if ((d<-1.0f)||(d>1.0f)) return 0;
+  if (sprite->pv[0]!=ctx->raccoon) return 0;
   ctx->acorn=sprite;
   return 1;
 }
