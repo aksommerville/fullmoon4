@@ -13,6 +13,20 @@
 #define MOONSONG_OUVERTURE_TIME 3.0f
 #define MOONSONG_STROKE_TIME 0.5f
 #define MOONSONG_BETWEEN_TIME 0.25f
+#define MOONSONG_WALK_SPEED 2.0f
+
+/* emergency_exit: Hacky workaround for a trap possible in the demo.
+ * Our setup is you have to turn Moon Song into a pumpkin and push her onto a treadle to open a gate and get into her basement.
+ * If you empumpkin each other at the same time -- easy to do -- and proceed, she'll respawn off the treadle and you're trapped.
+ * I guess that could also happen if you get to the other side and then depumpkin her. Why would you do that?
+ * SOLUTION: Upon startup, if the hero is a pumpkin and on the other side of the gate, walk to the treadle.
+ * That's out of character of course, the real Moon Song would keep you trapped until you rot.
+ * We have to delay until the first update, to ensure that the treadle and gate both exist and hero is in the right place.
+ * emergency_exit_state:
+ *   0: No need.
+ *   1: Waiting for first update.
+ *   2: Walk to treadle.
+ */
 
 // Must match FMN_SPELLID_PUMPKIN, defined in src/app/fmn_secrets.c.
 static const uint8_t moonsong_spell[]={
@@ -23,7 +37,10 @@ static const uint8_t moonsong_spell[]={
 #define sleeping sprite->bv[1]
 #define pumpkinned sprite->bv[2]
 #define spellp sprite->bv[3]
+#define emergency_exit_state sprite->bv[4]
 #define clock sprite->fv[0]
+#define emergency_exit_dstx sprite->fv[1]
+#define emergency_exit_dsty sprite->fv[2]
 #define gsbit sprite->argv[0] /* nonzero=pumpkinned */
 
 /* Init.
@@ -31,6 +48,7 @@ static const uint8_t moonsong_spell[]={
  
 static void _moonsong_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
+  emergency_exit_state=1;
   if (gsbit&&fmn_gs_get_bit(gsbit)) {
     pumpkinned=1;
     sprite->invmass=128;
@@ -67,11 +85,93 @@ static uint8_t moonsong_tile_offset_for_stroke(uint8_t dir) {
   return 4;
 }
 
+/* Initial check for emergency_exit.
+ */
+ 
+struct moonsong_emergency_exit_players {
+  struct fmn_sprite *sprite;
+  struct fmn_sprite *treadle;
+  struct fmn_sprite *gate;
+};
+
+static int moonsong_assess_emergency_exit_players(struct fmn_sprite *q,void *userdata) {
+  struct moonsong_emergency_exit_players *players=userdata;
+  // Assume that any treadle and gate are ok; there shouldn't be more than one of each.
+  if (q->controller==FMN_SPRCTL_treadle) players->treadle=q;
+  else if (q->controller==FMN_SPRCTL_gate) players->gate=q;
+  else return 0;
+  if (players->treadle&&players->gate) return 1;
+  return 0;
+}
+ 
+static uint8_t moonsong_assess_emergency_exit(struct fmn_sprite *sprite) {
+
+  // Only necessary if the hero is a pumpkin.
+  if (fmn_global.transmogrification!=1) return 0;
+  
+  // Must have a treadle and gate.
+  struct moonsong_emergency_exit_players players={
+    .sprite=sprite,
+  };
+  if (!fmn_sprites_for_each(moonsong_assess_emergency_exit_players,&players)) return 0;
+  
+  // Hero must be on the other side of the gate horizontally.
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  if (sprite->x<players.gate->x) {
+    if (herox<players.gate->x) return 0;
+  } else {
+    if (herox>players.gate->x) return 0;
+  }
+  
+  // OK we are going to do the emergency exit thing.
+  emergency_exit_dstx=players.treadle->x;
+  emergency_exit_dsty=players.treadle->y;
+  return 1;
+}
+
+/* Check for emergency exit behavior.
+ * If we do something and return nonzero, all other update behavior is suspended.
+ * (NB even if somehow we are sleeping, we do this).
+ */
+ 
+static uint8_t moonsong_update_emergency_exit(struct fmn_sprite *sprite,float elapsed) {
+  switch (emergency_exit_state) {
+    case 0: return 0;
+    case 1: if (moonsong_assess_emergency_exit(sprite)) {
+        emergency_exit_state=2;
+        return 1;
+      } else {
+        emergency_exit_state=0;
+        return 0;
+      }
+    case 2: {
+        uint8_t xok=0,yok=0;
+        if (sprite->x<emergency_exit_dstx) {
+          if ((sprite->x+=MOONSONG_WALK_SPEED*elapsed)>=emergency_exit_dstx) sprite->x=emergency_exit_dstx;
+        } else if (sprite->x>emergency_exit_dstx) {
+          if ((sprite->x-=MOONSONG_WALK_SPEED*elapsed)<=emergency_exit_dstx) sprite->x=emergency_exit_dstx;
+        } else xok=1;
+        if (sprite->y<emergency_exit_dsty) {
+          if ((sprite->y+=MOONSONG_WALK_SPEED*elapsed)>=emergency_exit_dsty) sprite->y=emergency_exit_dsty;
+        } else if (sprite->y>emergency_exit_dsty) {
+          if ((sprite->y-=MOONSONG_WALK_SPEED*elapsed)<=emergency_exit_dsty) sprite->y=emergency_exit_dsty;
+        } else yok=1;
+        if (xok&&yok) {
+          emergency_exit_state=0;
+          return 0;
+        }
+      } return 1;
+  }
+  return 0;
+}
+
 /* Update.
  */
  
 static void _moonsong_update(struct fmn_sprite *sprite,float elapsed) {
   clock+=elapsed;
+  if (moonsong_update_emergency_exit(sprite,elapsed)) return;
   if (pumpkinned) {
     if (clock>=4.0f) clock=0.0f;
     sprite->tileid=tileid0+((clock>=3.8f)?11:10);

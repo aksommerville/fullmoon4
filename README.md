@@ -23,11 +23,11 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] pitcher house: 4 pictures on the wall: river, tree, bee, cow
 - - [ ] violin house: challenge
 - - [ ] violin house: teach a song. Lullabye? ha ha yes, there should be people lingering around and they fall asleep
-- - [ ] moonsong's basement: teach Spell of Opening
+- - [x] moonsong's basement: teach Spell of Opening
 - - - It would be a terrible mistake to go into the basement if you are a pumpkin. Can we make that impossible?
-- - - (I believe it currently is possible to make both witches pumpkins)
+- - - (I believe it currently is possible to make both witches pumpkins) -- CONFIRMED, easy, just cast the pumpkin spell but hold it until she gets you
 - - - Or just open the gate automatically if you're a pumpkin and on the right of it?
-- - [ ] Put some matches down here too, because you have to learn the spell to get back out!
+- - [x] Put some matches down here too, because you have to learn the spell to get back out!
 - - [ ] building by graveyard: church
 - - [ ] church: teach the Wind Spell, and the chalkguard reference
 - - [ ] Must somehow make some exception to the interior weather rule, or else send her outside to learn it.
@@ -50,9 +50,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] farmer: Sow and water on separate trips. Let the hero intervene.
 - [ ] Simplify the Home spell. Maybe "SSS", like clicking your heels three times?
 - [ ] Can we make like "song only if nothing yet" for map 1? It's jarring when you're just passing thru.
-- [x] Forest entrance: bottom block stops moving a pixel or two short of flush.
-- [x] Map editor: Use symbolic names for sprite controller in map "sprite" commands, will help finding them in the commands view.
-- [x] Raccoons get mixed up if you bounce back an acorn and they're already holding one; have seen them stuck with an acorn.
 
 ### April
 
