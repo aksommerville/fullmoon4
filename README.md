@@ -19,8 +19,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### March
 
 - [ ] Maps for demo.
-- - [ ] Think on interiors, what should these walls look like?
-- - [ ] pitcher house: 4 pictures on the wall: river, tree, bee, cow
+- - [x] Think on interiors, what should these walls look like?
+- - [x] Move pitcher house next to farm, church north one, ...what to do with the SE corner?
+- - [x] pitcher house: 4 pictures on the wall: river, tree, bee, cow
 - - [ ] violin house: challenge
 - - [ ] violin house: teach a song. Lullabye? ha ha yes, there should be people lingering around and they fall asleep
 - - [x] moonsong's basement: teach Spell of Opening
@@ -28,18 +29,18 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - - (I believe it currently is possible to make both witches pumpkins) -- CONFIRMED, easy, just cast the pumpkin spell but hold it until she gets you
 - - - Or just open the gate automatically if you're a pumpkin and on the right of it?
 - - [x] Put some matches down here too, because you have to learn the spell to get back out!
-- - [ ] building by graveyard: church
-- - [ ] church: teach the Wind Spell, and the chalkguard reference
-- - [ ] Must somehow make some exception to the interior weather rule, or else send her outside to learn it.
-- - - Climb to the belfry?
-- - [ ] Some kind of excuse to dilly dally outside the church, so the ghosts can catch you
+- - [x] building by graveyard: church
+- - [x] church: teach the Wind Spell, and the chalkguard reference
+- - xxx Must somehow make some exception to the interior weather rule, or else send her outside to learn it.
+- - - Climb to the belfry? ...i think it's ok
+- - [ ] Some kind of excuse to dilly dally outside the church, so the ghosts can catch you. I think speed them up too.
 - - [ ] forest: challenges
 - - [ ] forest: Song of Blooming
 - - [ ] forest: Beehive. By the rabbit?
 - - [ ] The Exciting Conclusion. Can we do the actual werewolf fight?
 - [ ] Graphics.
 - - [ ] Village interiors
-- - [ ] Church
+- - [x] Church
 - - [ ] Castle exterior
 - - [ ] Mountains exterior
 - - [ ] Desert
@@ -50,6 +51,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] farmer: Sow and water on separate trips. Let the hero intervene.
 - [ ] Simplify the Home spell. Maybe "SSS", like clicking your heels three times?
 - [ ] Can we make like "song only if nothing yet" for map 1? It's jarring when you're just passing thru.
+- [ ] Shovel underlay briefly visible during transition.
+- [ ] No underlay for pitcher when empty.
+- [ ] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
+- [ ] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
 
 ### April
 

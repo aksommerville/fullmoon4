@@ -56,13 +56,13 @@ static const struct fmn_spell {
 #define SONG(name,...) {FMN_SPELLID_##name,1,{__VA_ARGS__},sizeof((uint8_t[]){__VA_ARGS__})},
 
   SONG(BLOOM,W,E,W,_,W,E,W,_,N,_,N,_,S)
-  SPELL(RAIN,N,S,S,S)
+  SPELL(RAIN,N,W,S,N,E,S)
   SPELL(WIND_W,E,N,W,S,E,W,S,W)
   SPELL(WIND_E,E,N,W,S,E,W,S,E)
   SPELL(WIND_N,E,N,W,S,E,W,S,N)
   SPELL(WIND_S,E,N,W,S,E,W,S,S)
   SPELL(SLOWMO,E,W,W,E,W,W,S,W)
-  SPELL(HOME,E,S,N,W,S,N)
+  SPELL(HOME,S,S,S)
   SPELL(TELE1,S,W,E,N,W,E)
   SPELL(TELE2,W,N,S,E,N,S)
   SPELL(TELE3,N,E,W,S,E,W)
