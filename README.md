@@ -19,42 +19,23 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### March
 
 - [ ] Maps for demo.
-- - [x] Think on interiors, what should these walls look like?
-- - [x] Move pitcher house next to farm, church north one, ...what to do with the SE corner?
-- - [x] pitcher house: 4 pictures on the wall: river, tree, bee, cow
-- - xxx violin house: challenge ...meh
-- - [x] violin house: teach a song. Lullabye? ha ha yes, there should be people lingering around and they fall asleep
-- - [x] moonsong's basement: teach Spell of Opening
-- - - It would be a terrible mistake to go into the basement if you are a pumpkin. Can we make that impossible?
-- - - (I believe it currently is possible to make both witches pumpkins) -- CONFIRMED, easy, just cast the pumpkin spell but hold it until she gets you
-- - - Or just open the gate automatically if you're a pumpkin and on the right of it?
-- - [x] Put some matches down here too, because you have to learn the spell to get back out!
-- - [x] building by graveyard: church
-- - [x] church: teach the Wind Spell, and the chalkguard reference
-- - xxx Must somehow make some exception to the interior weather rule, or else send her outside to learn it.
-- - - Climb to the belfry? ...i think it's ok
-- - [x] Some kind of excuse to dilly dally outside the church, so the ghosts can catch you. I think speed them up too. ...graverobbing
-- - [x] forest: challenges
-- - [x] forest: Song of Blooming
-- - [x] Move shovel to the farmer's shack.
-- - [x] forest: Beehive. By the rabbit?
 - - [ ] The Exciting Conclusion. Can we do the actual werewolf fight?
-- - [x] Mountains/Caves
-- - [ ] Desert
-- - [ ] After moving shovel, we need some really nice prize in the SW corner.
+- - [x] Desert
+- - [x] After moving shovel, we need some really nice prize in the SW corner. ...teach rain and lambda
+- - [x] Teach the rain spell. Right where you get the wand? ...no, put that at the SW corner too
+- - [x] Make a third strategy for getting the Umbrella, or rethink it easier. ...labmda blocks
+- - [x] Tolltroll gsbit -- ensure you can't get trapped by giving him your last penny!
 - [ ] Graphics.
 - - [ ] Village interiors
 - - - [ ] Moon Song doesn't read well against her floor. Change floor.
-- - [x] Church
 - - [ ] Castle exterior
-- - [ ] Mountains exterior
-- - [ ] Desert
-- - [ ] Beach
+- - [x] Mountains exterior
+- - [x] Desert
+- - [x] Beach
 - [ ] Out-to-sea blowback maps.
 - [ ] farmer: shovel sound
 - [ ] farmer: tweak position
 - [ ] farmer: Sow and water on separate trips. Let the hero intervene.
-- [x] Simplify the Home spell. Maybe "SSS", like clicking your heels three times?
 - [ ] Can we make like "song only if nothing yet" for map 1? It's jarring when you're just passing thru.
 - [ ] Shovel underlay briefly visible during transition.
 - [ ] No underlay for pitcher when empty.
@@ -64,6 +45,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] The forest map with a depumpkinning transmogrifier, can we add some artificial logic instead? "If in the NW corner and a pumpkin, eliminate the block..."
 - [ ] lizard: range too short. he should burn you by default
 - [ ] Door transition is basically invisible when lights out. (and it's disconcerting)
+- [ ] "WORM"<=>"FISH" might be too involved. Can we pick words closer together? Remember to update the church if so.
+- - It's not that big a deal; caves only contain the Bell. The caves are there for the joy of playing, mostly.
+- [ ] Disable the hard-coded teleport spells!
+- [ ] Minor challenges and hazards for the desert.
 
 ### April
 
@@ -82,8 +67,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Coloring book. (printingcenterusa.com says about $1/ea for 250)
 - - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
-- - [x] Notebooks
-- - [x] Pencils
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
 - - Probly no need for thumb drives if we've only got the demo.
 - [ ] Beta test.
@@ -127,7 +110,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
 - [ ] Finish everything by Halloween. (to this point in the list at least)
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
-- [x] Move Map decoding out of DataService into a class of its own.
 - [ ] Unit tests.
 - - [ ] General-purpose test runner.
 - - [ ] C tests
