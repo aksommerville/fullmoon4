@@ -1,0 +1,23 @@
+2b2b1d3b1e2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+2b2b2c002a2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+3b3b3c002a2b2b1d3b3b3b1e2b2b2b2b2b2b2b2b
+000000002a2b2b2c0000002a2b2b2b2b2b2b2b2b
+000000002a2b2b2c0000003a3b3b3b3b3b3b3b3b
+1b1b1b1b2e2b1d3c000000000000000000000000
+3b3b3b3b3b1e2c00000000000000000000000000
+00000000002a2c00000000001a1b1b1b1c000000
+1b1b1b1c002a2d1b1b1b1b1b2e2b2b2b2d1b1b1b
+2b2b2b2c002a2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+2b2b2b2d1b2e2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
+tilesheet caves
+song seven_circles
+dark
+indoors
+neighbore 39
+neighborw 37
+sprite 3 1 stompbox gs:cavegate1 0 0
+sprite 4 9 stompbox gs:cavegate2 0 0
+sprite 13 4 firenozzle_s 2 0 gs:cavegate1
+sprite 15 7 firenozzle_n 2 0 gs:cavegate2
+sprite 9 4 treasure item:BELL 0 0

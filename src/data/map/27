@@ -13,3 +13,4 @@
 tilesheet villint
 indoors
 door 9 9 5 4 3
+sprite 6 5 treasure item:SHOVEL 0 0

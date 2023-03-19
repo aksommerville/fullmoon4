@@ -1,9 +1,10 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/hero/fmn_hero.h"
+#include "app/fmn_game.h"
 
 #define range sprite->argv[0]
 #define off_time_ds sprite->argv[1]
-#define init_phase sprite->argv[2]
+#define init_phase sprite->argv[2] /* gsbit if (off_time_ds==0) */
 
 // Direction is knowable canonically from (xform), but we express more comprehensibly as (dx,dy).
 #define dx sprite->sv[0]
@@ -23,6 +24,20 @@
 #define FIRENOZZLE_STATUS_IDLE 0
 #define FIRENOZZLE_STATUS_HUFF 1
 #define FIRENOZZLE_STATUS_PUFF 2
+
+/* gsbit change.
+ */
+ 
+static void _firenozzle_gsbit(void *userdata,uint16_t p,uint8_t v) {
+  struct fmn_sprite *sprite=userdata;
+  if (v) {
+    if (status==FIRENOZZLE_STATUS_IDLE) return;
+    status=FIRENOZZLE_STATUS_IDLE;
+  } else {
+    if (status==FIRENOZZLE_STATUS_PUFF) return;
+    status=FIRENOZZLE_STATUS_PUFF;
+  }
+}
 
 /* Init.
  */
@@ -54,9 +69,24 @@ static void _firenozzle_init(struct fmn_sprite *sprite) {
     range=2;
   }
   flamec=range;
-  period=off_time_ds/10.0f+on_time;
-  clock=(init_phase*period)/256.0f;
   tileid0=sprite->tileid;
+  if (off_time_ds) {
+    // Run on a cycle, no controller bit.
+    period=off_time_ds/10.0f+on_time;
+    clock=(init_phase*period)/256.0f;
+  } else if (init_phase) {
+    // Control via gsbit. (note that the sense is inverted: BIT OFF means FIRE ON)
+    period=clock=0.0f;
+    fmn_gs_listen_bit(init_phase,_firenozzle_gsbit,sprite);
+    if (fmn_gs_get_bit(init_phase)) {
+      status=FIRENOZZLE_STATUS_IDLE;
+    } else {
+      status=FIRENOZZLE_STATUS_PUFF;
+    }
+  } else {
+    // Always on.
+    status=FIRENOZZLE_STATUS_PUFF;
+  }
 }
 
 /* Check hero.
@@ -101,13 +131,17 @@ static void firenozzle_check_hero(struct fmn_sprite *sprite) {
  */
  
 static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
-  clock+=elapsed;
-  while (clock>=period) clock-=period;
-  if (clock>=period-on_time) {
-    status=FIRENOZZLE_STATUS_PUFF;
+  if (off_time_ds) { // timer in play
+    clock+=elapsed;
+    while (clock>=period) clock-=period;
+    if (clock>=period-on_time) {
+      status=FIRENOZZLE_STATUS_PUFF;
+      firenozzle_check_hero(sprite);
+    } else if (clock>=period-on_time-huff_time) status=FIRENOZZLE_STATUS_HUFF;
+    else status=FIRENOZZLE_STATUS_IDLE;
+  } else if (status==FIRENOZZLE_STATUS_PUFF) { // controlled externally
     firenozzle_check_hero(sprite);
-  } else if (clock>=period-on_time-huff_time) status=FIRENOZZLE_STATUS_HUFF;
-  else status=FIRENOZZLE_STATUS_IDLE;
+  }
 }
 
 /* Type definition.
