@@ -90,6 +90,7 @@ export class Constants {
     this.SPRITE_STYLE_PITCHFORK = 8;
     this.SPRITE_STYLE_TWOFRAME = 9;
     this.SPRITE_STYLE_EIGHTFRAME = 10;
+    this.SPRITE_STYLE_SCARYDOOR = 11;
     
     this.SPRITE_BV_SIZE = 8;
     this.SPRITE_SV_SIZE = 4;

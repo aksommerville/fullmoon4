@@ -78,6 +78,7 @@ export class RenderSprites {
         case this.constants.SPRITE_STYLE_FIRENOZZLE: this._renderFirenozzle(ctx, sprite, srcImage); break;
         case this.constants.SPRITE_STYLE_FIREWALL: this._renderFirewall(ctx, sprite, srcImage); break;
         case this.constants.SPRITE_STYLE_PITCHFORK: this._renderPitchfork(ctx, sprite, srcImage); break;
+        case this.constants.SPRITE_STYLE_SCARYDOOR: this._renderScarydoor(ctx, sprite, srcImage); break;
       }
     }
   }
@@ -177,6 +178,20 @@ export class RenderSprites {
       this.renderBasics.tile(ctx, dstx, dsty, srcImage, sprite.tileid - 2, sprite.xform);
     }
     this.renderBasics.tile(ctx, bodydstx, dsty, srcImage, sprite.tileid - (fv[0] ? 0 : 1), sprite.xform); // body
+  }
+  
+  _renderScarydoor(ctx, sprite, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    const tilesize2 = tilesize << 1;
+    const fv = this.globals.getSpriteFv(sprite.address); // closedness
+    const halfh = Math.floor(fv[0] * tilesize2);
+    if (halfh <= 0) return;
+    const dstx = Math.floor(sprite.x) * tilesize;
+    const dsty = Math.floor(sprite.y) * tilesize;
+    const srcx = (sprite.tileid & 15) * tilesize;
+    const srcy = (sprite.tileid >> 4) * tilesize;
+    ctx.drawImage(srcImage, srcx, srcy + tilesize2 - halfh, tilesize2, halfh, dstx, dsty, tilesize2, halfh);
+    ctx.drawImage(srcImage, srcx, srcy + tilesize2, tilesize2, halfh, dstx, dsty + tilesize + tilesize2 - halfh, tilesize2, halfh);
   }
 }
 

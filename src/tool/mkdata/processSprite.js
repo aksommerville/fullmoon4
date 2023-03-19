@@ -81,6 +81,7 @@ function rewriteInput_style(src) {
     case "pitchfork": v = 8; break;
     case "twoframe": v = 9; break;
     case "eightframe": v = 10; break;
+    case "scarydoor": v = 11; break;
   }
   return ["style", v];
 }

@@ -171,6 +171,7 @@ int rand();
 #define FMN_SPRITE_STYLE_PITCHFORK   8 /* special */
 #define FMN_SPRITE_STYLE_TWOFRAME    9 /* 2 tiles arranged horizontally, automatic animation */
 #define FMN_SPRITE_STYLE_EIGHTFRAME 10 /* 8 tiles arranged horizontally, automatic animation */
+#define FMN_SPRITE_STYLE_SCARYDOOR  11 /* special */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4

@@ -28,7 +28,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Graphics.
 - - [ ] Village interiors
 - - - [ ] Moon Song doesn't read well against her floor. Change floor.
-- - [ ] Castle exterior
+- - [x] Castle exterior
 - - [x] Mountains exterior
 - - [x] Desert
 - - [x] Beach
