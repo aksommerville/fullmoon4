@@ -1,0 +1,4 @@
+controller decoanimal
+image sprites
+tile 0xb8
+style twoframe

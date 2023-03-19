@@ -5,13 +5,13 @@
 /* I want the ghost to spiral in upon the hero.
  * EXPERIMENT: Do it without much state. Find the clockwise tangent with respect to hero, and tweak it clockwise by like pi/8.
  */
-#define GHOST_IN_RANGE 0.25f /* Manhattan distance <this, we are upon the hero, stop moving. */
+#define GHOST_IN_RANGE 0.40f /* Manhattan distance <this, we are upon the hero, stop moving. */
 
 #define GHOST_STAGE_APPROACH 1
 #define GHOST_STAGE_RETREAT 2
 #define GHOST_STAGE_PANIC 3
 
-#define GHOST_APPROACH_SPEED 3.0f
+#define GHOST_APPROACH_SPEED 4.0f
 #define GHOST_APPROACH_ANGULAR_VELOCITY 7.0f /* radians/sec */
 #define GHOST_APPROACH_PANIC_DISTANCE 8.0f /* exceed this threshold, we fly straight to the hero */
 #define GHOST_APPROACH_RECOVERY_DISTANCE 4.0f /* ...until we get this close */

@@ -23,7 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] Move pitcher house next to farm, church north one, ...what to do with the SE corner?
 - - [x] pitcher house: 4 pictures on the wall: river, tree, bee, cow
 - - [ ] violin house: challenge
-- - [ ] violin house: teach a song. Lullabye? ha ha yes, there should be people lingering around and they fall asleep
+- - [x] violin house: teach a song. Lullabye? ha ha yes, there should be people lingering around and they fall asleep
 - - [x] moonsong's basement: teach Spell of Opening
 - - - It would be a terrible mistake to go into the basement if you are a pumpkin. Can we make that impossible?
 - - - (I believe it currently is possible to make both witches pumpkins) -- CONFIRMED, easy, just cast the pumpkin spell but hold it until she gets you
@@ -33,7 +33,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] church: teach the Wind Spell, and the chalkguard reference
 - - xxx Must somehow make some exception to the interior weather rule, or else send her outside to learn it.
 - - - Climb to the belfry? ...i think it's ok
-- - [ ] Some kind of excuse to dilly dally outside the church, so the ghosts can catch you. I think speed them up too.
+- - [x] Some kind of excuse to dilly dally outside the church, so the ghosts can catch you. I think speed them up too. ...graverobbing
 - - [ ] forest: challenges
 - - [ ] forest: Song of Blooming
 - - [ ] forest: Beehive. By the rabbit?
@@ -55,6 +55,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] No underlay for pitcher when empty.
 - [ ] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
 - [ ] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
+- [ ] Map command for buried treasure, then grave robbing.
 
 ### April
 
@@ -73,8 +74,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Coloring book. (printingcenterusa.com says about $1/ea for 250)
 - - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
-- - [ ] Notebooks
-- - [ ] Pencils
+- - [x] Notebooks
+- - [x] Pencils
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
 - - Probly no need for thumb drives if we've only got the demo.
 - [ ] Beta test.
