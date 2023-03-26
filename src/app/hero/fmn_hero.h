@@ -37,4 +37,9 @@ uint8_t fmn_hero_feet_on_ground();
 
 void fmn_hero_cancel_item();
 
+/* Killing is not something that happens routinely here.
+ * Only the werewolf should call this.
+ */
+void fmn_hero_kill(struct fmn_sprite *assailant);
+
 #endif

@@ -160,6 +160,7 @@ int rand();
 #define FMN_SFX_CURSE 61
 #define FMN_SFX_UNCURSE 62
 #define FMN_SFX_QUACK 63
+#define FMN_SFX_KILL_WEREWOLF 64
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */
@@ -172,6 +173,9 @@ int rand();
 #define FMN_SPRITE_STYLE_TWOFRAME    9 /* 2 tiles arranged horizontally, automatic animation */
 #define FMN_SPRITE_STYLE_EIGHTFRAME 10 /* 8 tiles arranged horizontally, automatic animation */
 #define FMN_SPRITE_STYLE_SCARYDOOR  11 /* special */
+#define FMN_SPRITE_STYLE_WEREWOLF   12 /* special */
+#define FMN_SPRITE_STYLE_FLOORFIRE  13 /* special */
+#define FMN_SPRITE_STYLE_DEADWITCH  14 /* special */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4
@@ -326,7 +330,7 @@ extern struct fmn_global {
   uint8_t cheesing;
   uint8_t spell_repudiation; // app sets to 0xff to begin repudiation (upon ending the wand action). platform handles from there.
   uint8_t transmogrification; // 0=normal, 1=pumpkin
-  uint8_t pad3;
+  uint8_t hero_dead;
   float invisibility_time;
   float curse_time;
   
@@ -338,7 +342,8 @@ extern struct fmn_global {
   // Current cell focussed for shovel.
   int8_t shovelx;
   int8_t shovely;
-  uint16_t pad3_5;
+  uint8_t werewolf_dead;
+  uint8_t pad3_5;
   
   // General-purpose global state.
   // The whole thing gets persisted on saves.
@@ -355,6 +360,7 @@ extern struct fmn_global {
   float wind_time;
   float rain_time;
   float slowmo_time;
+  float terminate_time;
   
 } fmn_global;
 
@@ -395,6 +401,8 @@ void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*
 #define FMN_MENU_PAUSE -1
 #define FMN_MENU_CHALK -2 /* XXX use fmn_begin_sketch() */
 #define FMN_MENU_TREASURE -3 /* opt1=itemid, cb1=required */
+#define FMN_MENU_VICTORY -4
+#define FMN_MENU_GAMEOVER -5
 
 /* Prepare a transition while in the "from" state, and declare what style you will want.
  * Then make your changes, and either commit or cancel it.

@@ -86,10 +86,12 @@ export class Globals {
     this.g_cheesing = new Uint8Array(this.memU8.buffer, this.p_hero + 16, 1);
     this.g_spell_repudiation = new Uint8Array(this.memU8.buffer, this.p_hero + 17, 1);
     this.g_transmogrification = new Uint8Array(this.memU8.buffer, this.p_hero + 18, 1);
+    this.g_hero_dead = new Uint8Array(this.memU8.buffer, this.p_hero + 19, 1);
     this.g_invisibility_time = new Float32Array(this.memU8.buffer, this.p_hero + 20, 1);
     this.g_curse_time = new Float32Array(this.memU8.buffer, this.p_hero + 24, 1);
     this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 28, 2); // [x,y]
     this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 32, 2); // [x,y]
+    this.g_werewolf_dead = new Uint8Array(this.memU8.buffer, this.p_hero + 34, 1);
     this.g_gs = new Uint8Array(this.memU8.buffer, this.p_gs, this.constants.GS_SIZE);
     this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, this.constants.VIOLIN_SONG_LENGTH);
     this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH, 1);
@@ -98,6 +100,7 @@ export class Globals {
     this.g_wind_time = new Float32Array(this.memU8.buffer, this.p_weather + 1, 1);
     this.g_rain_time = new Float32Array(this.memU8.buffer, this.p_weather + 5, 1);
     this.g_slowmo_time = new Float32Array(this.memU8.buffer, this.p_weather + 9, 1);
+    this.g_terminate_time = new Float32Array(this.memU8.buffer, this.p_weather + 13, 1);
   }
   
   /* Higher-level logical access with structured models.

@@ -5,7 +5,7 @@
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
-import { Menu, PauseMenu, ChalkMenu, TreasureMenu } from "./Menu.js";
+import { Menu, PauseMenu, ChalkMenu, TreasureMenu, VictoryMenu, GameOverMenu } from "./Menu.js";
 import { RenderBasics } from "./RenderBasics.js";
  
 export class RenderMenu {
@@ -59,6 +59,8 @@ export class RenderMenu {
     else if (menu instanceof Menu) this._renderOptionsMenu(dst, ctx, menu);
     else if (menu instanceof ChalkMenu) this._renderChalkMenu(dst, ctx, menu);
     else if (menu instanceof TreasureMenu) this._renderTreasureMenu(dst, ctx, menu);
+    else if (menu instanceof VictoryMenu) this._renderVictoryMenu(dst, ctx, menu);
+    else if (menu instanceof GameOverMenu) this._renderGameOverMenu(dst, ctx, menu);
     else throw new Error(`Unexpected object provided to RenderMenu._renderMenu`);
   }
   
@@ -272,6 +274,22 @@ export class RenderMenu {
     ctx.scale(-1, 1);
     ctx.drawImage(srcImage, 48, 0, 160, 32, 0, 0, 160, 32);
     ctx.restore();
+  }
+  
+  /* Victory.
+   *********************************************************/
+   
+  _renderVictoryMenu(dst, ctx, menu) {//TODO
+    ctx.fillStyle = "#080";
+    ctx.fillRect(0, 0, dst.width, dst.height);
+  }
+  
+  /* GameOver.
+   *********************************************************/
+   
+  _renderGameOverMenu(dst, ctx, menu) {//TODO
+    ctx.fillStyle = "#800";
+    ctx.fillRect(0, 0, dst.width, dst.height);
   }
 }
 

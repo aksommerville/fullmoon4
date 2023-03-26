@@ -22,6 +22,8 @@ export class MenuFactory {
       case this.constants.MENU_PAUSE: return new PauseMenu(cbDismiss, this.globals, this.constants);
       case this.constants.MENU_CHALK: return new ChalkMenu(cbDismiss, this.globals, this.constants);
       case this.constants.MENU_TREASURE: return new TreasureMenu(cbDismiss, this.globals, this.constants, options);
+      case this.constants.MENU_VICTORY: return new VictoryMenu(cbDismiss, this.globals, this.constants);
+      case this.constants.MENU_GAMEOVER: return new GameOverMenu(cbDismiss, this.globals, this.constants);
     }
     const resolvedOptions = [];
     for (let i=0; i<options.length; i+=2) {
@@ -295,6 +297,58 @@ export class TreasureMenu {
     if (pressed & 0x30) {
       this.cbDismiss(this);
       this.nativeCallback();
+    }
+    this.previousState = state;
+  }
+}
+
+/* VictoryMenu
+ * Shown after you kill the werewolf.
+ * Eventually this will do the whole ending splash.
+ **********************************************************/
+
+export class VictoryMenu {//TODO
+  constructor(cbDismiss, globals, constants, options) {
+    this.cbDismiss = cbDismiss || (() => {});
+    this.globals = globals;
+    this.constants = constants;
+    
+    this.previousState = 0xff;
+    
+    console.log(`VictoryMenu`, this);
+  }
+  
+  update(state) {
+    if (state === this.previousState) return;
+    const pressed = state & ~this.previousState;
+    if (pressed & 0x30) {
+      this.cbDismiss(this);
+    }
+    this.previousState = state;
+  }
+}
+
+/* GameOverMenu
+ * Shown after you die, which can only happen in the werewolf fight.
+ * Eventually this will do the whole ending splash.
+ **********************************************************/
+
+export class GameOverMenu {//TODO
+  constructor(cbDismiss, globals, constants, options) {
+    this.cbDismiss = cbDismiss || (() => {});
+    this.globals = globals;
+    this.constants = constants;
+    
+    this.previousState = 0xff;
+    
+    console.log(`GameOverMenu`, this);
+  }
+  
+  update(state) {
+    if (state === this.previousState) return;
+    const pressed = state & ~this.previousState;
+    if (pressed & 0x30) {
+      this.cbDismiss(this);
     }
     this.previousState = state;
   }

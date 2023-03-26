@@ -91,6 +91,9 @@ export class Constants {
     this.SPRITE_STYLE_TWOFRAME = 9;
     this.SPRITE_STYLE_EIGHTFRAME = 10;
     this.SPRITE_STYLE_SCARYDOOR = 11;
+    this.SPRITE_STYLE_WEREWOLF = 12;
+    this.SPRITE_STYLE_FLOORFIRE = 13;
+    this.SPRITE_STYLE_DEADWITCH = 14;
     
     this.SPRITE_BV_SIZE = 8;
     this.SPRITE_SV_SIZE = 4;
@@ -107,6 +110,8 @@ export class Constants {
     this.MENU_PAUSE = -1;
     this.MENU_CHALK = -2;
     this.MENU_TREASURE = -3;
+    this.MENU_VICTORY = -4;
+    this.MENU_GAMEOVER = -5;
   }
 }
 

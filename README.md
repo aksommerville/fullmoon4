@@ -18,8 +18,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [ ] Maps for demo.
-- - [ ] The Exciting Conclusion. Can we do the actual werewolf fight?
+- [x] Maps for demo.
+- - [x] The Exciting Conclusion. Can we do the actual werewolf fight? ...fuck yes do it
+- - - [x] Hadouken
+- - - [x] Floor fire
+- - - [x] Pounce
+- - - [x] Eat witch
+- - - [x] Get stunned by returned hadouken
+- - - [x] Tickle to death
 - - [x] Desert
 - - [x] After moving shovel, we need some really nice prize in the SW corner. ...teach rain and lambda
 - - [x] Teach the rain spell. Right where you get the wand? ...no, put that at the SW corner too
@@ -32,6 +38,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] Mountains exterior
 - - [x] Desert
 - - [x] Beach
+- [ ] Jaws of Wrath for werewolf fight.
+- [ ] Game Over menu: music, messaging, and restart game with full state at map 1.
+- [ ] Victory menu: music, messaging.
 - [ ] Out-to-sea blowback maps.
 - [ ] farmer: shovel sound
 - [ ] farmer: tweak position
@@ -49,6 +58,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - It's not that big a deal; caves only contain the Bell. The caves are there for the joy of playing, mostly.
 - [ ] Disable the hard-coded teleport spells!
 - [ ] Minor challenges and hazards for the desert.
+- [ ] Display total time and completion after killing the werewolf.
+- - Current best times to werewolf:
+- - - With Feather, Wand, Broom: 78 s
+- - - With all 14 things: 233 s
 
 ### April
 

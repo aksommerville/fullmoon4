@@ -73,6 +73,7 @@ export class Renderer {
   
   render(menus) {
     if (!this.canvas) return;
+    if (!this.globals.p_fmn_global) return;
     this.frameCount++;
     
     if (!this.renderTransitions.render(this.canvas)) {
@@ -85,6 +86,18 @@ export class Renderer {
       this.renderViolin.reset();
     }
     
+    if (this.globals.g_werewolf_dead[0] || this.globals.g_hero_dead[0]) {
+      const FADE_OUT_TIME = 2.0;
+      const lightness = this.globals.g_terminate_time[0] / FADE_OUT_TIME;
+      if (lightness < 1) {
+        const ctx = this.canvas.getContext("2d");
+        ctx.globalAlpha = 1 - lightness;
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.globalAlpha = 1;
+      }
+    }
+    
     this.renderMenu.render(this.canvas, menus);
   }
   
@@ -93,13 +106,18 @@ export class Renderer {
    
   _renderScene(canvas, withOverlay) {
     const ctx = canvas.getContext("2d");
-    const bg = this.renderMap.update();
-    ctx.drawImage(bg, 0, 0);
-    this.renderMap.renderDarkness(canvas, ctx);
-    if (true||withOverlay) this.renderHero.renderUnderlay(canvas, ctx);
-    this.renderSprites.render(canvas, ctx);
-    if (withOverlay) this.renderHero.renderOverlay(canvas, ctx);
-    this.renderMap.renderWeather(canvas, ctx);
+    if (this.globals.p_fmn_global) {
+      const bg = this.renderMap.update();
+      ctx.drawImage(bg, 0, 0);
+      this.renderMap.renderDarkness(canvas, ctx);
+      if (true||withOverlay) this.renderHero.renderUnderlay(canvas, ctx);
+      this.renderSprites.render(canvas, ctx);
+      if (withOverlay) this.renderHero.renderOverlay(canvas, ctx);
+      this.renderMap.renderWeather(canvas, ctx);
+    } else {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
   }
 }
 

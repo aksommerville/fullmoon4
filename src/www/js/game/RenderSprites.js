@@ -4,6 +4,7 @@
  */
  
 import { RenderHero } from "./RenderHero.js";
+import { RenderWerewolf } from "./RenderWerewolf.js";
 import { RenderBasics } from "./RenderBasics.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
@@ -11,14 +12,15 @@ import { DataService } from "./DataService.js";
  
 export class RenderSprites {
   static getDependencies() {
-    return [RenderHero, RenderBasics, Constants, Globals, DataService];
+    return [RenderHero, RenderBasics, Constants, Globals, DataService, RenderWerewolf];
   }
-  constructor(renderHero, renderBasics, constants, globals, dataService) {
+  constructor(renderHero, renderBasics, constants, globals, dataService, renderWerewolf) {
     this.renderHero = renderHero;
     this.renderBasics = renderBasics;
     this.constants = constants;
     this.globals = globals;
     this.dataService = dataService;
+    this.renderWerewolf = renderWerewolf;
     
     this.frameCount = 0;
   }
@@ -79,6 +81,9 @@ export class RenderSprites {
         case this.constants.SPRITE_STYLE_FIREWALL: this._renderFirewall(ctx, sprite, srcImage); break;
         case this.constants.SPRITE_STYLE_PITCHFORK: this._renderPitchfork(ctx, sprite, srcImage); break;
         case this.constants.SPRITE_STYLE_SCARYDOOR: this._renderScarydoor(ctx, sprite, srcImage); break;
+        case this.constants.SPRITE_STYLE_WEREWOLF: this.renderWerewolf.render(ctx, sprite, srcImage); break;
+        case this.constants.SPRITE_STYLE_FLOORFIRE: this._renderFloorfire(ctx, sprite, srcImage); break;
+        case this.constants.SPRITE_STYLE_DEADWITCH: this._renderDeadwitch(ctx, sprite, srcImage); break;
       }
     }
   }
@@ -183,7 +188,7 @@ export class RenderSprites {
   _renderScarydoor(ctx, sprite, srcImage) {
     const tilesize = this.constants.TILESIZE;
     const tilesize2 = tilesize << 1;
-    const fv = this.globals.getSpriteFv(sprite.address); // closedness
+    const fv = this.globals.getSpriteFv(sprite.address); // [0]:closedness
     const halfh = Math.floor(fv[0] * tilesize2);
     if (halfh <= 0) return;
     const dstx = Math.floor(sprite.x) * tilesize;
@@ -192,6 +197,58 @@ export class RenderSprites {
     const srcy = (sprite.tileid >> 4) * tilesize;
     ctx.drawImage(srcImage, srcx, srcy + tilesize2 - halfh, tilesize2, halfh, dstx, dsty, tilesize2, halfh);
     ctx.drawImage(srcImage, srcx, srcy + tilesize2, tilesize2, halfh, dstx, dsty + tilesize + tilesize2 - halfh, tilesize2, halfh);
+  }
+  
+  _renderFloorfire(ctx, sprite, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    const fv = this.globals.getSpriteFv(sprite.address);
+    const bv = this.globals.getSpriteBv(sprite.address);
+    const RING_SPACING = 0.750; // should match fmn_sprite_floorfire.c:FLOORFIRE_RING_SPACING
+    const RADIAL_SPACING = 0.500;
+    const xlimit = (this.constants.COLC + 1) * tilesize;
+    const ylimit = (this.constants.ROWC + 1) * tilesize;
+    for (let i=bv[0], radius=fv[2], tileid=0xb0; (i-->0) && (tileid<0xbd); radius-=RING_SPACING, tileid++) {
+      const firec = Math.floor((radius * 2 * Math.PI) / RADIAL_SPACING);
+      if (firec < 1) break;
+      const dt = (Math.PI * 2) / firec;
+      for (let t=0, firei=firec; firei-->0; t+=dt) {
+        const x = ~~((sprite.x + Math.cos(t) * radius) * tilesize);
+        if ((x < -tilesize) || (x > xlimit)) continue;
+        const y = ~~((sprite.y + Math.sin(t) * radius) * tilesize);
+        if ((y < -tilesize) || (y > ylimit)) continue;
+        this.renderBasics.tile(ctx, x, y, srcImage, tileid, 0);
+      }
+    }
+    if (false) {
+      ctx.beginPath();
+      ctx.arc(sprite.x * tilesize, sprite.y * tilesize, fv[1] * tilesize, 0, Math.PI * 2); // leading edge
+      if (fv[1] >= 2) {
+        ctx.arc(sprite.x * tilesize, sprite.y * tilesize, (fv[1] - 2) * tilesize, 0, Math.PI * 2); // outer danger limit
+        if (fv[1] >= 6) {
+          ctx.arc(sprite.x * tilesize, sprite.y * tilesize, (fv[1] - 6) * tilesize, 0, Math.PI * 2); // inner danger limit
+        }
+      }
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+    }
+  }
+  
+  _renderDeadwitch(ctx, sprite, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    const pxx = (sprite.x * tilesize);
+    const pxy = (sprite.y * tilesize) + 2;
+    const clock = this.globals.getSpriteFv(sprite.address)[0];
+    let frame = ~~(clock * 7);
+    if (frame >= 7) frame = 6;
+    const puddles = [ // [x,y,tileid]
+      [pxx - 8, pxy + 1, sprite.tileid - 0x0f + frame],
+      [pxx + 8, pxy + 2, sprite.tileid + 0x01 + frame],
+      [pxx - 2, pxy + 4, sprite.tileid + 0x01 + frame],
+    ];
+    for (const [x, y, tileid] of puddles) {
+      this.renderBasics.tile(ctx, x, y, srcImage, tileid, 0);
+    }
+    this.renderBasics.tile(ctx, pxx, pxy, srcImage, sprite.tileid, sprite.xform);
   }
 }
 

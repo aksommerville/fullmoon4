@@ -37,6 +37,28 @@ export class RenderBasics {
       ctx.restore();
     }
   }
+  
+  // (w,h) are for the input.
+  decal(ctx, dstx, dsty, srcImage, srcx, srcy, w, h, xform) {
+    if (!xform) {
+      ctx.drawImage(srcImage, srcx, srcy, w, h, dstx, dsty, w, h);
+    } else {
+      ctx.save();
+      const midx = ~~(dstx + w / 2);
+      const midy = ~~(dsty + h / 2);
+      ctx.translate(midx, midy);
+      if (xform & this.constants.XFORM_SWAP) {
+        ctx.transform(0, 1, 1, 0, 0, 0);
+      }
+      switch (xform & (this.constants.XFORM_XREV | this.constants.XFORM_YREV)) {
+        case this.constants.XFORM_XREV: ctx.scale(-1, 1); break;
+        case this.constants.XFORM_YREV: ctx.scale(1, -1); break;
+        case this.constants.XFORM_XREV | this.constants.XFORM_YREV: ctx.scale(-1, -1); break;
+      }
+      ctx.drawImage(srcImage, srcx, srcy, w, h, -(w >> 1), -(h >> 1), w, h);
+      ctx.restore();
+    }
+  }
 }
 
 RenderBasics.singleton = true;

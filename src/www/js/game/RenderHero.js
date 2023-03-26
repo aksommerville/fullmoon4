@@ -53,6 +53,7 @@ export class RenderHero {
   }
   
   render(ctx, srcImage, sprite) {
+    if (this.globals.g_hero_dead[0]) return;
     this.frameCount++;
     
     // Invisibility is nice and simple: Skip every other frame.
@@ -393,6 +394,7 @@ export class RenderHero {
    **********************************************************/
    
   renderOverlay(dst, ctx) {
+    if (this.globals.g_hero_dead[0]) return;
     if (this.globals.g_itemv[this.globals.g_selected_item[0]]) {
       switch (this.globals.g_selected_item[0]) {
         case this.constants.ITEM_COMPASS: this._renderCompassOverlay(dst, ctx); break;
@@ -471,6 +473,7 @@ export class RenderHero {
    **********************************************************/
    
   renderUnderlay(dst, ctx) {
+    if (this.globals.g_hero_dead[0]) return;
     if (this.globals.g_itemv[this.globals.g_selected_item[0]]) {
       switch (this.globals.g_selected_item[0]) {
         case this.constants.ITEM_SHOVEL: this._renderShovelUnderlay(dst, ctx); return;

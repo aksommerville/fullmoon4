@@ -279,6 +279,15 @@ void fmn_game_update(float elapsed) {
     fmn_global.match_illumination_time=0.0f;
   }
   
+  if (fmn_global.werewolf_dead||fmn_global.hero_dead) {
+    if ((fmn_global.terminate_time-=elapsed)<=0.0f) {
+      fmn_global.terminate_time=0.0f;
+      if (fmn_global.hero_dead) fmn_begin_menu(FMN_MENU_GAMEOVER);
+      else fmn_begin_menu(FMN_MENU_VICTORY);
+      return;
+    }
+  }
+  
   if (fmn_global.show_off_item_time) {
     uint8_t drop_time=elapsed * 128; // about 2 seconds total
     if (drop_time<1) drop_time=1;

@@ -18,6 +18,7 @@ static int fmn_hero_cb_find(struct fmn_sprite *sprite,void *userdata) {
  
 int fmn_hero_reset() {
   fmn_hero.sprite=0;
+  fmn_global.hero_dead=0;
   if (fmn_sprites_for_each(fmn_hero_cb_find,0)<1) {
   
     uint8_t col=fmn_global.herostartp%FMN_COLC;
@@ -64,6 +65,7 @@ int fmn_hero_reset() {
  */
  
 void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
+  if (fmn_global.hero_dead) return;
 
   // Spell repudiation is highly transient; drop on any keypress.
   if (state) {
@@ -90,6 +92,7 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
  */
  
 void fmn_hero_update(float elapsed) {
+  if (fmn_global.hero_dead) return;
 
   if (fmn_hero.recent_reset) {
     fmn_hero.enterx=fmn_hero.sprite->x;
@@ -132,6 +135,10 @@ void fmn_hero_update(float elapsed) {
  */
  
 uint8_t fmn_hero_get_quantized_position(int8_t *x,int8_t *y) {
+  if (fmn_global.hero_dead) {
+    *x=*y=0.0f;
+    return 0;
+  }
   *x=fmn_hero.sprite->x; if (fmn_hero.sprite->x<0.0f) (*x)--;
   *y=fmn_hero.sprite->y; if (fmn_hero.sprite->y<0.0f) (*y)--;
   if ((*x!=fmn_hero.cellx)||(*y!=fmn_hero.celly)) {
@@ -147,16 +154,22 @@ uint8_t fmn_hero_get_quantized_position(int8_t *x,int8_t *y) {
  */
  
 void fmn_hero_get_position(float *x,float *y) {
-  *x=fmn_hero.sprite->x;
-  *y=fmn_hero.sprite->y;
+  if (fmn_global.hero_dead) {
+    *x=*y=0.0f;
+  } else {
+    *x=fmn_hero.sprite->x;
+    *y=fmn_hero.sprite->y;
+  }
 }
 
 void fmn_hero_set_position(float x,float y) {
+  if (fmn_global.hero_dead) return;
   fmn_hero.sprite->x=x;
   fmn_hero.sprite->y=y;
 }
 
 void fmn_hero_kill_velocity() {
+  if (fmn_global.hero_dead) return;
   fmn_hero.walkforce=0.0f;
   fmn_hero.sprite->velx=0.0f;
   fmn_hero.sprite->vely=0.0f;
@@ -167,6 +180,7 @@ void fmn_hero_kill_velocity() {
  */
  
 uint8_t fmn_hero_feet_on_ground() {
+  if (fmn_global.hero_dead) return 0;
   if (fmn_global.active_item==FMN_ITEM_BROOM) return 0;
   return 1;
 }

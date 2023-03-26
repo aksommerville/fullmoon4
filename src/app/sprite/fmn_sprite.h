@@ -140,6 +140,10 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_throwswitch   37
 #define FMN_SPRCTL_decoanimal    38
 #define FMN_SPRCTL_scarydoor     39
+#define FMN_SPRCTL_werewolf      40
+#define FMN_SPRCTL_floorfire     41
+#define FMN_SPRCTL_deadwitch     42
+#define FMN_SPRCTL_losthat       43
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -181,7 +185,11 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(seamonster) \
   _(throwswitch) \
   _(decoanimal) \
-  _(scarydoor)
+  _(scarydoor) \
+  _(werewolf) \
+  _(floorfire) \
+  _(deadwitch) \
+  _(losthat)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

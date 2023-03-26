@@ -33,6 +33,7 @@ static void fmn_hero_walk_end() {
  */
  
 void fmn_hero_motion_event(uint8_t bit,uint8_t value) {
+  if (fmn_global.hero_dead) return;
 
   if (fmn_global.active_item==FMN_ITEM_UMBRELLA) return;
   
@@ -55,6 +56,7 @@ void fmn_hero_motion_event(uint8_t bit,uint8_t value) {
  */
  
 uint8_t fmn_hero_facedir_agrees() {
+  if (fmn_global.hero_dead) return 1;
   switch (fmn_global.facedir) {
     case FMN_DIR_W: if (fmn_hero.walkdx<0) return 1; break;
     case FMN_DIR_E: if (fmn_hero.walkdx>0) return 1; break;
@@ -65,6 +67,7 @@ uint8_t fmn_hero_facedir_agrees() {
 }
 
 void fmn_hero_reset_facedir() {
+  if (fmn_global.hero_dead) return;
        if (fmn_hero.walkdx<0) fmn_hero_motion_event(FMN_INPUT_LEFT,1);
   else if (fmn_hero.walkdx>0) fmn_hero_motion_event(FMN_INPUT_RIGHT,1);
   else if (fmn_hero.walkdy<0) fmn_hero_motion_event(FMN_INPUT_UP,1);
@@ -75,6 +78,7 @@ void fmn_hero_reset_facedir() {
  */
  
 void fmn_hero_motion_input(uint8_t state) {
+  if (fmn_global.hero_dead) return;
 
   int8_t dx=0,dy=0;
   switch (state&(FMN_INPUT_LEFT|FMN_INPUT_RIGHT)) {
@@ -114,6 +118,7 @@ static uint8_t fmn_hero_should_suppress_motion() {
  */
  
 void fmn_hero_motion_update(float elapsed) {
+  if (fmn_global.hero_dead) return;
 
   // We may drop (fmn_global.walking) during transitions or pauses.
   // We're updating now, so ensure it is true.
@@ -326,6 +331,7 @@ void fmn_hero_return_to_map_entry() {
  */
  
 uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
+  if (fmn_global.hero_dead) return 0;
   struct fmn_sprite *hero=fmn_hero.sprite;
   
   if (fmn_hero_suppress_injury_if_applicable(hero,x,y,assailant)) return 0;
@@ -405,9 +411,26 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
  */
  
 uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
+  if (fmn_global.hero_dead) return 0;
   if (fmn_global.curse_time>0.0f) return 0;
   fmn_global.curse_time=FMN_HERO_CURSE_TIME;
   fmn_sound_effect(FMN_SFX_CURSE);
   fmn_hero_item_end();
   return 1;
+}
+
+/* Kill.
+ */
+ 
+void fmn_hero_kill(struct fmn_sprite *assailant) {
+  if (fmn_global.hero_dead) return;
+  fmn_log("%s",__func__);
+  struct fmn_sprite *hero=fmn_hero.sprite;
+  fmn_hero_walk_end();
+  fmn_hero_item_end();
+  fmn_global.hero_dead=1;
+  fmn_global.terminate_time=5.0f;
+  fmn_sprite_generate_soulballs(hero->x,hero->y,7);
+  fmn_sound_effect(FMN_SFX_GRIEVOUS_INJURY);
+  fmn_sprite_kill(hero);
 }

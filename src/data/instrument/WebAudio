@@ -820,3 +820,10 @@ sound QUACK
   env 0 ( 0 40 0xffff 40 0x4000 220 0 )
   norm 0 0.300
 end
+
+sound KILL_WEREWOLF #TODO
+  len 0.300
+  fm 0 ( 100 150 200 150 190 ) 1.5 ( 0 20 4 30 2 100 3 150 5 ) sine
+  env 0 ( 0 40 0xffff 40 0x4000 220 0 )
+  norm 0 0.300
+end
