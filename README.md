@@ -18,29 +18,17 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [x] Maps for demo.
-- - [x] The Exciting Conclusion. Can we do the actual werewolf fight? ...fuck yes do it
-- - - [x] Hadouken
-- - - [x] Floor fire
-- - - [x] Pounce
-- - - [x] Eat witch
-- - - [x] Get stunned by returned hadouken
-- - - [x] Tickle to death
-- - [x] Desert
-- - [x] After moving shovel, we need some really nice prize in the SW corner. ...teach rain and lambda
-- - [x] Teach the rain spell. Right where you get the wand? ...no, put that at the SW corner too
-- - [x] Make a third strategy for getting the Umbrella, or rethink it easier. ...labmda blocks
-- - [x] Tolltroll gsbit -- ensure you can't get trapped by giving him your last penny!
-- [ ] Graphics.
-- - [ ] Village interiors
-- - - [ ] Moon Song doesn't read well against her floor. Change floor.
-- - [x] Castle exterior
-- - [x] Mountains exterior
-- - [x] Desert
-- - [x] Beach
-- [ ] Jaws of Wrath for werewolf fight.
-- [ ] Game Over menu: music, messaging, and restart game with full state at map 1.
-- [ ] Victory menu: music, messaging.
+- [x] Graphics.
+- - [x] Village interiors
+- - - [x] Moon Song doesn't read well against her floor. Change floor.
+- [ ] A bit more music:
+- - [ ] midevil: record to visible track and channel. need this first!
+- - [ ] Jaws of Wrath
+- - [ ] Seventh Roots of Unity
+- - [ ] Game Over (something new?)
+- [x] Game Over menu: messaging, and restart game with full state at map 1.
+- [x] Victory menu: messaging.
+- [ ] Victory menu: damage and travel reports, or remove them
 - [ ] Out-to-sea blowback maps.
 - [ ] farmer: shovel sound
 - [ ] farmer: tweak position
@@ -58,10 +46,15 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - It's not that big a deal; caves only contain the Bell. The caves are there for the joy of playing, mostly.
 - [ ] Disable the hard-coded teleport spells!
 - [ ] Minor challenges and hazards for the desert.
-- [ ] Display total time and completion after killing the werewolf.
-- - Current best times to werewolf:
-- - - With Feather, Wand, Broom: 78 s
-- - - With all 14 things: 233 s
+- [ ] I don't like the tickling. Needs I think a broader hit box, and some kind of feedback.
+- - [ ] werewolf: Can we make him solid? at least in SHOCK stage. Would improve tickle.
+- [ ] werewolf: Make attacks more deterministic. eg alternate floorfire and hadouken
+- - Current best times:
+- - - To werewolf, With Feather, Wand, Broom: 78 s
+- - - To werewolf, With all 14 things: 233 s
+- - - Best time to kill werewolf: 79 s
+- - - 100%, including werewolf: 273 s
+- [x] Persisted sketches need to clear on Reset.
 
 ### April
 

@@ -306,8 +306,18 @@ export class DataService {
     return Promise.resolve(Array.from(ids));
   }
   
+  dropSavedGame() {
+    this.savedGame = null;
+    this.savedGameId = null;
+  }
+  
   /* Plants and sketches.
    **************************************************************/
+   
+  dropGameState() {
+    this.plants = [];
+    this.sketches = [];
+  }
    
   updateSketch(sketch) {
     for (let i=this.sketches.length; i-->0; ) {

@@ -1,5 +1,6 @@
 #include "fmn_hero_internal.h"
 #include "app/sprite/fmn_physics.h"
+#include "app/fmn_game.h"
 #include <math.h>
 
 /* Begin walking.

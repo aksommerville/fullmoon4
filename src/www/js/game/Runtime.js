@@ -6,7 +6,7 @@ import { WasmLoader } from "../util/WasmLoader.js";
 import { DataService } from "./DataService.js";
 import { InputManager } from "./InputManager.js";
 import { Renderer } from "./Renderer.js";
-import { MenuFactory, ChalkMenu } from "./Menu.js";
+import { MenuFactory, ChalkMenu, VictoryMenu, GameOverMenu } from "./Menu.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
@@ -99,6 +99,8 @@ export class Runtime {
     this.inputManager.clearState();
     this.clock.reset(0);
     this.synthesizer.reset();
+    this.dataService.dropSavedGame();
+    this.dataService.dropGameState();
     this.menus = [];
     this.map = null;
     this.mapId = 0;
@@ -191,7 +193,10 @@ export class Runtime {
     const p = this.menus.indexOf(menu);
     if (p < 0) return;
     this.menus.splice(p, 1);
+    
     if (menu instanceof ChalkMenu) this.renderer.mapDirty();
+    else if (menu instanceof VictoryMenu) this.reset();
+    
     this.inputManager.clearState();
   }
   

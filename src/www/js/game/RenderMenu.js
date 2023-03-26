@@ -279,17 +279,81 @@ export class RenderMenu {
   /* Victory.
    *********************************************************/
    
-  _renderVictoryMenu(dst, ctx, menu) {//TODO
-    ctx.fillStyle = "#080";
+  _renderVictoryMenu(dst, ctx, menu) {
+    // TODO Looks like the content here will not change. Use a dirty flag, and don't redraw every frame.
+    //...same with game over
+    ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, dst.width, dst.height);
+    const tilesize = this.constants.TILESIZE;
+    const menuBits = this.dataService.getImage(14);
+    if (menuBits) {
+      ctx.drawImage(
+        menuBits, 0, 0, tilesize * 8, tilesize * 3,
+        (dst.width >> 1) - tilesize * 4, (tilesize * 3) >> 1, tilesize * 8, tilesize * 3
+      );
+    }
+    const fontBits = this.dataService.getImage(16);
+    if (fontBits) {
+      const glyphw = ~~(fontBits.naturalWidth / 16);
+      const glyphh = ~~(fontBits.naturalHeight / 6);
+      const textX = tilesize * 6;
+      let textY = ~~(tilesize * 5.5);
+      for (const [k, v] of menu.report) {
+        this.drawText(ctx, textX, textY, fontBits, glyphw, glyphh, k + ": " + v);
+        textY += glyphh;
+      }
+      textY += glyphh;
+      this.drawTextCentered(dst, ctx, textY, fontBits, glyphw, glyphh, "Thanks for playing this");
+      textY += glyphh;
+      this.drawTextCentered(dst, ctx, textY, fontBits, glyphw, glyphh, "tiny Full Moon demo!");
+      textY += glyphh;
+      this.drawTextCentered(dst, ctx, textY, fontBits, glyphw, glyphh, "Full version will be available");
+      textY += glyphh;
+      this.drawTextCentered(dst, ctx, textY, fontBits, glyphw, glyphh, "on Steam and Itch.io");
+      textY += glyphh;
+      this.drawTextCentered(dst, ctx, textY, fontBits, glyphw, glyphh, "29 September 2023");
+      textY += glyphh;
+      this.drawTextCentered(dst, ctx, textY, fontBits, glyphw, glyphh, "- AK Sommerville");
+    }
   }
   
-  /* GameOver.
+  /* Game Over.
    *********************************************************/
    
-  _renderGameOverMenu(dst, ctx, menu) {//TODO
-    ctx.fillStyle = "#800";
+  _renderGameOverMenu(dst, ctx, menu) {
+    ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, dst.width, dst.height);
+    const tilesize = this.constants.TILESIZE;
+    const menuBits = this.dataService.getImage(14);
+    if (menuBits) {
+      ctx.drawImage(
+        menuBits, 0, tilesize * 3, tilesize * 12, tilesize * 2,
+        (dst.width >> 1) - tilesize * 6,
+        (dst.height >> 1) - tilesize,
+        tilesize * 12, tilesize * 2
+      );
+    }
+  }
+  
+  /* Draw a string with the provided monospaced font image, centered horizontally.
+   * (y) is the top edge.
+   */
+  drawTextCentered(dst, ctx, y, font, glyphw, glyphh, text) {
+    const w = glyphw * text.length;
+    this.drawText(ctx, (dst.width >> 1) - (w >> 1), y, font, glyphw, glyphh, text);
+  }
+  
+  drawText(ctx, x, y, font, glyphw, glyphh, text) {
+    for (let i=0; i<text.length; i++, x+=glyphw) {
+      let ch = text.charCodeAt(i);
+      if (ch <= 0x20) continue; // don't render space (though technically maybe we should?)
+      if (ch >= 0x80) continue; // ascii only
+      ch -= 0x20; // font images begin with row 0x20
+      ctx.drawImage(
+        font, (ch & 0x0f) * glyphw, (ch >> 4) * glyphh, glyphw, glyphh,
+        x, y, glyphw, glyphh
+      );
+    }
   }
 }
 

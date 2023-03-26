@@ -242,7 +242,6 @@ static void werewolf_begin_FLOORFIRE(struct fmn_sprite *sprite) {
  */
  
 static void werewolf_begin_EAT(struct fmn_sprite *sprite) {
-  fmn_log("%s",__func__);
   stage=WEREWOLF_STAGE_EAT;
   stage_clock=0.0f;
   fmn_hero_kill(sprite);

@@ -4,15 +4,17 @@
 import { StringService } from "./StringService.js";
 import { Globals } from "./Globals.js";
 import { Constants } from "./Constants.js";
+import { Clock } from "./Clock.js";
  
 export class MenuFactory {
   static getDependencies() {
-    return [StringService, Globals, Constants];
+    return [StringService, Globals, Constants, Clock];
   }
-  constructor(stringService, globals, constants) {
+  constructor(stringService, globals, constants, clock) {
     this.stringService = stringService;
     this.globals = globals;
     this.constants = constants;
+    this.clock = clock;
   }
   
   /* (options) is [[stringId, callback], ...]
@@ -22,8 +24,8 @@ export class MenuFactory {
       case this.constants.MENU_PAUSE: return new PauseMenu(cbDismiss, this.globals, this.constants);
       case this.constants.MENU_CHALK: return new ChalkMenu(cbDismiss, this.globals, this.constants);
       case this.constants.MENU_TREASURE: return new TreasureMenu(cbDismiss, this.globals, this.constants, options);
-      case this.constants.MENU_VICTORY: return new VictoryMenu(cbDismiss, this.globals, this.constants);
-      case this.constants.MENU_GAMEOVER: return new GameOverMenu(cbDismiss, this.globals, this.constants);
+      case this.constants.MENU_VICTORY: return new VictoryMenu(cbDismiss, this.globals, this.constants, this.clock);
+      case this.constants.MENU_GAMEOVER: return new GameOverMenu(cbDismiss, this.globals, this.constants, options);
     }
     const resolvedOptions = [];
     for (let i=0; i<options.length; i+=2) {
@@ -307,15 +309,45 @@ export class TreasureMenu {
  * Eventually this will do the whole ending splash.
  **********************************************************/
 
-export class VictoryMenu {//TODO
-  constructor(cbDismiss, globals, constants, options) {
+export class VictoryMenu {
+  constructor(cbDismiss, globals, constants, clock) {
     this.cbDismiss = cbDismiss || (() => {});
     this.globals = globals;
     this.constants = constants;
+    this.clock = clock;
     
     this.previousState = 0xff;
     
-    console.log(`VictoryMenu`, this);
+    this.report = [
+      ["  Time", this.reprPlayTime()],
+      [" Items", this.reprItemCount()],
+      ["Travel", this.reprTravel()],
+      ["Damage", this.reprDamage()],
+    ];
+  }
+  
+  reprPlayTime() {
+    let v = this.clock.lastGameTime;
+    const ms = v % 1000; v = Math.floor(v / 1000);
+    const sec = v % 60; v = Math.floor(v / 60);
+    const min = v % 60;
+    const hour = Math.floor(v / 60);
+    return `${hour}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+  }
+  
+  reprItemCount() {
+    let c = 0;
+    // The first two items are dummies.
+    for (let i=2; i<16; i++) if (this.globals.g_itemv[i]) c++;
+    return `${c}/14`;
+  }
+  
+  reprTravel() {
+    return "TODO"; // we don't currently track this
+  }
+  
+  reprDamage() {
+    return "TODO"; // we don't currently track this
   }
   
   update(state) {
@@ -333,15 +365,16 @@ export class VictoryMenu {//TODO
  * Eventually this will do the whole ending splash.
  **********************************************************/
 
-export class GameOverMenu {//TODO
+export class GameOverMenu {
   constructor(cbDismiss, globals, constants, options) {
     this.cbDismiss = cbDismiss || (() => {});
     this.globals = globals;
     this.constants = constants;
     
-    this.previousState = 0xff;
+    if (options.length !== 1) throw new Error(`GameOverMenu requires 1 option`);
+    this.nativeCallback = options[0][1];
     
-    console.log(`GameOverMenu`, this);
+    this.previousState = 0xff;
   }
   
   update(state) {
@@ -349,6 +382,7 @@ export class GameOverMenu {//TODO
     const pressed = state & ~this.previousState;
     if (pressed & 0x30) {
       this.cbDismiss(this);
+      this.nativeCallback();
     }
     this.previousState = state;
   }

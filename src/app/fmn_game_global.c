@@ -267,6 +267,16 @@ static float fmn_weather_update(float elapsed) {
   return adjusted;
 }
 
+/* Callback from Game Over menu.
+ */
+ 
+static void cb_game_over_ok() {
+  fmn_log("%s",__func__);
+  fmn_global.hero_dead=0;
+  fmn_global.werewolf_dead=0;
+  fmn_game_load_map(1);
+}
+
 /* Update.
  */
  
@@ -282,7 +292,7 @@ void fmn_game_update(float elapsed) {
   if (fmn_global.werewolf_dead||fmn_global.hero_dead) {
     if ((fmn_global.terminate_time-=elapsed)<=0.0f) {
       fmn_global.terminate_time=0.0f;
-      if (fmn_global.hero_dead) fmn_begin_menu(FMN_MENU_GAMEOVER);
+      if (fmn_global.hero_dead) fmn_begin_menu(FMN_MENU_GAMEOVER,1,cb_game_over_ok);
       else fmn_begin_menu(FMN_MENU_VICTORY);
       return;
     }
