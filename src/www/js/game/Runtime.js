@@ -170,9 +170,6 @@ export class Runtime {
   }
   
   beginMenu(prompt, varargs) {
-    if ((prompt === this.constants.MENU_VICTORY) || (prompt === this.constants.MENU_GAMEOVER)) {
-      console.log(`menu ${prompt} at time ${this.clock.lastGameTime}`);
-    }
     const options = [];
     if (varargs) for (;;) {
       const stringId = this.wasmLoader.memU32[varargs >> 2];
@@ -186,6 +183,10 @@ export class Runtime {
     for (const menu of this.menus) menu.update(0xff);
     const menu = this.menuFactory.newMenu(prompt, options, menu => this.dismissMenu(menu));
     this.menus.push(menu);
+    
+    if (menu instanceof GameOverMenu) this.synthesizer.playSong(this.dataService.getSong(6));
+    else if (menu instanceof VictoryMenu) this.synthesizer.playSong(this.dataService.getSong(7));
+    
     return menu;
   }
   
@@ -201,7 +202,6 @@ export class Runtime {
   }
   
   loadMap(mapId, cbSpawn) {
-    console.log(`load map ${mapId} at time ${this.clock.lastGameTime}`);
     this.dropWitheredPlants();
     const map = this.dataService.getMap(mapId);
     if (!map) return 0;

@@ -18,16 +18,11 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [x] Graphics.
-- - [x] Village interiors
-- - - [x] Moon Song doesn't read well against her floor. Change floor.
-- [ ] A bit more music:
-- - [ ] midevil: record to visible track and channel. need this first!
-- - [ ] Jaws of Wrath
-- - [ ] Seventh Roots of Unity
-- - [ ] Game Over (something new?)
-- [x] Game Over menu: messaging, and restart game with full state at map 1.
-- [x] Victory menu: messaging.
+- [x] A bit more music:
+- - [x] midevil: record to visible track and channel. need this first!
+- - [x] Jaws of Wrath
+- - [x] Seventh Roots of Unity
+- - [x] Game Over (something new?)
 - [ ] Victory menu: damage and travel reports, or remove them
 - [ ] Out-to-sea blowback maps.
 - [ ] farmer: shovel sound
@@ -54,7 +49,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - - To werewolf, With all 14 things: 233 s
 - - - Best time to kill werewolf: 79 s
 - - - 100%, including werewolf: 273 s
-- [x] Persisted sketches need to clear on Reset.
 
 ### April
 

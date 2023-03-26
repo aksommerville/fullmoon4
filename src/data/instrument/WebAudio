@@ -98,11 +98,15 @@ begin 0x06
   modEnv ff 10 c0 30 ff 200 60
 end
 
-# Instrument placeholders.
 begin 11
-  wave sine
-  env 10 80 10 20 100
+  wave 0000 ffff 1111 3000 8888
+  modRate 3
+  modRange 1
+  modEnv 00 10 ff 20 40 100 00
+  env 20 80 20 20 100 .. 10 ff 10 40 300
 end
+
+# Instrument placeholders.
 begin 12
   wave sine
   env 10 80 10 20 100

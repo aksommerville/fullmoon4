@@ -224,7 +224,7 @@ export class AudioVoice {
       node.frequency.setValueAtTime(this.unbentFrequency * multiplier, when);
     }
     if (this.modOscillator) {
-      this.modOscillator.setValueAtTime(this.unbentModFrequency * multiplier, when);
+      this.modOscillator.frequency.setValueAtTime(this.unbentModFrequency * multiplier, when);
     }
     // modLfoOscillator is not impacted; that's pegged to real time.
   }
