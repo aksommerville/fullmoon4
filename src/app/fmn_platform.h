@@ -362,6 +362,8 @@ extern struct fmn_global {
   float slowmo_time;
   float terminate_time;
   
+  uint16_t damage_count;
+  
 } fmn_global;
 
 /* App must implement these hooks for platform to call.

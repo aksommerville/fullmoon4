@@ -101,6 +101,7 @@ export class Globals {
     this.g_rain_time = new Float32Array(this.memU8.buffer, this.p_weather + 5, 1);
     this.g_slowmo_time = new Float32Array(this.memU8.buffer, this.p_weather + 9, 1);
     this.g_terminate_time = new Float32Array(this.memU8.buffer, this.p_weather + 13, 1);
+    this.g_damage_count = new Uint16Array(this.memU8.buffer, this.p_weather + 17, 1);
   }
   
   /* Higher-level logical access with structured models.

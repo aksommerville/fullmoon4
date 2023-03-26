@@ -321,7 +321,6 @@ export class VictoryMenu {
     this.report = [
       ["  Time", this.reprPlayTime()],
       [" Items", this.reprItemCount()],
-      ["Travel", this.reprTravel()],
       ["Damage", this.reprDamage()],
     ];
   }
@@ -342,12 +341,8 @@ export class VictoryMenu {
     return `${c}/14`;
   }
   
-  reprTravel() {
-    return "TODO"; // we don't currently track this
-  }
-  
   reprDamage() {
-    return "TODO"; // we don't currently track this
+    return this.globals.g_damage_count[0].toString();
   }
   
   update(state) {

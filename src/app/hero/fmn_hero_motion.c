@@ -326,6 +326,7 @@ void fmn_hero_return_to_map_entry() {
   fmn_hero_get_quantized_position(&dumx,&dumy);
   fmn_hero_walk_end();
   fmn_hero_attempt_valid_position();
+  fmn_global.damage_count++;
 }
 
 /* Begin injury.
@@ -401,6 +402,7 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
     hero->vely*=scale;
   }
   
+  fmn_global.damage_count++;
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
 
   fmn_sound_effect(FMN_SFX_HURT);
@@ -414,6 +416,7 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
 uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
   if (fmn_global.hero_dead) return 0;
   if (fmn_global.curse_time>0.0f) return 0;
+  fmn_global.damage_count++;
   fmn_global.curse_time=FMN_HERO_CURSE_TIME;
   fmn_sound_effect(FMN_SFX_CURSE);
   fmn_hero_item_end();
@@ -425,10 +428,10 @@ uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
  
 void fmn_hero_kill(struct fmn_sprite *assailant) {
   if (fmn_global.hero_dead) return;
-  fmn_log("%s",__func__);
   struct fmn_sprite *hero=fmn_hero.sprite;
   fmn_hero_walk_end();
   fmn_hero_item_end();
+  fmn_global.damage_count++;
   fmn_global.hero_dead=1;
   fmn_global.terminate_time=5.0f;
   fmn_sprite_generate_soulballs(hero->x,hero->y,7);

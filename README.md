@@ -23,7 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] Jaws of Wrath
 - - [x] Seventh Roots of Unity
 - - [x] Game Over (something new?)
-- [ ] Victory menu: damage and travel reports, or remove them
+- [x] Victory menu: damage and travel reports, or remove them
 - [ ] Out-to-sea blowback maps.
 - [ ] farmer: shovel sound
 - [ ] farmer: tweak position
