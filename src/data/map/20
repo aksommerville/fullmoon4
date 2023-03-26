@@ -25,3 +25,4 @@ sprite 10 4 gate gs:windblocks 0 0
 sprite 11 5 treasure item:UMBRELLA 0 0
 sprite 18 7 alphablock_lambda 0 0 0
 sprite 18 9 alphablock_lambda 0 0 0
+neighbors 12

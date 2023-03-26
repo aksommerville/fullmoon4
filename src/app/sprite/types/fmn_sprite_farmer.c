@@ -4,9 +4,12 @@
 #define FARMER_STAGE_INDOORS 1
 #define FARMER_STAGE_GO_OUT 2
 #define FARMER_STAGE_DIG 3
-#define FARMER_STAGE_SOW 4
-#define FARMER_STAGE_WATER 5
-#define FARMER_STAGE_GO_HOME 6
+#define FARMER_STAGE_HOME_MID 4
+#define FARMER_STAGE_WAIT_MID 5
+#define FARMER_STAGE_OUT_MID 6
+#define FARMER_STAGE_SOW 7
+#define FARMER_STAGE_WATER 8
+#define FARMER_STAGE_GO_HOME 9
 
 #define FARMER_WALK_SPEED 1.0f
 
@@ -18,7 +21,7 @@
 #define physics0 sprite->bv[3]
 #define hole_distance sprite->argv[0]
 
-/* INDOOR stage: Hidden, do nothing.
+/* INDOOR and WAIT_MID stage: Hidden, do nothing.
  */
  
 static void farmer_begin_INDOORS(struct fmn_sprite *sprite) {
@@ -28,13 +31,21 @@ static void farmer_begin_INDOORS(struct fmn_sprite *sprite) {
   sprite->style=FMN_SPRITE_STYLE_HIDDEN;
   sprite->physics=0;
 }
+ 
+static void farmer_begin_WAIT_MID(struct fmn_sprite *sprite) {
+  clock=0.0f;
+  stagetime=3.0f;
+  stage=FARMER_STAGE_WAIT_MID;
+  sprite->style=FMN_SPRITE_STYLE_HIDDEN;
+  sprite->physics=0;
+}
 
-/* GO_OUT: Walk down to the plant.
+/* GO_OUT and OUT_MID: Walk down to the plant.
  */
  
 static void farmer_begin_GO_OUT(struct fmn_sprite *sprite) {
   clock=0.0f;
-  stagetime=(hole_distance-0.5f)/FARMER_WALK_SPEED;
+  stagetime=(hole_distance-0.750f)/FARMER_WALK_SPEED;
   stage=FARMER_STAGE_GO_OUT;
   sprite->style=FMN_SPRITE_STYLE_TILE;
   sprite->physics=physics0;
@@ -50,8 +61,19 @@ static void farmer_update_GO_OUT(struct fmn_sprite *sprite,float elapsed) {
     case 3: sprite->tileid=tileid0+2; break;
   }
 }
+ 
+static void farmer_begin_OUT_MID(struct fmn_sprite *sprite) {
+  clock=0.0f;
+  stagetime=(hole_distance-0.750f)/FARMER_WALK_SPEED;
+  stage=FARMER_STAGE_OUT_MID;
+  sprite->style=FMN_SPRITE_STYLE_TILE;
+  sprite->physics=physics0;
+  sprite->tileid=tileid0;
+}
 
-/* GO_HOME: Walk back into the door where we started.
+#define farmer_update_OUT_MID farmer_update_GO_OUT
+
+/* GO_HOME and HOME_MID: Walk back into the door where we started.
  */
  
 static void farmer_begin_GO_HOME(struct fmn_sprite *sprite) {
@@ -72,6 +94,17 @@ static void farmer_update_GO_HOME(struct fmn_sprite *sprite,float elapsed) {
     case 3: sprite->tileid=tileid0+8; break;
   }
 }
+ 
+static void farmer_begin_HOME_MID(struct fmn_sprite *sprite) {
+  clock=0.0f;
+  stagetime=(hole_distance-0.5f)/FARMER_WALK_SPEED;
+  stage=FARMER_STAGE_HOME_MID;
+  sprite->style=FMN_SPRITE_STYLE_TILE;
+  sprite->physics=physics0;
+  sprite->tileid=tileid0+6;
+}
+
+#define farmer_update_HOME_MID farmer_update_GO_HOME
 
 /* DIG: Create the hole and animate.
  */
@@ -82,6 +115,7 @@ static void farmer_begin_DIG(struct fmn_sprite *sprite,int8_t col,int8_t row) {
   sprite->style=FMN_SPRITE_STYLE_TILE;
   sprite->physics=physics0;
   stage=FARMER_STAGE_DIG;
+  fmn_sound_effect(FMN_SFX_DIG);
   fmn_global.map[row*FMN_COLC+col]=0x0f;
   fmn_map_dirty();
   sprite->tileid=tileid0+3;
@@ -221,13 +255,22 @@ static void farmer_advance(struct fmn_sprite *sprite) {
         uint8_t i=fmn_global.plantc;
         for (;i-->0;plant++) {
           if ((plant->x==col)&&(plant->y==row)) {
-            farmer_begin_GO_HOME(sprite);
+            farmer_begin_HOME_MID(sprite);
             return;
           }
         }
         farmer_begin_SOW(sprite,col,row);
       } break;
     case FARMER_STAGE_SOW: {
+        farmer_begin_HOME_MID(sprite);
+      } break;
+    case FARMER_STAGE_HOME_MID: {
+        farmer_begin_WAIT_MID(sprite);
+      } break;
+    case FARMER_STAGE_WAIT_MID: {
+        farmer_begin_OUT_MID(sprite);
+      } break;
+    case FARMER_STAGE_OUT_MID: {
         // Confirm there's a plant here and it's not watered yet.
         int8_t col=(int8_t)sprite->x;
         int8_t row=(int8_t)(sprite->y+0.5f);
@@ -264,6 +307,8 @@ static void _farmer_update(struct fmn_sprite *sprite,float elapsed) {
     case FARMER_STAGE_GO_OUT: farmer_update_GO_OUT(sprite,elapsed); break;
     case FARMER_STAGE_DIG: farmer_update_DIG(sprite,elapsed); break;
     case FARMER_STAGE_SOW: farmer_update_SOW(sprite,elapsed); break;
+    case FARMER_STAGE_HOME_MID: farmer_update_HOME_MID(sprite,elapsed); break;
+    case FARMER_STAGE_OUT_MID: farmer_update_OUT_MID(sprite,elapsed); break;
     case FARMER_STAGE_WATER: farmer_update_WATER(sprite,elapsed); break;
     case FARMER_STAGE_GO_HOME: farmer_update_GO_HOME(sprite,elapsed); break;
   }

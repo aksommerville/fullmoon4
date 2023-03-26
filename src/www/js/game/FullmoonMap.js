@@ -48,6 +48,7 @@ export class FullmoonMap {
     this.cellphysics = null; // Uint8Array(256), but supplied by our owner
     this.dark = 0;
     this.indoors = 0;
+    this.blowback = 0;
     this.wind = 0;
     this.herostartp = (constants.ROWC >> 1) * constants.COLC + (constants.COLC >> 1);
     this.songId = 0;
@@ -67,6 +68,7 @@ export class FullmoonMap {
     this.cellphysics = src.cellphysics; // null or a globally shared Tileprops, no need to copy.
     this.dark = src.dark;
     this.indoors = src.indoors;
+    this.blowback = src.blowback;
     this.wind = src.wind;
     this.herostartp = src.herostartp;
     this.songId = src.songId;
@@ -92,6 +94,7 @@ export class FullmoonMap {
       
         case 0x01: this.dark = 1; break;
         case 0x02: this.indoors = 1; break;
+        case 0x03: this.blowback = 1; break;
         case 0x20: this.songId = v[argp]; break;
         case 0x21: this.bgImageId = v[argp]; break;
         case 0x22: this.herostartp = v[argp]; break;

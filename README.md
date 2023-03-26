@@ -24,10 +24,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] Seventh Roots of Unity
 - - [x] Game Over (something new?)
 - [x] Victory menu: damage and travel reports, or remove them
-- [ ] Out-to-sea blowback maps.
-- [ ] farmer: shovel sound
-- [ ] farmer: tweak position
-- [ ] farmer: Sow and water on separate trips. Let the hero intervene.
+- [x] Out-to-sea blowback maps.
+- [x] farmer: shovel sound
+- [x] farmer: tweak position
+- [x] farmer: Sow and water on separate trips. Let the hero intervene.
 - [ ] Can we make like "song only if nothing yet" for map 1? It's jarring when you're just passing thru.
 - [ ] Shovel underlay briefly visible during transition.
 - [ ] No underlay for pitcher when empty.
@@ -52,6 +52,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
+- [ ] Feedback for blowback.
+- [ ] Violin: visual metronome feedback.
+- [ ] Fruit-bearing plants are ugly and not distinctive enough.
 - [ ] Compass and crow: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - [ ] UI for saved game management.
@@ -84,8 +87,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Delete maps (and resources in general)
 - - [ ] ImageAllUi: Show names
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
+- [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
-- [ ] verify: Check neighbor edges cell by cell (be mindful of firewall)
+- [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
 - [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
 - [ ] verify: Song channel 14 reserved for violin, songs must not use.
 - [ ] verify: Teleport targets must set song.

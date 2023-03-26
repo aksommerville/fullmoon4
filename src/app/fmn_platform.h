@@ -343,7 +343,7 @@ extern struct fmn_global {
   int8_t shovelx;
   int8_t shovely;
   uint8_t werewolf_dead;
-  uint8_t pad3_5;
+  uint8_t blowback;
   
   // General-purpose global state.
   // The whole thing gets persisted on saves.

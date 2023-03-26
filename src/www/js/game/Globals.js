@@ -92,6 +92,7 @@ export class Globals {
     this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 28, 2); // [x,y]
     this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 32, 2); // [x,y]
     this.g_werewolf_dead = new Uint8Array(this.memU8.buffer, this.p_hero + 34, 1);
+    this.g_blowback = new Uint8Array(this.memU8.buffer, this.p_hero + 35, 1);
     this.g_gs = new Uint8Array(this.memU8.buffer, this.p_gs, this.constants.GS_SIZE);
     this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, this.constants.VIOLIN_SONG_LENGTH);
     this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH, 1);
@@ -174,6 +175,7 @@ export class Globals {
     this.g_neighbors[0] = map.neighbors;
     this.g_mapdark[0] = map.dark;
     this.g_indoors[0] = map.indoors;
+    this.g_blowback[0] = map.blowback;
     this.g_herostartp[0] = map.herostartp;
     if (map.doors && map.doors.length) {
       const doorc = Math.min(map.doors.length, this.constants.DOOR_LIMIT);

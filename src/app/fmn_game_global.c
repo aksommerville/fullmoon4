@@ -235,6 +235,33 @@ static void fmn_wind_blow(uint8_t dir,float others_time,float hero_time) {
   ctx.dy*=FMN_WIND_RATE;
   fmn_sprites_for_each(fmn_wind_blow_1,&ctx);
 }
+
+static void fmn_wind_check_blowback(float others_time,float hero_time) {
+  // Blowback begins when you cross the midpoint horizontally or vertically, if there is no neighbor in that direction.
+  // Intensity increases as you approach the edge.
+  const float BLOWBACK_RATE_MAX=10.0f;
+  const float HALFW=FMN_COLC*0.5f;
+  const float HALFH=FMN_ROWC*0.5f;
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  struct fmn_wind_context ctx={
+    .others_time=others_time,
+    .hero_time=hero_time,
+  };
+  if (herox<HALFW) {
+    if (!fmn_global.neighborw) ctx.dx=((HALFW-herox)*BLOWBACK_RATE_MAX*2.0f)/HALFW;
+  } else {
+    if (!fmn_global.neighbore) ctx.dx=((herox-HALFW)*BLOWBACK_RATE_MAX*-2.0f)/HALFW;
+  }
+  if (heroy<FMN_ROWC*0.5f) {
+    if (!fmn_global.neighborn) ctx.dy=((HALFH-heroy)*BLOWBACK_RATE_MAX*2.0f)/HALFH;
+  } else {
+    if (!fmn_global.neighbors) ctx.dy=((heroy-HALFH)*BLOWBACK_RATE_MAX*-2.0f)/HALFH;
+  }
+  if ((ctx.dx<-0.01f)||(ctx.dx>0.01f)||(ctx.dy<-0.01f)||(ctx.dy>0.01f)) {
+    fmn_sprites_for_each(fmn_wind_blow_1,&ctx);
+  }
+}
  
 static float fmn_weather_update(float elapsed) {
   float adjusted=elapsed;
@@ -264,6 +291,9 @@ static float fmn_weather_update(float elapsed) {
       fmn_global.invisibility_time=0.0f;
     }
   }
+  if (fmn_global.blowback) {
+    fmn_wind_check_blowback(adjusted,elapsed);
+  }
   return adjusted;
 }
 
@@ -271,9 +301,9 @@ static float fmn_weather_update(float elapsed) {
  */
  
 static void cb_game_over_ok() {
-  fmn_log("%s",__func__);
   fmn_global.hero_dead=0;
   fmn_global.werewolf_dead=0;
+  fmn_hero_kill_velocity();
   fmn_game_load_map(1);
 }
 

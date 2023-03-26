@@ -201,6 +201,7 @@ function decodeCommand(words) {
     case "indoors": return decodeCommand_noarg(0x02, words.slice(1));
     case "wind": return decodeCommand_wind(words.slice(1));
     case "sketch": return decodeCommand_sketch(words.slice(1));
+    case "blowback": return decodeCommand_noarg(0x03, words.slice(1));
   }
   return null;
 }

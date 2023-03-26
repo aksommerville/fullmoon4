@@ -31,6 +31,7 @@ transmogrify X Y MODE STATE # STATE=[1:pumpkin], MODE=[to,from,toggle]
 indoors
 wind N|E|S|W # direction it blows *to*, opposite the meterological convention
 sketch X Y BITS # Creates sketch if there are none initially.
+blowback
 ```
 
 Resource IDs may be name or number.
@@ -57,6 +58,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x00 () EOF: Stop processing commands, the remainder is garbage. Optional, maps are sized externally.
 0x01 () DARK
 0x02 () INDOORS
+0x03 () BLOWBACK
 
 0x20 (u8 songid) SONG
 0x21 (u8 imageid) TILESHEET
