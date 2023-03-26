@@ -119,6 +119,7 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
     int8_t dumx,dumy;
     fmn_hero_get_quantized_position(&dumx,&dumy);
     fmn_hero_kill_velocity();
+    fmn_global.shovelx=fmn_global.shovely=-1;
     
     fmn_commit_transition();
     return 1;

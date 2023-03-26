@@ -478,7 +478,11 @@ export class RenderHero {
       switch (this.globals.g_selected_item[0]) {
         case this.constants.ITEM_SHOVEL: this._renderShovelUnderlay(dst, ctx); return;
         case this.constants.ITEM_SEED: this._renderShovelUnderlay(dst, ctx); return;
-        case this.constants.ITEM_PITCHER: this._renderShovelUnderlay(dst, ctx); return;
+        case this.constants.ITEM_PITCHER: {
+            // Show underlay if the pitcher is full, otherwise nothing.
+            if (!this.globals.g_itemqv[this.constants.ITEM_PITCHER]) break;
+            this._renderShovelUnderlay(dst, ctx);
+          } return;
       }
     }
     switch (this.globals.g_active_item[0]) {

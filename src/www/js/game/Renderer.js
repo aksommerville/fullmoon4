@@ -110,7 +110,7 @@ export class Renderer {
       const bg = this.renderMap.update();
       ctx.drawImage(bg, 0, 0);
       this.renderMap.renderDarkness(canvas, ctx);
-      if (true||withOverlay) this.renderHero.renderUnderlay(canvas, ctx);
+      if (withOverlay) this.renderHero.renderUnderlay(canvas, ctx);
       this.renderSprites.render(canvas, ctx);
       if (withOverlay) this.renderHero.renderOverlay(canvas, ctx);
       this.renderMap.renderWeather(canvas, ctx);

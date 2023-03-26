@@ -18,19 +18,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [x] A bit more music:
-- - [x] midevil: record to visible track and channel. need this first!
-- - [x] Jaws of Wrath
-- - [x] Seventh Roots of Unity
-- - [x] Game Over (something new?)
-- [x] Victory menu: damage and travel reports, or remove them
-- [x] Out-to-sea blowback maps.
-- [x] farmer: shovel sound
-- [x] farmer: tweak position
-- [x] farmer: Sow and water on separate trips. Let the hero intervene.
-- [ ] Can we make like "song only if nothing yet" for map 1? It's jarring when you're just passing thru.
-- [ ] Shovel underlay briefly visible during transition.
-- [ ] No underlay for pitcher when empty.
 - [ ] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
 - [ ] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
 - [ ] Map command for buried treasure, then grave robbing.
