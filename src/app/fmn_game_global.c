@@ -34,6 +34,7 @@ static void cb_spawn(
 int fmn_game_load_map(int mapid) {
   fmn_sprites_clear();
   fmn_gs_drop_listeners();
+  fmn_game_event_unlisten_all();
   fmn_game_drop_map_singletons();
   int err=fmn_load_map(mapid,cb_spawn);
   if (err<=0) return err;
@@ -579,6 +580,56 @@ void fmn_gs_set_bit(uint16_t p,uint8_t v) {
     if (listener->p!=p) continue;
     listener->cb(listener->userdata,p,v);
   }
+}
+
+/* Game events.
+ */
+ 
+#define FMN_GAME_EVENT_LISTENER_LIMIT 32
+static struct fmn_game_event_listener {
+  uint16_t id;
+  uint16_t eventid;
+  void (*cb)(void *userdata,uint16_t eventid,void *payload);
+  void *userdata;
+} fmn_game_event_listenerv[FMN_GAME_EVENT_LISTENER_LIMIT];
+static uint8_t fmn_game_event_listenerc=0;
+static uint16_t fmn_game_event_listener_next_id=1;
+
+uint16_t fmn_game_event_listen(uint16_t eventid,void (*cb)(void *userdata,uint16_t eventid,void *payload),void *userdata) {
+  if (!cb||!eventid) return 0;
+  if (fmn_game_event_listenerc>=FMN_GAME_EVENT_LISTENER_LIMIT) return 0;
+  struct fmn_game_event_listener *listener=fmn_game_event_listenerv+fmn_game_event_listenerc++;
+  listener->id=fmn_game_event_listener_next_id++;
+  if (!fmn_game_event_listener_next_id) fmn_game_event_listener_next_id=1;
+  listener->eventid=eventid;
+  listener->cb=cb;
+  listener->userdata=userdata;
+  return listener->id;
+}
+
+void fmn_game_event_unlisten(uint16_t id) {
+  uint8_t i=fmn_game_event_listenerc;
+  while (i-->0) {
+    struct fmn_game_event_listener *listener=fmn_game_event_listenerv+i;
+    if (listener->id==id) {
+      fmn_game_event_listenerc--;
+      memmove(listener,listener+1,sizeof(struct fmn_game_event_listener)*(fmn_game_event_listenerc-i));
+      return;
+    }
+  }
+}
+
+void fmn_game_event_broadcast(uint16_t eventid,void *payload) {
+  struct fmn_game_event_listener *v=fmn_game_event_listenerv;
+  uint8_t i=fmn_game_event_listenerc;
+  for (;i-->0;v++) {
+    if (v->eventid!=eventid) continue;
+    v->cb(v->userdata,eventid,payload);
+  }
+}
+
+void fmn_game_event_unlisten_all() {
+  fmn_game_event_listenerc=0;
 }
 
 /* Map singletons.

@@ -5,6 +5,7 @@
  
 #include "app/sprite/fmn_sprite.h"
 #include "app/hero/fmn_hero.h"
+#include "app/fmn_game.h"
 
 #define MISSILE_HIT_DISTANCE 0.6f
 
@@ -68,6 +69,7 @@ static void _missile_update(struct fmn_sprite *sprite,float elapsed) {
     sprite->x+=dx*elapsed;
     sprite->y+=dy*elapsed;
     if ((sprite->x<-1.0f)||(sprite->y<-1.0f)||(sprite->x>FMN_COLC+1.0f)||(sprite->y>FMN_ROWC+1.0f)) {
+      fmn_game_event_broadcast(FMN_GAME_EVENT_MISSILE_OOB,sprite);
       fmn_sprite_kill(sprite);
       return;
     } else {

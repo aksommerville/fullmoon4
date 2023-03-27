@@ -56,6 +56,18 @@ uint16_t fmn_gs_listen_bit(uint16_t p,void (*cb)(void *userdata,uint16_t p,uint8
 void fmn_gs_unlisten(uint16_t id);
 void fmn_gs_drop_listeners();
 
+/* Subscribable event bus.
+ * All subscriptions get cleared on map loads.
+ * Do not unlisten during a callback!
+ */
+uint16_t fmn_game_event_listen(uint16_t eventid,void (*cb)(void *userdata,uint16_t eventid,void *payload),void *userdata);
+void fmn_game_event_unlisten(uint16_t id);
+void fmn_game_event_broadcast(uint16_t eventid,void *payload);
+void fmn_game_event_unlisten_all();
+#define FMN_GAME_EVENT_MISSILE_OOB 1 /* Missile sprite terminating due to off screen. payload=sprite */
+#define FMN_GAME_EVENT_SCOREBOARD_WIN 2 /* payload=sprite. argv[0]=gameid */
+#define FMN_GAME_EVENT_SCOREBOARD_LOSE 3
+
 /* Extra mechanism for arbitrary update logic.
  * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.
  * Any map_singleton registration with a (discriminator) already in use is presumed redundant and will be ignored.

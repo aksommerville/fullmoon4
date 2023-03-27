@@ -1,10 +1,12 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/hero/fmn_hero.h"
+#include "app/fmn_game.h"
 
 #define SEAMONSTER_STAGE_LURK 1
 #define SEAMONSTER_STAGE_SWIM 2
 #define SEAMONSTER_STAGE_SURFACE 3
 #define SEAMONSTER_STAGE_SPIT 4
+#define SEAMONSTER_STAGE_SURRENDER 5
 
 #define SEAMONSTER_LURK_TIME 1.0f
 #define SEAMONSTER_SWIM_SPEED 2.0f
@@ -14,9 +16,81 @@
 #define tileid0 sprite->bv[0]
 #define sleeping sprite->bv[1]
 #define stage sprite->bv[2]
+#define tileextra sprite->bv[3] /* for the crown i wear after winning Seamonster Pong */
+#define defeated sprite->bv[4] /* nonzero after i lose Seamonster Pong */
 #define clock sprite->fv[0]
 #define swimdx sprite->fv[1]
 #define swimdy sprite->fv[2]
+#define secret_tileid sprite->argv[0] /* left of two tiles to display above my head during surrender (a word bubble hopefully) */
+
+/* Choose swim destination, after we're defeated.
+ */
+ 
+static void seamonster_choose_surrender_destination(struct fmn_sprite *sprite) {
+
+  // We need a WATER cell in the middle row, adjacent to a VACANT or UNSHOVELLABLE one.
+  // When designing maps, you must arrange for this to exist.
+  uint8_t row=FMN_ROWC>>1;
+  uint8_t colv[FMN_COLC];
+  uint8_t colc=0;
+  const uint8_t *mapsrc=fmn_global.map+row*FMN_COLC;
+  uint8_t col=0;
+  #define IS_LAND(tile) ( \
+    (fmn_global.cellphysics[tile]==FMN_CELLPHYSICS_VACANT)|| \
+    (fmn_global.cellphysics[tile]==FMN_CELLPHYSICS_UNSHOVELLABLE) \
+  )
+  for (;col<FMN_COLC;col++,mapsrc++) {
+    if (fmn_global.cellphysics[*mapsrc]!=FMN_CELLPHYSICS_WATER) continue;
+    if (
+      (col&&IS_LAND(mapsrc[-1]))||
+      ((col<FMN_COLC-1)&&IS_LAND(mapsrc[1]))
+    ) {
+      colv[colc++]=col;
+    }
+  }
+  #undef IS_LAND
+  if (colc<1) {
+    fmn_log("%s: No suitable surrender destination!",__func__);
+    clock=swimdx=swimdy=0.0f;
+    return;
+  }
+  
+  // If there's more than one candidate, take the shorter by manhattan distance.
+  // (since its vertical is fixed, horizontal distance is the same as manhattan).
+  // Hopefully this yields a reachable cell! If not, pandemonium ensues.
+  uint8_t mycol=(uint8_t)sprite->x;
+  uint8_t myrow=(uint8_t)sprite->y;
+  int8_t score=0x7f;
+  uint8_t i=colc; while (i-->0) {
+    int8_t d=mycol-colv[i];
+    if (d<0) d=-d;
+    if (d<score) {
+      score=d;
+      col=colv[i];
+    }
+  }
+  row=FMN_ROWC>>1;
+  
+  // Swim first to the correct column, then to the correct row.
+  // Designer must ensure that the coastline is convex, otherwise we might swim through land.
+  float dstx,dsty=sprite->y;
+  if (mycol!=col) {
+    dstx=col+0.5f;
+  } else if (myrow!=row) {
+    dstx=col+0.5f;
+    dsty=row+0.5f;
+  } else {
+    clock=swimdx=swimdy=0.0f;
+    return;
+  }
+  
+  swimdx=dstx-sprite->x;
+  swimdy=dsty-sprite->y;
+  float distance=sqrtf(swimdx*swimdx+swimdy*swimdy);
+  swimdx=(swimdx*SEAMONSTER_SWIM_SPEED)/distance;
+  swimdy=(swimdy*SEAMONSTER_SWIM_SPEED)/distance;
+  clock=distance/SEAMONSTER_SWIM_SPEED;
+}
 
 /* Choose swim destination.
  * Sets (clock,swimdx,swimdy).
@@ -64,6 +138,12 @@ static void maprect_fill_bitmap(uint8_t *bitmap,const struct maprect *mr) {
 }
  
 static void seamonster_choose_swim_destination(struct fmn_sprite *sprite) {
+
+  // If we're defeated, the process is completely different.
+  if (defeated) {
+    seamonster_choose_surrender_destination(sprite);
+    return;
+  }
 
   // Prepare four rectangles in discrete grid space, all initially pointing to my cell.
   int8_t col=sprite->x,row=sprite->y;
@@ -134,23 +214,50 @@ static void seamonster_choose_swim_destination(struct fmn_sprite *sprite) {
  
 static void seamonster_begin_LURK(struct fmn_sprite *sprite) {
   sprite->style=FMN_SPRITE_STYLE_TWOFRAME;
-  sprite->tileid=tileid0;
+  sprite->tileid=tileid0+tileextra;
   stage=SEAMONSTER_STAGE_LURK;
   clock=SEAMONSTER_LURK_TIME;
 }
 
+static void seamonster_begin_SURRENDER(struct fmn_sprite *sprite) {
+  sprite->style=FMN_SPRITE_STYLE_TWOFRAME;
+  sprite->tileid=tileid0+tileextra+3;
+  stage=SEAMONSTER_STAGE_SURRENDER;
+  clock=99999.9f;
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  if (herox<sprite->x) sprite->xform=FMN_XFORM_XREV;
+  else sprite->xform=0;
+  
+  if (secret_tileid) {
+    struct fmn_sprite *bubble=fmn_sprite_generate_noparam(0,sprite->x,sprite->y-1.0f);
+    if (bubble) {
+      bubble->imageid=sprite->imageid;
+      bubble->tileid=secret_tileid;
+      bubble->layer=140;
+      bubble->style=FMN_SPRITE_STYLE_DOUBLEWIDE;
+    }
+  } else {
+    fmn_log("Seamonster surrenders but secret_tileid unset!");
+  }
+}
+
 static void seamonster_begin_SWIM(struct fmn_sprite *sprite) {
   sprite->style=FMN_SPRITE_STYLE_TWOFRAME;
-  sprite->tileid=tileid0;
+  sprite->tileid=tileid0+tileextra;
   stage=SEAMONSTER_STAGE_SWIM;
   seamonster_choose_swim_destination(sprite);
   if (swimdx<0.0f) sprite->xform=FMN_XFORM_XREV;
   else sprite->xform=0;
+  
+  if (defeated&&(clock<0.01f)) {
+    seamonster_begin_SURRENDER(sprite);
+  }
 }
 
 static void seamonster_begin_SURFACE(struct fmn_sprite *sprite) {
   sprite->style=FMN_SPRITE_STYLE_TWOFRAME;
-  sprite->tileid=tileid0+2;
+  sprite->tileid=tileid0+tileextra+2;
   stage=SEAMONSTER_STAGE_SURFACE;
   clock=SEAMONSTER_SURFACE_TIME;
   float herox,heroy;
@@ -176,7 +283,7 @@ static void seamonster_begin_SPIT(struct fmn_sprite *sprite) {
   
   // OK! Make a missile, do the spit animation, and let the missile do its thing.
   sprite->style=FMN_SPRITE_STYLE_TILE;
-  sprite->tileid=tileid0+4;
+  sprite->tileid=tileid0+tileextra+4;
   stage=SEAMONSTER_STAGE_SPIT;
   clock=SEAMONSTER_SPIT_TIME;
   float x=sprite->x;
@@ -185,7 +292,7 @@ static void seamonster_begin_SPIT(struct fmn_sprite *sprite) {
   const uint8_t cmdv[]={
     0x42,FMN_SPRCTL_missile>>8,FMN_SPRCTL_missile,
     0x20,sprite->imageid,
-    0x21,tileid0+5,
+    0x21,tileid0+5, // no tileextra; there's just one missile
     0x23,FMN_SPRITE_STYLE_TILE,
   };
   const uint8_t argv[]={};
@@ -195,11 +302,41 @@ static void seamonster_begin_SPIT(struct fmn_sprite *sprite) {
   }
 }
 
+/* Game event.
+ */
+ 
+static void _seamonster_game_event(void *userdata,uint16_t eventid,void *payload) {
+  struct fmn_sprite *sprite=userdata;
+  switch (eventid) {
+    case FMN_GAME_EVENT_SCOREBOARD_WIN: {
+        uint8_t gameid=((struct fmn_sprite*)payload)->argv[0];
+        if (gameid==1) { // SEAMONSTER_PONG
+          if (!defeated) {
+            defeated=1;
+            seamonster_begin_SWIM(sprite);
+          }
+        }
+      } break;
+    case FMN_GAME_EVENT_SCOREBOARD_LOSE: {
+        uint8_t gameid=((struct fmn_sprite*)payload)->argv[0];
+        if (gameid==1) { // SEAMONSTER_PONG
+          if (!defeated&&!tileextra) {
+            tileextra=0x10;
+            sprite->tileid+=0x10;
+          }
+        }
+      } break;
+  }
+}
+
 /* Init.
  */
  
 static void _seamonster_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
+  tileextra=0;
+  fmn_game_event_listen(FMN_GAME_EVENT_SCOREBOARD_WIN,_seamonster_game_event,sprite);
+  fmn_game_event_listen(FMN_GAME_EVENT_SCOREBOARD_LOSE,_seamonster_game_event,sprite);
   seamonster_begin_LURK(sprite);
 }
 
@@ -227,7 +364,7 @@ static void _seamonster_update(struct fmn_sprite *sprite,float elapsed) {
   if (sleeping) return;
   if ((clock-=elapsed)<=0.0f) switch (stage) {
     case SEAMONSTER_STAGE_LURK: seamonster_begin_SWIM(sprite); break;
-    case SEAMONSTER_STAGE_SWIM: seamonster_begin_SURFACE(sprite); break;
+    case SEAMONSTER_STAGE_SWIM: if (defeated) seamonster_begin_SWIM(sprite); else seamonster_begin_SURFACE(sprite); break;
     case SEAMONSTER_STAGE_SURFACE: seamonster_begin_SPIT(sprite); break;
     case SEAMONSTER_STAGE_SPIT: seamonster_begin_LURK(sprite); break;
   } else switch (stage) {

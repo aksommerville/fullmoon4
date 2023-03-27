@@ -18,7 +18,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### March
 
-- [ ] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
+- [x] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
 - [ ] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
 - [ ] Map command for buried treasure, then grave robbing.
 - [ ] The forest map with a depumpkinning transmogrifier, can we add some artificial logic instead? "If in the NW corner and a pumpkin, eliminate the block..."
@@ -39,6 +39,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
+- [ ] Songs still hiccup right at the start, and when looping, and it drives me crazy.
+- [ ] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
+- [ ] Seventh Roots of Unity: bass is muddy, make a new instrument
 - [ ] Feedback for blowback.
 - [ ] Violin: visual metronome feedback.
 - [ ] Fruit-bearing plants are ugly and not distinctive enough.

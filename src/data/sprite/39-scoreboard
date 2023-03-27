@@ -1,0 +1,4 @@
+controller scoreboard
+image sprites
+tile 0xd0
+style tile
