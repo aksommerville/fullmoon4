@@ -1,5 +1,6 @@
 const resolveItemName = require("./resolveItemName.js");
 const resolveGsbitName = require("./resolveGsbitName.js");
+const resolveNameFromCpp = require("./resolveNameFromCpp.js");
 const fs = require("fs");
 
 /* Keyed by resource type string, values are { [name]: id }
@@ -31,9 +32,12 @@ function getResourceIdByName(resType, name) {
   if (!isNaN(id)) return id;
   
   // Allow a few string things that aren't resources but similar.
+  // This is really getting stupid. Next time around, let's have some structure around dynamic enums.
   if (typeof(name) === "string") {
          if (name.startsWith("gs:")) id = resolveGsbitName(name.substring(3));
     else if (name.startsWith("item:")) id = resolveItemName(name.substring(5));
+    else if (name.startsWith("ev:")) id = resolveNameFromCpp(name.substring(3), "src/app/fmn_platform.h", "FMN_MAP_EVID_");
+    else if (name.startsWith("cb:")) id = resolveNameFromCpp(name.substring(3), "src/app/fmn_game.h", "FMN_MAP_CALLBACK_");
     else id = null;
     if (typeof(id) === "number") return id;
   }

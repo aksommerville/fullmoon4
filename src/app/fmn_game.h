@@ -96,4 +96,18 @@ void fmn_game_update_map_singletons(float elapsed);
  */
 int8_t fmn_for_each_sketch_word(int8_t (*cb)(const char *src,uint8_t srcc,void *userdata),void *userdata);
 
+/* Map callbacks.
+ * Arbitrary bits of high-level game logic that can be triggered by map events.
+ */
+void fmn_game_map_callback(uint16_t cbid,uint8_t param,void *userdata);
+
+#define FMN_MAP_CALLBACK_kill_top_pushblock_if_pumpkin_at_nw       1
+
+#define FMN_FOR_EACH_MAP_CALLBACK \
+  _(kill_top_pushblock_if_pumpkin_at_nw)
+  
+#define _(tag) void fmn_map_callback_##tag(uint8_t param,void *userdata);
+FMN_FOR_EACH_MAP_CALLBACK
+#undef _
+
 #endif

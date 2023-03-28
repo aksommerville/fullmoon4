@@ -45,6 +45,7 @@ export class FullmoonMap {
     this.doors = []; // {x,y,mapId,dstx,dsty,extra}
     this.sprites = []; // {x,y,spriteId,arg0,arg1,arg2}
     this.sketches = []; // {x,y,bits}. Should only be examined if no user sketches exist at load.
+    this.callbacks = []; // {evid,cbid,param}
     this.cellphysics = null; // Uint8Array(256), but supplied by our owner
     this.dark = 0;
     this.indoors = 0;
@@ -65,6 +66,7 @@ export class FullmoonMap {
     this.doors = src.doors.map(d => ({ ...d }));
     this.sprites = src.sprites.map(s => ({ ...s }));
     this.sketches = src.sketches.map(s => ({ ...s }));
+    this.callbacks = src.callbacks.map(cb => ({ ...cb }));
     this.cellphysics = src.cellphysics; // null or a globally shared Tileprops, no need to copy.
     this.dark = src.dark;
     this.indoors = src.indoors;
@@ -138,6 +140,13 @@ export class FullmoonMap {
             dstx: 0x30,
             dsty: v[argp + 3],
             extra: (v[argp + 1] << 8) | v[argp + 2],
+          });
+          break;
+          
+        case 0x63: this.callbacks.push({
+            evid: v[argp],
+            cbid: (v[argp + 1] << 8) | v[argp + 2],
+            param: v[argp + 3],
           });
           break;
           

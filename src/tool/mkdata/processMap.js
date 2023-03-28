@@ -223,6 +223,24 @@ function decodeCommand_buried_door(args) {
   return dst;
 }
 
+/* callback EVID CBID PARAM
+ */
+ 
+function decodeCommand_callback(args) {
+  const [evid, cbid, param] = assertIntArgs(args,
+    ["evid", 0, 0xff],
+    ["cbid", 0, 0xffff],
+    ["param", 0, 0xff],
+  );
+  const dst = Buffer.alloc(5);
+  dst[0] = 0x63;
+  dst[1] = evid;
+  dst[2] = cbid >> 8;
+  dst[3] = cbid;
+  dst[4] = param;
+  return dst;
+}
+
 /* Main entry point, command TOC.
  */
 
@@ -246,6 +264,7 @@ function decodeCommand(words) {
     case "blowback": return decodeCommand_noarg(0x03, words.slice(1));
     case "buried_treasure": return decodeCommand_buried_treasure(words.slice(1));
     case "buried_door": return decodeCommand_buried_door(words.slice(1));
+    case "callback": return decodeCommand_callback(words.slice(1));
   }
   return null;
 }

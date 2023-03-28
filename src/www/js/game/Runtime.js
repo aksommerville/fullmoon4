@@ -62,6 +62,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
     this.wasmLoader.env.fmn_get_string = (dst, dsta, id) => this.getString(dst, dsta, id);
     this.wasmLoader.env.fmn_find_map_command = (dstp, mask, vp) => this.findMapCommand(dstp, mask, vp);
+    this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     
     // Fetch the data archive and wasm asap. This doesn't start the game or anything.
     this.preloadAtConstruction = Promise.all([
@@ -376,6 +377,15 @@ export class Runtime {
     }
     
     return 0;
+  }
+  
+  mapCallbacks(qevid, cbp, userdata) {
+    if (!this.map) return;
+    const cb = this.wasmLoader.instance.exports.__indirect_function_table.get(cbp);
+    for (const { evid, cbid, param } of this.map.callbacks) {
+      if (evid !== qevid) continue;
+      cb(cbid, param, userdata);
+    }
   }
 }
 

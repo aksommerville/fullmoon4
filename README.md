@@ -21,7 +21,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
 - [x] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
 - [x] Map command for buried treasure, then grave robbing.
-- [ ] The forest map with a depumpkinning transmogrifier, can we add some artificial logic instead? "If in the NW corner and a pumpkin, eliminate the block..."
+- [x] The forest map with a depumpkinning transmogrifier, can we add some artificial logic instead? "If in the NW corner and a pumpkin, eliminate the block..."
 - [ ] lizard: range too short. he should burn you by default
 - [ ] Door transition is basically invisible when lights out. (and it's disconcerting)
 - [ ] "WORM"<=>"FISH" might be too involved. Can we pick words closer together? Remember to update the church if so.
@@ -91,6 +91,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.
+- [ ] Pumpkin protection: Ensure she can't travel too far as a pumpkin, and can't get trapped in the reachable area.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
 - [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Rekajigger Constants.js, use actual inlinable constants.

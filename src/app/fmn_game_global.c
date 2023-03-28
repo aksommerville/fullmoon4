@@ -9,6 +9,7 @@
 int fmn_game_init() {
   fmn_global.itemv[FMN_ITEM_NONE]=1; // let it show an icon in the inventory, so it doesn't look like an item not found yet
   if (fmn_game_load_map(1)<1) return -1;
+  fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
   return 0;
 }
 
@@ -28,10 +29,23 @@ static void cb_spawn(
   }
 }
 
+/* Map callback events.
+ */
+ 
+void fmn_game_map_callback(uint16_t cbid,uint8_t param,void *userdata) {
+  switch (cbid) {
+    #define _(tag) case FMN_MAP_CALLBACK_##tag: fmn_map_callback_##tag(param,userdata); break;
+    FMN_FOR_EACH_MAP_CALLBACK
+    #undef _
+  }
+}
+
 /* Load map.
+ * This DOES NOT trigger FMN_MAP_EVID_LOADED, but the caller should. Update hero position first.
  */
  
 int fmn_game_load_map(int mapid) {
+  fmn_map_callbacks(FMN_MAP_EVID_UNLOAD,fmn_game_map_callback,0);
   fmn_sprites_clear();
   fmn_gs_drop_listeners();
   fmn_game_event_unlisten_all();
@@ -70,6 +84,7 @@ static void fmn_game_navigate(int8_t dx,int8_t dy) {
   }
   fmn_hero_set_position(herox-dx*FMN_COLC,heroy-dy*FMN_ROWC);
   // Preserve velocity on these neighbor transitions.
+  fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
   fmn_commit_transition();
 }
 
@@ -126,6 +141,8 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
     fmn_hero_get_quantized_position(&dumx,&dumy);
     fmn_hero_kill_velocity();
     fmn_global.shovelx=fmn_global.shovely=-1;
+    
+    fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
     
     fmn_commit_transition();
     return 1;
@@ -312,6 +329,7 @@ static void cb_game_over_ok() {
   fmn_global.werewolf_dead=0;
   fmn_hero_kill_velocity();
   fmn_game_load_map(1);
+  fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
 }
 
 /* Update.
@@ -393,6 +411,7 @@ static void fmn_teleport(uint16_t mapid) {
   int8_t dumx,dumy;
   fmn_hero_get_quantized_position(&dumx,&dumy);
   fmn_hero_kill_velocity();
+  fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
   fmn_commit_transition();
 }
 

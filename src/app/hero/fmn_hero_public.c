@@ -40,13 +40,6 @@ int fmn_hero_reset() {
     fmn_hero.sprite->velx=fmn_hero.velx;
     fmn_hero.sprite->vely=fmn_hero.vely;
     fmn_hero.sprite->invmass=0x80;
-    
-    /*XXX TEMP get some items initially.
-    fmn_global.itemv[FMN_ITEM_BROOM]=1;
-    fmn_global.itemv[FMN_ITEM_CHEESE]=1;
-    fmn_global.itemqv[FMN_ITEM_CHEESE]=20;
-    fmn_global.selected_item=FMN_ITEM_BROOM;
-    /**/
   }
   
   fmn_hero.cellx=-128;
