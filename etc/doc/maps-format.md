@@ -32,6 +32,8 @@ indoors
 wind N|E|S|W # direction it blows *to*, opposite the meterological convention
 sketch X Y BITS # Creates sketch if there are none initially.
 blowback
+buried_treasure X Y GSBIT ITEMID
+buried_door X Y GSBIT MAPID DSTX DSTY
 ```
 
 Resource IDs may be name or number.
@@ -73,6 +75,8 @@ Future decoders are allowed to skip unknown commands if the length is known.
 
 0x60 (u8 cellp,u16 mapid,u8 dstcellp) DOOR
 0x61 (u8 cellp,u24 bits) SKETCH
+0x62 (u8 cellp,u16 gsbit,u8 itemid) BURIED_TREASURE
 
 0x80 (u8 cellp,u16 spriteid,u8 arg0,u8 arg1,u8 arg2) SPRITE
+0x81 (u8 cellp,u16 gsbit,u16 mapid,u8 dstp) BURIED_DOOR
 ```

@@ -42,7 +42,7 @@ export class FullmoonMap {
   _init(constants) {
     this.cells = new Uint8Array(constants.COLC * constants.ROWC);
     this.commands = []; // Normally a Uint8Array pointing into the original source.
-    this.doors = []; // {x,y,mapId,dstx,dsty}
+    this.doors = []; // {x,y,mapId,dstx,dsty,extra}
     this.sprites = []; // {x,y,spriteId,arg0,arg1,arg2}
     this.sketches = []; // {x,y,bits}. Should only be examined if no user sketches exist at load.
     this.cellphysics = null; // Uint8Array(256), but supplied by our owner
@@ -110,6 +110,7 @@ export class FullmoonMap {
             mapId: 0,
             dstx: v[argp + 1] & 0xc0,
             dsty: v[argp + 1] & 0x3f,
+            extra: 0,
           });
           break;
           
@@ -119,6 +120,7 @@ export class FullmoonMap {
             mapId: (v[argp + 1] << 8) | v[argp + 2],
             dstx: v[argp + 3] % constants.COLC,
             dsty: Math.floor(v[argp + 3] / constants.COLC),
+            extra: 0,
           });
           break;
           
@@ -129,6 +131,16 @@ export class FullmoonMap {
           });
           break;
           
+        case 0x62: this.doors.push({ // buried_treasure
+            x: v[argp] % constants.COLC,
+            y: Math.floor(v[argp] / constants.COLC),
+            mapId: 0,
+            dstx: 0x30,
+            dsty: v[argp + 3],
+            extra: (v[argp + 1] << 8) | v[argp + 2],
+          });
+          break;
+          
         case 0x80: this.sprites.push({
             x: v[argp] % constants.COLC,
             y: Math.floor(v[argp] / constants.COLC),
@@ -136,6 +148,16 @@ export class FullmoonMap {
             arg0: v[argp + 3],
             arg1: v[argp + 4],
             arg2: v[argp + 5],
+          });
+          break;
+          
+        case 0x81: this.doors.push({ // buried_door
+            x: v[argp] % constants.COLC,
+            y: Math.floor(v[argp] / constants.COLC),
+            mapId: (v[argp + 3] << 8) | v[argp + 4],
+            dstx: v[argp + 5] % constants.COLC,
+            dsty: Math.floor(v[argp + 5] / constants.COLC),
+            extra: (v[argp + 1] << 8) | v[argp + 2],
           });
           break;
       }

@@ -188,7 +188,13 @@ export class Globals {
         this.g_doorv[dstp++] = door.mapId >> 8;
         this.g_doorv[dstp++] = door.dstx;
         this.g_doorv[dstp++] = door.dsty;
-        dstp += 2; // pad to 8 bytes
+        this.g_doorv[dstp++] = door.extra;
+        this.g_doorv[dstp++] = door.extra >> 8;
+        if (door.mapId && door.extra) { // buried door. we must change the tile to 0x3f if warranted
+          if (this.getGsBit(door.extra)) {
+            this.g_map[door.y * this.constants.COLC + door.x] = 0x3f;
+          }
+        }
       }
     } else {
       this.g_doorc[0] = 0;
@@ -228,6 +234,14 @@ export class Globals {
       this.g_wind_dir[0] = map.wind;
       this.g_wind_time[0] = 86400.0; // just wait one day and it will stop, easy.
     }
+  }
+  
+  getGsBit(gsbit) {
+    const p = gsbit >> 3;
+    if (p >= this.g_gs.length) return 0;
+    const mask = 0x80 >> (gsbit & 7);
+    if (this.g_gs[p] & mask) return 1;
+    return 0;
   }
   
   /* Plants and sketches.

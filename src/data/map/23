@@ -17,3 +17,6 @@ neighborn 9
 neighbors 24
 neighborw 26
 sprite 3 7 treasure item:COMPASS 0 0
+sprite 5 3 gate gs:desertgate1 0 0
+sprite 11 9 treadle gs:desertgate1 0 0
+sprite 14 9 stompbox gs:desertgate1 0 0

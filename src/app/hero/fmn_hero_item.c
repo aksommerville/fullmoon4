@@ -312,11 +312,6 @@ static void fmn_hero_shovel_begin() {
         fmn_map_dirty();
         break;
       }
-    
-      fmn_global.map[tilep]=0x0f;
-      fmn_map_dirty();
-      fmn_sound_effect(FMN_SFX_DIG);
-      //TODO find buried treasure?
       
       // Hard-stop motion. It's disconcerting if she starts digging while walking, then slides to the next tile.
       fmn_hero.walkdx=0;
@@ -324,7 +319,39 @@ static void fmn_hero_shovel_begin() {
       fmn_hero.walkspeed=0.0f;
       fmn_hero.sprite->velx=0.0f;
       fmn_hero.sprite->vely=0.0f;
+      
+      // Look for buried treasure and doors.
+      const struct fmn_door *door=fmn_global.doorv;
+      for (i=fmn_global.doorc;i-->0;door++) {
+        if (door->x!=fmn_global.shovelx) continue;
+        if (door->y!=fmn_global.shovely) continue;
+        if (door->mapid) {
+          if (!door->extra) continue; // not buried
+          fmn_gs_set_bit(door->extra,1);
+          fmn_global.map[tilep]=0x3f;
+          fmn_map_dirty();
+          fmn_sound_effect(FMN_SFX_UNBURY_DOOR);
+          return;
+        } else {
+          if (door->dstx==0x30) { // buried treasure
+            fmn_global.map[tilep]=0x0f;
+            fmn_map_dirty();
+            if (door->extra&&fmn_gs_get_bit(door->extra)) { // already got it
+              fmn_sound_effect(FMN_SFX_DIG);
+            } else {
+              if (door->extra) fmn_gs_set_bit(door->extra,1);
+              fmn_sound_effect(FMN_SFX_UNBURY_TREASURE);
+              fmn_collect_item(door->dsty,0);
+            }
+            return;
+          }
+        }
+      }
     
+      // Sound effect and swap the tile.
+      fmn_global.map[tilep]=0x0f;
+      fmn_map_dirty();
+      fmn_sound_effect(FMN_SFX_DIG);
       return;
     }
   }

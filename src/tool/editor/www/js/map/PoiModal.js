@@ -58,6 +58,8 @@ export class PoiModal {
     this.dom.spawn(typeSelect, "OPTION", { value: "hero" }, "hero");
     this.dom.spawn(typeSelect, "OPTION", { value: "transmogrify" }, "transmogrify");
     this.dom.spawn(typeSelect, "OPTION", { value: "sketch" }, "sketch");
+    this.dom.spawn(typeSelect, "OPTION", { value: "buried_treasure" }, "buried_treasure");
+    this.dom.spawn(typeSelect, "OPTION", { value: "buried_door" }, "buried_door");
     
     this.dom.spawn(permanentForm, "INPUT", {
       type: "number",
@@ -126,6 +128,8 @@ export class PoiModal {
       case "hero": break;
       case "transmogrify": this.buildTransmogrifyForm(table); break;
       case "sketch": this.buildSketchForm(table); break;
+      case "buried_treasure": this.buildBuriedTreasureForm(table); break;
+      case "buried_door": this.buildBuriedDoorForm(table); break;
     }
   }
   
@@ -155,6 +159,19 @@ export class PoiModal {
     this.dom.spawn(tr, "TD", "Edit in ChalkModal");
     const td = this.dom.spawn(tr, "TD");
     this.dom.spawn(td, "INPUT", { type: "button", value: "Open", "on-click": () => this.onEditChalk() });
+  }
+  
+  buildBuriedTreasureForm(table) {
+    this.addTextRow(table, "gsbit", this.poi ? this.poi.gsbit : "");
+    this.addTextRow(table, "itemId", this.poi ? this.poi.itemId : "");
+  }
+  
+  buildBuriedDoorForm(table) {
+    this.addTextRow(table, "gsbit", this.poi ? this.poi.gsbit : "");
+    this.addNumberRow(table, "mapId", 0, 65535, this.poi ? this.poi.mapId : 0, "0 to create");
+    this.addNumberRow(table, "dstx", 0, FullmoonMap.COLC - 1, this.poi ? this.poi.dstx : 0);
+    this.addNumberRow(table, "dsty", 0, FullmoonMap.ROWC - 1, this.poi ? this.poi.dsty : 0);
+    if (!this.poi) this.addCheckboxRow(table, "createRemote", true);
   }
   
   reprSpriteId(id) {
@@ -228,14 +245,22 @@ export class PoiModal {
     const command = this.commandFromPoiModel(poi);
     if (!command) return;
     
-    if ((command[0] === "door") && (command[3] === "0")) {
+    if ((command[0] === "door") && (+command[3] === 0)) {
       const mapId = this.mapService.createMap(this.resService);
       command[3] = mapId.toString();
+      poi.mapId = mapId;
+    } else if ((command[0] === "buried_door") && (+command[4] === 0)) {
+      const mapId = this.mapService.createMap(this.resService);
+      command[4] = mapId.toString();
       poi.mapId = mapId;
     }
     
     if (poi.createRemote) {
-      const remoteCommand = ["door", command[4], command[5], this.map.id.toString(), command[1], command[2]];
+      let remoteCommand;
+      switch (command[0]) {
+        case "door": remoteCommand = ["door", command[4], command[5], this.map.id.toString(), command[1], command[2]]; break;
+        case "buried_door": remoteCommand = ["door", command[5], command[6], this.map.id.toString(), command[1], command[2]]; break;
+      }
       if (!this.onCreateRemoteCommand(poi.mapId, remoteCommand)) return;
     }
     
@@ -278,6 +303,14 @@ export class PoiModal {
         
       case "sketch": {
           return ["sketch", poi.x.toString(), poi.y.toString(), poi.bits.toString()];
+        }
+        
+      case "buried_treasure": {
+          return ["buried_treasure", poi.x.toString(), poi.y.toString(), poi.gsbit.toString(), poi.itemId.toString()];
+        }
+        
+      case "buried_door": {
+          return ["buried_door", poi.x.toString(), poi.y.toString(), poi.gsbit.toString(), poi.mapId.toString(), poi.dstx.toString(), poi.dsty.toString()];
         }
     }
     return null;

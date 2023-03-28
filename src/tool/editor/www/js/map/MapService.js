@@ -164,6 +164,28 @@ export class MapService {
                 x, y, bits,
               });
             } break;
+          case "buried_treasure": {
+              const x = +command[1], y = +command[2];
+              pois.push({
+                type: "buried_treasure",
+                x, y,
+                index: pois.filter(p => p.x === x && p.y === y).length,
+                gsbit: command[3],
+                itemId: command[4],
+              });
+            } break;
+          case "buried_door": {
+              const x = +command[1], y = +command[2];
+              pois.push({
+                type: "buried_door",
+                x, y,
+                index: pois.filter(p => p.x === x && p.y === y).length,
+                gsbit: command[3],
+                mapId: command[4],
+                dstx: +command[5],
+                dsty: +command[6],
+              });
+            } break;
         }
       }
     }
@@ -173,7 +195,7 @@ export class MapService {
         if (type !== "map") continue;
         if (!object || (object === map)) continue;
         for (const command of object.commands) {
-          if (command[0] === "door") {
+          if ((command[0] === "door") || (command[0] === "buried_door")) {
             if (command[3] === myIdAsString) {
               const x = +command[4], y = +command[5];
               pois.push({
@@ -208,6 +230,8 @@ export class MapService {
       case "hero": command[1] = x.toString(); command[2] = y.toString(); break;
       case "transmogrify": command[1] = x.toString(); command[2] = y.toString(); break;
       case "sketch": command[1] = x.toString(); command[2] = y.toString(); break;
+      case "buried_treasure": command[1] = x.toString(); command[2] = y.toString(); break;
+      case "buried_door": command[1] = x.toString(); command[2] = y.toString(); break;
     }
     if (remoteMapHandle[0]) {
       // dirtying resources is really not our job, but we don't have any other way to tell our caller that it happened.
@@ -285,6 +309,28 @@ export class MapService {
             if (+command[1] !== poi.x) continue;
             if (+command[2] !== poi.y) continue;
             if (+command[3] !== poi.bits) continue;
+            return command;
+          }
+        } break;
+        
+      case "buried_treasure": {
+          for (const command of map.commands) {
+            if (command[0] !== "buried_treasure") continue;
+            if (+command[1] !== poi.x) continue;
+            if (+command[2] !== poi.y) continue;
+            if (command[3] !== poi.gsbit) continue;
+            if (command[4] !== poi.itemId) continue;
+            return command;
+          }
+        } break;
+        
+      case "buried_door": {
+          for (const command of map.commands) {
+            if (command[0] !== "buried_door") continue;
+            if (+command[1] !== poi.x) continue;
+            if (+command[2] !== poi.y) continue;
+            if (command[3] !== poi.gsbit) continue;
+            if (command[4] !== poi.mapId) continue;
             return command;
           }
         } break;

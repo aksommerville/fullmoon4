@@ -23,3 +23,9 @@ sprite 5 4 ghost 0 0 0
 sprite 7 2 ghost 0 0 0
 neighborn 54
 neighbore 56
+buried_treasure 3 3 gs:graverob1 item:COIN
+buried_treasure 7 3 gs:graverob2 item:COIN
+buried_treasure 3 5 gs:graverob3 item:COIN
+buried_treasure 5 5 gs:graverob4 item:COIN
+buried_treasure 7 5 gs:graverob5 item:COIN
+buried_door 5 3 gs:gravedoor 64 5 3

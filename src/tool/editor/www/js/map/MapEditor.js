@@ -318,6 +318,7 @@ export class MapEditor {
     switch (poi.type) {
       case "exit": this.window.location = `#map/${poi.mapId}`; return false;
       case "entrance": this.window.location = `#map/${poi.mapId}`; return false;
+      case "buried_door": this.window.location = `#map/${poi.mapId}`; return false;
     }
     return false;
   }

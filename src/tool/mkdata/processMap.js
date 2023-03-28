@@ -181,6 +181,48 @@ function decodeCommand_sketch(args) {
   return dst;
 }
 
+/* buried_treasure X Y GSBIT ITEMID
+ */
+ 
+function decodeCommand_buried_treasure(args) {
+  const [x, y, gsbit, itemid] = assertIntArgs(args,
+    ["x", 0, COLC - 1],
+    ["y", 0, ROWC - 1],
+    ["gsbit", 0, 0xffff],
+    ["itemid", 0, 0xff],
+  );
+  const dst = Buffer.alloc(5);
+  dst[0] = 0x62;
+  dst[1] = y * COLC + x;
+  dst[2] = gsbit >> 8;
+  dst[3] = gsbit;
+  dst[4] = itemid;
+  return dst;
+}
+ 
+/* buried_door X Y GSBIT MAPID DSTX DSTY
+ */
+ 
+function decodeCommand_buried_door(args) {
+  const [x, y, gsbit, mapid, dstx, dsty] = assertIntArgs(args,
+    ["x", 0, COLC - 1],
+    ["y", 0, ROWC - 1],
+    ["gsbit", 0, 0xffff],
+    ["mapid", 0, 0xffff, "map"],
+    ["dstx", 0, COLC - 1],
+    ["dsty", 0, ROWC - 1],
+  );
+  const dst = Buffer.alloc(7);
+  dst[0] = 0x81;
+  dst[1] = y * COLC + x;
+  dst[2] = gsbit >> 8;
+  dst[3] = gsbit;
+  dst[4] = mapid >> 8;
+  dst[5] = mapid;
+  dst[6] = dsty * COLC + x;
+  return dst;
+}
+
 /* Main entry point, command TOC.
  */
 
@@ -202,6 +244,8 @@ function decodeCommand(words) {
     case "wind": return decodeCommand_wind(words.slice(1));
     case "sketch": return decodeCommand_sketch(words.slice(1));
     case "blowback": return decodeCommand_noarg(0x03, words.slice(1));
+    case "buried_treasure": return decodeCommand_buried_treasure(words.slice(1));
+    case "buried_door": return decodeCommand_buried_door(words.slice(1));
   }
   return null;
 }

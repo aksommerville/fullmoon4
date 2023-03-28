@@ -161,6 +161,8 @@ int rand();
 #define FMN_SFX_UNCURSE 62
 #define FMN_SFX_QUACK 63
 #define FMN_SFX_KILL_WEREWOLF 64
+#define FMN_SFX_UNBURY_TREASURE 65
+#define FMN_SFX_UNBURY_DOOR 66
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */
@@ -259,10 +261,12 @@ struct fmn_door {
   uint16_t mapid;
   uint8_t dstx;
   uint8_t dsty;
-  uint16_t pad;
+  uint16_t extra;
   /* Use as a door, pretty obvious.
    * Can also be abused for other purposes:
    *  - transmogrify: mapid==0, dstx=0x80(to),0x40(from),0xc0(toggle), dsty=state(nonzero)
+   *  - buried_treasure: mapid==0, dstx=0x30, dsty=itemid, extra=gsbit
+   *  - buried_door: extra=gsbit(nonzero)
    */
 };
 

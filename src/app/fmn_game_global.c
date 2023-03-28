@@ -105,6 +105,11 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
       continue;
     }
     
+    // If (extra) nonzero, it's a gsbit telling whether the door is revealed.
+    if (door->extra) {
+      if (!fmn_gs_get_bit(door->extra)) continue;
+    }
+    
     float dstx=door->dstx+0.5f;
     float dsty=door->dsty+0.5f;
     fmn_prepare_transition(FMN_TRANSITION_DOOR);

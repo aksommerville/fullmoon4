@@ -19,8 +19,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### March
 
 - [x] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
-- [ ] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
-- [ ] Map command for buried treasure, then grave robbing.
+- [x] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
+- [x] Map command for buried treasure, then grave robbing.
 - [ ] The forest map with a depumpkinning transmogrifier, can we add some artificial logic instead? "If in the NW corner and a pumpkin, eliminate the block..."
 - [ ] lizard: range too short. he should burn you by default
 - [ ] Door transition is basically invisible when lights out. (and it's disconcerting)
@@ -87,6 +87,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] verify: Chalk duplicates
 - [ ] verify: Resources named by sprite config, eg chalkguard strings
 - [ ] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
+- [ ] verify: buried_treasure and buried_door. shovellable, etc
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.

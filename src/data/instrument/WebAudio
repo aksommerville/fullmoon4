@@ -831,3 +831,23 @@ sound KILL_WEREWOLF #TODO
   env 0 ( 0 40 0xffff 40 0x4000 220 0 )
   norm 0 0.300
 end
+
+sound UNBURY_TREASURE #TODO
+  len 0.300
+  fm 0 ( 300 * 400 ) 0.4 ( 2 * 3 ) sine
+  env 0 ( 0 30 0x8000 50 0x4000 * 0 )
+  fm 1 ( 200 * 600 ) 0.25 ( 1 80 3 ) sine
+  env 1 ( 0 50 0xffff 80 0x2000 * 0 )
+  mix 0 1
+  norm 0 0.200
+end
+
+sound UNBURY_DOOR #TODO
+  len 0.300
+  fm 0 ( 300 * 400 ) 0.4 ( 2 * 3 ) sine
+  env 0 ( 0 30 0x8000 50 0x4000 * 0 )
+  fm 1 ( 200 * 600 ) 0.25 ( 1 80 3 ) sine
+  env 1 ( 0 50 0xffff 80 0x2000 * 0 )
+  mix 0 1
+  norm 0 0.200
+end
