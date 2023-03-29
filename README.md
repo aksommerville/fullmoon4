@@ -16,29 +16,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 And tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### March
-
-- [x] Seamonster pong: He gets a point when his fish goes off the right, you get it when it goes left eg. If you get 5 in a row you win?
-- [x] gate: sound and visual acknowledgement when changing state (matters, if triggered by Spell of Opening)
-- [x] Map command for buried treasure, then grave robbing.
-- [x] The forest map with a depumpkinning transmogrifier, can we add some artificial logic instead? "If in the NW corner and a pumpkin, eliminate the block..."
-- [x] lizard: range too short. he should burn you by default
-- [x] Door transition is basically invisible when lights out. (and it's disconcerting)
-- xxx "WORM"<=>"FISH" might be too involved. Can we pick words closer together? Remember to update the church if so.
-- - It's not that big a deal; caves only contain the Bell. The caves are there for the joy of playing, mostly.
-- - ya, WORM/FISH is fine
-- [x] Disable the hard-coded teleport spells!
-- [x] Minor challenges and hazards for the desert.
-- [x] I don't like the tickling. Needs I think a broader hit box, and some kind of feedback.
-- - [x] werewolf: Can we make him solid? at least in SHOCK stage. Would improve tickle.
-- - [x] Allow custom hitboxes per sprite. Hero and raccoon could use this too.
-- [x] werewolf: Make attacks more deterministic. eg alternate floorfire and hadouken
-- - Current best times:
-- - - To werewolf, With Feather, Wand, Broom: 78 s
-- - - To werewolf, With all 14 things: 233 s
-- - - Best time to kill werewolf: 79 s
-- - - 100%, including werewolf: 273 s
-
 ### April
 
 - [ ] Songs still hiccup right at the start, and when looping, and it drives me crazy.
