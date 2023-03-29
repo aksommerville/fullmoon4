@@ -518,10 +518,12 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_REVELATIONS: fmn_cast_revelations(); break;
     case FMN_SPELLID_HOME: fmn_teleport(1); break;
     //TODO mapid for TELE(n) should be stored in the archive somehow.
+    /*TODO TELE 1..4 disabled for demo
     case FMN_SPELLID_TELE1: fmn_teleport(6); break;
     case FMN_SPELLID_TELE2: fmn_teleport(13); break;
     case FMN_SPELLID_TELE3: fmn_teleport(11); break;
     case FMN_SPELLID_TELE4: fmn_teleport(21); break;
+    /**/
   }
 }
 

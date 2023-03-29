@@ -4,6 +4,10 @@
 #define LIZARD_WALK_SPEED 3.0f
 #define LIZARD_ACCEL_RATE 0.125f
 #define LIZARD_DECEL_RATE 0.125f
+#define LIZARD_BURN_OFFSET 1.0f
+#define LIZARD_BURN_RADIUS 0.6f
+#define LIZARD_TARGET_Y_OFFSET 0.5f
+#define LIZARD_TARGET_X_OFFSET 0.8f
 
 #define tileid0 sprite->bv[0]
 #define sleeping sprite->bv[1]
@@ -82,11 +86,11 @@ static void lizard_burn_end(struct fmn_sprite *sprite) {
 static void lizard_check_injury(struct fmn_sprite *sprite) {
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
-  float x=sprite->x+((sprite->xform&FMN_XFORM_XREV)?-0.6f:0.6f);
+  float x=sprite->x+((sprite->xform&FMN_XFORM_XREV)?-LIZARD_BURN_OFFSET:LIZARD_BURN_OFFSET);
   float y=sprite->y;
   float dx=herox-x; if (dx<0.0f) dx=-dx;
   float dy=heroy-y; if (dy<0.0f) dy=-dy;
-  float radius=0.4f;
+  float radius=LIZARD_BURN_RADIUS;
   if (dx*dx+dy*dy>=radius*radius) return;
   fmn_hero_injure(x,y,sprite);
 }
@@ -102,11 +106,11 @@ static void lizard_update_velocity(struct fmn_sprite *sprite) {
   else sprite->xform=FMN_XFORM_XREV;
   
   float targety=heroy;
-  if (fmn_global.facedir==FMN_DIR_N) targety-=1.0f;
-  else if (fmn_global.facedir==FMN_DIR_S) targety+=1.0f;
+  if (fmn_global.facedir==FMN_DIR_N) targety-=LIZARD_TARGET_Y_OFFSET;
+  else if (fmn_global.facedir==FMN_DIR_S) targety+=LIZARD_TARGET_Y_OFFSET;
   float targetx=herox;
-  if (sprite->x<herox-0.5f) targetx-=1.5f;
-  else if (sprite->x>herox+0.5f) targetx+=1.5f;
+  if (sprite->x<herox-0.5f) targetx-=LIZARD_TARGET_X_OFFSET;
+  else if (sprite->x>herox+0.5f) targetx+=LIZARD_TARGET_X_OFFSET;
   
   float remainx=targetx-sprite->x;
   float remainy=targety-sprite->y;
@@ -145,6 +149,12 @@ static void _lizard_update(struct fmn_sprite *sprite,float elapsed) {
   
   if (burning) {
     fireclock+=elapsed;
+    // I didn't want this, but alas it does seem necessary: update the flame's position every time.
+    struct fmn_sprite *flame=lizard_find_flame(sprite);
+    if (flame) {
+      flame->x=sprite->x+((sprite->xform&FMN_XFORM_XREV)?-1.0f:1.0f);
+      flame->y=sprite->y;
+    }
     if (fireclock>=2.0f) lizard_burn_end(sprite);
     else lizard_check_injury(sprite);
     return;

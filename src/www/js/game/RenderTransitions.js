@@ -30,6 +30,7 @@ export class RenderTransitions {
     this.focusX = 0; // captured at prepare, for DOOR mode only.
     this.focusY = 0;
     this.subphase = 0; // zeroed at prepare, implementations can use for whatever
+    this.intermediateColor = "#000"; // eg for spotlight and fade. usually black, but different when lights out
   }
   
   resize(w, h) {
@@ -42,6 +43,10 @@ export class RenderTransitions {
     this.mode = mode;
     this.subphase = 0;
     this.renderScene(this.outgoingCanvas);
+    this.intermediateColor = "#000";
+    if (this.globals.g_mapdark[0]) {
+      this.intermediateColor = "#204";
+    }
     switch (this.mode) {
       case this.constants.TRANSITION_DOOR: {
           const sprite = this.globals.getHeroSprite();
@@ -60,6 +65,9 @@ export class RenderTransitions {
     if (!this.mode) return;
     this.startTime = this.window.Date.now();
     this.endTime = this.startTime + this.constants.TRANSITION_TIME_MS;
+    if (this.globals.g_mapdark[0]) {
+      this.intermediateColor = "#204";
+    }
   }
   
   cancel() {
@@ -124,7 +132,7 @@ export class RenderTransitions {
       ctx.drawImage(this.incomingCanvas, 0, 0);
       ctx.globalAlpha = (1 - t) * 2;
     }
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = this.intermediateColor;
     ctx.fillRect(0, 0, dst.width, dst.height);
     ctx.globalAlpha = 1;
   }
@@ -143,7 +151,7 @@ export class RenderTransitions {
   /* Door: Spotlight in to egress point, and then out from ingress point.
    **************************************************/
   
-  _renderDoor(dst, t) {//ctx, prev, next, p, hero) {
+  _renderDoor(dst, t) {
     const ctx = dst.getContext("2d");
     if (t < 0.5) {
       this._renderDoor1(dst, ctx, this.outgoingCanvas, (0.5 - t) * 2);
@@ -193,7 +201,7 @@ export class RenderTransitions {
     ctx.lineTo(dst.width, dst.height);
     ctx.lineTo(0, dst.height);
     ctx.lineTo(0, 0);
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = this.intermediateColor;
     ctx.fill();
   }
   
