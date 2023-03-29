@@ -52,6 +52,19 @@
 
 #define WEREWOLF_SHOCK_TIME 6.0f
 
+#define WEREWOLF_HBW_FOURS 0.50f
+#define WEREWOLF_HBE_FOURS 1.00f
+#define WEREWOLF_HBN_FOURS 1.30f
+#define WEREWOLF_HBS_FOURS 0.00f
+#define WEREWOLF_HBW_UPRIGHT -0.20f
+#define WEREWOLF_HBE_UPRIGHT 1.80f
+#define WEREWOLF_HBN_UPRIGHT 1.30f
+#define WEREWOLF_HBS_UPRIGHT 0.25f
+#define WEREWOLF_HBW_BACK 0.50f
+#define WEREWOLF_HBE_BACK 1.00f
+#define WEREWOLF_HBN_BACK 0.75f
+#define WEREWOLF_HBS_BACK 0.20f
+
 #define stage sprite->bv[0]
 #define floorfire_running sprite->bv[1]
 #define clock sprite->fv[0]
@@ -61,11 +74,35 @@
 #define walkdx sprite->fv[4]
 #define walkdy sprite->fv[5]
 
+/* Reset hitbox.
+ */
+ 
+#define WEREWOLF_SET_HITBOX(tag) { \
+  if (sprite->xform&FMN_XFORM_XREV) { \
+    sprite->hbw=WEREWOLF_HBE_##tag; \
+    sprite->hbe=WEREWOLF_HBW_##tag; \
+  } else { \
+    sprite->hbw=WEREWOLF_HBW_##tag; \
+    sprite->hbe=WEREWOLF_HBE_##tag; \
+  } \
+  sprite->hbn=WEREWOLF_HBN_##tag; \
+  sprite->hbs=WEREWOLF_HBS_##tag; \
+}
+
+#define WEREWOLF_FLOP_HITBOX { \
+  float tmp=sprite->hbw; \
+  sprite->hbw=sprite->hbe; \
+  sprite->hbe=tmp; \
+}
+
 /* Init.
  */
  
 static void _werewolf_init(struct fmn_sprite *sprite) {
   stage=WEREWOLF_STAGE_IDLE;
+  WEREWOLF_SET_HITBOX(FOURS)
+  sprite->physics=FMN_PHYSICS_EDGE|FMN_PHYSICS_SOLID|FMN_PHYSICS_HOLE|FMN_PHYSICS_SPRITES;
+  sprite->invmass=0;
 }
 
 /* Floorfire.
@@ -113,6 +150,7 @@ static void werewolf_sleep(struct fmn_sprite *sprite,uint8_t newstate) {
     if (stage==WEREWOLF_STAGE_SLEEP) return;
     if (stage==WEREWOLF_STAGE_EAT) return;
     if (stage==WEREWOLF_STAGE_DEAD) return;
+    WEREWOLF_SET_HITBOX(BACK)
     stage=WEREWOLF_STAGE_SLEEP;
     stage_clock=0.0f;
     struct fmn_sprite *zzz=fmn_sprite_generate_zzz(sprite);
@@ -125,6 +163,7 @@ static void werewolf_sleep(struct fmn_sprite *sprite,uint8_t newstate) {
     }
   } else {
     if (stage!=WEREWOLF_STAGE_SLEEP) return;
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_IDLE;
     stage_clock=0.0f;
   }
@@ -140,9 +179,15 @@ static void werewolf_face_hero(struct fmn_sprite *sprite) {
   // Change when she's a certain threshold beyond our (x), don't let it be fast toggleable. Not that it matters.
   const float threshold=1.0f;
   if (sprite->xform&FMN_XFORM_XREV) {
-    if (dx<-threshold) sprite->xform&=~FMN_XFORM_XREV;
+    if (dx<-threshold) {
+      sprite->xform&=~FMN_XFORM_XREV;
+      WEREWOLF_FLOP_HITBOX
+    }
   } else {
-    if (dx>threshold) sprite->xform|=FMN_XFORM_XREV;
+    if (dx>threshold) {
+      sprite->xform|=FMN_XFORM_XREV;
+      WEREWOLF_FLOP_HITBOX
+    }
   }
 }
 
@@ -159,6 +204,7 @@ static uint8_t werewolf_pounce_if_reasonable(struct fmn_sprite *sprite) {
   if (dy<0.0f) dy=-dy;
   if (dy>WEREWOLF_POUNCE_MAXIMUM_DISTANCE_Y) return 0;
   if (dx<dy*WEREWOLF_POUNCE_CONE_SLOPE) return 0;
+  WEREWOLF_SET_HITBOX(FOURS)
   stage=WEREWOLF_STAGE_GROWL;
   stage_clock=0.0f;
   return 1;
@@ -188,6 +234,7 @@ static uint8_t werewolf_begin_WALK(struct fmn_sprite *sprite) {
   if (distance<WEREWOLF_WALK_MINIMUM_DISTANCE) return 0;
   walkdx=(dx*WEREWOLF_WALK_SPEED)/distance;
   walkdy=(dy*WEREWOLF_WALK_SPEED)/distance;
+  WEREWOLF_SET_HITBOX(FOURS)
   stage=WEREWOLF_STAGE_WALK;
   stage_clock=0.0f;
   return 1;
@@ -221,6 +268,7 @@ static void werewolf_begin_WALK_random(struct fmn_sprite *sprite) {
   if (distance<1.0f) distance=1.0f; // shouldn't be possible but play it safe
   walkdx=(dx*WEREWOLF_WALK_SPEED)/distance;
   walkdy=(dy*WEREWOLF_WALK_SPEED)/distance;
+  WEREWOLF_SET_HITBOX(FOURS)
   stage=WEREWOLF_STAGE_WALK;
   stage_clock=0.0f;
 }
@@ -229,11 +277,13 @@ static void werewolf_begin_WALK_random(struct fmn_sprite *sprite) {
  */
  
 static void werewolf_begin_HADOUKEN(struct fmn_sprite *sprite) {
+  WEREWOLF_SET_HITBOX(UPRIGHT)
   stage=WEREWOLF_STAGE_HADOUKEN_CHARGE;
   stage_clock=0.0f;
 }
 
 static void werewolf_begin_FLOORFIRE(struct fmn_sprite *sprite) {
+  WEREWOLF_SET_HITBOX(UPRIGHT)
   stage=WEREWOLF_STAGE_FLOORFIRE_CHARGE;
   stage_clock=0.0f;
 }
@@ -242,6 +292,7 @@ static void werewolf_begin_FLOORFIRE(struct fmn_sprite *sprite) {
  */
  
 static void werewolf_begin_EAT(struct fmn_sprite *sprite) {
+  WEREWOLF_SET_HITBOX(FOURS)
   stage=WEREWOLF_STAGE_EAT;
   stage_clock=0.0f;
   fmn_hero_kill(sprite);
@@ -281,6 +332,7 @@ static int werewolf_check_missiles_1(struct fmn_sprite *q,void *userdata) {
     if (q->x>=sprite->x) return 0;
   }
   
+  //TODO use hitbox
   float dx=q->x-sprite->x;
   if ((dx<-1.0f)||(dx>1.0f)) return 0;
   float dy=q->y-sprite->y;
@@ -293,6 +345,7 @@ static int werewolf_check_missiles_1(struct fmn_sprite *q,void *userdata) {
  
 static uint8_t werewolf_check_missiles(struct fmn_sprite *sprite) {
   if (!fmn_sprites_for_each(werewolf_check_missiles_1,sprite)) return 0;
+  WEREWOLF_SET_HITBOX(BACK)
   stage=WEREWOLF_STAGE_SHOCK;
   stage_clock=0.0f;
   return 1;
@@ -304,6 +357,7 @@ static uint8_t werewolf_check_missiles(struct fmn_sprite *sprite) {
 static void werewolf_die(struct fmn_sprite *sprite) {
   fmn_sprite_generate_soulballs(sprite->x,sprite->y,6);
   fmn_sound_effect(FMN_SFX_KILL_WEREWOLF);
+  WEREWOLF_SET_HITBOX(BACK)
   stage=WEREWOLF_STAGE_DEAD;
   stage_clock=0.0f;
   fmn_global.werewolf_dead=1;
@@ -369,6 +423,7 @@ static void werewolf_update_ERECT(struct fmn_sprite *sprite,float elapsed) {
   werewolf_face_hero(sprite);
   stage_clock+=elapsed;
   if (stage_clock>=3.0f) {
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_IDLE;
     stage_clock=0.0f;
   }
@@ -404,6 +459,7 @@ static void werewolf_update_WALK(struct fmn_sprite *sprite,float elapsed) {
   stage_clock+=elapsed;
   if (stage_clock>WEREWOLF_WALK_PANIC_TIME) {
     // we've been walking for too long. Return to IDLE to reassess.
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_IDLE;
     stage_clock=0.0f;
     return;
@@ -428,6 +484,7 @@ static void werewolf_update_WALK(struct fmn_sprite *sprite,float elapsed) {
     else moved=1;
   }
   if (!moved) {
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_IDLE;
     stage_clock=0.0f;
   }
@@ -440,6 +497,7 @@ static void werewolf_update_GROWL(struct fmn_sprite *sprite,float elapsed) {
   if (werewolf_check_missiles(sprite)) return;
   stage_clock+=elapsed;
   if (stage_clock>=WEREWOLF_GROWL_TIME) {
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_POUNCE;
     stage_clock=0.0f;
   }
@@ -449,6 +507,7 @@ static void werewolf_update_POUNCE(struct fmn_sprite *sprite,float elapsed) {
   if (werewolf_check_missiles(sprite)) return;
   stage_clock+=elapsed;
   if (stage_clock>=WEREWOLF_POUNCE_TIME) {
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_IDLE;
     stage_clock=0.0f;
     return;
@@ -459,6 +518,7 @@ static void werewolf_update_POUNCE(struct fmn_sprite *sprite,float elapsed) {
     sprite->x-=WEREWOLF_POUNCE_SPEED*elapsed;
   }
   if ((sprite->x<1.0f)||(sprite->x>=FMN_COLC-1.0f)) {
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_IDLE;
     stage_clock=0.0f;
     return;
@@ -471,6 +531,7 @@ static void werewolf_update_POUNCE(struct fmn_sprite *sprite,float elapsed) {
   if (dy>WEREWOLF_POUNCE_RANGE_DOWN) return;
   if (dx<-WEREWOLF_POUNCE_RANGE_HORZ) return;
   if (dx>WEREWOLF_POUNCE_RANGE_HORZ) return;
+  
   werewolf_begin_EAT(sprite);
 }
 
@@ -534,6 +595,7 @@ static void werewolf_update_FOLLOWTHRU(struct fmn_sprite *sprite,float elapsed,f
   if (werewolf_check_missiles(sprite)) return;
   stage_clock+=elapsed;
   if (stage_clock<duration) return;
+  WEREWOLF_SET_HITBOX(FOURS)
   stage=WEREWOLF_STAGE_IDLE;
   stage_clock=0.0f;
 }
@@ -554,32 +616,10 @@ static void werewolf_update_DEAD(struct fmn_sprite *sprite,float elapsed) {
 static void werewolf_update_SHOCK(struct fmn_sprite *sprite,float elapsed) {
   stage_clock+=elapsed;
   if (stage_clock>=WEREWOLF_SHOCK_TIME) {
+    WEREWOLF_SET_HITBOX(FOURS)
     stage=WEREWOLF_STAGE_IDLE;
     stage_clock=0.0f;
     return;
-  }
-  
-  if (fmn_global.active_item!=FMN_ITEM_FEATHER) return;
-  float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  switch (fmn_global.facedir) {
-    case FMN_DIR_N: if (heroy<=sprite->y) return; break;
-    case FMN_DIR_S: if (heroy>=sprite->y) return; break;
-    case FMN_DIR_W: if (herox<=sprite->x) return; break;
-    case FMN_DIR_E: if (herox>=sprite->x) return; break;
-    default: return;
-  }
-  
-  float buttx=sprite->x,butty=sprite->y;
-  if (sprite->xform&FMN_XFORM_XREV) buttx-=1.0f;
-  else buttx+=1.0f;
-  butty-=0.5f;
-  float dx=herox-buttx;
-  float dy=heroy-butty;
-  const float xrange=0.75f;
-  const float yrange=0.75f;
-  if ((dx>=-xrange)&&(dx<=xrange)&&(dy>=-yrange)&&(dy<=yrange)) {
-    werewolf_die(sprite);
   }
 }
 
@@ -605,6 +645,16 @@ static void _werewolf_update(struct fmn_sprite *sprite,float elapsed) {
   }
 }
 
+/* Feather.
+ */
+
+static void werewolf_feather(struct fmn_sprite *sprite) {
+  switch (stage) {
+    case WEREWOLF_STAGE_SHOCK: werewolf_die(sprite); break;
+    case WEREWOLF_STAGE_SLEEP: werewolf_sleep(sprite,0); break;
+  }
+}
+
 /* Interact.
  */
  
@@ -615,6 +665,7 @@ static int16_t _werewolf_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8
         case FMN_SPELLID_REVEILLE: werewolf_sleep(sprite,0); break;
       } break;
     case FMN_ITEM_BELL: werewolf_sleep(sprite,0); break;
+    case FMN_ITEM_FEATHER: werewolf_feather(sprite); break;
   }
   return 0;
 }

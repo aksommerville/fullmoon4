@@ -29,9 +29,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - ya, WORM/FISH is fine
 - [x] Disable the hard-coded teleport spells!
 - [x] Minor challenges and hazards for the desert.
-- [ ] I don't like the tickling. Needs I think a broader hit box, and some kind of feedback.
-- - [ ] werewolf: Can we make him solid? at least in SHOCK stage. Would improve tickle.
-- - [ ] Allow custom hitboxes per sprite. Hero and raccoon could use this too.
+- [x] I don't like the tickling. Needs I think a broader hit box, and some kind of feedback.
+- - [x] werewolf: Can we make him solid? at least in SHOCK stage. Would improve tickle.
+- - [x] Allow custom hitboxes per sprite. Hero and raccoon could use this too.
 - [ ] werewolf: Make attacks more deterministic. eg alternate floorfire and hadouken
 - - Current best times:
 - - - To werewolf, With Feather, Wand, Broom: 78 s

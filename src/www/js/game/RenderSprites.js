@@ -85,6 +85,28 @@ export class RenderSprites {
         case this.constants.SPRITE_STYLE_FLOORFIRE: this._renderFloorfire(ctx, sprite, srcImage); break;
         case this.constants.SPRITE_STYLE_DEADWITCH: this._renderDeadwitch(ctx, sprite, srcImage); break;
       }
+      //this._renderHitbox(ctx, sprite);
+    }
+  }
+  
+  //XXX TEMP Highlight a sprite's hitbox.
+  _renderHitbox(ctx, sprite) {
+    const tilesize = this.constants.TILESIZE;
+    const v = new Float32Array(this.globals.memU8.buffer, sprite.address + 28 * 4, 5); // [radius, hbw, hbe, hbn, hbs]
+    if (v[0] > 0) {
+      ctx.beginPath();
+      ctx.arc(sprite.x * tilesize, sprite.y * tilesize, v[0] * tilesize, 0, Math.PI * 2);
+      ctx.strokeStyle = "#f00";
+      ctx.stroke();
+    } else if (v[1] || v[2]) {
+      ctx.beginPath();
+      ctx.moveTo((sprite.x - v[1]) * tilesize, (sprite.y - v[3]) * tilesize);
+      ctx.lineTo((sprite.x + v[2]) * tilesize, (sprite.y - v[3]) * tilesize);
+      ctx.lineTo((sprite.x + v[2]) * tilesize, (sprite.y + v[4]) * tilesize);
+      ctx.lineTo((sprite.x - v[1]) * tilesize, (sprite.y + v[4]) * tilesize);
+      ctx.lineTo((sprite.x - v[1]) * tilesize, (sprite.y - v[3]) * tilesize);
+      ctx.strokeStyle = "#f00";
+      ctx.stroke();
     }
   }
   

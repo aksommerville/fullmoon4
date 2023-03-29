@@ -2,23 +2,25 @@
 #include "fmn_physics.h"
 #include "fmn_sprite.h"
 
+#define HB(d,who) (((who)->radius>0.0f)?(who)->radius:(who)->hb##d)
+
 /* Check edges.
  */
  
 uint8_t fmn_physics_check_edges(float *cx,float *cy,const struct fmn_sprite *a) {
   uint8_t result=0;
-  if (a->x<a->radius) {
-    if (cx) *cx=a->radius-a->x;
+  if (a->x<HB(w,a)) {
+    if (cx) *cx=HB(w,a)-a->x;
     result=1;
-  } else if (a->x>FMN_COLC-a->radius) {
-    if (cx) *cx=FMN_COLC-a->radius-a->x;
+  } else if (a->x>FMN_COLC-HB(e,a)) {
+    if (cx) *cx=FMN_COLC-HB(e,a)-a->x;
     result=1;
   } else if (cx) *cx=0.0f;
-  if (a->y<a->radius) {
-    if (cy) *cy=a->radius-a->y;
+  if (a->y<HB(n,a)) {
+    if (cy) *cy=HB(n,a)-a->y;
     result=1;
-  } else if (a->y>FMN_ROWC-a->radius) {
-    if (cy) *cy=FMN_ROWC-a->radius-a->y;
+  } else if (a->y>FMN_ROWC-HB(s,a)) {
+    if (cy) *cy=FMN_ROWC-HB(s,a)-a->y;
     result=1;
   } else if (cy) *cy=0.0f;
   return result;
@@ -30,15 +32,15 @@ uint8_t fmn_physics_check_edges(float *cx,float *cy,const struct fmn_sprite *a) 
 uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,uint8_t features) {
 
   // Important that we stop early and special, if the right or bottom edge is below zero.
-  if (a->x+a->radius<0.0f) return 0;
-  if (a->y+a->radius<0.0f) return 0;
-  int8_t cola=a->x-a->radius;
-  int8_t colz=a->x+a->radius;
+  if (a->x+HB(e,a)<0.0f) return 0;
+  if (a->y+HB(s,a)<0.0f) return 0;
+  int8_t cola=a->x-HB(w,a);
+  int8_t colz=a->x+HB(e,a);
   if (cola<0) cola=0;
   if (colz>=FMN_COLC) colz=FMN_COLC-1;
   if (cola>colz) return 0;
-  int8_t rowa=a->y-a->radius;
-  int8_t rowz=a->y+a->radius;
+  int8_t rowa=a->y-HB(n,a);
+  int8_t rowz=a->y+HB(s,a);
   if (rowa<0) rowa=0;
   if (rowz>=FMN_ROWC) rowz=FMN_ROWC-1;
   if (rowa>rowz) return 0;
@@ -74,10 +76,10 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
       
       if (!cx||!cy) return 1;
       // Measure escapement for this cell alone.
-      float el1=a->x+a->radius-col;
-      float er1=col+1.0f-a->x+a->radius;
-      float eu1=a->y+a->radius-row;
-      float ed1=row+1.0f-a->y+a->radius;
+      float el1=a->x+HB(e,a)-col;
+      float er1=col+1.0f-a->x+HB(w,a);
+      float eu1=a->y+HB(s,a)-row;
+      float ed1=row+1.0f-a->y+HB(n,a);
       // If it's the first collision, that's it.
       if (!result) {
         result=1;
@@ -143,10 +145,10 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
       }
     
       float vmx=vacantx+0.5f,vmy=vacanty+0.5f;
-      if (a->x>=vmx) *cx=vacantx+1.0f-a->x-a->radius;
-      else *cx=vacantx-a->x+a->radius;
-      if (a->y>=vmy) *cy=vacanty+1.0f-a->y-a->radius;
-      else *cy=vacanty-a->y+a->radius;
+      if (a->x>=vmx) *cx=vacantx+1.0f-a->x-HB(w,a);
+      else *cx=vacantx-a->x+HB(e,a);
+      if (a->y>=vmy) *cy=vacanty+1.0f-a->y-HB(s,a);
+      else *cy=vacanty-a->y+HB(n,a);
     }
   }
   
@@ -159,17 +161,17 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
 uint8_t fmn_physics_check_sprites(float *cx,float *cy,const struct fmn_sprite *a,const struct fmn_sprite *b) {
 
   // Check as rectangles.
-  float ax0=a->x-a->radius;
-  float bx1=b->x+b->radius;
+  float ax0=a->x-HB(w,a);
+  float bx1=b->x+HB(e,b);
   if (bx1<=ax0) return 0;
-  float ax1=a->x+a->radius;
-  float bx0=b->x-b->radius;
+  float ax1=a->x+HB(e,a);
+  float bx0=b->x-HB(w,b);
   if (ax1<=bx0) return 0;
-  float ay0=a->y-a->radius;
-  float by1=b->y+b->radius;
+  float ay0=a->y-HB(n,a);
+  float by1=b->y+HB(s,b);
   if (by1<=ay0) return 0;
-  float ay1=a->y+a->radius;
-  float by0=b->y-b->radius;
+  float ay1=a->y+HB(s,a);
+  float by0=b->y-HB(n,b);
   if (ay1<=by0) return 0;
   
   //TODO Consider colliding as circles instead of rectangles.

@@ -188,7 +188,6 @@ static void fmn_sprite_physics_update(float elapsed) {
     struct fmn_sprite *a=*ap;
     if (a->style==FMN_SPRITE_STYLE_HERO) hero=a;
     if (!(a->physics&any_physics)) continue;
-    if (a->radius<=0.0f) continue;
     
     float cx,cy;
     if ((a->physics&FMN_PHYSICS_EDGE)&&fmn_physics_check_edges(&cx,&cy,a)) {
@@ -200,10 +199,12 @@ static void fmn_sprite_physics_update(float elapsed) {
       a->x+=cx;
       a->y+=cy;
       // See "Extra mitigation" below; the same problem can arise against the grid. Correction is easier than against sprites.
-      if (cx<0.0f) a->x=roundf(a->x+a->radius)-a->radius;
-      else if (cx>0.0f) a->x=roundf(a->x-a->radius)+a->radius;
-      else if (cy<0.0f) a->y=roundf(a->y+a->radius)-a->radius;
-      else if (cy>0.0f) a->y=roundf(a->y-a->radius)+a->radius;
+      #define HB(d) ((a->radius>0.0f)?a->radius:a->hb##d)
+      if (cx<0.0f) a->x=roundf(a->x+HB(e))-HB(e);
+      else if (cx>0.0f) a->x=roundf(a->x-HB(w))+HB(w);
+      else if (cy<0.0f) a->y=roundf(a->y+HB(s))-HB(s);
+      else if (cy>0.0f) a->y=roundf(a->y-HB(n))+HB(n);
+      #undef HB
       if (a->static_pressure) a->static_pressure(a,0,fmn_dir_from_vector(cx,cy));
     }
     
@@ -212,7 +213,6 @@ static void fmn_sprite_physics_update(float elapsed) {
       int bi=0; for (;bi<ai;bi++,bp++) {
         struct fmn_sprite *b=*bp;
         if (!(b->physics&FMN_PHYSICS_SPRITES)) continue;
-        if (b->radius<=0.0f) continue;
       
         if (!fmn_physics_check_sprites(&cx,&cy,a,b)) continue;
         int msum=a->invmass+b->invmass;
@@ -249,10 +249,12 @@ static void fmn_sprite_physics_update(float elapsed) {
         if (dir&&lighter) {
           float dstx=lighter->x,dsty=lighter->y;
           switch (mitigate_dir) {
-            case FMN_DIR_N: dsty=heavier->y-heavier->radius-lighter->radius; break;
-            case FMN_DIR_S: dsty=heavier->y+heavier->radius+lighter->radius; break;
-            case FMN_DIR_W: dstx=heavier->x-heavier->radius-lighter->radius; break;
-            case FMN_DIR_E: dstx=heavier->x+heavier->radius+lighter->radius; break;
+            #define HB(d,who) ((who->radius>0.0f)?who->radius:who->hb##d)
+            case FMN_DIR_N: dsty=heavier->y-HB(n,heavier)-HB(s,lighter); break;
+            case FMN_DIR_S: dsty=heavier->y+HB(s,heavier)+HB(n,lighter); break;
+            case FMN_DIR_W: dstx=heavier->x-HB(w,heavier)-HB(e,lighter); break;
+            case FMN_DIR_E: dstx=heavier->x+HB(e,heavier)+HB(w,lighter); break;
+            #undef HB
           }
           lighter->x=dstx;
           lighter->y=dsty;
@@ -281,19 +283,21 @@ static void fmn_sprite_physics_update(float elapsed) {
   
   // If we found a hero sprite (we should always), check again for collisions against interested parties.
   if (hero) {
+    #define HB(d,who) ((who->radius>0.0f)?who->radius:who->hb##d)
     struct fmn_sprite **p=fmn_spritepv;
     int i=fmn_global.spritec;
     for (;i-->0;p++) {
       struct fmn_sprite *hazard=*p;
       if (!hazard->hero_collision) continue;
       float dx=hero->x-hazard->x;
-      if (dx>=hazard->radius+hero->radius) continue;
-      if (dx<=-hazard->radius-hero->radius) continue;
+      if (dx>=HB(e,hazard)+HB(w,hero)) continue;
+      if (dx<=-HB(w,hazard)-HB(e,hero)) continue;
       float dy=hero->y-hazard->y;
-      if (dy>=hazard->radius+hero->radius) continue;
-      if (dy<=-hazard->radius-hero->radius) continue;
+      if (dy>=HB(s,hazard)+HB(n,hero)) continue;
+      if (dy<=-HB(n,hazard)-HB(s,hero)) continue;
       hazard->hero_collision(hazard,hero);
     }
+    #undef HB
   }
 }
 
@@ -329,10 +333,11 @@ void fmn_sprites_update(float elapsed,float hero_elapsed) {
       // ...actually instead of a half-tile, it makes more sense to clamp to the sprite's radius i think.
       float dx=sprite->velx*elapsed;
       float dy=sprite->vely*elapsed;
-      if (dx<=-sprite->radius) dx=-sprite->radius+0.001f;
-      else if (dx>=sprite->radius) dx=sprite->radius-0.001f;
-      if (dy<=-sprite->radius) dy=-sprite->radius+0.001f;
-      else if (dy>=sprite->radius) dy=sprite->radius-0.001f;
+      float radius=(sprite->radius>0.0f)?sprite->radius:0.5f;
+      if (dx<=-radius) dx=-radius+0.001f;
+      else if (dx>=radius) dx=radius-0.001f;
+      if (dy<=-radius) dy=-radius+0.001f;
+      else if (dy>=radius) dy=radius-0.001f;
       
       // Apply velocity.
       sprite->x+=dx;

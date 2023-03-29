@@ -20,12 +20,31 @@
 #define dsty sprite->fv[2]
 #define panic_clock sprite->fv[3]
 
+// Keep (w,e) symmetric, or account for xform at RACCOON_SET_HITBOX
+#define RACCOON_HBW_UPRIGHT 0.5f
+#define RACCOON_HBE_UPRIGHT 0.5f
+#define RACCOON_HBN_UPRIGHT 0.5f
+#define RACCOON_HBS_UPRIGHT 0.5f
+#define RACCOON_HBW_SLEEP 0.5f
+#define RACCOON_HBE_SLEEP 0.5f
+#define RACCOON_HBN_SLEEP 0.0f
+#define RACCOON_HBS_SLEEP 0.5f
+
+#define RACCOON_SET_HITBOX(tag) { \
+  sprite->hbw=RACCOON_HBW_##tag; \
+  sprite->hbe=RACCOON_HBE_##tag; \
+  sprite->hbn=RACCOON_HBN_##tag; \
+  sprite->hbs=RACCOON_HBS_##tag; \
+}
+
 /* Init.
  */
  
 static void _raccoon_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
   stage=RACCOON_STAGE_CHOOSE_DESTINATION;
+  sprite->radius=0.0f;
+  RACCOON_SET_HITBOX(UPRIGHT)
 }
 
 /* Choose destination and enter TRAVEL stage.
@@ -266,6 +285,7 @@ static void _raccoon_update(struct fmn_sprite *sprite,float elapsed) {
  
 static void raccoon_sleep(struct fmn_sprite *sprite) {
   if (sleeping) return;
+  RACCOON_SET_HITBOX(SLEEP)
   sleeping=1;
   fmn_sprite_generate_zzz(sprite);
   stage=RACCOON_STAGE_CHOOSE_DESTINATION;
@@ -281,9 +301,9 @@ static int16_t _raccoon_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_
   switch (itemid) {
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: raccoon_sleep(sprite); break;
-        case FMN_SPELLID_REVEILLE: sleeping=0; break;
+        case FMN_SPELLID_REVEILLE: RACCOON_SET_HITBOX(UPRIGHT) sleeping=0; break;
       } break;
-    case FMN_ITEM_BELL: sleeping=0; break;
+    case FMN_ITEM_BELL: RACCOON_SET_HITBOX(UPRIGHT) sleeping=0; break;
     case FMN_ITEM_FEATHER: if (!enchanted&&!sleeping) {
         enchanted=1;
         fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);

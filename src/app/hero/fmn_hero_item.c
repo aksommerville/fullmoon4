@@ -632,10 +632,17 @@ struct fmn_hero_feather_find_target_context {
 static int fmn_hero_feather_find_target_1(struct fmn_sprite *sprite,void *userdata) {
   struct fmn_hero_feather_find_target_context *ctx=userdata;
   if (!sprite->interact) return 0;
-  if (sprite->x-sprite->radius>=ctx->x) return 0;
-  if (sprite->x+sprite->radius<=ctx->x) return 0;
-  if (sprite->y-sprite->radius>=ctx->y) return 0;
-  if (sprite->y+sprite->radius<=ctx->y) return 0;
+  if (sprite->radius>0.0f) {
+    if (sprite->x-sprite->radius>=ctx->x) return 0;
+    if (sprite->x+sprite->radius<=ctx->x) return 0;
+    if (sprite->y-sprite->radius>=ctx->y) return 0;
+    if (sprite->y+sprite->radius<=ctx->y) return 0;
+  } else {
+    if (sprite->x-sprite->hbw>=ctx->x) return 0;
+    if (sprite->x+sprite->hbe<=ctx->x) return 0;
+    if (sprite->y-sprite->hbn>=ctx->y) return 0;
+    if (sprite->y+sprite->hbs<=ctx->y) return 0;
+  }
   ctx->target=sprite;
   return 1;
 }
