@@ -32,7 +32,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] I don't like the tickling. Needs I think a broader hit box, and some kind of feedback.
 - - [x] werewolf: Can we make him solid? at least in SHOCK stage. Would improve tickle.
 - - [x] Allow custom hitboxes per sprite. Hero and raccoon could use this too.
-- [ ] werewolf: Make attacks more deterministic. eg alternate floorfire and hadouken
+- [x] werewolf: Make attacks more deterministic. eg alternate floorfire and hadouken
 - - Current best times:
 - - - To werewolf, With Feather, Wand, Broom: 78 s
 - - - To werewolf, With all 14 things: 233 s

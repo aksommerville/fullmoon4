@@ -21,8 +21,7 @@
 
 // Relative odds of next stage, if the idle timer expires. (can WALK or POUNCE via different triggers)
 #define WEREWOLF_ODDS_WALK 30
-#define WEREWOLF_ODDS_HADOUKEN 20
-#define WEREWOLF_ODDS_FLOORFIRE 10
+#define WEREWOLF_ODDS_ATTACK 40
 
 #define WEREWOLF_HADOUKEN_DISTANCE_MINIMUM_X 2.0f /* must be so far away before we'll consider hadouking */
 #define WEREWOLF_HADOUKEN_CONE_SLOPE 2.0f /* 1.0f=45deg, higher is narrower */
@@ -67,6 +66,7 @@
 
 #define stage sprite->bv[0]
 #define floorfire_running sprite->bv[1]
+#define next_attack sprite->bv[2]
 #define clock sprite->fv[0]
 #define stage_clock sprite->fv[1]
 #define walkdstx sprite->fv[2]
@@ -103,6 +103,7 @@ static void _werewolf_init(struct fmn_sprite *sprite) {
   WEREWOLF_SET_HITBOX(FOURS)
   sprite->physics=FMN_PHYSICS_EDGE|FMN_PHYSICS_SOLID|FMN_PHYSICS_HOLE|FMN_PHYSICS_SPRITES;
   sprite->invmass=0;
+  next_attack=WEREWOLF_STAGE_HADOUKEN_CHARGE;
 }
 
 /* Floorfire.
@@ -404,13 +405,24 @@ static void werewolf_update_IDLE(struct fmn_sprite *sprite,float elapsed) {
   // Wait a tasteful interval, then walk, hadouken, or floorfire, at random.
   if (stage_clock<WEREWOLF_IDLE_TIME_MAX) return;
   
-  #define oddssum (WEREWOLF_ODDS_WALK+WEREWOLF_ODDS_HADOUKEN+WEREWOLF_ODDS_FLOORFIRE)
+  #define oddssum (WEREWOLF_ODDS_WALK+WEREWOLF_ODDS_ATTACK)
   int16_t choice=rand()%oddssum;
   #undef oddssum
-       if ((choice-=WEREWOLF_ODDS_WALK)<=0) werewolf_begin_WALK_random(sprite);
-  else if ((choice-=WEREWOLF_ODDS_HADOUKEN)<=0) werewolf_begin_HADOUKEN(sprite);
-  else if (!floorfire_running) werewolf_begin_FLOORFIRE(sprite);
-  else werewolf_begin_HADOUKEN(sprite);
+  if (choice<WEREWOLF_ODDS_WALK) {
+    werewolf_begin_WALK_random(sprite);
+    return;
+  }
+  // Attack: Alternate between hadouken and floorfire.
+  switch (next_attack) {
+    case WEREWOLF_STAGE_HADOUKEN_CHARGE: {
+        next_attack=WEREWOLF_STAGE_FLOORFIRE_CHARGE;
+        werewolf_begin_HADOUKEN(sprite);
+      } break;
+    case WEREWOLF_STAGE_FLOORFIRE_CHARGE: {
+        next_attack=WEREWOLF_STAGE_HADOUKEN_CHARGE;
+        werewolf_begin_FLOORFIRE(sprite);
+      } break;
+  }
 }
 
 /* Update, ERECT.
