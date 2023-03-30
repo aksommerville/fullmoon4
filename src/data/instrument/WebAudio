@@ -62,6 +62,13 @@ begin 0x0a # bow-wow circus lead
   env 40 a0 40 20 100 .. 10 ff 40 40 300
 end
 
+begin 12
+  wave sine
+  modRate 1
+  modRange 2
+  env 20 80 10 20 100 .. 10 ff 15 20 300
+end
+
 #-------------------------------------- Unfinished Instruments -----------------------------
 
 begin 0x02 # Thick siney organ.
@@ -107,10 +114,6 @@ begin 11
 end
 
 # Instrument placeholders.
-begin 12
-  wave sine
-  env 10 80 10 20 100
-end
 begin 13
   wave sine
   env 10 80 10 20 100

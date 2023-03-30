@@ -51,7 +51,16 @@ export class RenderViolin {
     ctx.globalAlpha = 1;
     
     // White-ish background, within that border.
-    ctx.fillStyle = "#f8f4e0";
+    if (!(this.globals.g_violin_songp[0] & 1) && (this.globals.g_violin_clock[0] < 0.5)) {
+      const aweight = this.globals.g_violin_clock[0] * 2;
+      const bweight = 1 - aweight; // 'b' color is the constant below
+      const r = ~~(0xc0 * aweight + 0xf8 * bweight);
+      const g = ~~(0xb0 * aweight + 0xf4 * bweight);
+      const b = ~~(0xa0 * aweight + 0xe0 * bweight);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+    } else {
+      ctx.fillStyle = "#f8f4e0";
+    }
     ctx.fillRect(this.bounds.x, this.bounds.y + 1, this.bounds.w, this.bounds.h - 3);
     
     // Staff lines. Basically static, but they'll change color as you play a note.
@@ -71,7 +80,7 @@ export class RenderViolin {
       ctx.stroke();
     }
     
-    // TODO measure bars. Not every beat, maybe every fourth beat?
+    // Measure bars, every fourth beat.
     const noteSpacing = this.bounds.w / this.constants.VIOLIN_SONG_LENGTH;
     const barSpacing = noteSpacing * 4;
     let barx = this.bounds.x - (this.globals.g_violin_songp[0] + this.globals.g_violin_clock[0] - 2.5) * noteSpacing;

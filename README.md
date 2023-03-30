@@ -20,10 +20,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [x] Songs still hiccup right at the start, and when looping, and it drives me crazy.
 - [ ] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
-- [ ] Seventh Roots of Unity: bass is muddy, make a new instrument
+- [x] Seventh Roots of Unity: bass is muddy, make a new instrument
 - [ ] Feedback for blowback.
-- [ ] Violin: visual metronome feedback.
-- [ ] Fruit-bearing plants are ugly and not distinctive enough.
+- [x] Violin: visual metronome feedback. ...done but i'm not sure it helps much
+- [x] Fruit-bearing plants are ugly and not distinctive enough.
 - [ ] Compass and crow: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - [ ] UI for saved game management.
