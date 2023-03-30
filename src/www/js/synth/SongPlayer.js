@@ -36,13 +36,12 @@ export class SongPlayer {
   }
   
   _nextEvent() {
+    if (this.song.events.length < 1) return;
   
-    // End of song. Drop all notes, add a wee artificial delay, and return to the beginning.
+    // End of song. Drop all notes, reset the event pointer, and hold all else steady.
     if (this.eventp >= this.song.events.length) {
       this.eventp = 0;
-      this.delay = 1;
       this.releaseAll();
-      return;
     }
     
     const event = this.song.events[this.eventp++];

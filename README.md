@@ -18,7 +18,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [ ] Songs still hiccup right at the start, and when looping, and it drives me crazy.
+- [x] Songs still hiccup right at the start, and when looping, and it drives me crazy.
 - [ ] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
 - [ ] Seventh Roots of Unity: bass is muddy, make a new instrument
 - [ ] Feedback for blowback.
@@ -31,7 +31,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Would it help to scale up only by integers? That's probably a good idea in any case.
 - - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
 - [ ] Finalize sound effects.
-- [ ] Hero's shadow when flying goes under the conveyor belts, but over would look more natural. Can anything be done?
+- xxx Hero's shadow when flying goes under the conveyor belts, but over would look more natural. Can anything be done?
+- - No conveyor belts in the demo, and also meh.
 
 ### May
 

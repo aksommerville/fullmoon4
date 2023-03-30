@@ -75,6 +75,18 @@ static void raccoon_choose_destination(struct fmn_sprite *sprite) {
   uint8_t dirc=(wc?1:0)+(nc?1:0)+(ec?1:0)+(sc?1:0);
   if (!dirc) return;
   
+  // When enchanted, if the hero is wagging her feather at the decision moment, go in the direction she's pointing.
+  if (enchanted) {
+    if (fmn_global.active_item==FMN_ITEM_FEATHER) {
+      switch (fmn_global.facedir) {
+        case FMN_DIR_W: ec=nc=sc=0; if (!wc) wc=1; break;
+        case FMN_DIR_E: wc=nc=sc=0; if (!ec) ec=1; break;
+        case FMN_DIR_N: wc=ec=sc=0; if (!nc) nc=1; break;
+        case FMN_DIR_S: wc=nc=ec=0; if (!sc) sc=1; break;
+      }
+    }
+  }
+  
   // Pick an available direction at random, and walk a random distance along it.
   dstx=sprite->x;
   dsty=sprite->y;
