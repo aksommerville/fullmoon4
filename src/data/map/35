@@ -18,3 +18,4 @@ door 8 2 34 8 2
 sprite 14 4 lizard 0 0 0
 neighborw 36
 neighbore 38
+buried_treasure 8 8 0 item:MATCH

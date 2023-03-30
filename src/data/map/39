@@ -17,3 +17,4 @@ indoors
 door 17 2 38 17 2
 sprite 6 7 rat 0 0 0
 neighborw 40
+buried_treasure 8 9 0 item:MATCH

@@ -20,7 +20,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [ ] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
 - [ ] Feedback for blowback.
-- [ ] Compass and crow: How to decide on target location? see src/app/fmn_secrets.c
+- [ ] Crow: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - [ ] UI for saved game management.
 - [ ] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.

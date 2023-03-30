@@ -331,6 +331,7 @@ static void fmn_hero_shovel_begin() {
           fmn_global.map[tilep]=0x3f;
           fmn_map_dirty();
           fmn_sound_effect(FMN_SFX_UNBURY_DOOR);
+          fmn_secrets_refresh_for_map();
           return;
         } else {
           if (door->dstx==0x30) { // buried treasure

@@ -194,6 +194,7 @@ uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
     fmn_sound_effect(FMN_SFX_ITEM_MINOR);
   }
   
+  fmn_secrets_refresh_for_map();
   return 1;
 }
 

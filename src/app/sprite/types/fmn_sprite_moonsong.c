@@ -68,6 +68,7 @@ static void moonsong_cast_spell(struct fmn_sprite *sprite) {
         fmn_sprite_generate_soulballs(herox,heroy,7);
         fmn_sound_effect(FMN_SFX_PUMPKIN);
         fmn_hero_cancel_item();
+        fmn_secrets_refresh_for_map();
       } break;
   }
 }

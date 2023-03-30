@@ -427,7 +427,9 @@ export class RenderHero {
     if (!srcImage) return;
     
     let [targetx, targety] = this.globals.g_compass;
-    if (!targetx && !targety) { // (0,0) is special, means there's nothing to point to. spin fast.
+    if (this.globals.g_curse_time > 0) { // when cursed, it spins backward slowly and creepily
+      this.compassAngle -= this.compassRateMin;
+    } else if (!targetx && !targety) { // (0,0) is special, means there's nothing to point to. spin fast.
       this.compassAngle += this.compassRateMax;
     } else {
       targetx = (targetx + 0.5);

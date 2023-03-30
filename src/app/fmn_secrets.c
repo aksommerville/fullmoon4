@@ -17,7 +17,35 @@ void fmn_secrets_refresh_for_map() {
     return;
   }
   
-  /* TODO Decide what constitutes a secret, implement some of those, and return here.
+  /* Buried door or treasure on this map is compassable if not discovered yet.
+   * Prefer doors. Show buried treasure only if it has a gsbit and there are no buried doors.
+   */
+  const struct fmn_door *buried_treasure=0;
+  const struct fmn_door *door=fmn_global.doorv;
+  uint8_t i=fmn_global.doorc;
+  for (;i-->0;door++) {
+    if (!door->mapid&&(door->dstx==0x30)) { // buried_treasure
+      if (buried_treasure) {
+      } else if (door->extra&&fmn_gs_get_bit(door->extra)) {
+        // already have it, no real treasure here
+      } else {
+        buried_treasure=door;
+      }
+    } else if (door->mapid&&door->extra) { // buried_door
+      if (!fmn_gs_get_bit(door->extra)) {
+        fmn_global.compassx=door->x;
+        fmn_global.compassy=door->y;
+        return;
+      }
+    }
+  }
+  if (buried_treasure) {
+    fmn_global.compassx=buried_treasure->x;
+    fmn_global.compassy=buried_treasure->y;
+    return;
+  }
+  
+  /* TODO Decide what else constitutes a secret, implement some of those, and return here.
    */
 }
 
