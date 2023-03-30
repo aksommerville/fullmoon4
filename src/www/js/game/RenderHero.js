@@ -48,7 +48,6 @@ export class RenderHero {
     this.compassRateMax = 0.200;
     this.compassRateMin = 0.010;
     this.compassDistanceMax = 40;
-    this.compassDistanceMin = 1;
     this.cheesePhase = 0;
   }
   
@@ -438,17 +437,13 @@ export class RenderHero {
         this.compassAngle += this.compassRateMax;
       } else {
         const targetAngle = Math.atan2(targetx - sprite.x, sprite.y - targety);
-        if (targetDistance <= this.compassDistanceMin) {
-          this.compassAngle = targetAngle;
-        } else {
-          const normDist = (targetDistance - this.compassDistanceMin) / (this.compassDistanceMax - this.compassDistanceMin);
-          const minRate = this.compassRateMin + (this.compassRateMax - this.compassRateMin) * normDist;
-          let diff = this.compassAngle - targetAngle;
-          if (diff > Math.PI) diff -= Math.PI * 2;
-          else if (diff < -Math.PI) diff += Math.PI * 2;
-          diff = Math.abs(diff) / Math.PI;
-          this.compassAngle += minRate + (diff * (this.compassRateMax - minRate));
-        }
+        const normDist = targetDistance / this.compassDistanceMax;
+        const minRate = this.compassRateMin + (this.compassRateMax - this.compassRateMin) * normDist;
+        let diff = this.compassAngle - targetAngle;
+        if (diff > Math.PI) diff -= Math.PI * 2;
+        else if (diff < -Math.PI) diff += Math.PI * 2;
+        diff = Math.abs(diff) / Math.PI;
+        this.compassAngle += minRate + (diff * (this.compassRateMax - minRate));
       }
     }
     if (this.compassAngle >= Math.PI) this.compassAngle -= Math.PI * 2;

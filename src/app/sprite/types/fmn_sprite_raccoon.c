@@ -79,10 +79,10 @@ static void raccoon_choose_destination(struct fmn_sprite *sprite) {
   if (enchanted) {
     if (fmn_global.active_item==FMN_ITEM_FEATHER) {
       switch (fmn_global.facedir) {
-        case FMN_DIR_W: ec=nc=sc=0; if (!wc) wc=1; break;
-        case FMN_DIR_E: wc=nc=sc=0; if (!ec) ec=1; break;
-        case FMN_DIR_N: wc=ec=sc=0; if (!nc) nc=1; break;
-        case FMN_DIR_S: wc=nc=ec=0; if (!sc) sc=1; break;
+        case FMN_DIR_W: ec=nc=sc=0; if (!wc) wc=1; dirc=1; break;
+        case FMN_DIR_E: wc=nc=sc=0; if (!ec) ec=1; dirc=1; break;
+        case FMN_DIR_N: wc=ec=sc=0; if (!nc) nc=1; dirc=1; break;
+        case FMN_DIR_S: wc=nc=ec=0; if (!sc) sc=1; dirc=1; break;
       }
     }
   }
