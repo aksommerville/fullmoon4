@@ -36,6 +36,11 @@ export class HeaderUi {
     }
   }
   
+  setPaused(state) {
+    const input = this.element.querySelector("input.pause");
+    input.checked = !!state;
+  }
+  
   buildUi() {
     this.element.innerHTML = "";
     this.dom.spawn(this.element, "INPUT", { type: "button", value: "Reset", disabled: "disabled", "on-click": () => this.onReset() });

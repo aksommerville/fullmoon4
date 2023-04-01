@@ -18,7 +18,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [ ] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
+- [x] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
 - [ ] Feedback for blowback.
 - [ ] Crow: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
@@ -27,11 +27,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Would it help to scale up only by integers? That's probably a good idea in any case.
 - - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
 - [ ] Finalize sound effects.
+- [ ] Linux DRM platform, why not.
 
 ### May
 
 - [ ] Order merch.
-- - [ ] Coloring book. (printingcenterusa.com says about $1/ea for 250)
+- - [x] Coloring book. (printingcenterusa.com says about $1/ea for 250)
 - - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
@@ -41,6 +42,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Lively intro splash.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
 - [ ] The Cheat Book. A nice looking "WARNING SPOILERS" notebook we can leave out for demo players.
+- [ ] Correct song and sound effect levels. Automated analysis?
 
 ### After GDEX
 

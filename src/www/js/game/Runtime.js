@@ -39,6 +39,7 @@ export class Runtime {
     this.soundEffects = soundEffects;
     
     this.onError = e => console.error(e); // RootUi should replace.
+    this.onForcedPause = () => {}; // ''
     
     this.debugging = false; // when true, updates only happen explicitly via debugStep()
     this.running = false;
@@ -138,6 +139,14 @@ export class Runtime {
     if (!this.running) return;
     if (!this.wasmLoader.instance) return;
     if (this.debugging && !viaExplicitDebugger) return;
+    
+    if (this.clock.checkUpdateFrequencyPanic()) {
+      console.log(`Pausing due to low update rate.`);
+      this.pause();
+      this.onForcedPause();
+      return;
+    }
+    
     try {
     
       this.inputManager.update();

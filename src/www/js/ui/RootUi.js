@@ -35,6 +35,7 @@ export class RootUi {
       .catch(e => this.onError(e));
       
     this.runtime.onError = e => this.onError(e);
+    this.runtime.onForcedPause = () => this.onForcedPause();
   }
   
   buildUi() {
@@ -78,6 +79,12 @@ export class RootUi {
     console.error(`RootUi.onError`, e);
     const modal = this.dom.spawnModal(ErrorModal);
     modal.setup(e);
+  }
+  
+  onForcedPause() {
+    // This event comes from Runtime, so we don't notify them.
+    this.game.setRunning(false);
+    this.header.setPaused(true);
   }
   
   dataLoaded() {

@@ -18,10 +18,23 @@ export class Clock {
     this.SHORTEST_UPDATE_MS = 1;
     this.LONGEST_UPDATE_MS = 50;
     
+    /* Thresholds for reporting a frequency panic.
+     * Upper layers depend on requestAnimationFrame for timing, which usually works great,
+     * but it tends to drop way low (like 1 Hz) when the window is occluded.
+     * We will get all kinds of messed up at such a low rate, so it's preferable to hard-pause the game.
+     */
+    this.UPDATE_INTERVAL_MAX_MS = 100; // 16 is a typical rate, and you got to allow like triple that. 100 is very long.
+    this.MISSED_UPDATE_TOLERANCE = 0; // >0 to require multiple misses before panicking.
+    
     /* When debugging, we advance game time by a uniform amount regardless of real time.
      * 16 ms is close to 60 Hz.
      */
     this.DEBUG_INTERVAL_MS = 16;
+    
+    // For panic-tracking only.
+    this.goodUpdateCount = 0;
+    this.badUpdateCount = 0;
+    this.lastUpdateTime = 0;
     
     this.reset(0);
   }
@@ -34,6 +47,34 @@ export class Clock {
     this.lastRealTime = this.window.Date.now();
     this.paused = false;
     this.debugging = false;
+    this.goodUpdateCount = this.badUpdateCount = this.lastUpdateTime = 0;
+  }
+  
+  /* Call every frame. We return true if the rate has dropped intolerably low.
+   */
+  checkUpdateFrequencyPanic() {
+    if (this.debugging) {
+      this.goodUpdateCount = this.badUpdateCount = this.lastUpdateTime = 0;
+      return false;
+    }
+    const now = Date.now();
+    if (!this.lastUpdateTime) this.lastUpdateTime = now;
+    const elapsed = now - this.lastUpdateTime;
+    this.lastUpdateTime = now;
+    if (elapsed <= this.UPDATE_INTERVAL_MAX_MS) {
+      this.goodUpdateCount++;
+      this.badUpdateCount = 0;
+    } else {
+      // opportunity to track goodUpdateCount, if anyone cares.
+      this.goodUpdateCount = 0;
+      this.badUpdateCount++;
+      if (this.badUpdateCount > this.MISSED_UPDATE_TOLERANCE) {
+        this.goodUpdateCount = 0;
+        this.badUpdateCount = 0;
+        return true;
+      }
+    }
+    return false;
   }
   
   /* Call when the game is running, each time you're about to update the core game.
@@ -74,11 +115,13 @@ export class Clock {
   pause() {
     if (this.paused) return;
     this.paused = true;
+    this.goodUpdateCount = this.badUpdateCount = this.lastUpdateTime = 0;
   }
   resume() {
     if (!this.paused) return;
     this.paused = false;
     this.lastRealTime = this.window.Date.now();
+    this.goodUpdateCount = this.badUpdateCount = this.lastUpdateTime = 0;
   }
   
   /* Enter a pause/step debug mode, where the meaning of time is somewhat unclear.
