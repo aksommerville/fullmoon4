@@ -10,6 +10,7 @@ import { MenuFactory, ChalkMenu, VictoryMenu, GameOverMenu } from "./Menu.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
+import { FullmoonMap } from "./FullmoonMap.js";
 import { Synthesizer } from "../synth/Synthesizer.js";
 import { SoundEffects } from "../synth/SoundEffects.js";
  
@@ -63,6 +64,8 @@ export class Runtime {
     this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
     this.wasmLoader.env.fmn_get_string = (dst, dsta, id) => this.getString(dst, dsta, id);
     this.wasmLoader.env.fmn_find_map_command = (dstp, mask, vp) => this.findMapCommand(dstp, mask, vp);
+    this.wasmLoader.env.fmn_find_direction_to_item = (itemid) => this.findDirectionToItem(itemid);
+    this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     
     // Fetch the data archive and wasm asap. This doesn't start the game or anything.
@@ -386,6 +389,123 @@ export class Runtime {
     }
     
     return 0;
+  }
+  
+  findDirectionToItem(itemid) {
+    return this.findDirectionToMap(
+      this.dataService.forEachOfType("map", null, (map) => {
+        if (map.ancillary) return false;
+        for (const sprite of map.sprites) {
+          if (sprite.spriteId === 3) { // treasure. TODO Can we avoid hard-coding resource IDs?
+            if (sprite.arg0 === itemid) return map;
+          }
+        }
+        for (const door of map.doors) {
+          if (door.mapId) continue;
+          if (door.dstx !== 0x30) continue;
+          if (door.dsty !== itemid) continue;
+          // Check whether we've already got it, which shouldn't be possible but hey.
+          if (door.extra && this.globals.getGsBit(door.extra)) continue;
+          return map;
+        }
+        return false;
+      })
+    );
+  }
+  
+  findDirectionToMap(mapIdOrMapOrFalse) {
+    if (!this.map) return 0;
+    let map;
+    if (mapIdOrMapOrFalse instanceof FullmoonMap) map = mapIdOrMapOrFalse;
+    else map = this.dataService.getMap(mapIdOrMapOrFalse);
+    if (!map) return 0;
+    return this.firstDirectionFromMapToMap(this.map, map);
+    return 0;
+  }
+  
+  firstDirectionFromMapToMap(from, to) {
+    if (!from || !to) return 0;
+    if (from.id === to.id) return 0xff;
+    let dir = 0, distance = 99;
+    const includeHoles = this.globals.g_itemv[this.constants.ITEM_BROOM];
+    const checkNeighbor = (mapId, ndir) => {
+      if (!mapId) return;
+      // Don't provide directions thru a wall:
+      switch (ndir) {
+        case 0x10: if (!from.regionContainsPassableCell(0, 0, 1, this.constants.ROWC, includeHoles)) return; break;
+        case 0x08: if (!from.regionContainsPassableCell(this.constants.COLC - 1, 0, 1, this.constants.ROWC, includeHoles)) return; break;
+        case 0x40: if (!from.regionContainsPassableCell(0, 0, this.constants.COLC, 1, includeHoles)) return; break;
+        case 0x02: if (!from.regionContainsPassableCell(0, this.constants.ROWC - 1, this.constants.COLC, 1, includeHoles)) return; break;
+      }
+      if (mapId === to.id) {
+        dir = ndir;
+        distance = 0;
+        return;
+      }
+      const qdist = this.distanceFromMapToMap(this.dataService.getMap(mapId), to, [from.id], 10);
+      // Expected path: 1(home) => 2(bridge) => 5(farm) => 8(pond) => 29(pub)
+      if (qdist < distance) {
+        dir = ndir;
+        distance = qdist;
+      }
+    };
+    checkNeighbor(from.neighborw, 0x10); if (!distance) return dir;
+    checkNeighbor(from.neighbore, 0x08); if (!distance) return dir;
+    checkNeighbor(from.neighborn, 0x40); if (!distance) return dir;
+    checkNeighbor(from.neighbors, 0x02); if (!distance) return dir;
+    for (const door of from.doors) {
+      if (!door.mapId) continue;
+      if (door.mapId === to.id) return 0xff;
+      let qdist = this.distanceFromMapToMap(this.dataService.getMap(door.mapId), to, [from.id], 10);
+      if (qdist < distance) {
+        distance = qdist;
+        dir = 0xff;
+      }
+    }
+    return dir;
+  }
+  
+  distanceFromMapToMap(from, to, poisonMapIds, limit) {
+  
+    // is it invalid, or the same map?
+    if (!from || !to) return 999;
+    if (from.id === to.id) return 0;
+    
+    // Filter neighbors. We only want them if that edge is actually reachable.
+    const includeHoles = this.globals.g_itemv[this.constants.ITEM_BROOM];
+    const neighborw = (from.neighborw && from.regionContainsPassableCell(0, 0, 1, this.constants.ROWC, includeHoles)) ? from.neighborw : 0;
+    const neighbore = (from.neighbore && from.regionContainsPassableCell(this.constants.COLC - 1, 0, 1, this.constants.ROWC, includeHoles)) ? from.neighbore : 0;
+    const neighborn = (from.neighborn && from.regionContainsPassableCell(0, 0, this.constants.COLC, 1, includeHoles)) ? from.neighborn : 0;
+    const neighbors = (from.neighbors && from.regionContainsPassableCell(0, this.constants.ROWC - 1, this.constants.COLC, 1, includeHoles)) ? from.neighbors : 0;
+    
+    // is it an immediate neighbor?
+    if (neighborw === to.id) return 1;
+    if (neighbore === to.id) return 1;
+    if (neighborn === to.id) return 1;
+    if (neighbors === to.id) return 1;
+    for (const door of from.doors) {
+      if (door.mapId === to.id) return 1;
+    }
+    
+    // recursion limits?
+    if (limit-- <= 0) return 999;
+    if (poisonMapIds.indexOf(from.id) >= 0) return 999;
+    poisonMapIds = [...poisonMapIds, from.id];
+    
+    // Take the lowest result from all my neighbors and add 1.
+    let best = 999;
+    for (const nid of [neighborw, neighbore, neighborn, neighbors]) {
+      if (!nid) continue;
+      const q = this.distanceFromMapToMap(this.dataService.getMap(nid), to, poisonMapIds, limit);
+      if (q < best) best = q;
+    }
+    for (const door of from.doors) {
+      if (!door.mapId) continue;
+      // Buried doors (door.gsbit nonzero) count whether exposed or not.
+      const q = this.distanceFromMapToMap(this.dataService.getMap(door.mapId), to, poisonMapIds, limit);
+      if (q < best) best = q;
+    }
+    return best + 1;
   }
   
   mapCallbacks(qevid, cbp, userdata) {

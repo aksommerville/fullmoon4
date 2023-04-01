@@ -265,6 +265,7 @@ function decodeCommand(words) {
     case "buried_treasure": return decodeCommand_buried_treasure(words.slice(1));
     case "buried_door": return decodeCommand_buried_door(words.slice(1));
     case "callback": return decodeCommand_callback(words.slice(1));
+    case "ancillary": return decodeCommand_noarg(0x04, words.slice(1));
   }
   return null;
 }

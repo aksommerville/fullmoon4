@@ -50,20 +50,84 @@ void fmn_secrets_refresh_for_map() {
 }
 
 /* Get the guidance direction, eg for crows.
+ * This is very aware of the layout and design, we need to code it with the maps in mind.
+ * Current logic is for the Demo. Will need to revisit for full version.
+ * TODO: Can we encode these decisions in the data set somehow?
  */
  
 uint8_t fmn_secrets_get_guide_dir() {
-  // This is not right, because the crow sees far, but not near.
-  // We don't care about secrets on this map, but we do want to lead to far-away things.
-  // Also this isn't really for "secrets"... It's more like "what is the next step, what should I be doing?"
-  fmn_secrets_refresh_for_map();
-  if (fmn_global.compassx||fmn_global.compassy) {
-    if ((fmn_global.compassx<0)&&(fmn_global.compassx<fmn_global.compassy)) return FMN_DIR_W;
-    if ((fmn_global.compassy<0)&&(fmn_global.compassy<fmn_global.compassx)) return FMN_DIR_N;
-    if ((fmn_global.compassx>0)&&(fmn_global.compassx>fmn_global.compassy)) return FMN_DIR_E;
-    if ((fmn_global.compassy>0)&&(fmn_global.compassy>fmn_global.compassx)) return FMN_DIR_S;
+  uint8_t dir;
+  
+  /* Feather required, and it has no prerequisites.
+   */
+  if (!fmn_global.itemv[FMN_ITEM_FEATHER]) {
+    if (dir=fmn_find_direction_to_item(FMN_ITEM_FEATHER)) return dir;
   }
-  return FMN_DIR_S;
+  
+  /* Broom required, but you need feather or compass first.
+   * We've already checked feather, so only check compass.
+   */
+  if (!fmn_global.itemv[FMN_ITEM_BROOM]) {
+    if (!fmn_global.itemv[FMN_ITEM_FEATHER]&&!fmn_global.itemv[FMN_ITEM_COMPASS]) { // COMPASS required only if you don't have BROOM or FEATHER.
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_COMPASS)) return dir;
+    } else {
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_BROOM)) return dir;
+    }
+  }
+  
+  /* Wand required.
+   * Technically you only need the feather to get it.
+   * Well, super technically, it's possible to get with nothing.
+   * But that would mean waiting for raccoons to randomly step on treadles.
+   * The feather-only solution, you need to understand raccoon mind control, and I don't count on users to figure that out.
+   * So require VIOLIN first.
+   * VIOLIN can be had for free.
+   */
+  if (!fmn_global.itemv[FMN_ITEM_WAND]) {
+    if (!fmn_global.itemv[FMN_ITEM_VIOLIN]) {
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_VIOLIN)) return dir;
+    } else {
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_WAND)) return dir;
+    }
+  }
+  
+  /* Umbrella required.
+   * You need one of:
+   *  - Feather, and knowledge of lambda blocks.
+   *  - Wand, and the Spell of Opening.
+   *  - Wand, and the Spell of Wind.
+   * TODO Platform needs to track player's travel history.
+   */
+  if (!fmn_global.itemv[FMN_ITEM_UMBRELLA]) {
+    // We've already checked FEATHER and WAND, and can't add the knowledge conditions yet.
+    if (dir=fmn_find_direction_to_item(FMN_ITEM_UMBRELLA)) return dir;
+  }
+  
+  /* TODO Require Spell of Opening.
+   * For now, use either of gsbit (3,4) as a proxy for knowing the spell.
+   * Those are (moonsong,mns_switch); you've likely been in her basement if either of those is true.
+   */
+  if (!fmn_gs_get_bit(3)&&!fmn_gs_get_bit(4)) {
+    if (dir=fmn_find_direction_to_map(30)) return dir;
+  }
+  
+  /* If the werewolf is alive, that's where you're going.
+   */
+  if (!fmn_global.werewolf_dead) {
+    if (dir=fmn_find_direction_to_map(11)) return dir;
+  }
+  
+  /* Werewolf is dead? Hmm ok. Let's figure they're going for 100% item collection.
+   * NB We are currently not allowing play to proceed after killing the werewolf.
+   */
+  uint8_t itemid=2; for (;itemid<FMN_ITEM_COUNT;itemid++) {
+    if (!fmn_global.itemv[itemid]) {
+      if (dir=fmn_find_direction_to_item(itemid)) return dir;
+    }
+  }
+  
+  // Welp that's all I got. Kaaaa, thanks for the corn.
+  return 0;
 }
 
 /* Decode spells and songs.

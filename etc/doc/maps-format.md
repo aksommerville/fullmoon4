@@ -35,6 +35,7 @@ blowback
 buried_treasure X Y GSBIT ITEMID
 buried_door X Y GSBIT MAPID DSTX DSTY
 callback EVID CBID PARAM
+ancillary # Will not be targetted by crow guidance, and not participate in travel coverage.
 ```
 
 Resource IDs may be name or number.
@@ -62,6 +63,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x01 () DARK
 0x02 () INDOORS
 0x03 () BLOWBACK
+0x04 () ANCILLARY
 
 0x20 (u8 songid) SONG
 0x21 (u8 imageid) TILESHEET

@@ -79,6 +79,7 @@ export class DataService {
   getSound(id) { return this.getResource(RESTYPE_SOUND, id); }
   
   getResource(type, id, qualifier) {
+    if (!id) return null;
     if (!(this.toc instanceof Array)) return null;
     const res = qualifier
       ? this.toc.find(t => ((t.type === type) && (t.id === id) && (t.q === qualifier)))
@@ -86,6 +87,33 @@ export class DataService {
     if (!res) return null;
     if (!res.obj) res.obj = this._decodeResource(res);
     return res.obj;
+  }
+  
+  // Return nonzero to stop iteration, and return that resource again.
+  forEachOfType(type, qualifier, cb) {
+    type = this.resolveType(type);
+    if (!(this.toc instanceof Array)) return null;
+    if (!cb) throw new Error(`DataService.forEachOfType requires a callback. Did you forget qualifier?`);
+    for (const res of this.toc) {
+      if (res.type !== type) continue;
+      if (qualifier && (res.qualifier !== qualifier)) continue;
+      if (!res.obj) res.obj = this._decodeResource(res);
+      if (cb(res.obj)) return res.obj;
+    }
+  }
+  
+  resolveType(type) {
+    if (typeof(type) === "string") switch (type) {
+      case "image": return RESTYPE_IMAGE;
+      case "song": return RESTYPE_SONG;
+      case "map": return RESTYPE_MAP;
+      case "tileprops": return RESTYPE_TILEPROPS;
+      case "sprite": return RESTYPE_SPRITE;
+      case "string": return RESTYPE_STRING;
+      case "instrument": return RESTYPE_INSTRUMENT;
+      case "sound": return RESTYPE_SOUND;
+    }
+    return type;
   }
   
   /* Load data.

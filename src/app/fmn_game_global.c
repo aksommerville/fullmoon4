@@ -7,6 +7,7 @@
  */
  
 int fmn_game_init() {
+  fmn_clear_free_birds();
   fmn_global.itemv[FMN_ITEM_NONE]=1; // let it show an icon in the inventory, so it doesn't look like an item not found yet
   if (fmn_game_load_map(1)<1) return -1;
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
@@ -52,6 +53,7 @@ int fmn_game_load_map(int mapid) {
   fmn_game_drop_map_singletons();
   int err=fmn_load_map(mapid,cb_spawn);
   if (err<=0) return err;
+  fmn_update_free_birds();
   if (fmn_hero_reset()<0) return -1;
   fmn_secrets_refresh_for_map();
   return 1;
@@ -67,6 +69,8 @@ void fmn_game_input(uint8_t bit,uint8_t value,uint8_t state) {
 /* Trigger navigation.
  */
  
+static int8_t fmn_last_nav_x=0,fmn_last_nav_y=0;
+ 
 static void fmn_game_navigate(int8_t dx,int8_t dy) {
   uint16_t mapid=0;
   uint8_t transition=0;
@@ -75,6 +79,8 @@ static void fmn_game_navigate(int8_t dx,int8_t dy) {
   else if (dy<0) { mapid=fmn_global.neighborn; transition=FMN_TRANSITION_PAN_UP; }
   else if (dy>0) { mapid=fmn_global.neighbors; transition=FMN_TRANSITION_PAN_DOWN; }
   if (!mapid) return;
+  fmn_last_nav_x=dx;
+  fmn_last_nav_y=dy;
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   fmn_prepare_transition(transition);
@@ -125,6 +131,8 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
       if (!fmn_gs_get_bit(door->extra)) continue;
     }
     
+    fmn_last_nav_x=0;
+    fmn_last_nav_y=0;
     float dstx=door->dstx+0.5f;
     float dsty=door->dsty+0.5f;
     fmn_prepare_transition(FMN_TRANSITION_DOOR);
@@ -735,5 +743,44 @@ void fmn_game_update_map_singletons(float elapsed) {
   uint8_t i=fmn_map_singletonc;
   for (;i-->0;v++) {
     if (v->cb_update) v->cb_update(v->userdata,elapsed);
+  }
+}
+
+/* Free birds.
+ */
+ 
+static uint8_t fmn_free_bird_count=0;
+ 
+void fmn_add_free_birds(uint8_t c) {
+  if (fmn_free_bird_count>0xff-c) fmn_free_bird_count=0xff;
+  else fmn_free_bird_count+=c;
+}
+
+void fmn_clear_free_birds() {
+  fmn_free_bird_count=0;
+}
+
+void fmn_update_free_birds() {
+  if (!fmn_free_bird_count) return;
+  fmn_free_bird_count--;
+  if (fmn_global.indoors) return;
+  uint8_t dir=fmn_secrets_get_guide_dir();
+  if (!dir) return;
+  float x=FMN_COLC*0.5f,y=FMN_ROWC*0.5f;
+  if (fmn_last_nav_x>0) x=-1.0f;
+  else if (fmn_last_nav_x<0) x=FMN_COLC+1.0f;
+  else if (fmn_last_nav_y>0) y=-1.0f;
+  else if (fmn_last_nav_y<0) y=FMN_ROWC+1.0f;
+  struct fmn_sprite *crow=fmn_sprite_generate_noparam(FMN_SPRCTL_crow,x,y);
+  if (!crow) return;
+  crow->bv[2]=5; // stage=LEAD
+  crow->bv[3]=1; // satisfied
+  crow->fv[1]=999999.999; // stagetime
+  switch (dir) {
+    case FMN_DIR_W: crow->fv[2]=1.0f; crow->fv[3]=FMN_ROWC*0.5f; break;
+    case FMN_DIR_E: crow->fv[2]=FMN_COLC-1.0f; crow->fv[3]=FMN_ROWC*0.5f; break;
+    case FMN_DIR_N: crow->fv[2]=FMN_COLC*0.5f; crow->fv[3]=1.0f; break;
+    case FMN_DIR_S: crow->fv[2]=FMN_COLC*0.5f; crow->fv[3]=FMN_ROWC-1.0f; break;
+    case 0xff: crow->bv[2]=7; break; // stage=CIRCLE
   }
 }

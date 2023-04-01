@@ -7,8 +7,14 @@
 #define CROW_STAGE_DIGEST 4 /* Nose back up. Show pride in what you have accomplished. */
 #define CROW_STAGE_LEAD 5 /* Fly towards the middle of a screen edge, and hold there. */
 #define CROW_STAGE_EXIT 6 /* Fly offscreen opposite where we came in. Nothing useful to do. */
+#define CROW_STAGE_CIRCLE 7 /* Fly in a circle around the center of the screen, indicating you've got where you're going. */
 
 #define CROW_FLIGHT_SPEED 4.0f
+#define CROW_CIRCLE_RADIUS_SPEED 2.0f /* m/s */
+#define CROW_CIRCLE_ANGULAR_SPEED 1.0f /* rad/s */
+#define CROW_CIRCLE_RADIUS_MAX (FMN_ROWC*0.5f-1.0f)
+
+#define CROW_FREE_BIRD_COUNT 4 /* Each feeding gets you 5 birds */
 
 #define tileid0 sprite->bv[0]
 #define sleeping sprite->bv[1]
@@ -18,6 +24,8 @@
 #define stagelen sprite->fv[1]
 #define targetx sprite->fv[2] /* Flight stages, where are we headed? <0 if undecided for ENTER */
 #define targety sprite->fv[3]
+#define circle_phase sprite->fv[4]
+#define circle_radius sprite->fv[5]
 
 /* Init.
  */
@@ -31,6 +39,16 @@ static void _crow_init(struct fmn_sprite *sprite) {
   stagelen=999.999f; // ENTER ends explicitly, during update.
   targetx=targety=-1.0f;
   if (sprite->x>(FMN_COLC>>1)) sprite->xform=FMN_XFORM_XREV;
+}
+
+/* CIRCLE stage.
+ */
+ 
+static void crow_begin_circle(struct fmn_sprite *sprite) {
+  stage=CROW_STAGE_CIRCLE;
+  circle_phase=0.0f;
+  circle_radius=0.0f;
+  stagelen=999999.999f;
 }
 
 /* Enter NIBBLE stage.
@@ -83,7 +101,16 @@ static void crow_eat(struct fmn_sprite *sprite) {
           targetx=FMN_COLC>>1;
           targety=FMN_ROWC-1.0f;
         } break;
+      case 0xff: { // it's right here! fly around in a circle to express your joy.
+          satisfied=2;
+        } break;
+      case 0: { // No advice to offer. TODO Can we do something funny like shrug or explode?
+          targetx=(sprite->x<(FMN_COLC>>1))?(FMN_COLC+1.0f):(-1.0f);
+          targety=FMN_ROWC>>1;
+          satisfied=0;
+        } return; // no free birds either
     }
+    fmn_add_free_birds(CROW_FREE_BIRD_COUNT);
   } else {
     satisfied=0;
     targetx=(sprite->x<(FMN_COLC>>1))?(FMN_COLC+1.0f):(-1.0f);
@@ -158,6 +185,28 @@ static void crow_update_EXIT(struct fmn_sprite *sprite,float elapsed) {
   }
 }
 
+static void crow_update_CIRCLE(struct fmn_sprite *sprite,float elapsed) {
+  crow_animate_flight(sprite);
+  circle_phase+=elapsed*CROW_CIRCLE_ANGULAR_SPEED;
+  circle_radius+=elapsed*CROW_CIRCLE_RADIUS_SPEED;
+  if (circle_phase>M_PI*2.0f) circle_phase-=M_PI*2.0f;
+  if (circle_radius>CROW_CIRCLE_RADIUS_MAX) circle_radius=CROW_CIRCLE_RADIUS_MAX;
+  float dstx=(FMN_COLC*0.5f)+circle_radius*cosf(circle_phase);
+  float dsty=(FMN_ROWC*0.5f)+circle_radius*sinf(circle_phase);
+  float dx=dstx-sprite->x;
+  float dy=dsty-sprite->y;
+  if (dx<0.0f) sprite->xform=FMN_XFORM_XREV; else sprite->xform=0;
+  float dsq=dx*dx+dy*dy;
+  float limit=CROW_FLIGHT_SPEED*elapsed;
+  if (dsq>limit) {
+    float d=sqrtf(dsq);
+    dx=(dx*limit)/d;
+    dy=(dy*limit)/d;
+  }
+  sprite->x+=dx;
+  sprite->y+=dy;
+}
+
 /* Update.
  */
  
@@ -173,7 +222,7 @@ static void _crow_update(struct fmn_sprite *sprite,float elapsed) {
       switch (stage) {
         case CROW_STAGE_APPETITE: stagelen=0.500f; break;
         case CROW_STAGE_NIBBLE: stagelen=0.400f; crow_eat(sprite); break;
-        case CROW_STAGE_DIGEST: stagelen=1.500f; break;
+        case CROW_STAGE_DIGEST: stagelen=1.500f; if (satisfied==2) crow_begin_circle(sprite); break;
         default: stagelen=999.999f;
       }
     }
@@ -184,6 +233,7 @@ static void _crow_update(struct fmn_sprite *sprite,float elapsed) {
       case CROW_STAGE_DIGEST: sprite->layer=128; sprite->tileid=tileid0; break;
       case CROW_STAGE_LEAD: crow_update_LEAD(sprite,elapsed); break;
       case CROW_STAGE_EXIT: crow_update_EXIT(sprite,elapsed); break;
+      case CROW_STAGE_CIRCLE: crow_update_CIRCLE(sprite,elapsed); break;
     }
   }
 }

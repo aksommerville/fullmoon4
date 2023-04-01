@@ -27,3 +27,4 @@ sprite 11 5 3 item:CHEESE 0 0
 sprite 9 5 3 item:MATCH 0 0
 sprite 7 5 3 item:COIN 0 0
 sprite 5 5 3 item:SEED 0 0
+ancillary

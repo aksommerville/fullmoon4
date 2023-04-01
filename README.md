@@ -20,7 +20,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [x] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
 - [x] Feedback for blowback.
-- [ ] Crow: How to decide on target location? see src/app/fmn_secrets.c
+- [x] Crow: How to decide on target location? see src/app/fmn_secrets.c
 - [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - - [ ] And configurable mapping. Awkward to ask people to test the demo when they can't configure input!
 - [ ] UI for saved game management.
@@ -29,6 +29,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
 - [ ] Finalize sound effects.
 - [ ] Linux DRM platform, why not.
+- [ ] Farmer doesn't water plant if it's planted initially?
 
 ### May
 
@@ -44,6 +45,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
 - [ ] The Cheat Book. A nice looking "WARNING SPOILERS" notebook we can leave out for demo players.
 - [ ] Correct song and sound effect levels. Automated analysis?
+- [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
+- - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 
 ### After GDEX
 

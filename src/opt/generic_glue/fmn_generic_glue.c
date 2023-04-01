@@ -58,5 +58,13 @@ uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v) {
   return 0;
 }
 
+uint8_t fmn_find_direction_to_item(uint8_t itemid) {
+  return 0;
+}
+
+uint8_t fmn_find_direction_to_map(uint16_t mapid) {
+  return 0;
+}
+
 void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void *userdata),void *userdata) {
 }

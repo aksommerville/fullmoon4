@@ -258,7 +258,7 @@ struct fmn_sketch {
 struct fmn_door {
   uint8_t x;
   uint8_t y;
-  uint16_t mapid;
+  uint16_t mapid; // zero if the door is used for special purposes (ie not an actual door)
   uint8_t dstx;
   uint8_t dsty;
   uint16_t extra;
@@ -463,6 +463,15 @@ uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id);
  * They are expected to search at least the current map and cardinal neighbors.
  */
 uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v);
+
+/* Like fmn_find_map_command() but designed for crows rather than compasses.
+ * We'll search a much broader range, and return FMN_DIR_*, which way should you go from here to get to it.
+ * We can only search for items, either as "treasure" sprites or "buried_treasure" map commands.
+ * 0 if not found
+ * 0xff if it's on the current map.
+ */
+uint8_t fmn_find_direction_to_item(uint8_t itemid);
+uint8_t fmn_find_direction_to_map(uint16_t mapid);
 
 /* Trigger callbacks registered with the current map, for this (evid).
  * This is a generic extension point for attaching your C code with map-specific config.

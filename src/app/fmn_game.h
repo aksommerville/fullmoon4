@@ -27,8 +27,18 @@ void fmn_game_update(float elapsed);
  */
 void fmn_secrets_refresh_for_map();
 
-// Points the direction of the secret, or we make something up. Always a valid cardinal direction.
+/* Points the direction of the next recommended step, or we make something up.
+ * Zero if we got nothing. We must allow for the possibility.
+ * 0xff if the next step is right here.
+ */ 
 uint8_t fmn_secrets_get_guide_dir();
+
+/* When the crow eats corn, he shows you the next direction to go.
+ * He can also call this, to auto-generate a crow on the next (c) maps.
+ */
+void fmn_add_free_birds(uint8_t c);
+void fmn_clear_free_birds();
+void fmn_update_free_birds();
 
 /* Songs and spells use the same namespace.
  * Both 'eval' return zero if invalid.

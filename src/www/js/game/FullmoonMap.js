@@ -50,6 +50,7 @@ export class FullmoonMap {
     this.dark = 0;
     this.indoors = 0;
     this.blowback = 0;
+    this.ancillary = 0;
     this.wind = 0;
     this.herostartp = (constants.ROWC >> 1) * constants.COLC + (constants.COLC >> 1);
     this.songId = 0;
@@ -71,6 +72,7 @@ export class FullmoonMap {
     this.dark = src.dark;
     this.indoors = src.indoors;
     this.blowback = src.blowback;
+    this.ancillary = src.ancillary;
     this.wind = src.wind;
     this.herostartp = src.herostartp;
     this.songId = src.songId;
@@ -97,6 +99,7 @@ export class FullmoonMap {
         case 0x01: this.dark = 1; break;
         case 0x02: this.indoors = 1; break;
         case 0x03: this.blowback = 1; break;
+        case 0x04: this.ancillary = 1; break;
         case 0x20: this.songId = v[argp]; break;
         case 0x21: this.bgImageId = v[argp]; break;
         case 0x22: this.herostartp = v[argp]; break;
@@ -197,5 +200,31 @@ export class FullmoonMap {
       if (err) return err;
       p += paylen;
     }
+  }
+  
+  regionContainsPassableCell(x, y, w, h, includeHoles) {
+    if (x < 0) { w += x; x = 0; }
+    if (y < 0) { h += y; y = 0; }
+    if (x + w > 20) w = 20 - x; //XXX hard-coded map size
+    if (y + h > 12) h = 12 - y;
+    if ((w < 1) || (h < 1)) return false;
+    if (!this.cellphysics) return true; // physics unset, everything is passable
+    for (let rowp=y*20+x; h-->0; rowp+=20) {
+      for (let p=rowp, xi=w; xi-->0; p++) {
+        switch (this.cellphysics[this.cells[p]]) { // XXX hard-coded FMN_CELLPHYSICS
+          // Truly vacant, no doubt:
+          case 0x00:
+          case 0x03:
+            return true;
+          // Water and hole, conditional:
+          case 0x02:
+          case 0x07:
+            if (includeHoles) return true;
+            break;
+          // Others are all solid.
+        }
+      }
+    }
+    return false;
   }
 }
