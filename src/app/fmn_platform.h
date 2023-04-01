@@ -365,6 +365,8 @@ extern struct fmn_global {
   float rain_time;
   float slowmo_time;
   float terminate_time;
+  float blowbackx; // Same idea as wind, but app reports a special "can't reach the edge" wind.
+  float blowbacky; // (-1,-1)..(0,0)..(1,1)
   
   uint16_t damage_count;
   

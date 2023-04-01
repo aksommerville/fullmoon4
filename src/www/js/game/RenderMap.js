@@ -81,6 +81,9 @@ export class RenderMap {
     if (this.globals.g_wind_time[0] > 0) {
       if (!this.wind) this.wind = this._initWind(canvas, this.globals.g_wind_dir[0]);
       this._renderWind(canvas, ctx, this.wind);
+    } else if (this.globals.g_blowbacknorm[0] || this.globals.g_blowbacknorm[1]) {
+      if (!this.wind) this.wind = this._initWind(canvas, 0);
+      this._renderBlowback(canvas, ctx, this.wind, this.globals.g_blowbacknorm[0], this.globals.g_blowbacknorm[1]);
     } else {
       this.wind = null;
     }
@@ -241,6 +244,41 @@ export class RenderMap {
       }
       ctx.moveTo(particle.x, particle.y);
       ctx.lineTo(particle.x + linex, particle.y + liney);
+    }
+    ctx.strokeStyle = "#ccc";
+    ctx.globalAlpha = 0.7;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  
+  // Same idea as wind, but the direction is volatile.
+  // Kind of tacked-on late.
+  _renderBlowback(canvas, ctx, wind, dx, dy) {
+    const linelen = 7;
+    const speed = 8;
+    const linex = dx * -linelen;
+    const liney = dy * -linelen;
+    const movex = dx * speed;
+    const movey = dy * speed;
+    ctx.beginPath();
+    for (const particle of wind.particles) {
+      particle.x += movex;
+      particle.y += movey;
+      ctx.moveTo(particle.x, particle.y);
+      ctx.lineTo(particle.x + linex, particle.y + liney);
+      if (particle.x < -linelen) {
+        particle.x = canvas.width;
+        particle.y = Math.random() * canvas.height;
+      } else if (particle.y < -linelen) {
+        particle.x = Math.random() * canvas.width;
+        particle.y = canvas.height;
+      } else if (particle.x >= canvas.width + linelen) {
+        particle.x = 0;
+        particle.y = Math.random() * canvas.height;
+      } else if (particle.y >= canvas.height + linelen) {
+        particle.x = Math.random() * canvas.width;
+        particle.y = 0;
+      }
     }
     ctx.strokeStyle = "#ccc";
     ctx.globalAlpha = 0.7;

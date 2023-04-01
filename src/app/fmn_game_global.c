@@ -264,7 +264,7 @@ static void fmn_wind_blow(uint8_t dir,float others_time,float hero_time) {
 static void fmn_wind_check_blowback(float others_time,float hero_time) {
   // Blowback begins when you cross the midpoint horizontally or vertically, if there is no neighbor in that direction.
   // Intensity increases as you approach the edge.
-  const float BLOWBACK_RATE_MAX=10.0f;
+  const float BLOWBACK_RATE_MAX=20.0f;
   const float HALFW=FMN_COLC*0.5f;
   const float HALFH=FMN_ROWC*0.5f;
   float herox,heroy;
@@ -273,17 +273,26 @@ static void fmn_wind_check_blowback(float others_time,float hero_time) {
     .others_time=others_time,
     .hero_time=hero_time,
   };
+  fmn_global.blowbackx=0.0f;
+  fmn_global.blowbacky=0.0f;
   if (herox<HALFW) {
-    if (!fmn_global.neighborw) ctx.dx=((HALFW-herox)*BLOWBACK_RATE_MAX*2.0f)/HALFW;
+    if (!fmn_global.neighborw) fmn_global.blowbackx=(HALFW-herox)/HALFW;
   } else {
-    if (!fmn_global.neighbore) ctx.dx=((herox-HALFW)*BLOWBACK_RATE_MAX*-2.0f)/HALFW;
+    if (!fmn_global.neighbore) fmn_global.blowbackx=(herox-HALFW)/-HALFW;
   }
-  if (heroy<FMN_ROWC*0.5f) {
-    if (!fmn_global.neighborn) ctx.dy=((HALFH-heroy)*BLOWBACK_RATE_MAX*2.0f)/HALFH;
+  if (heroy<HALFH) {
+    if (!fmn_global.neighborn) fmn_global.blowbacky=(HALFH-heroy)/HALFH;
   } else {
-    if (!fmn_global.neighbors) ctx.dy=((heroy-HALFH)*BLOWBACK_RATE_MAX*-2.0f)/HALFH;
+    if (!fmn_global.neighbors) fmn_global.blowbacky=(heroy-HALFH)/-HALFH;
   }
-  if ((ctx.dx<-0.01f)||(ctx.dx>0.01f)||(ctx.dy<-0.01f)||(ctx.dy>0.01f)) {
+  if (
+    (fmn_global.blowbackx<-0.001f)||
+    (fmn_global.blowbackx> 0.001f)||
+    (fmn_global.blowbacky<-0.001f)||
+    (fmn_global.blowbacky> 0.001f)
+  ) {
+    ctx.dx=fmn_global.blowbackx*BLOWBACK_RATE_MAX;
+    ctx.dy=fmn_global.blowbacky*BLOWBACK_RATE_MAX;
     fmn_sprites_for_each(fmn_wind_blow_1,&ctx);
   }
 }
@@ -318,6 +327,9 @@ static float fmn_weather_update(float elapsed) {
   }
   if (fmn_global.blowback) {
     fmn_wind_check_blowback(adjusted,elapsed);
+  } else {
+    fmn_global.blowbackx=0.0f;
+    fmn_global.blowbacky=0.0f;
   }
   return adjusted;
 }
