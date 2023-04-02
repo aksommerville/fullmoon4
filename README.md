@@ -21,7 +21,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
 - [x] Feedback for blowback.
 - [x] Crow: How to decide on target location? see src/app/fmn_secrets.c
-- [ ] Map gamepads necessary for demo (mind that they will be different per browser and os).
+- [x] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - - [x] And configurable mapping. Awkward to ask people to test the demo when they can't configure input!
 - [ ] UI for saved game management.
 - [ ] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.

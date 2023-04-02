@@ -1,0 +1,86 @@
+2023-04-02
+Map a healthy collection of my joysticks, on all the PCs I've got sitting around.
+
+Map everything the same way:
+  Dpad as expected
+  Left stick mirrors dpad *** Will leave this off where it looks too noisy.
+  South = Use
+  West = Choose
+
+Hosts:
+  Nuc Linux
+    Chrome
+    Firefox
+  iMac
+    Chrome
+  MacBook
+    Chrome
+  Asus Laptop
+    Chrome
+
+Joysticks:
+  PS2 knockoff
+  VCS Pad "Atari Game Controller" 3250:1002
+  VCS Stick "Atari Classic Controller" 3250:1001
+  Zelda "Bensussen Deutch & Associates,Inc.(BDA) Core (Plus) Wired Controller" 20d6:a711
+  8bitdo Pro 2 "8bitDo 8bitDo Pro 2" 2dc8:3010
+  8bitdo SN30 "Controller Controller" 045e:028e (that's a lie, that's MS vendor code)
+  Xbox 360 "&copy;Microsoft Corporation Controller" 045e:028e
+  Xbox "Microsoft X-Box pad v2 (US)" 045e:0289
+  Black-on-black "BDA Pro Ex" 20d6:ca6d
+  
+----------------------------------------------------------------------------------------
+Nuc Linux Chrome
+
+Xbox: Left sticky is too noisy. Leaving unmapped until we do customizable dead zones.
+
+{"keyMaps":[
+  {"code":"ArrowLeft","btnid":1},
+  {"code":"ArrowRight","btnid":2},
+  {"code":"ArrowUp","btnid":4},
+  {"code":"ArrowDown","btnid":8},
+  {"code":"KeyZ","btnid":16},
+  {"code":"KeyX","btnid":32}
+],"gamepadMaps":[
+  {"id":"MY-POWER CO.,LTD. 2In1 USB Joystick (STANDARD GAMEPAD Vendor: 0e8f Product: 0003)","axes":["","","",""],"buttons":[16,0,32,0,0,0,0,32,0,0,0,0,4,8,1,2]},
+  {"id":"BDA Pro Ex (Vendor: 20d6 Product: ca6d)","axes":["x","y","","","x","y"],"buttons":[32,16,0,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"Atari Classic Controller (Vendor: 3250 Product: 1001)","axes":["","x","y",""],"buttons":[16,32,0]},
+  {"id":"Controller Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)","axes":["x","y","",""],"buttons":[16,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"Bensussen Deutsch & Associates,Inc.(BDA) Core (Plus) Wired Controller (Vendor: 20d6 Product: a711)","axes":["x","y","","","x","y"],"buttons":[32,16,0,0,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"Atari Game Controller (Vendor: 3250 Product: 1002)","axes":["x","y","","","","","x","y",""],"buttons":[16,0,32,0,0,0,0,0,0]},
+  {"id":"©Microsoft Corporation Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)","axes":["x","y","",""],"buttons":[16,0,32,0,0,0,0,0,0,0,0,0,4,8,1,2,0]},
+  {"id":"Microsoft X-Box pad v2 (US) (Vendor: 045e Product: 0289)","axes":["","","","","","","x","y"],"buttons":[16,0,0,32,0,0,0,0,0,0]},
+  {"id":"8BitDo 8BitDo Pro 2 (Vendor: 2dc8 Product: 3010)","axes":["x","y","","","","","x","y"],"buttons":[0,16,0,0,32,0,0,0,0,0,0,0,0,0,0]}
+]}
+
+----------------------------------------------------------------------------------------
+Nuc Linux Firefox
+
+8bitdo SN30 doesn't pop up.
+
+{"keyMaps":[
+  {"code":"ArrowLeft","btnid":1},
+  {"code":"ArrowRight","btnid":2},
+  {"code":"ArrowUp","btnid":4},
+  {"code":"ArrowDown","btnid":8},
+  {"code":"KeyZ","btnid":16},
+  {"code":"KeyX","btnid":32}
+],"gamepadMaps":[
+  {"id":"0e8f-0003-MY-POWER CO.,LTD. 2In1 USB Joystick","axes":["x","y","","","x","y",""],"buttons":[0,0,16,32,0,0,0,0,0,0,0,0]},
+  {"id":"2dc8-3010-8BitDo 8BitDo Pro 2","axes":["x","y","","","","","x","y"],"buttons":[0,16,0,0,32,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"045e-0289-Microsoft X-Box pad v2 (US)","axes":["","","","","","","x","y"],"buttons":[16,0,0,32,0,0,0,0,0,0]},
+  {"id":"045e-028e-Microsoft X-Box 360 pad","axes":["","","","","","","x","y"],"buttons":[16,0,32,0,0,0,0,0,0,0,0]},
+  {"id":"20d6-ca6d-BDA Pro Ex","axes":["x","y","","","x","y"],"buttons":[32,16,0,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"20d6-a711-Bensussen Deutsch & Associates,Inc.(BDA) Core (Plus) Wired Controller","axes":["","","","","x","y"],"buttons":[32,16,0,0,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"3250-1002-Atari Game Controller","axes":["x","y","","","","","x","y",""],"buttons":[16,0,32,0,0,0,0,0,0]},
+  {"id":"3250-1001-Atari Classic Controller","axes":["","x","y",""],"buttons":[16,32,0]}
+]}
+
+----------------------------------------------------------------------------------------
+iMac Chrome
+
+----------------------------------------------------------------------------------------
+MacBook Chrome
+
+----------------------------------------------------------------------------------------
+Asus Laptop Chrome
