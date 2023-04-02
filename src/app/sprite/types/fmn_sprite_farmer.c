@@ -208,15 +208,26 @@ static void farmer_advance(struct fmn_sprite *sprite) {
   switch (stage) {
     case FARMER_STAGE_INDOORS: {
         // If we were configured with a bad hole_distance, stay put.
-        if ((hole_distance<2)||(sprite->y+hole_distance>=FMN_ROWC)) {
+        int8_t col=(int8_t)sprite->x;
+        int8_t row=(int8_t)(sprite->y+0.5f)+hole_distance;
+        if ((hole_distance<2)||(col<0)||(col>=FMN_COLC)||(row<0)||(row>=FMN_ROWC)) {
           farmer_begin_INDOORS(sprite);
           return;
         }
-        // If there is any plant on screen right now (even the withered carcass of the last one we planted, stay put).
-        // Typically, the farmer only appears once.
-        if (fmn_global.plantc) {
-          farmer_begin_INDOORS(sprite);
-          return;
+        // If there's a plant on my target zone in GROW, FLOWER, or DEAD state, stay put.
+        const struct fmn_plant *plant=fmn_global.plantv;
+        uint8_t i=fmn_global.plantc;
+        for (;i-->0;plant++) {
+          if (plant->x!=col) continue;
+          if (plant->y!=row) continue;
+          if (
+            (plant->state==FMN_PLANT_STATE_GROW)||
+            (plant->state==FMN_PLANT_STATE_FLOWER)||
+            (plant->state==FMN_PLANT_STATE_DEAD)
+          ) {
+            farmer_begin_INDOORS(sprite);
+            return;
+          }
         }
         // Finally, don't try to leave home if something is blocking the door.
         if (farmer_test_collisions(sprite)) {
@@ -227,20 +238,27 @@ static void farmer_advance(struct fmn_sprite *sprite) {
       } break;
     case FARMER_STAGE_GO_OUT: {
         // Confirm that we're looking down at a plantable tile. If not, go home.
+        // If there is a plant here that needs watered, pretend we were OUT_MID rather than GO_OUT.
         int8_t col=(int8_t)sprite->x;
         int8_t row=(int8_t)(sprite->y+0.5f);
         if ((col<0)||(row<0)||(col>=FMN_COLC)||(row>=FMN_ROWC)||(fmn_global.cellphysics[fmn_global.map[row*FMN_COLC+col]]!=FMN_CELLPHYSICS_VACANT)) {
           farmer_begin_GO_HOME(sprite);
           return;
         }
+        uint8_t must_water=0;
         const struct fmn_plant *plant=fmn_global.plantv;
         uint8_t i=fmn_global.plantc;
         for (;i-->0;plant++) {
           if ((plant->x==col)&&(plant->y==row)) {
-            farmer_begin_GO_HOME(sprite);
-            return;
+            if (plant->state==FMN_PLANT_STATE_SEED) {
+              must_water=1;
+            } else {
+              farmer_begin_GO_HOME(sprite);
+              return;
+            }
           }
         }
+        if (must_water) goto _begin_water_;
         farmer_begin_DIG(sprite,col,row);
       } break;
     case FARMER_STAGE_DIG: {
@@ -270,7 +288,7 @@ static void farmer_advance(struct fmn_sprite *sprite) {
     case FARMER_STAGE_WAIT_MID: {
         farmer_begin_OUT_MID(sprite);
       } break;
-    case FARMER_STAGE_OUT_MID: {
+    case FARMER_STAGE_OUT_MID: _begin_water_: {
         // Confirm there's a plant here and it's not watered yet.
         int8_t col=(int8_t)sprite->x;
         int8_t row=(int8_t)(sprite->y+0.5f);

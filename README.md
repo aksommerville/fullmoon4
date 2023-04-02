@@ -29,7 +29,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Finalize sound effects.
 - [ ] Linux DRM platform, why not.
 - - [ ] After that works, try for MacOS too. It works on the MacBook but it's a strain.
-- [ ] Farmer doesn't water plant if it's planted initially?
+- [x] Farmer doesn't water plant if it's planted initially?
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 
 ### May
