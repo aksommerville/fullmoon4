@@ -1,4 +1,4 @@
-const fs = require("fs").promises;
+const fs = require("fs").promises || require("../common/fakeFsPromises.js");
 const readInstruments = require("./readInstruments.js");
 
 // => { type, id, qualifier, name }

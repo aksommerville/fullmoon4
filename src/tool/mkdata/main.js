@@ -1,4 +1,4 @@
-const fs = require("fs").promises;
+const fs = require("fs").promises || require("../common/fakeFsPromises.js");
 
 function printUsage() {
   const exename = process.argv[1];

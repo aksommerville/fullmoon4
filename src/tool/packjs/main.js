@@ -1,4 +1,4 @@
-const fs = require("fs").promises;
+const fs = require("fs").promises || require("../common/fakeFsPromises.js");
 
 function printUsage() {
   console.log(`Usage: ${process.argv[1]} -oOUTPUT [INPUT...]`);

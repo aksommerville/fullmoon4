@@ -1,4 +1,4 @@
-const fs = require("fs").promises;
+const fs = require("fs").promises || require("../common/fakeFsPromises.js");
 
 function decodeCell(src) {
   const v = parseInt(src, 16);

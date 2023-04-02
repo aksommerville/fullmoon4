@@ -1,4 +1,5 @@
 const fs = require("fs");
+if (!fs.promises) fs.promises = require("../common/fakeFsPromises.js");
 
 let dstpath = "";
 let srcpath = "";

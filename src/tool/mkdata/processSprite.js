@@ -1,4 +1,4 @@
-const fs = require("fs").promises;
+const fs = require("fs").promises || require("../common/fakeFsPromises.js");
 const linewise = require("../common/linewise.js");
 const getControllerIdsByName = require("../common/getControllerIdsByName.js");
 const getResourceIdByName = require("../common/getResourceIdByName.js");
