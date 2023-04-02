@@ -79,6 +79,24 @@ Nuc Linux Firefox
 ----------------------------------------------------------------------------------------
 iMac Chrome
 
+SN30 doesn't pop up.
+Same hat problems as MacBook, no surprise.
+
+Aside from the hat thing, it runs great.
+
+{"keyMaps":[
+  {"code":"ArrowLeft","btnid":1},
+  {"code":"ArrowRight","btnid":2},
+  {"code":"ArrowUp","btnid":4},
+  {"code":"ArrowDown","btnid":8},
+  {"code":"KeyZ","btnid":16},
+  {"code":"KeyX","btnid":32}
+],"gamepadMaps":[
+  {"id":"Game Controller (Vendor: 3250 Product: 1002)","axes":["x","y","","","","","","","",""],"buttons":[16,0,0,32,0,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"8BitDo Pro 2 (Vendor: 2dc8 Product: 3010)","axes":["x","y","","","","","","","",""],"buttons":[0,16,0,0,32,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"2In1 USB Joystick (Vendor: 0e8f Product: 0003)","axes":["x","y","","","","","","","",""],"buttons":[0,0,16,32,0,0,0,0,0,0,0,0]}
+]}
+
 ----------------------------------------------------------------------------------------
 MacBook Chrome
 
