@@ -26,7 +26,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
 - - Would it help to scale up only by integers? That's probably a good idea in any case.
 - - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
-- [ ] Finalize sound effects.
+- [x] Finalize sound effects.
 - [ ] Linux DRM platform, why not.
 - - [ ] After that works, try for MacOS too. It works on the MacBook but it's a strain.
 - [ ] Farmer doesn't water plant if it's planted initially?
