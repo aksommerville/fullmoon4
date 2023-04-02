@@ -146,3 +146,61 @@ input.toggle:checked + label > * {
   overflow: scroll;
   font-family: monospace;
 }
+
+/* InputConfigurationModal
+ *****************************************/
+ 
+.InputConfigurationModal {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: stretch;
+  width: 80vw;
+  height: 80vh;
+}
+
+.InputConfigurationModal > .deviceList {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.InputConfigurationModal > .detailsPanel {
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.InputConfigurationModal > .deviceList > .entry {
+  padding: 5px;
+  border-bottom: 1px solid #000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.InputConfigurationModal > .deviceList > .entry.selected {
+  background-color: #6af;
+}
+
+.InputConfigurationModal > .detailsPanel > .mapContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.InputConfigurationModal > .detailsPanel > .mapContainer > .mapEntry {
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid #000;
+}
+
+.InputConfigurationModal > .detailsPanel > .mapContainer > .mapEntry.active {
+  background-color: #ff0;
+}
+
+.InputConfigurationModal > .detailsPanel > .keyboardHeader {
+  display: flex;
+  flex-direction: row;
+}

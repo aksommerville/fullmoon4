@@ -17,6 +17,7 @@ export class HeaderUi {
     this.onFullscreen = () => {};
     this.onPause = () => {};
     this.onResume = () => {};
+    this.onConfigureInput = () => {};
     this.onDebugPause = () => {}; // toggle
     this.onDebugStep = () => {};
     
@@ -48,6 +49,7 @@ export class HeaderUi {
     const pauseId = `HeaderUi-${this.discriminator}-pause`;
     this.dom.spawn(this.element, "INPUT", ["toggle", "pause"], { type: "checkbox", id: pauseId, disabled: "disabled", "on-change": () => this.onPauseToggled() });
     this.dom.spawn(this.dom.spawn(this.element, "LABEL", { for: pauseId, tabindex: "0", "on-keypress": e => this.fakePauseToggle(e) }), "DIV", "Pause");
+    this.dom.spawn(this.element, "INPUT", { type: "button", value: "Input", "on-click": () => this.onConfigureInput() });
     
     // Debug controls, not for production:
     this.dom.spawn(this.element, "DIV", ["spacer"]);

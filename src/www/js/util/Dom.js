@@ -26,12 +26,21 @@ export class Dom {
   
   onMutations(records) {
     for (const record of records) {
-      for (const element of record.removedNodes || []) {
-        if (element._fmn_controller) {
-          element._fmn_controller?.onRemoveFromDom?.();
+      for (const parent of record.removedNodes || []) {
+        this.forControllersInElement(parent, (controller, element) => {
+          controller?.onRemoveFromDom?.();
           delete element._fmn_controller;
-        }
+        });
       }
+    }
+  }
+  
+  forControllersInElement(element, cb) {
+    if (element._fmn_controller) {
+      cb(element._fmn_controller, element);
+    }
+    for (const child of element.children || []) {
+      this.forControllersInElement(child, cb);
     }
   }
   

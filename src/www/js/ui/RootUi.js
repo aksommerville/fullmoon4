@@ -9,6 +9,7 @@ import { FooterUi } from "./FooterUi.js";
 import { ErrorModal } from "./ErrorModal.js";
 import { Runtime } from "../game/Runtime.js";
 import { DataService } from "../game/DataService.js";
+import { InputConfigurationModal } from "./InputConfigurationModal.js";
 
 export class RootUi {
   static getDependencies() {
@@ -55,6 +56,7 @@ export class RootUi {
       this.game.setRunning(true);
       this.runtime.resume();
     };
+    this.header.onConfigureInput = () => this.onConfigureInput();
     this.header.onDebugPause = () => this.runtime.debugPauseToggle();
     this.header.onDebugStep = () => this.runtime.debugStep();
     if (this.ready) this.header.setReady(true);
@@ -90,5 +92,12 @@ export class RootUi {
   dataLoaded() {
     this.ready = true;
     this.header.setReady(true);
+  }
+  
+  onConfigureInput() {
+    this.game.setRunning(false);
+    this.runtime.pause();
+    this.header.setPaused(true);
+    const modal = this.dom.spawnModal(InputConfigurationModal);
   }
 }

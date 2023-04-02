@@ -13,6 +13,24 @@ export class InputManager {
     this.gamepads = []; // sparse, use provided index. {id, state, axes: [""|"x"|"y"...], buttons: [mask...], axesState: [number...], buttonsState: [boolean...] }
     this.touches = []; // {id, usage, x, y, anchorX, anchorY} usage: null, "dpad", "use", "menu"
     this.touchDeadRadius = 0;
+    this.dirtyTimeout = null;
+    
+    // If we don't get it from localStorage, set a sensible default configuration.
+    if (!this.load()) {
+      console.log(`Failed to load inputConfig, using defaults.`);
+      this.keyMaps = [ // {code, btnid}
+        { code: "ArrowLeft", btnid: InputManager.INPUT_LEFT },
+        { code: "ArrowRight", btnid: InputManager.INPUT_RIGHT },
+        { code: "ArrowUp", btnid: InputManager.INPUT_UP },
+        { code: "ArrowDown", btnid: InputManager.INPUT_DOWN },
+        { code: "KeyZ", btnid: InputManager.INPUT_USE },
+        { code: "KeyX", btnid: InputManager.INPUT_MENU },
+      ];
+      this.gamepadMaps = []; // {id, axes, buttons}
+    }
+    
+    this.listeners = [];
+    this.nextListenerId = 1;
     
     this.window.addEventListener("keydown", e => this.onKey(e, 1));
     this.window.addEventListener("keyup", e => this.onKey(e, 0));
@@ -35,6 +53,99 @@ export class InputManager {
     this._updateGamepad();
   }
   
+  listen(cb) {
+    const id = this.nextListenerId++;
+    this.listeners.push({cb, id});
+    return id;
+  }
+  
+  unlisten(id) {
+    const p = this.listeners.findIndex(l => l.id === id);
+    if (p < 0) return;
+    this.listeners.splice(p, 1);
+  }
+  
+  broadcast(event) {
+    for (const {cb} of this.listeners) cb(event);
+  }
+  
+  forEachGamepad(cb) {
+    for (const g of this.gamepads) {
+      if (!g) continue;
+      const result = cb(g);
+      if (result) return result;
+    }
+    return null;
+  }
+  
+  updateGamepadMap(map) {
+    if (!map?.id) throw new Error(`Invalid gamepad map`);
+    const p = this.gamepadMaps.findIndex(m => m.id === map.id);
+    if (p >= 0) {
+      this.gamepadMaps[p] = map;
+    } else {
+      this.gamepadMaps.push(map);
+    }
+    for (const gamepad of this.gamepads) {
+      if (!gamepad) continue;
+      if (gamepad.id !== map.id) continue;
+      gamepad.axes = [...map.axes];
+      gamepad.buttons = [...map.buttons];
+      gamepad.axesState = gamepad.axes.map(() => 0);
+      gamepad.buttonsState = gamepad.buttons.map(() => false);
+      this.state &= ~gamepad.state;
+      gamepad.state = 0;
+    }
+    this.dirty();
+  }
+  
+  updateKeyMaps(map) {
+    this.keyMaps = map.map(m => ({...m}));
+    this.dirty();
+  }
+  
+  /* Load and save localStorage.
+   *******************************************************/
+   
+  dirty() {
+    if (this.dirtyTimeout) {
+      this.window.clearTimeout(this.dirtyTimeout);
+    }
+    this.dirtyTimeout = this.window.setTimeout(() => {
+      this.dirtyTimeout = null;
+      this.saveNow();
+    }, 2000);
+  }
+  
+  saveNow() {
+    if (this.dirtyTimeout) {
+      this.window.clearTimeout(this.dirtyTimeout);
+      this.dirtyTimeout = null;
+    }
+    this.window.localStorage.setItem("inputConfig", this.encodeConfig());
+    console.log(`Saved inputConfig`);
+  }
+  
+  load() {
+    try {
+      const src = this.window.localStorage.getItem("inputConfig");
+      if (!src) throw "inputConfig not found in localStorage.";
+      const decoded = JSON.parse(src);
+      this.keyMaps = decoded.keyMaps || [];
+      this.gamepadMaps = decoded.gamepadMaps || [];
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  encodeConfig() {
+    return JSON.stringify({
+      keyMaps: this.keyMaps,
+      gamepadMaps: this.gamepadMaps,
+    });
+  }
+  
   /* Keyboard.
    *******************************************/
    
@@ -54,15 +165,8 @@ export class InputManager {
   }
   
   mapKey(code) {
-    switch (code) {
-      //TODO configurable
-      case "ArrowLeft": return InputManager.INPUT_LEFT;
-      case "ArrowRight": return InputManager.INPUT_RIGHT;
-      case "ArrowUp": return InputManager.INPUT_UP;
-      case "ArrowDown": return InputManager.INPUT_DOWN;
-      case "KeyZ": return InputManager.INPUT_USE;
-      case "KeyX": return InputManager.INPUT_MENU;
-    }
+    const map = this.keyMaps.find(m => m.code === code);
+    if (map) return map.btnid;
     return null;
   }
   
@@ -76,15 +180,15 @@ export class InputManager {
       const gamepad = this.gamepads[src.index];
       if (!gamepad) continue;
       for (let i=gamepad.axes.length; i-->0; ) {
-        if (!gamepad.axes[i]) continue;
+        if (!gamepad.axes[i] && !this.listeners.length) continue;
         const vraw = src.axes[i];
         const v = (vraw >= axisThreshold) ? 1 : (vraw <= -axisThreshold) ? -1 : 0;
         if (v === gamepad.axesState[i]) continue;
-        let btnidLo, btnidHi;
+        let btnidLo = 0, btnidHi = 0;
         switch (gamepad.axes[i]) {
           case "x": btnidLo = InputManager.INPUT_LEFT; btnidHi = InputManager.INPUT_RIGHT; break;
           case "y": btnidLo = InputManager.INPUT_UP; btnidHi = InputManager.INPUT_DOWN; break;
-          default: continue;
+          default: if (!this.listeners.length) continue;
         }
         switch (gamepad.axesState[i]) {
           case -1: gamepad.state &= ~btnidLo; this.state &= ~btnidLo; break;
@@ -95,9 +199,10 @@ export class InputManager {
           case 1: gamepad.state |= btnidHi; this.state |= btnidHi; break;
         }
         gamepad.axesState[i] = v;
+        if (this.listeners.length) this.broadcast({ type: "axis", device: src, axisIndex: i, v });
       }
       for (let i=gamepad.buttons.length; i-->0; ) {
-        if (!gamepad.buttons[i]) continue;
+        if (!gamepad.buttons[i] && !this.listeners.length) continue;
         if (src.buttons[i].value) {
           if (gamepad.buttonsState[i]) continue;
           gamepad.buttonsState[i] = true;
@@ -109,6 +214,7 @@ export class InputManager {
           gamepad.state &= ~gamepad.buttons[i];
           this.state &= ~gamepad.buttons[i];
         }
+        if (this.listeners.length) this.broadcast({ type: "button", device: src, buttonIndex: i, v: gamepad.buttonsState[i] });
       }
     }
   }
@@ -128,6 +234,7 @@ export class InputManager {
     gamepad.axesState = e.gamepad.axes.map(() => 0);
     gamepad.buttonsState = e.gamepad.buttons.map(() => false);
     this._mapGamepad(gamepad);
+    this.broadcast({ type: "gamepadconnected", gamepad });
   }
   
   onGamepadDisconnected(e) {
@@ -137,22 +244,25 @@ export class InputManager {
     if (gamepad.state) {
       this.state &= ~gamepad.state;
     }
+    this.broadcast({ type: "gamepaddisconnected", gamepad });
   }
   
   _mapGamepad(gamepad) {
-    console.log(`TODO InputManager._mapGamepad ac=${gamepad.axes.length} bc=${gamepad.buttons.length} id=${JSON.stringify(gamepad.id)}`);
-    
-    // PS2 knockoffs, Linux, Chrome.
-    if (gamepad.id === "MY-POWER CO.,LTD. 2In1 USB Joystick (STANDARD GAMEPAD Vendor: 0e8f Product: 0003)") {
-      //if (gamepad.axes.length > 0) gamepad.axes[0] = "x"; // lx
-      //if (gamepad.axes.length > 1) gamepad.axes[1] = "y"; // ly
-      if (gamepad.buttons.length > 0) gamepad.buttons[0] = InputManager.INPUT_USE; // south
-      if (gamepad.buttons.length > 2) gamepad.buttons[2] = InputManager.INPUT_MENU; // west
-      if (gamepad.buttons.length > 0) gamepad.buttons[12] = InputManager.INPUT_UP; // dpad...
-      if (gamepad.buttons.length > 0) gamepad.buttons[13] = InputManager.INPUT_DOWN;
-      if (gamepad.buttons.length > 0) gamepad.buttons[14] = InputManager.INPUT_LEFT;
-      if (gamepad.buttons.length > 0) gamepad.buttons[15] = InputManager.INPUT_RIGHT;
-      return;
+    const map = this.gamepadMaps.find(m => m.id === gamepad.id);
+    if (map) {
+      this._applyGamepadMap(gamepad, map);
+      console.log(`gamepad ${JSON.stringify(gamepad.id)} mapped per config`);
+    } else {
+      console.log(`gamepad ${JSON.stringify(gamepad.id)} no map. ${gamepad.axes.length} axes, ${gamepad.buttons.length} buttons`);
+    }
+  }
+  
+  _applyGamepadMap(gamepad, map) {
+    for (let i=Math.min(gamepad.axes.length, map.axes.length); i-->0; ) {
+      gamepad.axes[i] = map.axes[i];
+    }
+    for (let i=Math.min(gamepad.buttons.length, map.buttons.length); i-->0; ) {
+      gamepad.buttons[i] = map.buttons[i];
     }
   }
   
