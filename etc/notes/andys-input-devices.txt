@@ -82,5 +82,28 @@ iMac Chrome
 ----------------------------------------------------------------------------------------
 MacBook Chrome
 
+Xbox and Xbox 360 not detected (as expected).
+Black-on-black not usable. Stick is noisy, and I think the dpad is reporting like a hat? Need to look into this.
+Zelda ditto.
+VCS Stick ditto (only has the one hat).
+Pro 2 stick is OK but dpad not.
+PS2 knockoff ditto.
+VCS Pad ditto.
+SN30 works great :)
+
+{"keyMaps":[
+  {"code":"ArrowLeft","btnid":1},
+  {"code":"ArrowRight","btnid":2},
+  {"code":"ArrowUp","btnid":4},
+  {"code":"ArrowDown","btnid":8},
+  {"code":"KeyZ","btnid":16},
+  {"code":"KeyX","btnid":32}
+],"gamepadMaps":[
+  {"id":"8BitDo Pro 2 (Vendor: 2dc8 Product: 3010)","axes":["x","y","","","","","","","",""],"buttons":[0,16,0,0,32,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"2In1 USB Joystick (Vendor: 0e8f Product: 0003)","axes":["x","y","","","","","","","",""],"buttons":[0,0,16,32,0,0,0,0,0,0,0,0]},
+  {"id":"Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)","axes":["x","y","",""],"buttons":[16,0,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},
+  {"id":"Game Controller (Vendor: 3250 Product: 1002)","axes":["x","y","","","","","","","",""],"buttons":[16,0,0,32,0,0,0,0,0,0,0,0,0,0,0]}
+]}
+
 ----------------------------------------------------------------------------------------
 Asus Laptop Chrome
