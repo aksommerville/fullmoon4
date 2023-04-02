@@ -107,3 +107,9 @@ SN30 works great :)
 
 ----------------------------------------------------------------------------------------
 Asus Laptop Chrome
+
+Apparently no pre-built version of WASI SDK works in 32-bit Linux, tried all the way back to v2.
+(and don't even ask about building from source, that ended in tears).
+But it wouldn't matter anyway because no browser available to this Debian distro supports ES5, far as I can tell.
+(like, even GitHub.com fails spectacularly).
+It wasn't going to work anyway, but this all cements the decision: We need to build native in addition to web.
