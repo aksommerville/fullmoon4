@@ -6,12 +6,18 @@ web_OUTDIR:=out/web
 
 web_OPT_ENABLE:=web_glue
 
-web_EXPORTED_SYMBOLS:=fmn_global fmn_init fmn_update __indirect_function_table
+web_EXPORTED_SYMBOLS:=fmn_global fmn_init fmn_update
 
-web_LDOPT:=-nostdlib -Xlinker --no-entry -Xlinker --import-undefined \
-   $(foreach S,$(web_EXPORTED_SYMBOLS),-Xlinker --export=$S)
+# --allow-undefined replaced by --import-undefined around WASI 10, but my MacBook can't go above 8.
+web_LDOPT:=-nostdlib -Xlinker --no-entry -Xlinker --export-table \
+   $(foreach S,$(web_EXPORTED_SYMBOLS),-Xlinker --export=$S) \
+  $(if $(findstring -8.0,$(web_WASI_SDK)), \
+    -Xlinker --allow-undefined, \
+    -Xlinker --import-undefined \
+  )
+   
 web_CCOPT:=-c -MMD -O3 -nostdlib
-web_CCINC:=-Isrc -I$(web_MIDDIR)
+web_CCINC:=-Isrc -I$(web_MIDDIR) $(web_CCINC_EXTRA)
 web_CCWARN:=-Werror -Wimplicit -Wno-parentheses -Wno-comment
 web_CC:=$(web_WASI_SDK)/bin/clang $(web_CCOPT) $(web_CCDEF) $(web_CCINC) $(web_CCWARN)
 web_LD:=$(web_WASI_SDK)/bin/clang $(web_LDOPT)

@@ -1,6 +1,5 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/fmn_game.h"
-#include <string.h>
 
 static int16_t _chalkguard_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier);
 

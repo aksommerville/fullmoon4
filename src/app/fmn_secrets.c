@@ -1,5 +1,4 @@
 #include "fmn_game.h"
-#include <string.h>
 
 /* Rebuild secrets.
  */

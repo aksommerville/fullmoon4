@@ -19,6 +19,7 @@
 void *memcpy(void *dst,const void *src,size_t c);
 void *memmove(void *dst,const void *src,size_t c);
 void *memset(void *dst,int src,size_t c);
+int memcmp(const void *a,const void *b,size_t c);
 int rand();
 
 #define FMN_COLC 20

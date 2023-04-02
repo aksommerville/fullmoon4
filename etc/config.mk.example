@@ -25,6 +25,7 @@ verify:web-verify
 
 # https://github.com/WebAssembly/wasi-sdk
 web_WASI_SDK:=/home/andy/proj/thirdparty/wasi-sdk-16.0
+web_CCINC_EXTRA:=
 
 # Do not allow these details out to GitHub!
 # And we are never storing the password, even here.

@@ -10,6 +10,6 @@ generic_OPT_ENABLE:=generic_glue
 
 generic_EXE:=$(generic_OUTDIR)/fullmoon
 
-generic_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit
+generic_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses
 generic_LD:=gcc
 generic_LDPOST:=-lm
