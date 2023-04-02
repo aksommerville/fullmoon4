@@ -23,8 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Crow: How to decide on target location? see src/app/fmn_secrets.c
 - [x] Map gamepads necessary for demo (mind that they will be different per browser and os).
 - - [x] And configurable mapping. Awkward to ask people to test the demo when they can't configure input!
-- [ ] UI for saved game management.
-- [ ] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
+- [x] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
 - - Would it help to scale up only by integers? That's probably a good idea in any case.
 - - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
 - [ ] Finalize sound effects.
@@ -53,6 +52,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### After GDEX
 
+- [ ] UI for saved game management.
+- [ ] Building resources is too slow. Rewrite all those Node tools in C.
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.

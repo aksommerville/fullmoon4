@@ -121,14 +121,15 @@ input.toggle:checked + label > * {
 .GameUi {
   height: 90vh;
   display: flex;
-  align-items: stretch;
-  justify-content: stretch;
+  align-items: center;
+  justify-content: center;
 }
- 
+
 .GameUi > .gameView {
-  image-rendering: pixelated; /* TODO linear interpolation when less than 3x or 4x of the framebuffer size. */
-  object-fit: contain;
-  width: 100%;
+  image-rendering: pixelated;
+}
+.GameUi > .gameView.fuzzy { /* TODO Provide UI to enable this. It's a matter of taste. */
+  image-rendering: unset;
 }
 
 .GameUi > .gameView.running {
