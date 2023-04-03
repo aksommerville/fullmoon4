@@ -18,18 +18,15 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [x] Detect loss of window focus and hard-pause. Even if it means just tracking time between updates instead of an explicit event.
-- [x] Feedback for blowback.
-- [x] Crow: How to decide on target location? see src/app/fmn_secrets.c
-- [x] Map gamepads necessary for demo (mind that they will be different per browser and os).
-- - [x] And configurable mapping. Awkward to ask people to test the demo when they can't configure input!
-- [x] Chrome Linux, I get 1-pixel artifacts when scaled up. Visible when the violin chart is up.
-- - Would it help to scale up only by integers? That's probably a good idea in any case.
-- - We're using straight `object-fit:contain` on a canvas that fills the entire available space. Will be tricky.
-- [x] Finalize sound effects.
 - [ ] Linux DRM platform, why not.
-- - [ ] After that works, try for MacOS too. It works on the MacBook but it's a strain.
-- [x] Farmer doesn't water plant if it's planted initially?
+- - [ ] GLX first, to simplify the workflow.
+- - [ ] ALSA
+- - [ ] evdev
+- - [ ] Rendering - GL
+- - [ ] Synth
+- - [ ] Rendering - Soft
+- - [ ] DRM
+- - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 
 ### May
