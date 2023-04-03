@@ -1,25 +1,5 @@
 #include "bigpc_internal.h"
 
-/* XXX TEMP! Stub drivers, just to get it building.
- */
- 
-const struct bigpc_video_type bigpc_video_type_glx={
-  .name="glx",
-  .objlen=sizeof(struct bigpc_video_driver),
-};
-const struct bigpc_video_type bigpc_video_type_drm={
-  .name="drm",
-  .objlen=sizeof(struct bigpc_video_driver),
-};
-const struct bigpc_input_type bigpc_input_type_evdev={
-  .name="evdev",
-  .objlen=sizeof(struct bigpc_input_driver),
-};
-const struct bigpc_audio_type bigpc_audio_type_alsa={
-  .name="alsa",
-  .objlen=sizeof(struct bigpc_audio_driver),
-};
-
 /* Pop the next token from a comma-delimited list.
  * Always returns <0 or >srcp.
  */
@@ -127,7 +107,11 @@ static int bigpc_audio_try_init(const struct bigpc_audio_type *type) {
     fprintf(stderr,"%s: Failed to initialize audio driver '%s'\n",bigpc.exename,type->name);
     return -2;
   }
-  fprintf(stderr,"%s: Using audio driver '%s'\n",bigpc.exename,type->name);
+  fprintf(stderr,
+    "%s: Using audio driver '%s' rate=%d chanc=%d format=%d\n",
+    bigpc.exename,type->name,
+    bigpc.audio->rate,bigpc.audio->chanc,bigpc.audio->format
+  );
   return 0;
 }
 

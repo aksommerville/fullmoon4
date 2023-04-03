@@ -19,13 +19,13 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [ ] Linux DRM platform, why not.
-- - [ ] GLX first, to simplify the workflow.
-- - [ ] ALSA
-- - [ ] evdev
+- - [x] GLX first, to simplify the workflow.
+- - [x] ALSA
+- - [x] evdev
 - - [ ] Rendering - GL
 - - [ ] Synth
 - - [ ] Rendering - Soft
-- - [ ] DRM
+- - [ ] DRM, validate
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 
