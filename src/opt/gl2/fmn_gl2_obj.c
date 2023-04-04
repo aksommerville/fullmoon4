@@ -17,7 +17,6 @@ static int _gl2_init(struct bigpc_render_driver *driver,struct bigpc_video_drive
  */
  
 static int _gl2_update(struct bigpc_image *fb,struct bigpc_render_driver *driver) {
-  fprintf(stderr,"%s\n",__func__);
   return 0;
 }
 

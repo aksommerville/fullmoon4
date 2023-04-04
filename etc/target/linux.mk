@@ -6,9 +6,11 @@ linux_MIDDIR:=mid/linux
 linux_OUTDIR:=out/linux
 
 # 'xinerama' is not a code unit; it's a flag to 'glx', allowing it to use libXinerama.
-linux_OPT_ENABLE:=bigpc genioc linux evdev alsa glx xinerama drm gl2 soft stdsyn minsyn
+linux_OPT_ENABLE:=bigpc genioc linux evdev alsa glx xinerama drm gl2 soft stdsyn minsyn datafile
 
 linux_EXE:=$(linux_OUTDIR)/fullmoon
+linux_DATA:=$(linux_OUTDIR)/data
+linux-all:$(linux_EXE) $(linux_DATA)
 
 linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses \
   -I/usr/include/libdrm \
@@ -16,4 +18,6 @@ linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses
 linux_LD:=gcc
 linux_LDPOST:=-lm -lX11 -lGL -lGLX -lXinerama -lEGL -ldrm -lgbm
 
-linux-run:$(linux_EXE);$(linux_EXE)
+$(eval $(call SINGLE_DATA_ARCHIVE,linux,$(linux_DATA)))
+
+linux-run:$(linux_EXE) $(linux_DATA);$(linux_EXE) --data=$(linux_DATA)

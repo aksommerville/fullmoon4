@@ -58,6 +58,7 @@ int8_t fmn_load_map(
   )
 ) {
   fmn_log("TODO %s %d",__func__,mapid);
+  return 1;
   return -1;
 }
 

@@ -9,6 +9,7 @@ void bigpc_config_cleanup(struct bigpc_config *config) {
   if (config->input_drivers) free(config->input_drivers);
   if (config->synth_drivers) free(config->synth_drivers);
   if (config->render_drivers) free(config->render_drivers);
+  if (config->data_path) free(config->data_path);
 }
 
 /* Evaluate primitives.
@@ -203,6 +204,8 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   STRINGOPT("synth-drivers",synth_drivers)
   
   STRINGOPT("render-drivers",render_drivers)
+  
+  STRINGOPT("data",data_path)
   
   #undef STRINGOPT
   #undef BOOLOPT

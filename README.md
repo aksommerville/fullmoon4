@@ -23,7 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] ALSA
 - - [x] evdev
 - - [ ] gl2
-- - [ ] Load resources
+- - [x] Load resources
 - - [ ] stdsyn
 - - [ ] soft render
 - - [ ] Input manager

@@ -21,6 +21,7 @@ void bigpc_quit() {
   
   bigpc_render_del(bigpc.render);
   bigpc_synth_del(bigpc.synth);
+  fmn_datafile_del(bigpc.datafile);
 }
 
 /* Init.
@@ -30,6 +31,16 @@ int bigpc_init(int argc,char **argv) {
   int err;
   if ((err=bigpc_configure_argv(argc,argv))<0) return err;
   if ((err=bigpc_config_ready())<0) return err;
+  
+  if (!bigpc.config.data_path) {
+    //TODO Locate data file on our own.
+    fprintf(stderr,"%s: Please indicate data file as '--data=PATH'\n",bigpc.exename);
+    return -2;
+  }
+  if (!(bigpc.datafile=fmn_datafile_open(bigpc.config.data_path))) {
+    fprintf(stderr,"%s: Failed to read data file.\n",bigpc.config.data_path);
+    return -2;
+  }
   
   bigpc_signal_init();
   if ((err=bigpc_video_init())<0) return err;

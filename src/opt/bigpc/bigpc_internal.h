@@ -8,6 +8,7 @@
 #include "bigpc_input.h"
 #include "bigpc_synth.h"
 #include "bigpc_render.h"
+#include "opt/datafile/fmn_datafile.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,6 +28,8 @@ struct bigpc_config {
   char *synth_drivers;
   
   char *render_drivers;
+  
+  char *data_path;
 };
 
 extern struct bigpc {
@@ -42,6 +45,7 @@ extern struct bigpc {
   int inputc,inputa;
   struct bigpc_synth_driver *synth;
   struct bigpc_render_driver *render;
+  struct fmn_datafile *datafile;
   
 } bigpc;
 
