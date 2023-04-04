@@ -6,6 +6,8 @@
 #include "bigpc_video.h"
 #include "bigpc_audio.h"
 #include "bigpc_input.h"
+#include "bigpc_synth.h"
+#include "bigpc_render.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -21,6 +23,10 @@ struct bigpc_config {
   int audio_rate;
   int audio_chanc;
   int audio_format;
+  
+  char *synth_drivers;
+  
+  char *render_drivers;
 };
 
 extern struct bigpc {
@@ -34,6 +40,8 @@ extern struct bigpc {
   struct bigpc_audio_driver *audio;
   struct bigpc_input_driver **inputv;
   int inputc,inputa;
+  struct bigpc_synth_driver *synth;
+  struct bigpc_render_driver *render;
   
 } bigpc;
 

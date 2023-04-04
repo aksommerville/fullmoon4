@@ -14,6 +14,8 @@
 struct bigpc_video_driver;
 struct bigpc_audio_driver;
 struct bigpc_input_driver;
+struct bigpc_synth_driver;
+struct bigpc_render_driver;
 
 void bigpc_quit();
 int bigpc_init(int argc,char **argv);

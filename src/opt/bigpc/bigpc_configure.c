@@ -7,6 +7,8 @@ void bigpc_config_cleanup(struct bigpc_config *config) {
   if (config->video_drivers) free(config->video_drivers);
   if (config->audio_drivers) free(config->audio_drivers);
   if (config->input_drivers) free(config->input_drivers);
+  if (config->synth_drivers) free(config->synth_drivers);
+  if (config->render_drivers) free(config->render_drivers);
 }
 
 /* Evaluate primitives.
@@ -198,7 +200,9 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   INTOPT("audio-chanc",audio_chanc,1,8)
   ENUMOPT("audio-format",audio_format,bigpc_audio_format_eval)
   
-  //TODO options
+  STRINGOPT("synth-drivers",synth_drivers)
+  
+  STRINGOPT("render-drivers",render_drivers)
   
   #undef STRINGOPT
   #undef BOOLOPT

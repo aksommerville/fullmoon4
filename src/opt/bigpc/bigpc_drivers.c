@@ -53,6 +53,18 @@ static int bigpc_video_try_init(const struct bigpc_video_type *type) {
   return 0;
 }
 
+/* Initialize renderer.
+ */
+ 
+static int bigpc_render_try_init(const struct bigpc_render_type *type) {
+  if (!(bigpc.render=bigpc_render_new(type,bigpc.video))) {
+    fprintf(stderr,"%s: Error initializing renderer '%s'.\n",bigpc.exename,type->name);
+    return -2;
+  }
+  fprintf(stderr,"%s: Using renderer '%s'.\n",bigpc.exename,type->name);
+  return 0;
+}
+
 /* Init video.
  */
 
@@ -84,7 +96,31 @@ int bigpc_video_init() {
     return -2;
   }
   
-  // TODO Renderer setup?
+  // Initialize renderer, same idea as video.
+  if (bigpc.config.render_drivers) {
+    int p=0; while (1) {
+      const char *name=0;
+      int namec=0;
+      if ((p=bigpc_next_comma_token(&name,&namec,bigpc.config.render_drivers,p))<0) break;
+      const struct bigpc_render_type *type=bigpc_render_type_by_name(name,namec);
+      if (!type) {
+        fprintf(stderr,"%s: Renderer '%.*s' not found.\n",bigpc.exename,namec,name);
+        continue;
+      }
+      if (bigpc_render_try_init(type)>=0) break;
+    }
+  } else {
+    int p=0; while (1) {
+      const struct bigpc_render_type *type=bigpc_render_type_by_index(p++);
+      if (!type) break;
+      if (type->appointment_only) continue;
+      if (bigpc_render_try_init(type)>=0) break;
+    }
+  }
+  if (!bigpc.render) {
+    fprintf(stderr,"%s: Failed to initialize a renderer.\n",bigpc.exename);
+    return -2;
+  }
   
   return 0;
 }
@@ -112,6 +148,23 @@ static int bigpc_audio_try_init(const struct bigpc_audio_type *type) {
     bigpc.exename,type->name,
     bigpc.audio->rate,bigpc.audio->chanc,bigpc.audio->format
   );
+  return 0;
+}
+
+/* Initialize synthesizer.
+ */
+ 
+static int bigpc_synth_try_init(const struct bigpc_synth_type *type) {
+  struct bigpc_synth_config config={
+    .rate=bigpc.audio->rate,
+    .chanc=bigpc.audio->chanc,
+    .format=bigpc.audio->format,
+  };
+  if (!(bigpc.synth=bigpc_synth_new(type,&config))) {
+    fprintf(stderr,"%s: Failed to initialize synthesizer '%s'\n",bigpc.exename,type->name);
+    return -2;
+  }
+  fprintf(stderr,"%s: Using synthesizer '%s'.\n",bigpc.exename,type->name);
   return 0;
 }
 
@@ -146,7 +199,31 @@ int bigpc_audio_init() {
     return -2;
   }
   
-  // TODO Synthesizer.
+  // Initialize synthesizer, same idea.
+  if (bigpc.config.synth_drivers) {
+    int p=0; while (1) {
+      const char *name=0;
+      int namec=0;
+      if ((p=bigpc_next_comma_token(&name,&namec,bigpc.config.synth_drivers,p))<0) break;
+      const struct bigpc_synth_type *type=bigpc_synth_type_by_name(name,namec);
+      if (!type) {
+        fprintf(stderr,"%s: Synthesizer '%.*s' not found.\n",bigpc.exename,namec,name);
+        continue;
+      }
+      if (bigpc_synth_try_init(type)>=0) break;
+    }
+  } else {
+    int p=0; while (1) {
+      const struct bigpc_synth_type *type=bigpc_synth_type_by_index(p++);
+      if (!type) break;
+      if (type->appointment_only) continue;
+      if (bigpc_synth_try_init(type)>=0) break;
+    }
+  }
+  if (!bigpc.synth) {
+    fprintf(stderr,"%s: Failed to initialize a synthesizer.\n",bigpc.exename);
+    return -2;
+  }
 
   return 0;
 }

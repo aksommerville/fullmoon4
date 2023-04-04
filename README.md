@@ -22,10 +22,13 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] GLX first, to simplify the workflow.
 - - [x] ALSA
 - - [x] evdev
-- - [ ] Rendering - GL
-- - [ ] Synth
-- - [ ] Rendering - Soft
+- - [ ] gl2
+- - [ ] Load resources
+- - [ ] stdsyn
+- - [ ] soft render
+- - [ ] Input manager
 - - [ ] DRM, validate
+- - [ ] minsyn
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 
