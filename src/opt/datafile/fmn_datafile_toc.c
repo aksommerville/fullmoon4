@@ -124,11 +124,11 @@ int fmn_datafile_for_each_of_type(
   while (lo<hi) {
     int ck=(lo+hi)>>1;
     const struct fmn_datafile_toc_entry *entry=file->entryv+ck;
-         if (entry->type<type) hi=ck;
-    else if (entry->type>type) lo=ck+1;
+         if (type<entry->type) hi=ck;
+    else if (type>entry->type) lo=ck+1;
     else {
       entry--;
-      while ((ck>lo)&&(entry->type==type)) { entry--; ck--; }
+      while ((ck>lo)&&(entry[-1].type==type)) { entry--; ck--; }
       lo=ck;
       break;
     }
@@ -153,11 +153,11 @@ int fmn_datafile_for_each_of_qualified_type(
   while (lo<hi) {
     int ck=(lo+hi)>>1;
     const struct fmn_datafile_toc_entry *entry=file->entryv+ck;
-         if (entry->type<type) hi=ck;
-    else if (entry->type>type) lo=ck+1;
+         if (type<entry->type) hi=ck;
+    else if (type>entry->type) lo=ck+1;
     else {
       entry--;
-      while ((ck>lo)&&(entry->type==type)) { entry--; ck--; }
+      while ((ck>lo)&&(entry[-1].type==type)) { entry--; ck--; }
       lo=ck;
       break;
     }
@@ -183,13 +183,13 @@ int fmn_datafile_for_each_of_id(
   while (lo<hi) {
     int ck=(lo+hi)>>1;
     const struct fmn_datafile_toc_entry *entry=file->entryv+ck;
-         if (entry->type<type) hi=ck;
-    else if (entry->type>type) lo=ck+1;
-    else if (entry->id<id) hi=ck;
-    else if (entry->id>id) lo=ck+1;
+         if (type<entry->type) hi=ck;
+    else if (type>entry->type) lo=ck+1;
+    else if (id<entry->id) hi=ck;
+    else if (id>entry->id) lo=ck+1;
     else {
       entry--;
-      while ((ck>lo)&&(entry->type==type)&&(entry->id==id)) { entry--; ck--; }
+      while ((ck>lo)&&(entry[-1].type==type)&&(entry[-1].id==id)) { entry--; ck--; }
       lo=ck;
       break;
     }

@@ -11,6 +11,7 @@ struct bigpc_render_driver;
 struct bigpc_render_type;
 struct bigpc_video_driver;
 struct bigpc_image;
+struct fmn_datafile;
 
 /* Instance.
  *************************************************************/
@@ -18,6 +19,8 @@ struct bigpc_image;
 struct bigpc_render_driver {
   const struct bigpc_render_type *type;
   int refc;
+  int w,h; // Provider should update before each render.
+  struct fmn_datafile *datafile; // WEAK
 };
 
 void bigpc_render_del(struct bigpc_render_driver *driver);

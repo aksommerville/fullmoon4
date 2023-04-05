@@ -78,6 +78,7 @@ struct bigpc_video_driver {
   struct bigpc_video_delegate delegate;
   int refc;
   int w,h; // Real output size, not your framebuffer.
+  int fbw,fbh; // Preserved from config. Not necessarily what you'll get.
   int fullscreen;
   int renderer;
 };

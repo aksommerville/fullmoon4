@@ -64,13 +64,17 @@ struct bigpc_video_driver *bigpc_video_driver_new(
   const struct bigpc_video_delegate *delegate,
   const struct bigpc_video_config *config
 ) {
-  if (!type) return 0;
+  if (!type||!config) return 0;
   struct bigpc_video_driver *driver=calloc(1,type->objlen);
   if (!driver) return 0;
   
   driver->type=type;
   driver->refc=1;
   if (delegate) driver->delegate=*delegate;
+  driver->w=config->w;
+  driver->h=config->h;
+  driver->fbw=config->fbw;
+  driver->fbh=config->fbh;
   
   if (type->init) {
     if (type->init(driver,config)<0) {

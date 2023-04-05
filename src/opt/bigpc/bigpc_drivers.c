@@ -62,6 +62,9 @@ static int bigpc_render_try_init(const struct bigpc_render_type *type) {
     return -2;
   }
   fprintf(stderr,"%s: Using renderer '%s'.\n",bigpc.exename,type->name);
+  bigpc.render->w=bigpc.video->w;
+  bigpc.render->h=bigpc.video->h;
+  bigpc.render->datafile=bigpc.datafile;
   return 0;
 }
 

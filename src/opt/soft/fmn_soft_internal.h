@@ -4,6 +4,7 @@
 #include "opt/bigpc/bigpc_render.h"
 #include "opt/bigpc/bigpc_video.h"
 #include "opt/bigpc/bigpc_image.h"
+#include <stdio.h>
 
 struct bigpc_render_driver_soft {
   struct bigpc_render_driver hdr;

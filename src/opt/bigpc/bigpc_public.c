@@ -87,6 +87,8 @@ int bigpc_update() {
   fmn_update(now,input_state);
   
   // Render one frame.
+  bigpc.render->w=bigpc.video->w;
+  bigpc.render->h=bigpc.video->h;
   struct bigpc_image *fb=0;
   if (bigpc.video->renderer==BIGPC_RENDERER_rgb32) {
     if (!(fb=bigpc_video_driver_begin_soft(bigpc.video))) return -1;
