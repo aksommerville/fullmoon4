@@ -20,6 +20,13 @@ static void _glx_del(struct bigpc_video_driver *driver) {
   bigpc_image_del(DRIVER->fb);
 }
 
+static void _glx_cb_resize(void *userdata,int w,int h) {
+  struct bigpc_video_driver *driver=userdata;
+  driver->w=w;
+  driver->h=h;
+  if (driver->delegate.cb_resize) driver->delegate.cb_resize(driver,w,h);
+}
+
 static int _glx_init(struct bigpc_video_driver *driver,const struct bigpc_video_config *config) {
 
   // The fmn_glx and bigpc video delegates are pretty much the same (not a coincidence, written by the same guy).
@@ -27,7 +34,7 @@ static int _glx_init(struct bigpc_video_driver *driver,const struct bigpc_video_
     .userdata=driver,
     .close=(void*)driver->delegate.cb_close,
     .focus=(void*)driver->delegate.cb_focus,
-    .resize=(void*)driver->delegate.cb_resize,
+    .resize=_glx_cb_resize,
     .key=(void*)driver->delegate.cb_key,
     .text=(void*)driver->delegate.cb_text,
     .mmotion=(void*)driver->delegate.cb_mmotion,

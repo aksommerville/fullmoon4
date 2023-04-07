@@ -1,6 +1,7 @@
 #ifndef FMN_GL2_INTERNAL_H
 #define FMN_GL2_INTERNAL_H
 
+#include "app/fmn_platform.h"
 #include "opt/bigpc/bigpc_render.h"
 #include "opt/bigpc/bigpc_video.h"
 #include <stdio.h>
@@ -71,10 +72,12 @@ struct fmn_gl2_vertex_raw {
   GLubyte r,g,b,a;
 };
 void fmn_gl2_draw_raw(int mode,const struct fmn_gl2_vertex_raw *vtxv,int vtxc);
+void fmn_gl2_draw_raw_rect(int x,int y,int w,int h,uint32_t rgba);
 
 struct fmn_gl2_vertex_mintile {
   GLshort x,y; // center
   GLubyte tileid;
+  GLubyte xform;
 };
 void fmn_gl2_draw_mintile(const struct fmn_gl2_vertex_mintile *vtxv,int vtxc);
 
@@ -99,6 +102,26 @@ void fmn_gl2_draw_decal_swap(
   int srcx,int srcy,int srcw,int srch
 );
 
+/* I did a bad job splitting platform from game, and the result is that platforms are expected to know a lot about the game.
+ * I mean, a lot!
+ * So we split it again here: Everything Full Moony goes into gl2's "game" object.
+ * The rest of this gl2 unit is pretty much generic.
+ *******************************************************************/
+ 
+struct fmn_gl2_game {
+  int map_dirty;
+  struct fmn_gl2_framebuffer mapbits;
+  int tilesize;
+  struct fmn_gl2_vertex_mintile *mintile_vtxv;
+  int mintile_vtxc,mintile_vtxa;
+  int framec;
+  int itemtime; // how many frames item has been active
+};
+
+void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver);
+int fmn_gl2_game_init(struct bigpc_render_driver *driver);
+void fmn_gl2_game_render(struct bigpc_render_driver *driver);
+
 /* Driver.
  ****************************************************************/
 
@@ -116,6 +139,12 @@ struct bigpc_render_driver_gl2 {
   FMN_GL2_FOR_EACH_PROGRAM
   #undef _
   struct fmn_gl2_program *program; // WEAK, points to one of the named programs or null
+  
+  struct fmn_gl2_game game;
+  
+  // Output bounds.
+  int pvw,pvh; // total output size, so we can detect changes.
+  int dstx,dsty,dstw,dsth;
 };
 
 #define DRIVER ((struct bigpc_render_driver_gl2*)driver)

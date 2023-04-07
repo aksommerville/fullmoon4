@@ -37,3 +37,17 @@ void fmn_gl2_draw_raw(int mode,const struct fmn_gl2_vertex_raw *vtxv,int vtxc) {
   glVertexAttribPointer(1,4,GL_UNSIGNED_BYTE,1,sizeof(struct fmn_gl2_vertex_raw),&vtxv->r);
   glDrawArrays(mode,0,vtxc);
 }
+
+/* Conveniences.
+ */
+ 
+void fmn_gl2_draw_raw_rect(int x,int y,int w,int h,uint32_t rgba) {
+  uint8_t r=rgba>>24,g=rgba>>16,b=rgba>>8,a=rgba;
+  struct fmn_gl2_vertex_raw vtxv[]={
+    {x  ,y  ,r,g,b,a},
+    {x  ,y+h,r,g,b,a},
+    {x+w,y  ,r,g,b,a},
+    {x+w,y+h,r,g,b,a},
+  };
+  fmn_gl2_draw_raw(GL_TRIANGLE_STRIP,vtxv,sizeof(vtxv)/sizeof(vtxv[0]));
+}

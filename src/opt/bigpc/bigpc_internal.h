@@ -47,6 +47,8 @@ extern struct bigpc {
   struct bigpc_render_driver *render;
   struct fmn_datafile *datafile;
   
+  uint8_t input_state;
+  
 } bigpc;
 
 void bigpc_config_cleanup(struct bigpc_config *config);

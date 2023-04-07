@@ -4,6 +4,7 @@
  */
  
 static void _gl2_del(struct bigpc_render_driver *driver) {
+  fmn_gl2_game_cleanup(driver);
   if (DRIVER->texturev) {
     while (DRIVER->texturec-->0) fmn_gl2_texture_cleanup(DRIVER->texturev+DRIVER->texturec);
     free(DRIVER->texturev);
@@ -33,80 +34,79 @@ static int _gl2_init(struct bigpc_render_driver *driver,struct bigpc_video_drive
   
   if (fmn_gl2_framebuffer_init(&DRIVER->mainfb,video->fbw,video->fbh)<0) return -1;
   
+  if (fmn_gl2_game_init(driver)<0) return -1;
+  
   return 0;
 }
 
-/* Update.
+/* Freshen output bounds if needed.
  */
  
-static uint8_t clock=0;
+static void fmn_gl2_require_output_bounds(struct bigpc_render_driver *driver) {
+  if ((DRIVER->pvw==driver->w)&&(DRIVER->pvh==driver->h)) return;
+  int fbw=DRIVER->mainfb.texture.w;
+  int fbh=DRIVER->mainfb.texture.h;
+  
+  int wforh=(fbw*driver->h)/fbh;
+  if (wforh<=driver->w) {
+    DRIVER->dstw=wforh;
+    DRIVER->dsth=driver->h;
+  } else {
+    DRIVER->dstw=driver->w;
+    DRIVER->dsth=(fbh*driver->w)/fbw;
+  }
+  
+  //TODO If it's close, snap to integers.
+  //TODO If it's close to full, and scaled a few times, snap to edges.
+  //TODO Or toggle interpolation depending on scale?
+  
+  DRIVER->dstx=(driver->w>>1)-(DRIVER->dstw>>1);
+  DRIVER->dsty=(driver->h>>1)-(DRIVER->dsth>>1);
+  
+  DRIVER->pvw=driver->w;
+  DRIVER->pvh=driver->h;
+}
+
+/* Update.
+ * The render code here is only for shovelling the framebuffer up to the main screen.
+ * Everything else, the fun parts, is in fmn_gl2_game_render().
+ */
  
 static int _gl2_update(struct bigpc_image *fb,struct bigpc_render_driver *driver) {
-  clock++;
-  //glViewport(0,0,driver->w,driver->h);
-  
-  fmn_gl2_framebuffer_use(driver,&DRIVER->mainfb);
-  glClearColor(0.0f,0.3f,0.0f,1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-  
-  { // raw: ok
-    struct fmn_gl2_vertex_raw vtxv[]={
-      { 10, 10,0xff,0x00,0x00,0xff},
-      { 15, 30,0x00,0xff,0x00,0xff},
-      { 30, 15,0x00,0x00,0xff,0xff},
-    };
-    fmn_gl2_program_use(driver,&DRIVER->program_raw);
-    fmn_gl2_draw_raw(GL_TRIANGLES,vtxv,sizeof(vtxv)/sizeof(vtxv[0]));
-  }
-  
-  { // mintile: ok
-    struct fmn_gl2_vertex_mintile vtxv[]={
-      {100, 20,0x00},
-      {120, 20,0x10},
-      {136, 20,0x11},
-      {152, 20,0x12},
-    };
-    fmn_gl2_program_use(driver,&DRIVER->program_mintile);
-    fmn_gl2_texture_use(driver,1);
-    fmn_gl2_draw_mintile(vtxv,sizeof(vtxv)/sizeof(vtxv[0]));
-  }
-  
-  { // maxtile: ok
-    struct fmn_gl2_vertex_maxtile vtxv[]={
-      // x,  y,tile, rot,size,xform, -r-  -g-  -b- tint, -r-   primary,alpha
-      { 20, 50,0x00,0x00+clock,  16,    0,0xff,0x00,0x00,0x00,0x80,0x80,0x80,0xff},
-      { 40, 50,0x00,0x10+clock,  20,    0,0x00,0xff,0x00,0x40,0x80,0x80,0x80,0xe0},
-      { 60, 50,0x00,0x20+clock,  24,    0,0x00,0x00,0xff,0x80,0x80,0x80,0x80,0xc0},
-      { 80, 50,0x00,0x30+clock,  28,    0,0xff,0xff,0x00,0xc0,0x80,0x80,0x80,0xa0},
-      {100, 50,0x00,0x40+clock,  32,    0,0x00,0xff,0xff,0xff,0x80,0x80,0x80,0x80},
-      { 00, 80,0x81,clock,  32,    4,0x00,0x00,0x00,0x00,0x80,0x80,0x80,0xff},
-      { 40, 80,0x81,0x00,  32,    5,0xff,0xff,0xff,clock,0xff,0x00,0x00,0xff},
-      { 80, 80,0x81,0x00,  32,    6,0x00,0x00,0x00,clock,0x00,0xff,0x00,0xff},
-      {120, 80,0x81,0x00,  32,    7,0xff,0x80,0x00,0xff-clock,0x00,0x00,0xff,0xff},
-    };
-    fmn_gl2_program_use(driver,&DRIVER->program_maxtile);
-    fmn_gl2_texture_use(driver,2);
-    fmn_gl2_draw_maxtile(vtxv,sizeof(vtxv)/sizeof(vtxv[0]));
-  }
-  
-  // decal: ok
-  fmn_gl2_program_use(driver,&DRIVER->program_decal);
-  fmn_gl2_texture_use(driver,3);
-  fmn_gl2_draw_decal(     150, 80, 50,100,0,0,16,16);
-  fmn_gl2_draw_decal_swap(210, 80,100,100,16,32,16,16);
+
+  fmn_gl2_game_render(driver);
   
   fmn_gl2_framebuffer_use(driver,0);
-  glClearColor(0.0f,0.0f,1.0f,1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+  fmn_gl2_require_output_bounds(driver);
   
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   fmn_gl2_texture_use_object(driver,&DRIVER->mainfb.texture);
   fmn_gl2_draw_decal(
-    10,10,driver->w-20,driver->h-20,
+    DRIVER->dstx,DRIVER->dsty,DRIVER->dstw,DRIVER->dsth,
     0,DRIVER->mainfb.texture.h,DRIVER->mainfb.texture.w,-DRIVER->mainfb.texture.h
   );
   
+  // When the projected framebuffer is smaller than the screen, we letterbox or pillarbox.
+  // It's more efficient to draw the bars on top, rather than the perhaps more obvious clear output first.
+  if (DRIVER->dstw<driver->w) {
+    fmn_gl2_program_use(driver,&DRIVER->program_raw);
+    fmn_gl2_draw_raw_rect(0,0,DRIVER->dstx,driver->h,0x000000ff);
+    fmn_gl2_draw_raw_rect(DRIVER->dstx+DRIVER->dstw,0,driver->w-DRIVER->dstw-DRIVER->dstx,driver->h,0x000000ff);
+  }
+  if (DRIVER->dsth<driver->h) {
+    fmn_gl2_program_use(driver,&DRIVER->program_raw);
+    fmn_gl2_draw_raw_rect(0,0,driver->w,DRIVER->dsty,0x000000ff);
+    fmn_gl2_draw_raw_rect(0,DRIVER->dsty+DRIVER->dsth,driver->w,driver->h-DRIVER->dsth-DRIVER->dsty,0x000000ff);
+  }
+  
   return 0;
+}
+
+/* Full Moon specific hooks.
+ */
+ 
+static void _gl2_map_dirty(struct bigpc_render_driver *driver) {
+  DRIVER->game.map_dirty=1;
 }
 
 /* Type.
@@ -119,4 +119,5 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .del=_gl2_del,
   .init=_gl2_init,
   .update=_gl2_update,
+  .map_dirty=_gl2_map_dirty,
 };

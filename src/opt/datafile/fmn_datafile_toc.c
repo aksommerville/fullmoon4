@@ -203,3 +203,15 @@ int fmn_datafile_for_each_of_id(
   }
   return 0;
 }
+
+/* Get any resource of type and id.
+ */
+ 
+static int fmn_datafile_get_any_cb(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  *(const void**)userdata=v;
+  return c;
+}
+ 
+int fmn_datafile_get_any(void *dstpp,struct fmn_datafile *file,uint16_t type,uint32_t id) {
+  return fmn_datafile_for_each_of_id(file,type,id,fmn_datafile_get_any_cb,dstpp);
+}

@@ -39,6 +39,10 @@ struct bigpc_render_driver *bigpc_render_new(
  */
 int bigpc_render_update(struct bigpc_image *fb,struct bigpc_render_driver *driver);
 
+/* Full Moon specific stuff.
+ */
+void bigpc_render_map_dirty(struct bigpc_render_driver *driver);
+
 /* Type.
  ********************************************************/
  
@@ -50,6 +54,7 @@ struct bigpc_render_type {
   void (*del)(struct bigpc_render_driver *driver);
   int (*init)(struct bigpc_render_driver *driver,struct bigpc_video_driver *video);
   int (*update)(struct bigpc_image *fb,struct bigpc_render_driver *driver);
+  void (*map_dirty)(struct bigpc_render_driver *driver);
 };
 
 const struct bigpc_render_type *bigpc_render_type_by_index(int p);

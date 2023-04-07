@@ -56,6 +56,9 @@ int fmn_datafile_for_each_of_id(
   void *userdata
 );
 
+// Was planning for "iteration only", but that's already getting old...
+int fmn_datafile_get_any(void *dstpp,struct fmn_datafile *file,uint16_t type,uint32_t id);
+
 int fmn_file_read(void *dstpp,const char *path);
 int fmn_file_write(const char *path,const void *src,int srcc);
 

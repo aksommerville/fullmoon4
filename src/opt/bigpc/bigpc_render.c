@@ -82,3 +82,7 @@ int bigpc_render_update(struct bigpc_image *fb,struct bigpc_render_driver *drive
   if (!driver||!driver->type->update) return -1;
   return driver->type->update(fb,driver);
 }
+
+void bigpc_render_map_dirty(struct bigpc_render_driver *driver) {
+  if (driver&&driver->type->map_dirty) driver->type->map_dirty(driver);
+}

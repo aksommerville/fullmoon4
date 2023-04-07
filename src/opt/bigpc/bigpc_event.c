@@ -17,6 +17,16 @@ void bigpc_cb_resize(struct bigpc_video_driver *driver,int w,int h) {
 
 int bigpc_cb_key(struct bigpc_video_driver *driver,int keycode,int value) {
   //fprintf(stderr,"%s 0x%08x=%d\n",__func__,keycode,value);
+  //TODO input manager. hard-coding one config for now
+  switch (keycode) {
+    case 0x00070050: if (value) bigpc.input_state|=FMN_INPUT_LEFT; else bigpc.input_state&=~FMN_INPUT_LEFT; break;
+    case 0x0007004f: if (value) bigpc.input_state|=FMN_INPUT_RIGHT; else bigpc.input_state&=~FMN_INPUT_RIGHT; break;
+    case 0x00070052: if (value) bigpc.input_state|=FMN_INPUT_UP; else bigpc.input_state&=~FMN_INPUT_UP; break;
+    case 0x00070051: if (value) bigpc.input_state|=FMN_INPUT_DOWN; else bigpc.input_state&=~FMN_INPUT_DOWN; break;
+    case 0x0007001d: if (value) bigpc.input_state|=FMN_INPUT_USE; else bigpc.input_state&=~FMN_INPUT_USE; break;
+    case 0x0007001b: if (value) bigpc.input_state|=FMN_INPUT_MENU; else bigpc.input_state&=~FMN_INPUT_MENU; break;
+    case 0x00070029: bigpc.sigc++; break; // esc
+  }
   return 0;
 }
 
