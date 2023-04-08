@@ -14,6 +14,7 @@ void fmn_gl2_game_render_FLOORFIRE(struct bigpc_render_driver *driver,struct fmn
 void fmn_gl2_game_render_DEADWITCH(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
 void fmn_gl2_game_render_weather(struct bigpc_render_driver *driver);
 void fmn_gl2_render_mapdark(struct bigpc_render_driver *driver);
+void fmn_gl2_render_violin(struct bigpc_render_driver *driver);
 
 /* Cleanup.
  */
@@ -213,6 +214,10 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
     fmn_gl2_game_render_world(driver);
   }
   
-  //TODO violin
+  // The violin chart is its own thing, above transitions but below menus.
+  if (fmn_global.active_item==FMN_ITEM_VIOLIN) {
+    fmn_gl2_render_violin(driver);
+  }
+  
   //TODO menus
 }
