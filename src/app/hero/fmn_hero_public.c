@@ -27,6 +27,7 @@ int fmn_hero_reset() {
     fmn_hero.sprite->update=0;
     fmn_hero.sprite->style=FMN_SPRITE_STYLE_HERO;
     fmn_hero.sprite->imageid=2;
+    fmn_hero.sprite->controller=FMN_SPRCTL_hero;
     
     fmn_hero.sprite->physics=
       FMN_PHYSICS_MOTION|

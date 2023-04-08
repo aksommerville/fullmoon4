@@ -543,7 +543,6 @@ static void werewolf_update_POUNCE(struct fmn_sprite *sprite,float elapsed) {
   if (dy>WEREWOLF_POUNCE_RANGE_DOWN) return;
   if (dx<-WEREWOLF_POUNCE_RANGE_HORZ) return;
   if (dx>WEREWOLF_POUNCE_RANGE_HORZ) return;
-  
   werewolf_begin_EAT(sprite);
 }
 

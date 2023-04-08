@@ -108,6 +108,10 @@ void fmn_gl2_draw_decal_swap(
  * The rest of this gl2 unit is pretty much generic.
  *******************************************************************/
  
+#define FMN_GL2_COMPASS_RATE_MIN 0.010f
+#define FMN_GL2_COMPASS_RATE_MAX 0.200f
+#define FMN_GL2_COMPASS_DISTANCE_MAX 40.0f
+ 
 struct fmn_gl2_game {
   int map_dirty;
   struct fmn_gl2_framebuffer mapbits;
@@ -116,11 +120,21 @@ struct fmn_gl2_game {
   int mintile_vtxc,mintile_vtxa;
   int framec;
   int itemtime; // how many frames item has been active
+  int ffchargeframe; // specific to werewolf
+  float compassangle;
 };
 
 void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver);
 int fmn_gl2_game_init(struct bigpc_render_driver *driver);
 void fmn_gl2_game_render(struct bigpc_render_driver *driver);
+
+int fmn_gl2_game_add_mintile_vtx_pixcoord(
+  struct bigpc_render_driver *driver,
+  int16_t x,int16_t y,uint8_t tileid,uint8_t xform
+);
+ 
+#define fmn_gl2_game_add_mintile_vtx(driver,sx,sy,tileid,xform) \
+  fmn_gl2_game_add_mintile_vtx_pixcoord(driver,(sx)*DRIVER->game.tilesize,(sy)*DRIVER->game.tilesize,tileid,xform)
 
 /* Driver.
  ****************************************************************/
