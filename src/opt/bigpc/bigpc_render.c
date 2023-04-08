@@ -86,3 +86,7 @@ int bigpc_render_update(struct bigpc_image *fb,struct bigpc_render_driver *drive
 void bigpc_render_map_dirty(struct bigpc_render_driver *driver) {
   if (driver&&driver->type->map_dirty) driver->type->map_dirty(driver);
 }
+
+void bigpc_render_transition(struct bigpc_render_driver *driver,int request) {
+  if (driver&&driver->type->transition) driver->type->transition(driver,request);
+}

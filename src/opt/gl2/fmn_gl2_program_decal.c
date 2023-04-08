@@ -23,7 +23,6 @@ static const char fmn_gl2_fsrc_decal[]=
 "uniform sampler2D sampler;\n"
 "varying vec2 vtexcoord;\n"
 "void main() {\n"
-"  gl_FragColor=vec4(vtexcoord,0.0,1.0);\n"//TODO texture
 "  gl_FragColor=texture2D(sampler,vtexcoord);\n"
 "}\n";
 

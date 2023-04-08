@@ -35,15 +35,15 @@ void _fmn_begin_menu(int prompt,...) {
  */
  
 void fmn_prepare_transition(int transition) {
-  fmn_log("TODO %s %d",__func__,transition);
+  bigpc_render_transition(bigpc.render,transition);
 }
 
 void fmn_commit_transition() {
-  fmn_log("TODO %s",__func__);
+  bigpc_render_transition(bigpc.render,FMN_TRANSITION_COMMIT);
 }
 
 void fmn_cancel_transition() {
-  fmn_log("TODO %s",__func__);
+  bigpc_render_transition(bigpc.render,FMN_TRANSITION_CANCEL);
 }
 
 /* Map load helpers.

@@ -102,11 +102,29 @@ static int _gl2_update(struct bigpc_image *fb,struct bigpc_render_driver *driver
   return 0;
 }
 
-/* Full Moon specific hooks.
+/* Map dirty.
  */
  
 static void _gl2_map_dirty(struct bigpc_render_driver *driver) {
   DRIVER->game.map_dirty=1;
+}
+
+/* Transition.
+ */
+ 
+static void _gl2_transition(struct bigpc_render_driver *driver,int request) {
+  driver->transition_in_progress=0;
+  if (request>=0) {
+    DRIVER->game.transition=request;
+    DRIVER->game.transitionp=0;
+    DRIVER->game.transitionc=0; // 0 until committed
+    fmn_gl2_game_transition_begin(driver);
+  } else if (request==FMN_TRANSITION_COMMIT) {
+    fmn_gl2_game_transition_commit(driver);
+  } else if (request==FMN_TRANSITION_CANCEL) {
+    DRIVER->game.transition=0;
+    DRIVER->game.transitionc=0;
+  }
 }
 
 /* Type.
@@ -120,4 +138,5 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .init=_gl2_init,
   .update=_gl2_update,
   .map_dirty=_gl2_map_dirty,
+  .transition=_gl2_transition,
 };

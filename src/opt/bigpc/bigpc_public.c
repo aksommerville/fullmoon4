@@ -82,9 +82,11 @@ int bigpc_update() {
   }
   
   // Update game.
-  uint32_t now=bigpc_now();//TODO this is "active game time", but we're stubbing with absolute real time for now.
-  uint8_t input_state=bigpc.input_state;
-  fmn_update(now,input_state);
+  if (!bigpc.render->transition_in_progress) {
+    uint32_t now=bigpc_now();//TODO this is "active game time", but we're stubbing with absolute real time for now.
+    uint8_t input_state=bigpc.input_state;
+    fmn_update(now,input_state);
+  }
   
   // Render one frame.
   bigpc.render->w=bigpc.video->w;

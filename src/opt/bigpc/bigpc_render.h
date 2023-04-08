@@ -21,6 +21,7 @@ struct bigpc_render_driver {
   int refc;
   int w,h; // Provider should update before each render.
   struct fmn_datafile *datafile; // WEAK
+  int transition_in_progress; // bigpc makes the call whether to suspend during transition; render has to declare whether one is happening.
 };
 
 void bigpc_render_del(struct bigpc_render_driver *driver);
@@ -43,6 +44,11 @@ int bigpc_render_update(struct bigpc_image *fb,struct bigpc_render_driver *drive
  */
 void bigpc_render_map_dirty(struct bigpc_render_driver *driver);
 
+// We use just one hook for transition 'prepare', 'commit', and 'cancel'.
+#define FMN_TRANSITION_COMMIT -1
+#define FMN_TRANSITION_CANCEL -2
+void bigpc_render_transition(struct bigpc_render_driver *driver,int request);
+
 /* Type.
  ********************************************************/
  
@@ -55,6 +61,7 @@ struct bigpc_render_type {
   int (*init)(struct bigpc_render_driver *driver,struct bigpc_video_driver *video);
   int (*update)(struct bigpc_image *fb,struct bigpc_render_driver *driver);
   void (*map_dirty)(struct bigpc_render_driver *driver);
+  void (*transition)(struct bigpc_render_driver *driver,int request);
 };
 
 const struct bigpc_render_type *bigpc_render_type_by_index(int p);

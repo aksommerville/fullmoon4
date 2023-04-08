@@ -33,6 +33,7 @@ struct fmn_gl2_program {
   GLuint loc_screensize;
   GLuint loc_texsize;
   GLuint loc_sampler;
+  GLuint locv[8]; // for program-specific uniforms
 };
 
 void fmn_gl2_texture_cleanup(struct fmn_gl2_texture *texture);
@@ -61,7 +62,8 @@ int fmn_gl2_program_init(
   _(raw) \
   _(mintile) \
   _(maxtile) \
-  _(decal)
+  _(decal) \
+  _(recal)
   
 #define _(tag) int fmn_gl2_program_##tag##_init(struct fmn_gl2_program *program,struct bigpc_render_driver *driver);
 FMN_GL2_FOR_EACH_PROGRAM
@@ -101,6 +103,18 @@ void fmn_gl2_draw_decal_swap(
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch
 );
+void fmn_gl2_draw_recal(
+  struct fmn_gl2_program *program,
+  int dstx,int dsty,int dstw,int dsth,
+  int srcx,int srcy,int srcw,int srch,
+  uint32_t rgba
+);
+void fmn_gl2_draw_recal_swap(
+  struct fmn_gl2_program *program,
+  int dstx,int dsty,int dstw,int dsth,
+  int srcx,int srcy,int srcw,int srch,
+  uint32_t rgba
+);
 
 /* I did a bad job splitting platform from game, and the result is that platforms are expected to know a lot about the game.
  * I mean, a lot!
@@ -111,6 +125,16 @@ void fmn_gl2_draw_decal_swap(
 #define FMN_GL2_COMPASS_RATE_MIN 0.010f
 #define FMN_GL2_COMPASS_RATE_MAX 0.200f
 #define FMN_GL2_COMPASS_DISTANCE_MAX 40.0f
+
+#define FMN_GL2_ILLUMINATION_PERIOD 70 /* frames per cycle */
+#define FMN_GL2_ILLUMINATION_RANGE 0.250f /* full range width in alpha units */
+#define FMN_GL2_ILLUMINATION_FADE_TIME 1.0f /* seconds */
+#define FMN_GL2_ILLUMINATION_PEAK 0.750f /* RANGE..1 */
+
+#define FMN_GL2_TRANSITION_FRAMEC 36 /* web: 600 ms */
+
+// Wind and rain share a particle buffer.
+#define FMN_GL2_PARTICLE_LIMIT 500
  
 struct fmn_gl2_game {
   int map_dirty;
@@ -122,6 +146,13 @@ struct fmn_gl2_game {
   int itemtime; // how many frames item has been active
   int ffchargeframe; // specific to werewolf
   float compassangle;
+  int transition,transitionp,transitionc; // (p) counts up to (c)
+  struct fmn_gl2_framebuffer transitionfrom,transitionto;
+  uint32_t transitioncolor; // for fade. rgbx
+  int16_t transitionfromx,transitionfromy,transitiontox,transitiontoy; // for spotlight
+  struct fmn_gl2_vertex_raw particlev[FMN_GL2_PARTICLE_LIMIT];
+  int particlec;
+  float illuminationp;
 };
 
 void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver);
@@ -135,6 +166,14 @@ int fmn_gl2_game_add_mintile_vtx_pixcoord(
  
 #define fmn_gl2_game_add_mintile_vtx(driver,sx,sy,tileid,xform) \
   fmn_gl2_game_add_mintile_vtx_pixcoord(driver,(sx)*DRIVER->game.tilesize,(sy)*DRIVER->game.tilesize,tileid,xform)
+  
+void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver);
+void fmn_gl2_game_transition_commit(struct bigpc_render_driver *driver);
+void fmn_gl2_game_transition_apply(
+  struct bigpc_render_driver *driver,
+  int transition,int p,int c,
+  struct fmn_gl2_framebuffer *from,struct fmn_gl2_framebuffer *to
+);
 
 /* Driver.
  ****************************************************************/

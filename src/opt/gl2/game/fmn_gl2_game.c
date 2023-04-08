@@ -12,6 +12,8 @@ void fmn_gl2_game_render_SCARYDOOR(struct bigpc_render_driver *driver,struct fmn
 void fmn_gl2_game_render_WEREWOLF(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
 void fmn_gl2_game_render_FLOORFIRE(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
 void fmn_gl2_game_render_DEADWITCH(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
+void fmn_gl2_game_render_weather(struct bigpc_render_driver *driver);
+void fmn_gl2_render_mapdark(struct bigpc_render_driver *driver);
 
 /* Cleanup.
  */
@@ -19,6 +21,8 @@ void fmn_gl2_game_render_DEADWITCH(struct bigpc_render_driver *driver,struct fmn
 void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver) {
   fmn_gl2_framebuffer_cleanup(&DRIVER->game.mapbits);
   if (DRIVER->game.mintile_vtxv) free(DRIVER->game.mintile_vtxv);
+  fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionfrom);
+  fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionto);
 }
 
 /* Init.
@@ -30,6 +34,13 @@ int fmn_gl2_game_init(struct bigpc_render_driver *driver) {
   
   int err=fmn_gl2_framebuffer_init(&DRIVER->game.mapbits,DRIVER->game.tilesize*FMN_COLC,DRIVER->game.tilesize*FMN_ROWC);
   if (err<0) return err;
+  
+  if ((err=fmn_gl2_framebuffer_init(
+    &DRIVER->game.transitionfrom,DRIVER->game.mapbits.texture.w,DRIVER->game.mapbits.texture.h
+  ))<0) return err;
+  if ((err=fmn_gl2_framebuffer_init(
+    &DRIVER->game.transitionto,DRIVER->game.mapbits.texture.w,DRIVER->game.mapbits.texture.h
+  ))<0) return err;
   
   return 0;
 }
@@ -115,18 +126,10 @@ static inline int fmn_gl2_sprite_style_uses_mintile(int style) {
   return 0;
 }
 
-/* Render.
+/* Render to the currently-bound framebuffer, all the diegetic stuff subject to transitions.
  */
  
-void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
-  DRIVER->game.framec++;
-  
-  if (DRIVER->game.map_dirty) {
-    DRIVER->game.map_dirty=0;
-    fmn_gl2_game_freshen_map(driver);
-  }
-
-  fmn_gl2_framebuffer_use(driver,&DRIVER->mainfb);
+void fmn_gl2_game_render_world(struct bigpc_render_driver *driver) {
   
   // Map.
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
@@ -137,7 +140,12 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
   );
   
   // Hero underlay: Shovel focus and broom shadow.
-  fmn_gl2_render_hero_underlay(driver);
+  if (!driver->transition_in_progress) {
+    fmn_gl2_render_hero_underlay(driver);
+  }
+  
+  // Darkness is weather, but it's below the sprites.
+  fmn_gl2_render_mapdark(driver);
   
   { // Sprites.
     struct fmn_sprite_header **p=fmn_global.spritev;
@@ -159,11 +167,52 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
   }
   
   // Hero overlay: Compass and show-off-item.
-  fmn_gl2_render_hero_overlay(driver);
+  if (!driver->transition_in_progress) {
+    fmn_gl2_render_hero_overlay(driver);
+  }
   
-  //TODO item overlay
-  //TODO weather
-  //TODO transitions
+  // Weather.
+  fmn_gl2_game_render_weather(driver);
+}
+
+/* Render.
+ */
+ 
+void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
+  DRIVER->game.framec++;
+  
+  // Redraw map if needed.
+  if (DRIVER->game.map_dirty) {
+    DRIVER->game.map_dirty=0;
+    fmn_gl2_game_freshen_map(driver);
+  }
+  
+  // Advance transition clock.
+  if (DRIVER->game.transition) {
+    DRIVER->game.transitionp++;
+    if (DRIVER->game.transitionp>=DRIVER->game.transitionc) {
+      DRIVER->game.transition=0;
+      DRIVER->game.transitionc=0;
+      driver->transition_in_progress=0;
+    }
+  }
+  
+  // Transition in progress? Draw world to (transitionto), then combine (transitionfrom,transitionto) into the main.
+  // No transition? Draw direct into main.
+  if (DRIVER->game.transition) {
+    fmn_gl2_framebuffer_use(driver,&DRIVER->game.transitionto);
+    fmn_gl2_game_render_world(driver);
+    fmn_gl2_framebuffer_use(driver,&DRIVER->mainfb);
+    fmn_gl2_game_transition_apply(
+      driver,
+      DRIVER->game.transition,DRIVER->game.transitionp,DRIVER->game.transitionc,
+      &DRIVER->game.transitionfrom,&DRIVER->game.transitionto
+    );
+  } else {
+    fmn_gl2_framebuffer_use(driver,&DRIVER->mainfb);
+    fmn_gl2_game_render_world(driver);
+  }
+  
   //TODO violin
   //TODO menus
 }

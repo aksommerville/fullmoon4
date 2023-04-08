@@ -34,4 +34,7 @@ void fmn_gl2_game_freshen_map(struct bigpc_render_driver *driver) {
   fmn_gl2_texture_use(driver,fmn_global.maptsid);
   fmn_gl2_program_use(driver,&DRIVER->program_mintile);
   fmn_gl2_draw_mintile(vtxv,vtxc);
+  
+  //TODO plants
+  //TODO sketches
 }

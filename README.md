@@ -31,6 +31,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] minsyn
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
+- [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
 
 ### May
 
