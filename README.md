@@ -31,6 +31,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] bigpc: initial sketches. Desired behavior is initials only show up if there are none from the store. I believe we're currently doing them a la carte.
 - [ ] bigpc: map callbacks
 - [ ] bigpc: gameover song change
+- [ ] glx: initial window size should be a multiple of the framebuffer size
 
 ### May
 

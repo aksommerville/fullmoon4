@@ -6,8 +6,10 @@
 
 #include "inmgr_internal.h"
 #include "app/fmn_platform.h"
+#include "opt/bigpc/bigpc_internal.h"
 
 #define BTN(id,tag) {.srcbtnid=id,.srclo=1,.srchi=INT_MAX,.mode=INMGR_MAP_MODE_TWOSTATE,.dstbtnid=FMN_INPUT_##tag},
+#define BTNA(id,tag) {.srcbtnid=id,.srclo=1,.srchi=INT_MAX,.mode=INMGR_MAP_MODE_ACTION,.dstbtnid=BIGPC_ACTIONID_##tag},
 #define HORZ1(id) {.srcbtnid=id,.srclo=-1,.srchi=1,.mode=INMGR_MAP_MODE_THREESTATE,.dstbtnid=FMN_INPUT_LEFT|FMN_INPUT_RIGHT},
 #define VERT1(id) {.srcbtnid=id,.srclo=-1,.srchi=1,.mode=INMGR_MAP_MODE_THREESTATE,.dstbtnid=FMN_INPUT_UP|FMN_INPUT_DOWN},
 #define HORZ15(id) {.srcbtnid=id,.srclo=-10000,.srchi=10000,.mode=INMGR_MAP_MODE_THREESTATE,.dstbtnid=FMN_INPUT_LEFT|FMN_INPUT_RIGHT},
@@ -30,6 +32,7 @@ static const struct inmgr_map inmgr_map_zelda[]={ // ok
 static const struct inmgr_map inmgr_map_sn30[]={ // ok (SN30 and Xbox 360)
   BTN(0x00010130,USE)
   BTN(0x00010133,MENU)
+  BTNA(0x0001013a,quit) // select
   HORZ15(0x00030000)
   VERT15(0x00030001)
   HORZ1(0x00030010)
