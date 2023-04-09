@@ -22,7 +22,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] GLX first, to simplify the workflow.
 - - [x] ALSA
 - - [x] evdev
-- - [ ] gl2
+- - [x] gl2
 - - [x] Load resources
 - - [ ] stdsyn
 - - xxx soft render -- punt
@@ -34,10 +34,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
 - [ ] bigpc: Clear inputs when dismissing a menu. How does web do it?
 - [ ] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
+- - Confirm that it really is ALSA. Only I noticed it when VLC was running, so assume it's audio-related.
 - [ ] gl2: Cheese whiz.
 - [ ] bigpc: clock
 - [ ] gl2: victory menu
-- [ ] bigpc: plants and sketches, then in gl2 too
+- [x] bigpc: plants and sketches, then in gl2 too
+- [ ] bigpc: validate buried doors, they probably won't auto-open second visit
+- [ ] bigpc: validate static wind, probably not happening due to unset wind_time
+- [ ] bigpc: initial sketches. Desired behavior is initials only show up if there are none from the store. I believe we're currently doing them a la carte.
 
 ### May
 

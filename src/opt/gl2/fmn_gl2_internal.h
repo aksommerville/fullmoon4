@@ -176,6 +176,17 @@ void fmn_gl2_game_transition_apply(
   struct fmn_gl2_framebuffer *from,struct fmn_gl2_framebuffer *to
 );
 
+/* Chalk bits are 0x000fffff, and points are (0,0) thru (2,2).
+ * Pack the points in the four low nybbles:
+ *   0x0000f000 ax
+ *   0x00000f00 ay
+ *   0x000000f0 bx
+ *   0x0000000f by
+ * In a canonical point, a<b. But we accept it in either order.
+ */
+uint32_t fmn_gl2_chalk_points_from_bit(uint32_t bit);
+uint32_t fmn_gl2_chalk_bit_from_points(uint32_t points);
+
 /* Driver.
  ****************************************************************/
 

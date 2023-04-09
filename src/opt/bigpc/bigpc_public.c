@@ -22,6 +22,10 @@ void bigpc_quit() {
   bigpc_render_del(bigpc.render);
   bigpc_synth_del(bigpc.synth);
   fmn_datafile_del(bigpc.datafile);
+  fmstore_del(bigpc.fmstore);
+  
+  memset(&bigpc,0,sizeof(struct bigpc));
+  bigpc.exename="fullmoon";
 }
 
 /* Init.
@@ -41,6 +45,7 @@ int bigpc_init(int argc,char **argv) {
     fprintf(stderr,"%s: Failed to read data file.\n",bigpc.config.data_path);
     return -2;
   }
+  if (!(bigpc.fmstore=fmstore_new())) return -1;
   
   bigpc_signal_init();
   if ((err=bigpc_video_init())<0) return err;

@@ -17,6 +17,7 @@ struct bigpc_menu {
   uint8_t pvinput;
   int selx,sely; // types can do what they like with these
   int framec; // updated by wrapper
+  uint32_t extra[4];
   
   // Not doing a "type" object for these, all the hooks live on each instance.
   void (*del)(struct bigpc_menu *menu);

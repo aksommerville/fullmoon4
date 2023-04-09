@@ -6,7 +6,7 @@ linux_MIDDIR:=mid/linux
 linux_OUTDIR:=out/linux
 
 # 'xinerama' is not a code unit; it's a flag to 'glx', allowing it to use libXinerama.
-linux_OPT_ENABLE:=bigpc genioc linux evdev alsa glx xinerama drm gl2 soft stdsyn minsyn datafile png
+linux_OPT_ENABLE:=bigpc genioc linux evdev alsa glx xinerama drm gl2 soft stdsyn minsyn datafile png fmstore
 
 linux_EXE:=$(linux_OUTDIR)/fullmoon
 linux_DATA:=$(linux_OUTDIR)/data

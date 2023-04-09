@@ -22,7 +22,6 @@ void fmn_log(const char *fmt,...) {
  */
  
 void fmn_abort() {
-  fmn_log("TODO %s",__func__);
   bigpc.sigc++;
 }
 
@@ -30,7 +29,6 @@ void fmn_abort() {
  */
  
 void _fmn_begin_menu(int prompt,...) {
-  fmn_log("TODO %s %d",__func__,prompt);
   
   if (bigpc.menuc>=bigpc.menua) {
     int na=bigpc.menua+8;
@@ -160,6 +158,22 @@ static void bigpc_play_song(uint8_t songid) {
   bigpc_synth_play_song(bigpc.synth,serial,serialc,0);
 }
 
+static void bigpc_autobloom_plants() {
+  fprintf(stderr,"%s plantc=%d\n",__func__,fmn_global.plantc);
+  struct fmn_plant *plant=fmn_global.plantv;
+  int i=fmn_global.plantc;
+  for (;i-->0;plant++) {
+    if (plant->state!=FMN_PLANT_STATE_GROW) {
+      fprintf(stderr,"  (%d,%d) not growing\n",plant->x,plant->y);
+    } else if (!plant->flower_time) {
+      fprintf(stderr,"  (%d,%d) flower_time unset\n",plant->x,plant->y);
+    } else {
+      fprintf(stderr,"  (%d,%d) flower_time=%d. what time is it right now?\n",plant->x,plant->y,plant->flower_time);
+      // ^ this question is more complicated than you think
+    }
+  }
+}
+
 /* Load map.
  */
  
@@ -181,9 +195,13 @@ int8_t fmn_load_map(
   int serialc=fmn_datafile_for_each_of_id(bigpc.datafile,FMN_RESTYPE_MAP,mapid,fmn_load_map_cb,&serial);
   if (serialc<serialp) return -1;
   
-  memcpy(fmn_global.map,serial,serialp);
+  fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
+  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
   
+  bigpc.mapid=mapid;
+  memcpy(fmn_global.map,serial,serialp);
   bigpc_clear_map_commands();
+
   while (serialp<serialc) {
     uint8_t opcode=serial[serialp++];
     int paylen;
@@ -238,31 +256,144 @@ int8_t fmn_load_map(
   }
   
   bigpc_load_cellphysics();
+  fmstore_write_plants_to_globals(bigpc.fmstore,bigpc.mapid);
+  fmstore_write_sketches_to_globals(bigpc.fmstore,bigpc.mapid);
+  bigpc_autobloom_plants();
   bigpc_render_map_dirty(bigpc.render);
   return 1;
+}
+
+/* When the client indicates map dirty, we check plants for required but unset flower_time.
+ * I guess this ought to be done by the client on his own, but this is how I did it for web, so hey don't make waves.
+ */
+ 
+static void bigpc_set_flower_times() {
+  struct fmn_plant *plant=fmn_global.plantv;
+  int i=fmn_global.plantc;
+  for (;i-->0;plant++) {
+    if (plant->state!=FMN_PLANT_STATE_GROW) continue;
+    if (plant->flower_time) continue;
+    fprintf(stderr,"***** setting flower_time *****\n");
+    plant->flower_time=12345;//TODO clock
+  }
 }
 
 /* Map dirty.
  */
  
 void fmn_map_dirty() {
+  bigpc_set_flower_times();
   bigpc_render_map_dirty(bigpc.render);
+  fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
+  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
 }
 
 /* Add a plant.
  */
  
 int8_t fmn_add_plant(uint16_t x,uint16_t y) {
-  fmn_log("TODO %s (%d,%d)",__func__,x,y);
-  return -1;
+
+  // The tile should be 0x0f. Proceed anyway if it's not, but if it is, reset to 0x00.
+  if ((x<0)||(y<0)||(x>=FMN_COLC)||(y>=FMN_ROWC)) return -1;
+
+  // Reject if there's one here already.
+  { struct fmn_plant *already=fmn_global.plantv;
+    int i=fmn_global.plantc;
+    for (;i-->0;already++) {
+      if (already->x!=x) continue;
+      if (already->y!=y) continue;
+      return -1;
+    }
+  }
+  
+  // Find an available plant.
+  struct fmn_plant *plant=0;
+  if (fmn_global.plantc<FMN_PLANT_LIMIT) {
+    plant=fmn_global.plantv+fmn_global.plantc++;
+  } else {
+    struct fmn_plant *q=fmn_global.plantv;
+    int i=fmn_global.plantc;
+    for (;i-->0;q++) {
+      if ((q->state==FMN_PLANT_STATE_NONE)||(q->state==FMN_PLANT_STATE_DEAD)) {
+        plant=q;
+        break;
+      }
+    }
+  }
+  if (!plant) return -1;
+  
+  if (fmn_global.map[y*FMN_COLC+x]==0x0f) {
+    fmn_global.map[y*FMN_COLC+x]=0x00;
+  }
+  
+  plant->x=x;
+  plant->y=y;
+  plant->state=FMN_PLANT_STATE_SEED;
+  plant->fruit=0;
+  plant->flower_time=0;
+  
+  bigpc_render_map_dirty(bigpc.render);
+  fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
+  return 0;
 }
 
 /* Begin a sketch.
  */
  
+static void fmn_cb_sketch() {
+  if (!bigpc.sketch_in_progress) return;
+  if (bigpc.menuc<1) return;
+  struct bigpc_menu *menu=bigpc.menuv[bigpc.menuc-1];
+  if (menu->prompt!=FMN_MENU_CHALK) return;
+  bigpc.sketch_in_progress->bits=menu->extra[0];
+  bigpc.sketch_in_progress=0;
+  bigpc_render_map_dirty(bigpc.render);
+  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
+}
+ 
 int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
-  fmn_log("TODO %s (%d,%d)",__func__,x,y);
-  return -1;
+
+  // If there's one at this cell already, cool, we'll use it.
+  struct fmn_sketch *sketch=0;
+  { struct fmn_sketch *q=fmn_global.sketchv;
+    int i=fmn_global.sketchc;
+    for (;i-->0;q++) {
+      if (q->x!=x) continue;
+      if (q->y!=y) continue;
+      sketch=q;
+      break;
+    }
+  }
+  
+  // Find an available sketch.
+  if (!sketch) {
+    if (fmn_global.sketchc<FMN_SKETCH_LIMIT) {
+      sketch=fmn_global.sketchv+fmn_global.sketchc++;
+    } else {
+      // Yoink one if its bits are zero (what's it still doing there?). But otherwise we have to reject.
+      struct fmn_sketch *q=fmn_global.sketchv;
+      int i=fmn_global.sketchc;
+      for (;i-->0;q++) {
+        if (!q->bits) {
+          sketch=q;
+          break;
+        }
+      }
+    }
+    if (!sketch) return -1;
+    sketch->x=x;
+    sketch->y=y;
+    sketch->pad=0;
+    sketch->bits=0;
+  }
+  
+  sketch->time=0;//TODO
+  
+  bigpc.sketch_in_progress=sketch;
+  fmn_begin_menu(FMN_MENU_CHALK,sketch->bits|0x80000000,fmn_cb_sketch);
+  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
+  
+  return 0;
 }
 
 /* Audio events.

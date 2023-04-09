@@ -10,6 +10,7 @@
 #include "bigpc_render.h"
 #include "bigpc_menu.h"
 #include "opt/datafile/fmn_datafile.h"
+#include "opt/fmstore/fmstore.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -47,12 +48,16 @@ extern struct bigpc {
   struct bigpc_synth_driver *synth;
   struct bigpc_render_driver *render;
   struct fmn_datafile *datafile;
+  struct fmstore *fmstore;
   
   uint8_t input_state;
   
   // Last in the list is on top.
   struct bigpc_menu **menuv;
   int menuc,menua;
+  
+  uint16_t mapid;
+  struct fmn_sketch *sketch_in_progress;
   
 } bigpc;
 
