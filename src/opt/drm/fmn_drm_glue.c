@@ -32,6 +32,7 @@ static int _drm_init(struct bigpc_video_driver *driver,const struct bigpc_video_
 }
 
 static int _drm_begin_gx(struct bigpc_video_driver *driver) {
+  return 0;
 }
 
 static void _drm_end(struct bigpc_video_driver *driver) {
