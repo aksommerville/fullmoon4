@@ -8,6 +8,7 @@
 #include "bigpc_input.h"
 #include "bigpc_synth.h"
 #include "bigpc_render.h"
+#include "bigpc_menu.h"
 #include "opt/datafile/fmn_datafile.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +49,10 @@ extern struct bigpc {
   struct fmn_datafile *datafile;
   
   uint8_t input_state;
+  
+  // Last in the list is on top.
+  struct bigpc_menu **menuv;
+  int menuc,menua;
   
 } bigpc;
 

@@ -15,6 +15,7 @@ void fmn_gl2_game_render_DEADWITCH(struct bigpc_render_driver *driver,struct fmn
 void fmn_gl2_game_render_weather(struct bigpc_render_driver *driver);
 void fmn_gl2_render_mapdark(struct bigpc_render_driver *driver);
 void fmn_gl2_render_violin(struct bigpc_render_driver *driver);
+void fmn_gl2_render_menu(struct bigpc_render_driver *driver,struct bigpc_menu *menu);
 
 /* Cleanup.
  */
@@ -219,5 +220,7 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
     fmn_gl2_render_violin(driver);
   }
   
-  //TODO menus
+  // Finally, if there's a menu it goes on top.
+  struct bigpc_menu *menu=bigpc_get_menu();
+  if (menu) fmn_gl2_render_menu(driver,menu);
 }

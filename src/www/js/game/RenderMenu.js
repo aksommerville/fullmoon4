@@ -223,7 +223,7 @@ export class RenderMenu {
       ctx.drawImage(srcImage, 48 + col * 48, 32 + row * 48, 48, 48, dstx, dsty, 48, 48);
     }
     
-    // Experimental. Circle of charms.
+    // Circle of charms.
     {
       const charmTilesize = tilesize - 2; // Getting edge artifacts due to rotation -- source images must be inset with a 1-pixel border
       const charmRotationPeriod = 200;

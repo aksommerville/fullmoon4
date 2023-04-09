@@ -4,6 +4,7 @@
 #include "app/fmn_platform.h"
 #include "opt/bigpc/bigpc_render.h"
 #include "opt/bigpc/bigpc_video.h"
+#include "opt/bigpc/bigpc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

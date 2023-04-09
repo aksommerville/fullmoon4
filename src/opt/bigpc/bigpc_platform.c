@@ -1,5 +1,6 @@
 #include "bigpc_internal.h"
 #include <stdio.h>
+#include <stdarg.h>
 
 /* Log.
  */
@@ -22,6 +23,7 @@ void fmn_log(const char *fmt,...) {
  
 void fmn_abort() {
   fmn_log("TODO %s",__func__);
+  bigpc.sigc++;
 }
 
 /* Begin modal menu.
@@ -29,6 +31,45 @@ void fmn_abort() {
  
 void _fmn_begin_menu(int prompt,...) {
   fmn_log("TODO %s %d",__func__,prompt);
+  
+  if (bigpc.menuc>=bigpc.menua) {
+    int na=bigpc.menua+8;
+    if (na>INT_MAX/sizeof(void*)) return;
+    void *nv=realloc(bigpc.menuv,sizeof(void*)*na);
+    if (!nv) return;
+    bigpc.menuv=nv;
+    bigpc.menua=na;
+  }
+  
+  struct bigpc_menu *menu=0;
+  if (prompt>0) {
+    menu=bigpc_menu_new_prompt(prompt);
+  } else switch (prompt) {
+    case FMN_MENU_PAUSE: menu=bigpc_menu_new_PAUSE(); break;
+    case FMN_MENU_CHALK: menu=bigpc_menu_new_CHALK(0); break;
+    case FMN_MENU_TREASURE: menu=bigpc_menu_new_TREASURE(); break;
+    case FMN_MENU_VICTORY: menu=bigpc_menu_new_VICTORY(); break;
+    case FMN_MENU_GAMEOVER: menu=bigpc_menu_new_GAMEOVER(); break;
+  }
+  if (!menu) return;
+  
+  va_list vargs;
+  va_start(vargs,prompt);
+  while (1) {
+    int stringid=va_arg(vargs,int);
+    if (!stringid) break;
+    void (*cb)()=va_arg(vargs,void*);
+    if (bigpc_menu_add_option(menu,stringid,cb)<0) {
+      bigpc_menu_del(menu);
+      return;
+    }
+  }
+  if (bigpc_menu_ready(menu)<0) {
+    bigpc_menu_del(menu);
+    return;
+  }
+  
+  bigpc.menuv[bigpc.menuc++]=menu;
 }
 
 /* Transitions.

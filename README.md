@@ -25,13 +25,19 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] gl2
 - - [x] Load resources
 - - [ ] stdsyn
-- - [ ] soft render
+- - xxx soft render -- punt
 - - [ ] Input manager
 - - [ ] DRM, validate
 - - [ ] minsyn
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
+- [ ] bigpc: Clear inputs when dismissing a menu. How does web do it?
+- [ ] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
+- [ ] gl2: Cheese whiz.
+- [ ] bigpc: clock
+- [ ] gl2: victory menu
+- [ ] bigpc: plants and sketches, then in gl2 too
 
 ### May
 
@@ -55,6 +61,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [ ] UI for saved game management.
 - [ ] Building resources is too slow. Rewrite all those Node tools in C.
+- [ ] Soft render.
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.

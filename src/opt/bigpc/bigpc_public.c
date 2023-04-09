@@ -67,6 +67,15 @@ static uint32_t bigpc_now() {
   return tv.tv_sec*1000+tv.tv_usec/1000;
 }
 
+/* Pop the top menu off the stack.
+ */
+ 
+static void bigpc_pop_menu() {
+  if (bigpc.menuc<1) return;
+  struct bigpc_menu *menu=bigpc.menuv[--(bigpc.menuc)];
+  bigpc_menu_del(menu);
+}
+
 /* Update.
  */
  
@@ -81,8 +90,12 @@ int bigpc_update() {
     if (bigpc_input_driver_update(bigpc.inputv[i])<0) return -1;
   }
   
-  // Update game.
-  if (!bigpc.render->transition_in_progress) {
+  // Update game or top menu.
+  if (bigpc.menuc) {
+    int err=bigpc_menu_update(bigpc.menuv[bigpc.menuc-1]);
+    if (err<0) return -1;
+    if (!err) bigpc_pop_menu();
+  } else if (!bigpc.render->transition_in_progress) {
     uint32_t now=bigpc_now();//TODO this is "active game time", but we're stubbing with absolute real time for now.
     uint8_t input_state=bigpc.input_state;
     fmn_update(now,input_state);
@@ -104,4 +117,12 @@ int bigpc_update() {
   bigpc_video_driver_end(bigpc.video);
   
   return bigpc.sigc?0:1;
+}
+
+/* Get menu.
+ */
+ 
+struct bigpc_menu *bigpc_get_menu() {
+  if (bigpc.menuc<1) return 0;
+  return bigpc.menuv[bigpc.menuc-1];
 }
