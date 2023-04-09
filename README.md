@@ -5,11 +5,6 @@ Non-violent adventure game where the witch has to find and kill the werewolf.
 I mean "non-violent" in a pretty loose sense.
 Because there is definitely a werewolf-slaying involved.
 
-Target platform is web browsers only.
-There will be a "platform" layer in Javascript, and an "app" layer in C compiled to WebAssembly.
-
-^ meaning "*initial* target platform". I am definitely making a Linux-native version, and yknow, as many others as we can.
-
 ## TODO
 
 I want this thing ready to show off at GDEX 2023. Anything not necessary for demoing there can wait.
@@ -19,34 +14,29 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [ ] Linux DRM platform, why not.
-- - [x] GLX first, to simplify the workflow.
-- - [x] ALSA
-- - [x] evdev
-- - [x] gl2
-- - [x] Load resources
 - - [ ] stdsyn
-- - xxx soft render -- punt
-- - [x] Input manager
 - - [ ] DRM, validate
 - - [ ] minsyn
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
-- [x] bigpc: Clear inputs when dismissing a menu. How does web do it?
 - [ ] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
 - - Confirm that it really is ALSA. Only I noticed it when VLC was running, so assume it's audio-related.
 - [ ] gl2: Cheese whiz.
 - [ ] bigpc: clock
+- - [ ] bigpc_autobloom_plants, once the clock works
 - [ ] gl2: victory menu. Presentation, but also we need to reset after ack and that's not happening yet.
-- [x] bigpc: plants and sketches, then in gl2 too
 - [ ] bigpc: validate buried doors, they probably won't auto-open second visit
 - [ ] bigpc: validate static wind, probably not happening due to unset wind_time
 - [ ] bigpc: initial sketches. Desired behavior is initials only show up if there are none from the store. I believe we're currently doing them a la carte.
+- [ ] bigpc: map callbacks
+- [ ] bigpc: gameover song change
 
 ### May
 
+- [ ] Trick floor: Would it help to gently suck the hero into the center of each tile? to prevent overstepping, i mean
+- [ ] Raccoon mind control: Don't wait for the decision cycle, make it immediate.
 - [ ] Order merch.
-- - [x] Coloring book. (printingcenterusa.com says about $1/ea for 250)
 - - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
@@ -59,7 +49,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- [ ] Book of Spoilers
+- [x] Book of Spoilers
 
 ### After GDEX
 

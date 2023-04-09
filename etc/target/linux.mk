@@ -11,7 +11,7 @@ linux_OUTDIR:=out/linux
 linux_OPT_ENABLE:=evdev alsa glx xinerama drm gl2 soft stdsyn minsyn
 
 # The rest are mandatory, no alternatives:
-linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr
+linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr midi
 
 linux_EXE:=$(linux_OUTDIR)/fullmoon
 linux_DATA:=$(linux_OUTDIR)/data

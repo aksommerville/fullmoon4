@@ -155,7 +155,10 @@ static void bigpc_play_song(uint8_t songid) {
   int serialc=fmn_datafile_get_any(&serial,bigpc.datafile,FMN_RESTYPE_SONG,songid);
   if (serialc<0) serialc=0;
   fprintf(stderr,"Play song %d, %d bytes\n",songid,serialc);
-  bigpc_synth_play_song(bigpc.synth,serial,serialc,0);
+  if (bigpc_audio_lock(bigpc.audio)>=0) {
+    bigpc_synth_play_song(bigpc.synth,serial,serialc,0);
+    bigpc_audio_unlock(bigpc.audio);
+  }
 }
 
 static void bigpc_autobloom_plants() {
@@ -401,10 +404,22 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
  
 void fmn_sound_effect(uint16_t sfxid) {
   fmn_log("TODO %s %d",__func__,sfxid);
+  if (bigpc_audio_lock(bigpc.audio)>=0) {
+    uint8_t chid=0x0f;
+    uint8_t opcode=0x98;
+    uint8_t a=sfxid;
+    uint8_t b=0;
+    bigpc_synth_event(bigpc.synth,chid,opcode,a,b);
+    bigpc_audio_unlock(bigpc.audio);
+  }
 }
 
 void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
   fmn_log("TODO %s %d 0x%02x 0x%02x 0x%02x",__func__,chid,opcode,a,b);
+  if (bigpc_audio_lock(bigpc.audio)>=0) {
+    bigpc_synth_event(bigpc.synth,chid,opcode,a,b);
+    bigpc_audio_unlock(bigpc.audio);
+  }
 }
 
 /* Get a string resource.

@@ -57,7 +57,7 @@ void bigpc_cb_pcm_out(void *v,int c,struct bigpc_audio_driver *driver) {
  */
 
 static int bigpc_cb_report_button(int btnid,int usage,int lo,int hi,int value,void *userdata) {
-  fprintf(stderr,"  id=%08x usage=%08x range=%d..%d value=%d\n",btnid,usage,lo,hi,value);
+  //fprintf(stderr,"  id=%08x usage=%08x range=%d..%d value=%d\n",btnid,usage,lo,hi,value);
   int devid=*(int*)userdata;
   inmgr_device_capability(bigpc.inmgr,devid,btnid,usage,lo,hi,value);
   return 0;
@@ -66,19 +66,19 @@ static int bigpc_cb_report_button(int btnid,int usage,int lo,int hi,int value,vo
 void bigpc_cb_connect(struct bigpc_input_driver *driver,int devid) {
   uint16_t vid=0,pid=0;
   const char *name=bigpc_input_device_get_ids(&vid,&pid,driver,devid);
-  fprintf(stderr,"%s %d %04x:%04x '%s'\n",__func__,devid,vid,pid,name);
+  //fprintf(stderr,"%s %d %04x:%04x '%s'\n",__func__,devid,vid,pid,name);
   if (inmgr_device_connect(bigpc.inmgr,devid,vid,pid,name,-1)<0) return;
   bigpc_input_device_for_each_button(driver,devid,bigpc_cb_report_button,&devid);
   inmgr_device_ready(bigpc.inmgr,devid);
 }
 
 void bigpc_cb_disconnect(struct bigpc_input_driver *driver,int devid) {
-  fprintf(stderr,"%s %d\n",__func__,devid);
+  //fprintf(stderr,"%s %d\n",__func__,devid);
   inmgr_device_disconnect(bigpc.inmgr,devid);
 }
 
 void bigpc_cb_event(struct bigpc_input_driver *driver,int devid,int btnid,int value) {
-  fprintf(stderr,"%s %d.0x%08x=%d\n",__func__,devid,btnid,value);
+  //fprintf(stderr,"%s %d.0x%08x=%d\n",__func__,devid,btnid,value);
   inmgr_event(bigpc.inmgr,devid,btnid,value);
 }
 
