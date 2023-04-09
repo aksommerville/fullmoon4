@@ -11,8 +11,36 @@
 #include "bigpc_menu.h"
 #include "opt/datafile/fmn_datafile.h"
 #include "opt/fmstore/fmstore.h"
+#include "opt/inmgr/inmgr.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#define BIGPC_ACTIONID_quit             1
+#define BIGPC_ACTIONID_fullscreen       2
+#define BIGPC_ACTIONID_pause            3
+#define BIGPC_ACTIONID_step             4
+#define BIGPC_ACTIONID_screencap        5
+#define BIGPC_ACTIONID_save             6
+#define BIGPC_ACTIONID_restore          7
+#define BIGPC_ACTIONID_mainmenu         8
+
+#define BIGPC_FOR_EACH_ACTIONID \
+  _(quit) \
+  _(fullscreen) \
+  _(pause) \
+  _(step) \
+  _(screencap) \
+  _(save) \
+  _(restore) \
+  _(mainmenu)
+  
+#define BIGPC_FOR_EACH_BTNID \
+  _(LEFT) \
+  _(RIGHT) \
+  _(UP) \
+  _(DOWN) \
+  _(USE) \
+  _(MENU)
 
 struct bigpc_config {
   char *video_drivers;
@@ -49,8 +77,10 @@ extern struct bigpc {
   struct bigpc_render_driver *render;
   struct fmn_datafile *datafile;
   struct fmstore *fmstore;
+  struct inmgr *inmgr;
   
   uint8_t input_state;
+  int devid_keyboard;
   
   // Last in the list is on top.
   struct bigpc_menu **menuv;
@@ -74,6 +104,9 @@ int bigpc_audio_init();
 
 int bigpc_input_init();
 
+// Force a player's state to all ones, so each key needs to release before we notice the change.
+void bigpc_ignore_next_button();
+
 void bigpc_cb_close(struct bigpc_video_driver *driver);
 void bigpc_cb_focus(struct bigpc_video_driver *driver,int focus);
 void bigpc_cb_resize(struct bigpc_video_driver *driver,int w,int h);
@@ -86,5 +119,7 @@ void bigpc_cb_pcm_out(void *v,int c,struct bigpc_audio_driver *driver);
 void bigpc_cb_connect(struct bigpc_input_driver *driver,int devid);
 void bigpc_cb_disconnect(struct bigpc_input_driver *driver,int devid);
 void bigpc_cb_event(struct bigpc_input_driver *driver,int devid,int btnid,int value);
+void bigpc_cb_state_change(void *userdata,uint8_t playerid,uint16_t btnid,uint8_t value,uint16_t state);
+void bigpc_cb_action(void *userdata,uint8_t playerid,uint16_t actionid);
 
 #endif

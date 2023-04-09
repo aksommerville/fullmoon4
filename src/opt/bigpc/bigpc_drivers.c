@@ -259,6 +259,75 @@ static int bigpc_input_try_init(const struct bigpc_input_type *type) {
   return 0;
 }
 
+/* Input button and action strings.
+ */
+ 
+static uint16_t bigpc_btnid_eval(void *userdata,const char *src,int srcc) {
+  // Button ID tags are all upper-case. Evaluate case-insensitively.
+  char norm[16];
+  if ((srcc<0)||(srcc>sizeof(norm))) return 0;
+  int i=srcc; while (i-->0) if ((src[i]>=0x61)&&(src[i]<=0x7a)) norm[i]=src[i]-0x20; else norm[i]=src[i];
+  src=norm;
+  #define _(tag) if ((srcc==sizeof(#tag)-1)&&!memcmp(src,#tag,srcc)) return FMN_INPUT_##tag;
+  BIGPC_FOR_EACH_BTNID
+  #undef _
+  if (srcc==4) {
+    if (!memcmp(src,"HORZ",4)) return FMN_INPUT_LEFT|FMN_INPUT_RIGHT;
+    if (!memcmp(src,"VERT",4)) return FMN_INPUT_UP|FMN_INPUT_DOWN;
+    if (!memcmp(src,"DPAD",4)) return FMN_INPUT_LEFT|FMN_INPUT_RIGHT|FMN_INPUT_UP|FMN_INPUT_DOWN;
+  }
+  if ((srcc==6)&&!memcmp(src,"CHOOSE",6)) return FMN_INPUT_MENU; // some time after committing it, i've come to prefer "CHOOSE" over "MENU".
+  return 0;
+}
+
+static int bigpc_btnid_repr(char *dst,int dsta,void *userdata,uint16_t btnid) {
+  const char *src=0;
+  int srcc=0;
+  switch (btnid) {
+    #define _(tag) case FMN_INPUT_##tag: src=#tag; srcc=sizeof(#tag)-1; break;
+    BIGPC_FOR_EACH_BTNID
+    #undef _
+    case FMN_INPUT_LEFT|FMN_INPUT_RIGHT: src="horz"; srcc=4; break;
+    case FMN_INPUT_UP|FMN_INPUT_DOWN: src="vert"; srcc=4; break;
+    case FMN_INPUT_LEFT|FMN_INPUT_RIGHT|FMN_INPUT_UP|FMN_INPUT_DOWN: src="dpad"; srcc=4; break;
+  }
+  if (!src) return -1;
+  if (srcc<=dsta) {
+    memcpy(dst,src,srcc);
+    if (srcc<dsta) dst[srcc]=0;
+  }
+  return srcc;
+}
+
+static uint16_t bigpc_actionid_eval(void *userdata,const char *src,int srcc) {
+  // Action ID tags are all lower-case. Evaluate case-insensitively.
+  char norm[32];
+  if ((srcc<0)||(srcc>sizeof(norm))) return 0;
+  int i=srcc; while (i-->0) if ((src[i]>=0x41)&&(src[i]<=0x5a)) norm[i]=src[i]+0x20; else norm[i]=src[i];
+  src=norm;
+  #define _(tag) if ((srcc==sizeof(#tag)-1)&&!memcmp(src,#tag,srcc)) return BIGPC_ACTIONID_##tag;
+  BIGPC_FOR_EACH_ACTIONID
+  #undef _
+  //TODO actionid aliases?
+  return 0;
+}
+
+static int bigpc_actionid_repr(char *dst,int dsta,void *userdata,uint16_t actionid) {
+  const char *src=0;
+  int srcc=0;
+  switch (actionid) {
+    #define _(tag) case BIGPC_ACTIONID_##tag: src=#tag; srcc=sizeof(#tag)-1; break;
+    BIGPC_FOR_EACH_ACTIONID
+    #undef _
+  }
+  if (!src) return -1;
+  if (srcc<=dsta) {
+    memcpy(dst,src,srcc);
+    if (srcc<dsta) dst[srcc]=0;
+  }
+  return srcc;
+}
+
 /* Init input.
  */
 
@@ -286,7 +355,24 @@ int bigpc_input_init() {
     }
   }
   
-  // TODO Input manager.
+  // Initialize the mapper.
+  const struct inmgr_delegate inmgr_delegate={
+    .userdata=0,
+    .btnid_left=FMN_INPUT_LEFT,
+    .btnid_right=FMN_INPUT_RIGHT,
+    .btnid_up=FMN_INPUT_UP,
+    .btnid_down=FMN_INPUT_DOWN,
+    .btnid_required=FMN_INPUT_LEFT|FMN_INPUT_RIGHT|FMN_INPUT_UP|FMN_INPUT_DOWN|FMN_INPUT_USE|FMN_INPUT_MENU,
+    .state_change=bigpc_cb_state_change,
+    .action=bigpc_cb_action,
+    .btnid_eval=bigpc_btnid_eval,
+    .btnid_repr=bigpc_btnid_repr,
+    .actionid_eval=bigpc_actionid_eval,
+    .actionid_repr=bigpc_actionid_repr,
+  };
+  if (!(bigpc.inmgr=inmgr_new(&inmgr_delegate))) return -1;
+  //TODO config file for inmgr
+  if (inmgr_ready(bigpc.inmgr)<0) return -1;
   
   return 0;
 }

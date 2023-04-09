@@ -127,6 +127,7 @@ static void _glx_show_cursor(struct bigpc_video_driver *driver,int show) {
 
 static void _glx_set_fullscreen(struct bigpc_video_driver *driver,int fullscreen) {
   fmn_glx_set_fullscreen(DRIVER->glx,fullscreen);
+  driver->fullscreen=fmn_glx_get_fullscreen(DRIVER->glx);
 }
 
 static void _glx_suppress_screensaver(struct bigpc_video_driver *driver) {

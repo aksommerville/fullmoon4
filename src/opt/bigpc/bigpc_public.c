@@ -23,6 +23,7 @@ void bigpc_quit() {
   bigpc_synth_del(bigpc.synth);
   fmn_datafile_del(bigpc.datafile);
   fmstore_del(bigpc.fmstore);
+  inmgr_del(bigpc.inmgr);
   
   memset(&bigpc,0,sizeof(struct bigpc));
   bigpc.exename="fullmoon";
@@ -52,6 +53,12 @@ int bigpc_init(int argc,char **argv) {
   if ((err=bigpc_audio_init())<0) return err;
   if ((err=bigpc_input_init())<0) return err;
   
+  // With video and input both online, check whether we need to map the System Keyboard.
+  if (bigpc.video->type->has_wm) {
+    bigpc.devid_keyboard=bigpc_input_devid_next();
+    inmgr_connect_system_keyboard(bigpc.inmgr,bigpc.devid_keyboard);
+  }
+  
   if (fmn_init()<0) {
     fprintf(stderr,"Error initializing game.\n");
     return -2;
@@ -79,6 +86,7 @@ static void bigpc_pop_menu() {
   if (bigpc.menuc<1) return;
   struct bigpc_menu *menu=bigpc.menuv[--(bigpc.menuc)];
   bigpc_menu_del(menu);
+  bigpc_ignore_next_button();
 }
 
 /* Update.
