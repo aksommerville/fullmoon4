@@ -18,9 +18,6 @@
 
 // Required only for making intelligent initial-size decisions in a multi-monitor setting.
 // apt install libxinerama-dev
-#ifndef FMN_USE_xinerama
-  #define FMN_USE_xinerama 1
-#endif
 #if FMN_USE_xinerama
   #include <X11/extensions/Xinerama.h>
 #endif
