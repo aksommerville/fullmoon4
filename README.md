@@ -18,6 +18,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] DRM, validate
 - - [ ] minsyn
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
+- - - Prediction: A native build will run like butter, no strain at all.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
 - [ ] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
@@ -31,7 +32,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] bigpc: initial sketches. Desired behavior is initials only show up if there are none from the store. I believe we're currently doing them a la carte.
 - [ ] bigpc: map callbacks
 - [ ] bigpc: gameover song change
-- [ ] glx: initial window size should be a multiple of the framebuffer size
+- [x] glx: initial window size should be a multiple of the framebuffer size
 
 ### May
 

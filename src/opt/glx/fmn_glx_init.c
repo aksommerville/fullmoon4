@@ -63,14 +63,17 @@ static void fmn_glx_estimate_monitor_size(int *w,int *h,const struct fmn_glx *fm
 static void fmn_glx_size_window_for_framebuffer(
   struct fmn_glx *fmn_glx,int fbw,int fbh,int monw,int monh
 ) {
-  fmn_glx->w=(monw*3)>>2;
-  fmn_glx->h=(monh*3)>>2;
-  int wforh=(monw*fmn_glx->h)/monh;
-  if (wforh<=fmn_glx->w) {
-    fmn_glx->w=wforh;
-  } else {
-    fmn_glx->h=(monh*fmn_glx->w)/monw;
-  }
+  // No particular reason for this, but take 3/4 of the monitor as our upper limit.
+  // I figure it's polite to leave some breathing room on the user's screen, when not in fullscreen mode.
+  int wlimit=(monw*3)>>2;
+  int hlimit=(monh*3)>>2;
+  // Within that, take some integer multiple of the framebuffer size.
+  int xscale=wlimit/fbw;
+  int yscale=hlimit/fbh;
+  int scale=(xscale<yscale)?xscale:yscale;
+  if (scale<1) scale=1;
+  fmn_glx->w=fbw*scale;
+  fmn_glx->h=fbh*scale;
 }
 
 static void fmn_glx_size_window_for_monitor(
@@ -99,8 +102,8 @@ int fmn_glx_init_start(struct fmn_glx *fmn_glx,const struct fmn_glx_setup *setup
   // Caller usually doesn't specify a window size, and we default based on frambuffer and monitor.
   fmn_glx->w=setup->w;
   fmn_glx->h=setup->h;
+    int monw=0,monh=0;
   if ((fmn_glx->w<1)||(fmn_glx->h<1)) {
-    int monw,monh;
     fmn_glx_estimate_monitor_size(&monw,&monh,fmn_glx);
     if (fmn_glx->fbw) fmn_glx_size_window_for_framebuffer(fmn_glx,fmn_glx->fbw,fmn_glx->fbh,monw,monh);
     else fmn_glx_size_window_for_monitor(fmn_glx,monw,monh);

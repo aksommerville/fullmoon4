@@ -7,7 +7,6 @@ linux_OUTDIR:=out/linux
 
 # Truly optional units, ie you can change these (remember to update LDPOST et al).
 # You must enable at least one of (glx,drm), otherwise you're not going to see anything.
-# 'xinerama' is not a code unit; it's a flag to 'glx', allowing it to use libXinerama.
 linux_OPT_ENABLE:=evdev alsa glx drm gl2 soft stdsyn minsyn
 
 # The rest are mandatory, no alternatives:
@@ -23,6 +22,12 @@ linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses
   $(foreach U,$(linux_OPT_ENABLE),-DFMN_USE_$U=1)
 linux_LD:=gcc
 linux_LDPOST:=-lm -lX11 -lGL -lGLX -lEGL -ldrm -lgbm -lz -lpthread
+
+ifneq (,$(linux_USE_XINERAMA))
+  linux_OPT_ENABLE+=xinerama
+  linux_CC+=-DFMN_USE_xinerama
+  linux_LDPOST+=-lXinerama
+endif
 
 $(eval $(call SINGLE_DATA_ARCHIVE,linux,$(linux_DATA)))
 
