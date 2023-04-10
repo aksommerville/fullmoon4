@@ -31,7 +31,9 @@ static int alsapcm_list_devices_1(
 ) {
   int err;
   struct snd_pcm_hw_params hwparams;
-  int fd=open(path,O_RDONLY);
+  // O_NONBLOCK here prevents us from stalling when some other client is using ALSA.
+  // Seems like in that case, we will never actually get audio output, but from our perspective we'll appear to.
+  int fd=open(path,O_RDONLY|O_NONBLOCK);
   if (fd<0) return -1;
   
   if ((err=ioctl(fd,SNDRV_PCM_IOCTL_PVERSION,&device->protocol_version))<0) goto _done_;

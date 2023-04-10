@@ -21,8 +21,11 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - - Prediction: A native build will run like butter, no strain at all.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
-- [ ] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
+- [x] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
 - - Confirm that it really is ALSA. Only I noticed it when VLC was running, so assume it's audio-related.
+- - ...confirmed. If VLC is running, opening /dev/snd/pcmC0D0p stalls.
+- - If I open with O_NONBLOCK, it appears to succeed (writes return full length and all) but no output, even after closing the other client.
+- - I guess that's fair, go with it.
 - [x] gl2: Cheese whiz.
 - [x] bigpc: clock
 - - [x] bigpc_autobloom_plants, once the clock works
@@ -44,11 +47,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
 - - Probly no need for thumb drives if we've only got the demo.
+- - [ ] Big banner. Try sewing this instead of buying one.
+- - [ ] Stuffed werewolf.
+- - [ ] Feathers with sharp pins at the tip so we can impale the werewolf with them.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Lively intro splash.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
-- [ ] The Cheat Book. A nice looking "WARNING SPOILERS" notebook we can leave out for demo players.
+- [x] The Cheat Book. A nice looking "WARNING SPOILERS" notebook we can leave out for demo players.
 - [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
