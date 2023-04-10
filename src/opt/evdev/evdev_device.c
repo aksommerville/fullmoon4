@@ -204,7 +204,7 @@ int evdev_device_enumerate(
       struct evdev_key_usage *u=keyusagev+keyusagec++;
       u->code=entry.keycode;
       u->usage=*(uint32_t*)entry.scancode;
-    }
+    } else break;
   }
   qsort(keyusagev,keyusagec,sizeof(struct evdev_key_usage),evdev_key_usage_cmp);
   

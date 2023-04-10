@@ -24,8 +24,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
 - - Confirm that it really is ALSA. Only I noticed it when VLC was running, so assume it's audio-related.
 - [x] gl2: Cheese whiz.
-- [ ] bigpc: clock
-- - [ ] bigpc_autobloom_plants, once the clock works
+- [x] bigpc: clock
+- - [x] bigpc_autobloom_plants, once the clock works
 - [ ] gl2: victory menu. Presentation, but also we need to reset after ack and that's not happening yet.
 - [ ] bigpc: validate buried doors, they probably won't auto-open second visit ...confirmed, they don't
 - [ ] bigpc: validate static wind, probably not happening due to unset wind_time

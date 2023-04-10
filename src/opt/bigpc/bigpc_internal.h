@@ -9,6 +9,7 @@
 #include "bigpc_synth.h"
 #include "bigpc_render.h"
 #include "bigpc_menu.h"
+#include "bigpc_clock.h"
 #include "opt/datafile/fmn_datafile.h"
 #include "opt/fmstore/fmstore.h"
 #include "opt/inmgr/inmgr.h"
@@ -41,6 +42,9 @@
   _(DOWN) \
   _(USE) \
   _(MENU)
+  
+// Unclear why this isn't part of the client.
+#define BIGPC_PLANT_FLOWER_TIME 20000
 
 struct bigpc_config {
   char *video_drivers;
@@ -78,6 +82,7 @@ extern struct bigpc {
   struct fmn_datafile *datafile;
   struct fmstore *fmstore;
   struct inmgr *inmgr;
+  struct bigpc_clock clock;
   
   uint8_t input_state;
   int devid_keyboard;

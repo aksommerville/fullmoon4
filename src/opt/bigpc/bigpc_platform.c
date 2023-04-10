@@ -154,7 +154,6 @@ static void bigpc_play_song(uint8_t songid) {
   const void *serial=0;
   int serialc=fmn_datafile_get_any(&serial,bigpc.datafile,FMN_RESTYPE_SONG,songid);
   if (serialc<0) serialc=0;
-  fprintf(stderr,"Play song %d, %d bytes\n",songid,serialc);
   if (bigpc_audio_lock(bigpc.audio)>=0) {
     bigpc_synth_play_song(bigpc.synth,serial,serialc,0);
     bigpc_audio_unlock(bigpc.audio);
@@ -162,18 +161,20 @@ static void bigpc_play_song(uint8_t songid) {
 }
 
 static void bigpc_autobloom_plants() {
-  fprintf(stderr,"%s plantc=%d\n",__func__,fmn_global.plantc);
+  int dirty=0;
   struct fmn_plant *plant=fmn_global.plantv;
   int i=fmn_global.plantc;
   for (;i-->0;plant++) {
     if (plant->state!=FMN_PLANT_STATE_GROW) {
-      fprintf(stderr,"  (%d,%d) not growing\n",plant->x,plant->y);
     } else if (!plant->flower_time) {
-      fprintf(stderr,"  (%d,%d) flower_time unset\n",plant->x,plant->y);
+    } else if (plant->flower_time>bigpc.clock.last_game_time_ms) {
     } else {
-      fprintf(stderr,"  (%d,%d) flower_time=%d. what time is it right now?\n",plant->x,plant->y,plant->flower_time);
-      // ^ this question is more complicated than you think
+      plant->state=FMN_PLANT_STATE_FLOWER;
+      dirty=1;
     }
+  }
+  if (dirty) {
+    fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
   }
 }
 
@@ -276,8 +277,7 @@ static void bigpc_set_flower_times() {
   for (;i-->0;plant++) {
     if (plant->state!=FMN_PLANT_STATE_GROW) continue;
     if (plant->flower_time) continue;
-    fprintf(stderr,"***** setting flower_time *****\n");
-    plant->flower_time=12345;//TODO clock
+    plant->flower_time=bigpc.clock.last_game_time_ms+BIGPC_PLANT_FLOWER_TIME;
   }
 }
 
@@ -390,7 +390,7 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
     sketch->bits=0;
   }
   
-  sketch->time=0;//TODO
+  sketch->time=bigpc.clock.last_game_time_ms;
   
   bigpc.sketch_in_progress=sketch;
   fmn_begin_menu(FMN_MENU_CHALK,sketch->bits|0x80000000,fmn_cb_sketch);
@@ -403,7 +403,6 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
  */
  
 void fmn_sound_effect(uint16_t sfxid) {
-  fmn_log("TODO %s %d",__func__,sfxid);
   if (bigpc_audio_lock(bigpc.audio)>=0) {
     uint8_t chid=0x0f;
     uint8_t opcode=0x98;
@@ -415,7 +414,6 @@ void fmn_sound_effect(uint16_t sfxid) {
 }
 
 void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
-  fmn_log("TODO %s %d 0x%02x 0x%02x 0x%02x",__func__,chid,opcode,a,b);
   if (bigpc_audio_lock(bigpc.audio)>=0) {
     bigpc_synth_event(bigpc.synth,chid,opcode,a,b);
     bigpc_audio_unlock(bigpc.audio);

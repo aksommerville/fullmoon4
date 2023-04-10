@@ -10,6 +10,13 @@ struct bigpc bigpc={
 void bigpc_quit() {
   bigpc_audio_play(bigpc.audio,0);
   
+  int64_t elapsed_real_us=bigpc.clock.last_real_time_us-bigpc.clock.first_real_time_us;
+  fprintf(stderr,
+    "%s, clock stats: Final game time %u ms (%u ms real time). overflow=%d underflow=%d fault=%d wrap=%d\n",
+    __func__,bigpc.clock.last_game_time_ms,(int)(elapsed_real_us/1000),
+    bigpc.clock.overflowc,bigpc.clock.underflowc,bigpc.clock.faultc,bigpc.clock.wrapc
+  );
+  
   bigpc_video_driver_del(bigpc.video);
   bigpc_audio_driver_del(bigpc.audio);
   if (bigpc.inputv) {
@@ -65,18 +72,8 @@ int bigpc_init(int argc,char **argv) {
   }
   
   bigpc_audio_play(bigpc.audio,1);
+  bigpc_clock_reset(&bigpc.clock);
   return 0;
-}
-
-/* Current time in milliseconds. XXX need a smarter clock with a concept of "game time".
- */
- 
-#include <sys/time.h>
-
-static uint32_t bigpc_now() {
-  struct timeval tv={0};
-  gettimeofday(&tv,0);
-  return tv.tv_sec*1000+tv.tv_usec/1000;
 }
 
 /* Pop the top menu off the stack.
@@ -105,13 +102,14 @@ int bigpc_update() {
   
   // Update game or top menu.
   if (bigpc.menuc) {
+    bigpc_clock_skip(&bigpc.clock);
     int err=bigpc_menu_update(bigpc.menuv[bigpc.menuc-1]);
     if (err<0) return -1;
     if (!err) bigpc_pop_menu();
-  } else if (!bigpc.render->transition_in_progress) {
-    uint32_t now=bigpc_now();//TODO this is "active game time", but we're stubbing with absolute real time for now.
-    uint8_t input_state=bigpc.input_state;
-    fmn_update(now,input_state);
+  } else if (bigpc.render->transition_in_progress) {
+    bigpc_clock_skip(&bigpc.clock);
+  } else {
+    fmn_update(bigpc_clock_update(&bigpc.clock),bigpc.input_state);
   }
   
   // Render one frame.

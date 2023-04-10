@@ -16,11 +16,11 @@ int fmn_init() {
 void fmn_update(uint32_t timems,uint8_t input) {
 
   uint32_t elapsedms=timems-last_update_time;
-  last_update_time=timems;
   if ((elapsedms>ELAPSED_TIME_LIMIT)||(elapsedms<1)) {
     fmn_log("Clock fault! last_time=%d time=%d elapsed=%d",last_update_time,timems,elapsedms);
     elapsedms=1;
   }
+  last_update_time=timems;
   float elapsed=elapsedms/1000.0f;
   
   if (input!=pvinput) {
