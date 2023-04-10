@@ -10,8 +10,35 @@ static void fmn_gl2_game_render_HERO_curse(struct bigpc_render_driver *driver,st
   fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-1.0f,0x73,(DRIVER->game.framec&0x10)?FMN_XFORM_XREV:0);
 }
 
+static const struct fmn_hero_cheese_schedule {
+  uint8_t dtile;
+  uint8_t xform;
+} fmn_hero_cheese_schedule[]={
+  {0,0},
+  {1,0},
+  {2,0},
+  {3,0},
+  {4,0},
+  {4,FMN_XFORM_XREV},
+  {3,FMN_XFORM_XREV},
+  {2,FMN_XFORM_XREV},
+  {1,FMN_XFORM_XREV},
+  {0,FMN_XFORM_XREV},
+  {1,FMN_XFORM_XREV},
+  {2,FMN_XFORM_XREV},
+  {3,FMN_XFORM_XREV},
+  {4,FMN_XFORM_XREV},
+  {4,0},
+  {3,0},
+  {2,0},
+  {1,0},
+};
+
 static void fmn_gl2_game_render_HERO_cheese(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite) {
-  //TODO RenderHero.js does this with ellipses. Use tiles instead. (lets us keep in the merged-mintile batches, and the web look of this is not so hot anyway).
+  int schedulec=sizeof(fmn_hero_cheese_schedule)/sizeof(fmn_hero_cheese_schedule[0]);
+  int frame=(DRIVER->game.framec/2)%schedulec;
+  const struct fmn_hero_cheese_schedule *src=fmn_hero_cheese_schedule+frame;
+  fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-1.3f,0x80+src->dtile,src->xform);
 }
 
 /* Injury, a unique state.
