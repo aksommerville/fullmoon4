@@ -15,9 +15,10 @@ static const char fmn_gl2_vsrc_maxtile[]=
 "attribute vec4 aprimary;\n"
 "varying vec2 vtexcoord;\n" // upper-left corner, normalized
 #if FMN_USE_bcm
-//TODO alternative to vxform
+  "varying vec2 vxformx;\n"
+  "varying vec2 vxformy;\n"
 #else
-"varying mat2x3 vxform;\n"
+  "varying mat2x3 vxform;\n"
 #endif
 "varying vec4 vtint;\n"
 "varying vec4 vprimary;\n"
@@ -28,7 +29,25 @@ static const char fmn_gl2_vsrc_maxtile[]=
 "  vtexcoord.y=floor(atileid/16.0)/16.0;\n"
 
 #if FMN_USE_bcm
-//TODO
+"       if (axform<0.5) { vxformx=vec2( 1.0, 0.0); vxformy=vec2( 0.0, 1.0); }\n"
+"  else if (axform<1.5) { vxformx=vec2(-1.0, 0.0); vxformy=vec2( 0.0, 1.0); }\n"
+"  else if (axform<2.5) { vxformx=vec2( 1.0, 0.0); vxformy=vec2( 0.0,-1.0); }\n"
+"  else if (axform<3.5) { vxformx=vec2(-1.0, 0.0); vxformy=vec2( 0.0,-1.0); }\n"
+"  else if (axform<4.5) { vxformx=vec2( 0.0, 1.0); vxformy=vec2( 1.0, 0.0); }\n"
+"  else if (axform<5.5) { vxformx=vec2( 0.0, 1.0); vxformy=vec2(-1.0, 0.0); }\n"
+"  else if (axform<6.5) { vxformx=vec2( 0.0,-1.0); vxformy=vec2( 1.0, 0.0); }\n"
+"  else                 { vxformx=vec2( 0.0,-1.0); vxformy=vec2(-1.0, 0.0); }\n"
+
+"  if (arotate>0.0) {\n"
+"    float slopscale=1.4142135623730951;\n"
+"    gl_PointSize*=slopscale;\n"
+"    float t=arotate*-6.283185307179586;\n"
+"    vec2 tmpx=vec2(cos(t)*vxformx.x+sin(t)*vxformx.y,-sin(t)*vxformx.x+cos(t)*vxformx.y);\n"
+"    vec2 tmpy=vec2(cos(t)*vxformy.x+sin(t)*vxformy.y,-sin(t)*vxformy.x+cos(t)*vxformy.y);\n"
+"    vxformx=tmpx*slopscale;\n"
+"    vxformy=tmpy*slopscale;\n"
+"  }\n"
+
 #else
 "       if (axform<0.5) vxform=mat2x3(  1.0, 0.0,0.0,  0.0, 1.0,0.0 );\n" // natural
 "  else if (axform<1.5) vxform=mat2x3( -1.0, 0.0,0.0,  0.0, 1.0,0.0 );\n" // XREV
@@ -56,16 +75,19 @@ static const char fmn_gl2_fsrc_maxtile[]=
 "uniform sampler2D sampler;\n"
 "varying vec2 vtexcoord;\n"
 #if FMN_USE_bcm
-//TODO
+  "varying vec2 vxformx;\n"
+  "varying vec2 vxformy;\n"
 #else
-"varying mat2x3 vxform;\n"
+  "varying mat2x3 vxform;\n"
 #endif
 "varying vec4 vtint;\n"
 "varying vec4 vprimary;\n"
 "void main() {\n"
 
 #if FMN_USE_bcm
-"  vec2 texcoord=gl_PointCoord;\n"
+"  vec2 texcoord=gl_PointCoord-0.5;\n"
+"  texcoord=vec2(texcoord.x*vxformx.x+texcoord.y*vxformx.y,texcoord.x*vxformy.x+texcoord.y*vxformy.y);\n"
+"  texcoord+=0.5;\n"
 #else
 "  vec2 texcoord=(vxform*(gl_PointCoord-0.5)+0.5).xy;\n"
 #endif
