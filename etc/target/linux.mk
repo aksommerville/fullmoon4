@@ -18,6 +18,7 @@ linux_DATA:=$(linux_OUTDIR)/data
 linux-all:$(linux_EXE) $(linux_DATA)
 
 linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses \
+  $(linux_CC_EXTRA) \
   -I/usr/include/libdrm \
   $(foreach U,$(linux_OPT_ENABLE),-DFMN_USE_$U=1)
 linux_LD:=gcc

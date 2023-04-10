@@ -220,8 +220,9 @@ static int alsapcm_configure_device(
     .silence_threshold=alsapcm->hwbufframec,
     .silence_size=0,
     .boundary=alsapcm->hwbufframec,
-    .proto=alsapcm->protocol_version,
-    .tstamp_type=SNDRV_PCM_TSTAMP_NONE,
+    // these two fields aren't in my pi's alsa headers. TODO how to detect?
+    //.proto=alsapcm->protocol_version,
+    //.tstamp_type=SNDRV_PCM_TSTAMP_NONE,
   };
   if (ioctl(alsapcm->fd,SNDRV_PCM_IOCTL_SW_PARAMS,&swparams)<0) {
     return alsapcm_error(alsapcm,"SNDRV_PCM_IOCTL_SW_PARAMS",0);

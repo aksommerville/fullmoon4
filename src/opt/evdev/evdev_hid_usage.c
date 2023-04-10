@@ -161,11 +161,11 @@ static int evdev_guess_hid_usage_KEY(int code) {
  */
  
 static int evdev_guess_hid_usage_ABS(int code) {
-  if ((code>=ABS_MISC)&&(code<ABS_RESERVED)) {
+  //if ((code>=ABS_MISC)&&(code<ABS_RESERVED)) {
     // MISC+n (0..5)
     // HID doesn't have a "generic absolute axis" like it does for buttons. Whatever.
-    return 0;
-  }
+    //return 0;
+  //}
   switch (code) {
     case ABS_X: return 0x00010030; // X
     case ABS_Y: return 0x00010031; // Y

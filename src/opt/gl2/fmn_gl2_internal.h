@@ -12,7 +12,13 @@
 #define GL_GLEXT_PROTOTYPES 1
 #include <GL/gl.h>
 
-#define FMN_GL2_GLSL_VERSION 120
+//TODO What's the right way to determine the GLSL version?
+#if FMN_USE_bcm
+  // a proxy for older raspberry pis, which need version 100
+  #define FMN_GL2_GLSL_VERSION 100
+#else
+  #define FMN_GL2_GLSL_VERSION 120
+#endif
 
 /* GL object wrappers.
  *************************************************************/

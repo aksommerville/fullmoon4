@@ -7,6 +7,7 @@
  
 extern const struct bigpc_video_type bigpc_video_type_glx;
 extern const struct bigpc_video_type bigpc_video_type_drm;
+extern const struct bigpc_video_type bigpc_video_type_bcm;
 extern const struct bigpc_video_type bigpc_video_type_macwm;
 extern const struct bigpc_video_type bigpc_video_type_mswm;
 extern const struct bigpc_video_type bigpc_video_type_dummy;
@@ -17,6 +18,9 @@ static const struct bigpc_video_type *bigpc_video_typev[]={
 #endif
 #if FMN_USE_drm
   &bigpc_video_type_drm,
+#endif
+#if FMN_USE_bcm
+  &bigpc_video_type_bcm,
 #endif
 #if FMN_USE_macwm
   &bigpc_video_type_macwm,
