@@ -227,6 +227,7 @@ static void _stdsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t
   switch (opcode) {
     case MIDI_OPCODE_NOTE_OFF: stdsyn_release_chid_noteid(driver,chid,a); break;
     case MIDI_OPCODE_NOTE_ON: stdsyn_note_on(driver,chid,a,b); break;
+    case MIDI_OPCODE_RESET: stdsyn_silence_all(driver); break;
   }
 }
 

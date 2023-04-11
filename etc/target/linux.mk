@@ -31,4 +31,4 @@ endif
 
 $(eval $(call SINGLE_DATA_ARCHIVE,linux,$(linux_DATA)))
 
-linux-run:$(linux_EXE) $(linux_DATA);$(linux_EXE) --data=$(linux_DATA)
+linux-run:$(linux_EXE) $(linux_DATA);$(linux_EXE) --data=$(linux_DATA) $(linux_RUN_ARGS)

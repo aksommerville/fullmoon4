@@ -19,3 +19,10 @@ void stdsyn_release_all(struct bigpc_synth_driver *driver) {
   int i=DRIVER->voicec;
   for (;i-->0;voice++) stdsyn_voice_release(voice);
 }
+
+void stdsyn_silence_all(struct bigpc_synth_driver *driver) {
+  struct stdsyn_voice *voice=DRIVER->voicev;
+  int i=DRIVER->voicec;
+  for (;i-->0;voice++) stdsyn_voice_cleanup(voice);
+  DRIVER->voicec=0;
+}

@@ -41,6 +41,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
+- [ ] Make up a new item to take Corn's place, and one for the zero slot. Fill all 16 slots. (mind that item zero comes into play then)
+- - [ ] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
 
 ### After GDEX
 
@@ -67,7 +69,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
-- [ ] Make up a new item to take Corn's place.
 - [ ] Maps for full game.
 - [ ] Pumpkin protection: Ensure she can't travel too far as a pumpkin, and can't get trapped in the reachable area.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js

@@ -46,6 +46,7 @@ struct bigpc_synth_driver_stdsyn {
 void stdsyn_generate_signal(float *v,int c,struct bigpc_synth_driver *driver);
 
 void stdsyn_release_all(struct bigpc_synth_driver *driver);
+void stdsyn_silence_all(struct bigpc_synth_driver *driver);
 
 void stdsyn_voice_cleanup(struct stdsyn_voice *voice);
 void stdsyn_voice_update(float *v,int c,struct stdsyn_voice *voice);
