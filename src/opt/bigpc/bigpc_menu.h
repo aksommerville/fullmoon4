@@ -30,7 +30,7 @@ void bigpc_menu_del(struct bigpc_menu *menu);
 
 struct bigpc_menu *bigpc_menu_new_prompt(int stringid);
 struct bigpc_menu *bigpc_menu_new_PAUSE();
-struct bigpc_menu *bigpc_menu_new_CHALK(uint32_t bits);
+struct bigpc_menu *bigpc_menu_new_CHALK();
 struct bigpc_menu *bigpc_menu_new_TREASURE();
 struct bigpc_menu *bigpc_menu_new_VICTORY();
 struct bigpc_menu *bigpc_menu_new_GAMEOVER();

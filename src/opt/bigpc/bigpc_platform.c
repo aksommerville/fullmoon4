@@ -1,4 +1,5 @@
 #include "bigpc_internal.h"
+#include "app/fmn_game.h"
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -44,7 +45,7 @@ void _fmn_begin_menu(int prompt,...) {
     menu=bigpc_menu_new_prompt(prompt);
   } else switch (prompt) {
     case FMN_MENU_PAUSE: menu=bigpc_menu_new_PAUSE(); break;
-    case FMN_MENU_CHALK: menu=bigpc_menu_new_CHALK(0); break;
+    case FMN_MENU_CHALK: menu=bigpc_menu_new_CHALK(); break;
     case FMN_MENU_TREASURE: menu=bigpc_menu_new_TREASURE(); break;
     case FMN_MENU_VICTORY: menu=bigpc_menu_new_VICTORY(); break;
     case FMN_MENU_GAMEOVER: menu=bigpc_menu_new_GAMEOVER(); break;
@@ -109,6 +110,8 @@ static void bigpc_clear_map_commands() {
   fmn_global.sketchc=0;
   fmn_global.blowback=0;
   fmn_global.wind_dir=0;
+  
+  bigpc.map_callbackc=0;
 }
  
 static int bigpc_cb_pick_sprite(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
@@ -125,6 +128,10 @@ static void bigpc_add_door(uint8_t cellp,uint16_t gsbit,uint16_t dstmapid,uint8_
   door->dstx=dstx;
   door->dsty=dsty;
   door->extra=gsbit;
+  // Expose buried doors if we got them already:
+  if (door->extra&&door->mapid&&fmn_gs_get_bit(door->extra)) {
+    fmn_global.map[cellp]=0x3f;
+  }
 }
 
 static void bigpc_add_transmogrify(uint8_t cellp,uint8_t flags) {
@@ -141,7 +148,18 @@ static void bigpc_add_sketch(uint8_t cellp,uint32_t bits) {
 }
 
 static void bigpc_add_callback(uint8_t evid,uint16_t cbid,uint8_t param) {
-  //TODO register callbacks
+  if (bigpc.map_callbackc>=bigpc.map_callbacka) {
+    int na=bigpc.map_callbacka+8;
+    if (na>INT_MAX/sizeof(struct bigpc_map_callback)) return;
+    void *nv=realloc(bigpc.map_callbackv,sizeof(struct bigpc_map_callback)*na);
+    if (!nv) return;
+    bigpc.map_callbackv=nv;
+    bigpc.map_callbacka=na;
+  }
+  struct bigpc_map_callback *cb=bigpc.map_callbackv+bigpc.map_callbackc++;
+  cb->evid=evid;
+  cb->cbid=cbid;
+  cb->param=param;
 }
 
 static void bigpc_load_cellphysics() {
@@ -211,6 +229,13 @@ int8_t fmn_load_map(
   bigpc.mapid=mapid;
   memcpy(fmn_global.map,serial,serialp);
   bigpc_clear_map_commands();
+  
+  // Apply plants and sketches from session store before decoding the map's commands.
+  // This is important for sketches: We want the map-command ones only if there are none from the store.
+  int use_initial_sketches=1;
+  fmstore_write_plants_to_globals(bigpc.fmstore,bigpc.mapid);
+  fmstore_write_sketches_to_globals(bigpc.fmstore,bigpc.mapid);
+  if (fmn_global.sketchc) use_initial_sketches=0;
 
   while (serialp<serialc) {
     uint8_t opcode=serial[serialp++];
@@ -238,7 +263,7 @@ int8_t fmn_load_map(
       case 0x20: bigpc_play_song(arg[0]); break;
       case 0x21: fmn_global.maptsid=arg[0]; break;
       case 0x22: fmn_global.herostartp=arg[0]; break;
-      case 0x23: fmn_global.wind_dir=arg[0]; break;
+      case 0x23: if (fmn_global.wind_dir=arg[0]) fmn_global.wind_time=86400.0f; else fmn_global.wind_time=0.0f; break;
       
       case 0x40: fmn_global.neighborw=(arg[0]<<8)|arg[1]; break;
       case 0x41: fmn_global.neighbore=(arg[0]<<8)|arg[1]; break;
@@ -247,7 +272,7 @@ int8_t fmn_load_map(
       case 0x44: bigpc_add_transmogrify(arg[0],arg[1]); break;
       
       case 0x60: bigpc_add_door(arg[0],0,(arg[1]<<8)|arg[2],arg[3]%FMN_COLC,arg[3]/FMN_COLC); break;
-      case 0x61: bigpc_add_sketch(arg[0],(arg[1]<<16)|(arg[2]<<8)|arg[3]); break;
+      case 0x61: if (use_initial_sketches) bigpc_add_sketch(arg[0],(arg[1]<<16)|(arg[2]<<8)|arg[3]); break;
       case 0x62: bigpc_add_door(arg[0],(arg[1]<<16)|arg[2],0,0x30,arg[3]); break;
       case 0x63: bigpc_add_callback(arg[0],(arg[1]<<8)|arg[2],arg[3]); break;
       
@@ -266,8 +291,6 @@ int8_t fmn_load_map(
   }
   
   bigpc_load_cellphysics();
-  fmstore_write_plants_to_globals(bigpc.fmstore,bigpc.mapid);
-  fmstore_write_sketches_to_globals(bigpc.fmstore,bigpc.mapid);
   bigpc_autobloom_plants();
   bigpc_render_map_dirty(bigpc.render);
   return 1;
@@ -430,8 +453,15 @@ void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
  */
  
 uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id) {
-  fmn_log("TODO %s %d",__func__,id);
-  return 0;
+  const char *src=0;
+  int srcc=fmn_datafile_get_any(&src,bigpc.datafile,FMN_RESTYPE_STRING,id);
+  if (srcc<0) srcc=0;
+  if (srcc>0xff) srcc=0xff;
+  if (srcc<=dsta) {
+    memcpy(dst,src,srcc);
+    if (srcc<dsta) dst[srcc]=0;
+  }
+  return srcc;
 }
 
 /* Find a command in nearby maps, for the compass.
@@ -460,5 +490,10 @@ uint8_t fmn_find_direction_to_map(uint16_t mapid) {
  */
  
 void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void *userdata),void *userdata) {
-  fmn_log("TODO %s",__func__);
+  struct bigpc_map_callback *reg=bigpc.map_callbackv;
+  int i=bigpc.map_callbackc;
+  for (;i-->0;reg++) {
+    if (reg->evid!=evid) continue;
+    cb(reg->cbid,reg->param,userdata);
+  }
 }

@@ -31,6 +31,7 @@ void bigpc_quit() {
   fmn_datafile_del(bigpc.datafile);
   fmstore_del(bigpc.fmstore);
   inmgr_del(bigpc.inmgr);
+  if (bigpc.map_callbackv) free(bigpc.map_callbackv);
   
   memset(&bigpc,0,sizeof(struct bigpc));
   bigpc.exename="fullmoon";

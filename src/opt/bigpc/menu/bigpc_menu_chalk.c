@@ -31,7 +31,7 @@ static int _chalk_ready(struct bigpc_menu *menu) {
   int i=menu->optionc;
   for (;i-->0;option++) {
     if (option->stringid&0x80000000) {
-      menu->extra[0]=option->stringid;
+      menu->extra[0]=option->stringid&0x000fffff;
       break;
     }
   }
@@ -120,7 +120,7 @@ static int _chalk_update(struct bigpc_menu *menu,uint8_t new_input) {
 /* New.
  */
  
-struct bigpc_menu *bigpc_menu_new_CHALK(uint32_t bits) {
+struct bigpc_menu *bigpc_menu_new_CHALK() {
   struct bigpc_menu *menu=calloc(1,sizeof(struct bigpc_menu_chalk));
   if (!menu) return 0;
   menu->prompt=FMN_MENU_CHALK;
@@ -128,7 +128,7 @@ struct bigpc_menu *bigpc_menu_new_CHALK(uint32_t bits) {
   MENU->pvinput=0xff;
   menu->selx=1;
   menu->sely=1;
-  menu->extra[0]=bits;
+  menu->extra[0]=0; // bits
   menu->extra[1]=0; // highlighted bit
   menu->del=_chalk_del;
   menu->ready=_chalk_ready;

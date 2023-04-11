@@ -93,6 +93,11 @@ extern struct bigpc {
   
   uint16_t mapid;
   struct fmn_sketch *sketch_in_progress;
+  struct bigpc_map_callback {
+    uint8_t evid,param;
+    uint16_t cbid;
+  } *map_callbackv;
+  int map_callbackc,map_callbacka;
   
 } bigpc;
 

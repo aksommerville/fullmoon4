@@ -15,28 +15,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [ ] Linux DRM platform, why not.
 - - [ ] stdsyn
-- - [x] DRM, validate
 - - [ ] minsyn
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - - - Prediction: A native build will run like butter, no strain at all.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
-- [x] alsa: Seems we are delaying sometimes at startup. Can we open it async or something?
-- - Confirm that it really is ALSA. Only I noticed it when VLC was running, so assume it's audio-related.
-- - ...confirmed. If VLC is running, opening /dev/snd/pcmC0D0p stalls.
-- - If I open with O_NONBLOCK, it appears to succeed (writes return full length and all) but no output, even after closing the other client.
-- - I guess that's fair, go with it.
-- [x] gl2: Cheese whiz.
-- [x] bigpc: clock
-- - [x] bigpc_autobloom_plants, once the clock works
-- [x] gl2: victory menu. Presentation, but also we need to reset after ack and that's not happening yet.
-- [ ] bigpc: validate buried doors, they probably won't auto-open second visit ...confirmed, they don't
-- [ ] bigpc: validate static wind, probably not happening due to unset wind_time
-- [ ] bigpc: initial sketches. Desired behavior is initials only show up if there are none from the store. I believe we're currently doing them a la carte.
-- [ ] bigpc: map callbacks
-- [x] bigpc: gameover song change
 - [ ] bigpc: Stop music while violin up
-- [x] glx: initial window size should be a multiple of the framebuffer size
 
 ### May
 
@@ -54,11 +38,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Pretty up the public web page.
 - [ ] Lively intro splash.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
-- [x] The Cheat Book. A nice looking "WARNING SPOILERS" notebook we can leave out for demo players.
 - [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- [x] Book of Spoilers
 
 ### After GDEX
 
@@ -89,18 +71,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Maps for full game.
 - [ ] Pumpkin protection: Ensure she can't travel too far as a pumpkin, and can't get trapped in the reachable area.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
-- [ ] Detect heavy drops in requestAnimationFrame rate and stop music if too low.
 - [ ] Rekajigger Constants.js, use actual inlinable constants.
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Translation.
 - [ ] Web input: Key events are triggering the pause button when focussed. Why isn't it just space bar?
 - [ ] Touch input.
 - [ ] Input configuration.
-- - [ ] Generalize mapping, see src/www/js/game/InputManager.js
-- - [ ] Persist gamepad and keyboard mapping.
 - - [ ] UI for mapping.
 - [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
-- [ ] Finish everything by Halloween. (to this point in the list at least)
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
 - [ ] Unit tests.
 - - [ ] General-purpose test runner.
@@ -109,7 +87,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Automation against headless native build.
 - [ ] Other platforms:
 - - [ ] Web wrapper eg Electron
-- - [ ] Linux
 - - [ ] Tiny. I don't think it will work, but prove it.
 - - [ ] MacOS
 - - [ ] Windows
