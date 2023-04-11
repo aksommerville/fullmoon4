@@ -31,9 +31,14 @@ static int _victory_ready(struct bigpc_menu *menu) {
  */
  
 static int _victory_update(struct bigpc_menu *menu,uint8_t new_input) {
-  if (new_input&(FMN_INPUT_USE|FMN_INPUT_MENU)) {
+  // We hackily use (extra[0]) as a termination countdown, to give the renderer a chance to clean up.
+  // So there is one render with nonzero (extra[0]), renderer will notice that and clear its sticky state.
+  if (menu->extra[0]) {
     bigpc_menu_callback_any(menu);
     return 0;
+  }
+  if (new_input&(FMN_INPUT_USE|FMN_INPUT_MENU)) {
+    if (!menu->extra[0]) menu->extra[0]=1;
   }
   return 1;
 }

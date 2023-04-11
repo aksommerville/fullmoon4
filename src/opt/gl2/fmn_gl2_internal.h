@@ -43,8 +43,13 @@ struct fmn_gl2_program {
   GLuint locv[8]; // for program-specific uniforms
 };
 
+/* Initialize texture with a PNG file.
+ * The context provides a convenience using image ids.
+ * Alternately, provide packed 32-bit RGBA, LRTB as usual.
+ */
 void fmn_gl2_texture_cleanup(struct fmn_gl2_texture *texture);
 int fmn_gl2_texture_init(struct fmn_gl2_texture *texture,const void *src,int srcc);
+int fmn_gl2_texture_init_rgba(struct fmn_gl2_texture *texture,int w,int h,const void *v);
 
 void fmn_gl2_framebuffer_cleanup(struct fmn_gl2_framebuffer *framebuffer);
 int fmn_gl2_framebuffer_init(struct fmn_gl2_framebuffer *framebuffer,int w,int h);

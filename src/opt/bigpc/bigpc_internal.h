@@ -112,6 +112,8 @@ int bigpc_input_init();
 // Force a player's state to all ones, so each key needs to release before we notice the change.
 void bigpc_ignore_next_button();
 
+void bigpc_play_song(uint8_t songid);
+
 void bigpc_cb_close(struct bigpc_video_driver *driver);
 void bigpc_cb_focus(struct bigpc_video_driver *driver,int focus);
 void bigpc_cb_resize(struct bigpc_video_driver *driver,int w,int h);

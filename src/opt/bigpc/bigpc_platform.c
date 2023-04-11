@@ -68,6 +68,12 @@ void _fmn_begin_menu(int prompt,...) {
   }
   
   bigpc.menuv[bigpc.menuc++]=menu;
+  
+  // VICTORY and GAMEOVER menus also entail a song change, which the client can't do.
+  switch (prompt) {
+    case FMN_MENU_VICTORY: bigpc_play_song(7); break;
+    case FMN_MENU_GAMEOVER: bigpc_play_song(6); break;
+  }
 }
 
 /* Transitions.
@@ -147,7 +153,7 @@ static void bigpc_load_cellphysics() {
   if (serialc<sizeof(fmn_global.cellphysics)) memset(fmn_global.cellphysics+serialc,0,sizeof(fmn_global.cellphysics)-serialc);
 }
 
-static void bigpc_play_song(uint8_t songid) {
+void bigpc_play_song(uint8_t songid) {
   if (!songid) return; // 0 means "don't change", as opposed to "nothing" (TODO not sure that's correct)
   if (songid==fmn_global.songid) return;
   fmn_global.songid=songid;

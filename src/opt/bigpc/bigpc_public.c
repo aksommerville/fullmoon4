@@ -76,14 +76,36 @@ int bigpc_init(int argc,char **argv) {
   return 0;
 }
 
+/* Reset, eg after the victory menu.
+ */
+ 
+static void bigpc_reset() {
+
+  memset(&fmn_global,0,sizeof(fmn_global));
+  fmstore_del(bigpc.fmstore);
+  bigpc.fmstore=fmstore_new();
+  
+  if (fmn_init()<0) {
+    fprintf(stderr,"Error reinitializing game.\n");
+    bigpc.sigc++;
+    return;
+  }
+  bigpc_clock_reset(&bigpc.clock);
+}
+
 /* Pop the top menu off the stack.
  */
  
 static void bigpc_pop_menu() {
   if (bigpc.menuc<1) return;
   struct bigpc_menu *menu=bigpc.menuv[--(bigpc.menuc)];
+  int prompt=menu->prompt;
   bigpc_menu_del(menu);
   bigpc_ignore_next_button();
+  
+  switch (prompt) {
+    case FMN_MENU_VICTORY: bigpc_reset(); break;
+  }
 }
 
 /* Update.
@@ -130,10 +152,14 @@ int bigpc_update() {
   return bigpc.sigc?0:1;
 }
 
-/* Get menu.
+/* Trivial accessors.
  */
  
 struct bigpc_menu *bigpc_get_menu() {
   if (bigpc.menuc<1) return 0;
   return bigpc.menuv[bigpc.menuc-1];
+}
+
+uint32_t bigpc_get_game_time_ms() {
+  return bigpc.clock.last_game_time_ms;
 }

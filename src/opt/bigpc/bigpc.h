@@ -11,6 +11,8 @@
 #ifndef BIGPC_H
 #define BIGPC_H
 
+#include <stdint.h>
+
 struct bigpc_video_driver;
 struct bigpc_audio_driver;
 struct bigpc_input_driver;
@@ -29,5 +31,7 @@ int bigpc_update();
  * For now I'm assuming we will not render downstack menus. If that changes, we could add an index here.
  */
 struct bigpc_menu *bigpc_get_menu();
+
+uint32_t bigpc_get_game_time_ms();
 
 #endif

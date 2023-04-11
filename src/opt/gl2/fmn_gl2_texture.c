@@ -8,7 +8,34 @@ void fmn_gl2_texture_cleanup(struct fmn_gl2_texture *texture) {
   if (texture->texid) glDeleteTextures(1,&texture->texid);
 }
 
-/* Initialize.
+/* Initialize from RGBA.
+ */
+ 
+int fmn_gl2_texture_init_rgba(struct fmn_gl2_texture *texture,int w,int h,const void *v) {
+  if ((w<1)||(h<1)||!v) return -1;
+  
+  if (!texture->texid) {
+    glGenTextures(1,&texture->texid);
+    if (!texture->texid) {
+      glGenTextures(1,&texture->texid);
+      if (!texture->texid) return -1;
+    }
+  }
+  
+  glBindTexture(GL_TEXTURE_2D,texture->texid);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+  
+  glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,GL_RGBA,GL_UNSIGNED_BYTE,v);
+  texture->w=w;
+  texture->h=h;
+  
+  return 0;
+}
+
+/* Initialize from PNG.
  */
  
 int fmn_gl2_texture_init(struct fmn_gl2_texture *texture,const void *src,int srcc) {

@@ -118,8 +118,10 @@ struct png_image *png_image_reformat(
   if (!image) return 0;
   if (!w) w=image->w-x;
   if (!h) h=image->h-y;
-  if (!depth) depth=image->depth;
-  if (!colortype) colortype=image->colortype;
+  if (!depth) {
+    depth=image->depth;
+    if (!colortype) colortype=image->colortype;
+  }
   if ((w<1)||(w>PNG_IMAGE_SIZE_LIMIT)) return 0;
   if ((h<1)||(h>PNG_IMAGE_SIZE_LIMIT)) return 0;
   int chanc=png_channel_count_for_colortype(colortype);

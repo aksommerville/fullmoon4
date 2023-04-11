@@ -9,6 +9,7 @@ static uint8_t pvinput=0;
 
 
 int fmn_init() {
+  last_update_time=0;
   if (fmn_game_init()<0) return -1;
   return 0;
 }

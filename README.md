@@ -29,12 +29,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] gl2: Cheese whiz.
 - [x] bigpc: clock
 - - [x] bigpc_autobloom_plants, once the clock works
-- [ ] gl2: victory menu. Presentation, but also we need to reset after ack and that's not happening yet.
+- [x] gl2: victory menu. Presentation, but also we need to reset after ack and that's not happening yet.
 - [ ] bigpc: validate buried doors, they probably won't auto-open second visit ...confirmed, they don't
 - [ ] bigpc: validate static wind, probably not happening due to unset wind_time
 - [ ] bigpc: initial sketches. Desired behavior is initials only show up if there are none from the store. I believe we're currently doing them a la carte.
 - [ ] bigpc: map callbacks
-- [ ] bigpc: gameover song change
+- [x] bigpc: gameover song change
 - [ ] bigpc: Stop music while violin up
 - [x] glx: initial window size should be a multiple of the framebuffer size
 
