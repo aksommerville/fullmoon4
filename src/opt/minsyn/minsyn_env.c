@@ -7,14 +7,21 @@ void minsyn_env_reset(struct minsyn_env *env,uint8_t velocity,int mainrate) {
 
   /* XXX TEMP We don't currently have a venue for storing configured envelopes.
    * So make it up on the fly each time, the same content.
-   */
+   *
   env->atkvlo=0x100000; env->atkvhi=0x300000;
   env->susvlo=0x050000; env->susvhi=0x100000;
   env->atkclo=  30; env->atkchi=  10;
   env->decclo=  50; env->decchi=  30;
   env->rlsclo= 100; env->rlschi= 600;
+  env->atkclo=(env->atkclo*driver->rate)/1000;
+  env->decclo=(env->decclo*driver->rate)/1000;
+  env->rlsclo=(env->rlsclo*driver->rate)/1000;
+  env->atkchi=(env->atkchi*driver->rate)/1000;
+  env->decchi=(env->decchi*driver->rate)/1000;
+  env->rlschi=(env->rlschi*driver->rate)/1000;
+  /**/
   
-  /* Apply velocity. (times in ms at this point).
+  /* Apply velocity.
    */
   if (!velocity) {
     env->atkv=env->atkvlo;
@@ -36,9 +43,9 @@ void minsyn_env_reset(struct minsyn_env *env,uint8_t velocity,int mainrate) {
     env->decc=(env->decclo*rev+env->decchi*velocity)>>7;
     env->rlsc=(env->rlsclo*rev+env->rlschi*velocity)>>7;
   }
-  if (!(env->atkc=(env->atkc*mainrate)/1000)) env->atkc=1;
-  if (!(env->decc=(env->decc*mainrate)/1000)) env->decc=1;
-  if (!(env->rlsc=(env->rlsc*mainrate)/1000)) env->rlsc=1;
+  if (env->atkc<1) env->atkc=1;
+  if (env->decc<1) env->decc=1;
+  if (env->rlsc<1) env->rlsc=1;
   
   env->stage=0;
   env->released=0;
@@ -46,6 +53,7 @@ void minsyn_env_reset(struct minsyn_env *env,uint8_t velocity,int mainrate) {
   env->v=0;
   env->c=env->atkc;
   env->dv=env->atkv/env->c;
+  
 }
 
 /* Release.

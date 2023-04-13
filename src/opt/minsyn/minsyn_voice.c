@@ -23,14 +23,28 @@ void minsyn_playback_cleanup(struct minsyn_playback *playback) {
 /* Init voice.
  */
 
-void minsyn_voice_init(struct bigpc_synth_driver *driver,struct minsyn_voice *voice,uint8_t velocity) {
+void minsyn_voice_init(
+  struct bigpc_synth_driver *driver,
+  struct minsyn_voice *voice,
+  uint8_t velocity,
+  struct minsyn_resource *instrument
+) {
 
-  int waveid=1;//TODO waveid from channel config or something?
+  int waveid=instrument->waveid;
   struct minsyn_wave *wave=minsyn_get_wave(driver,waveid);
-  if (!wave) return;
-  voice->v=wave->v;
+  if (wave) voice->v=wave->v;
+  else voice->v=DRIVER->sine;
   
-  //TODO initialize voice->env
+  voice->env.atkclo=instrument->envlo.atkc;
+  voice->env.atkvlo=instrument->envlo.atkv;
+  voice->env.decclo=instrument->envlo.decc;
+  voice->env.susvlo=instrument->envlo.susv;
+  voice->env.rlsclo=instrument->envlo.rlsc;
+  voice->env.atkchi=instrument->envhi.atkc;
+  voice->env.atkvhi=instrument->envhi.atkv;
+  voice->env.decchi=instrument->envhi.decc;
+  voice->env.susvhi=instrument->envhi.susv;
+  voice->env.rlschi=instrument->envhi.rlsc;
   minsyn_env_reset(&voice->env,velocity,driver->rate);
 
   voice->p=0;

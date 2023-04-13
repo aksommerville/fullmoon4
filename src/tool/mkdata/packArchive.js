@@ -81,6 +81,8 @@ function encodeQualifier(type, qualifier) {
     case "sound": {
         if (!qualifier) return 0;
         if (qualifier === "WebAudio") return 1;
+        if (qualifier === "minsyn") return 2;
+        if (qualifier === "stdsyn") return 3;
         const n = +qualifier;
         if (!isNaN(n) && (n >= 0) && (n <= 0xffff)) return n;
         throw new Error(`Unexpected instruments qualifier ${JSON.stringify(qualifier)}`);

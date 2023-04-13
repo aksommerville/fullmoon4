@@ -157,6 +157,16 @@ static int bigpc_audio_try_init(const struct bigpc_audio_type *type) {
 /* Initialize synthesizer.
  */
  
+static int bigpc_cb_load_instrument(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  if (bigpc_synth_set_instrument(bigpc.synth,id,v,c)<0) return -1;
+  return 0;
+}
+ 
+static int bigpc_cb_load_sound(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  if (bigpc_synth_set_sound(bigpc.synth,id,v,c)<0) return -1;
+  return 0;
+}
+ 
 static int bigpc_synth_try_init(const struct bigpc_synth_type *type) {
   struct bigpc_synth_config config={
     .rate=bigpc.audio->rate,
@@ -225,6 +235,15 @@ int bigpc_audio_init() {
   }
   if (!bigpc.synth) {
     fprintf(stderr,"%s: Failed to initialize a synthesizer.\n",bigpc.exename);
+    return -2;
+  }
+  
+  // Load instrument and sound resources.
+  if (
+    (fmn_datafile_for_each_of_qualified_type(bigpc.datafile,FMN_RESTYPE_INSTRUMENT,bigpc.synth->type->data_qualifier,bigpc_cb_load_instrument,0)<0)||
+    (fmn_datafile_for_each_of_qualified_type(bigpc.datafile,FMN_RESTYPE_SOUND,bigpc.synth->type->data_qualifier,bigpc_cb_load_sound,0)<0)
+  ) {
+    fprintf(stderr,"%s: Failed to load instruments for synthesizer '%s'.\n",bigpc.exename,bigpc.synth->type->name);
     return -2;
   }
 

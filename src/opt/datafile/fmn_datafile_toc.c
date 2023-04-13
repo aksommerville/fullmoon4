@@ -127,7 +127,6 @@ int fmn_datafile_for_each_of_type(
          if (type<entry->type) hi=ck;
     else if (type>entry->type) lo=ck+1;
     else {
-      entry--;
       while ((ck>lo)&&(entry[-1].type==type)) { entry--; ck--; }
       lo=ck;
       break;
@@ -156,7 +155,6 @@ int fmn_datafile_for_each_of_qualified_type(
          if (type<entry->type) hi=ck;
     else if (type>entry->type) lo=ck+1;
     else {
-      entry--;
       while ((ck>lo)&&(entry[-1].type==type)) { entry--; ck--; }
       lo=ck;
       break;
@@ -188,7 +186,6 @@ int fmn_datafile_for_each_of_id(
     else if (id<entry->id) hi=ck;
     else if (id>entry->id) lo=ck+1;
     else {
-      entry--;
       while ((ck>lo)&&(entry[-1].type==type)&&(entry[-1].id==id)) { entry--; ck--; }
       lo=ck;
       break;

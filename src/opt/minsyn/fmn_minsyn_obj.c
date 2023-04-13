@@ -24,6 +24,10 @@ static void _minsyn_del(struct bigpc_synth_driver *driver) {
     while (DRIVER->printerc-->0) minsyn_printer_del(DRIVER->printerv[DRIVER->printerc]);
     free(DRIVER->printerv);
   }
+  if (DRIVER->resourcev) {
+    while (DRIVER->resourcec-->0) minsyn_resource_cleanup(DRIVER->resourcev+DRIVER->resourcec);
+    free(DRIVER->resourcev);
+  }
   midi_file_del(DRIVER->song);
 }
 
@@ -123,6 +127,8 @@ static int _minsyn_init(struct bigpc_synth_driver *driver) {
   else if (driver->chanc==2) driver->update=(void*)_minsyn_update_stereo;
   else return -1;
   
+  minsyn_generate_sine(DRIVER->sine,MINSYN_WAVE_SIZE_SAMPLES);
+  
   return 0;
 }
 
@@ -130,11 +136,25 @@ static int _minsyn_init(struct bigpc_synth_driver *driver) {
  */
  
 static int _minsyn_set_instrument(struct bigpc_synth_driver *driver,int id,const void *src,int srcc) {
-  return -1;
+  struct minsyn_resource *resource=minsyn_resource_init_instrument(driver,id);
+  if (!resource) return -1;
+  if (srcc) {
+    if (!(resource->v=malloc(srcc))) return -1;
+    memcpy(resource->v,src,srcc);
+    resource->c=srcc;
+  }
+  return 0;
 }
 
 static int _minsyn_set_sound(struct bigpc_synth_driver *driver,int id,const void *src,int srcc) {
-  return -1;
+  struct minsyn_resource *resource=minsyn_resource_init_sound(driver,id);
+  if (!resource) return -1;
+  if (srcc) {
+    if (!(resource->v=malloc(srcc))) return -1;
+    memcpy(resource->v,src,srcc);
+    resource->c=srcc;
+  }
+  return 0;
 }
 
 /* Release all voices.
@@ -232,14 +252,21 @@ static void minsyn_note_on(struct bigpc_synth_driver *driver,uint8_t chid,uint8_
   if (noteid>=128) return;
 
   if (chid<0x0f) { // channel 0..14 are tuned voices
+    struct minsyn_resource *resource=minsyn_resource_get_instrument(driver,DRIVER->instrument_by_chid[chid]);
+    //fprintf(stderr,"%s chid=%d noteid=%d insid=%d resource=%p\n",__func__,chid,noteid,DRIVER->instrument_by_chid[chid],resource);
+    if (!resource) return;
+    if (minsyn_resource_ready(driver,resource)<0) return;
     struct minsyn_voice *voice=minsyn_voice_alloc(driver);
     if (!voice) return;
     memset(voice,0,sizeof(struct minsyn_voice));
     voice->chid=chid;
     voice->noteid=noteid;
-    minsyn_voice_init(driver,voice,velocity);
+    minsyn_voice_init(driver,voice,velocity,resource);
     
   } else if (chid==0x0f) { // channel 15 is raw pcm
+    struct minsyn_resource *resource=minsyn_resource_get_sound(driver,noteid);
+    if (!resource) return;
+    if (minsyn_resource_ready(driver,resource)<0) return;
     struct minsyn_pcm *pcm=0;//TODO acquire pcm per noteid
     if (!pcm) return;
     struct minsyn_playback *playback=minsyn_playback_alloc(driver);
@@ -259,6 +286,7 @@ static void _minsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t
   switch (opcode) {
     case MIDI_OPCODE_NOTE_OFF: minsyn_release_chid_noteid(driver,chid,a); break;
     case MIDI_OPCODE_NOTE_ON: minsyn_note_on(driver,chid,a,b); break;
+    case MIDI_OPCODE_PROGRAM: if (chid<0x10) DRIVER->instrument_by_chid[chid]=a; break;
     case MIDI_OPCODE_RESET: minsyn_silence_all(driver); break;
   }
 }
@@ -269,6 +297,7 @@ static void _minsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t
 const struct bigpc_synth_type bigpc_synth_type_minsyn={
   .name="minsyn",
   .desc="Simple synthesizer for resource-constrained systems.",
+  .data_qualifier=2,
   .objlen=sizeof(struct bigpc_synth_driver_minsyn),
   .del=_minsyn_del,
   .init=_minsyn_init,

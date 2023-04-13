@@ -237,6 +237,7 @@ static void _stdsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t
 const struct bigpc_synth_type bigpc_synth_type_stdsyn={
   .name="stdsyn",
   .desc="The preferred synthesizer.",
+  .data_qualifier=3,
   .objlen=sizeof(struct bigpc_synth_driver_stdsyn),
   .del=_stdsyn_del,
   .init=_stdsyn_init,

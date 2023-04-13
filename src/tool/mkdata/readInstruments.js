@@ -1,6 +1,8 @@
 const Encoder = require("../common/Encoder.js");
 const linewise = require("../common/linewise.js");
 const getSoundEffectIdByName = require("../common/getSoundEffectIdByName.js");
+const { MinsynInstrument, MinsynSound } = require("./minsyn.js");
+const { StdsynInstrument, StdsynSound } = require("./stdsyn.js");
 
 /* WebAudio instrument builder.
  **************************************************************/
@@ -557,6 +559,8 @@ function newInstrument(qualifier, args, path, lineno) {
   switch (qualifier) {
   
     case "WebAudio": return new WebAudioInstrument(id, path, lineno);
+    case "minsyn": return new MinsynInstrument(id, path, lineno);
+    case "stdsyn": return new StdsynInstrument(id, path, lineno);
     
   }
   throw new Error(`Unknown instrument qualifier ${JSON.stringify(qualifier)}`);
@@ -574,6 +578,8 @@ function newSound(qualifier, args, path, lineno) {
   switch (qualifier) {
   
     case "WebAudio": return new WebAudioSound(id, path, lineno);
+    case "minsyn": return new MinsynSound(id, path, lineno);
+    case "stdsyn": return new StdsynSound(id, path, lineno);
     
   }
   throw new Error(`Unknown sound qualifier ${JSON.stringify(qualifier)}`);

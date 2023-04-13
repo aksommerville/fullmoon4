@@ -76,6 +76,7 @@ struct bigpc_synth_type {
   const char *desc;
   int objlen;
   int appointment_only;
+  uint16_t data_qualifier;
   void (*del)(struct bigpc_synth_driver *driver);
   int (*init)(struct bigpc_synth_driver *driver);
   int (*set_instrument)(struct bigpc_synth_driver *driver,int id,const void *src,int srcc);

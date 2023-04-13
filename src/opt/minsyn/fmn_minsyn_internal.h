@@ -10,6 +10,7 @@
 #include "opt/bigpc/bigpc_synth.h"
 #include "opt/bigpc/bigpc_audio.h"
 #include "opt/midi/midi.h"
+#include "opt/datafile/fmn_datafile.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,9 +40,13 @@ struct minsyn_env {
   // Constantish:
   int32_t atkvlo,atkvhi; // attack level, 24 bits
   int32_t susvlo,susvhi; // sustain level, 24 bits
-  int32_t atkclo,atkchi; // attack time, ms
-  int32_t decclo,decchi; // decay time, ms
-  int32_t rlsclo,rlschi; // release time, ms
+  int32_t atkclo,atkchi; // attack time, frames
+  int32_t decclo,decchi; // decay time, frames
+  int32_t rlsclo,rlschi; // release time, frames
+};
+
+struct minsyn_env_config {
+  int32_t atkv,susv,atkc,decc,rlsc;
 };
 
 /* minsyn_voice for tuned notes with a flexible envelope.
@@ -85,6 +90,19 @@ struct minsyn_printer {
   int p;
 };
 
+/* Loaded instrument or sound. At initial load, we only copy the serial data.
+ */
+struct minsyn_resource {
+  int type; // FMN_RESTYPE_INSTRUMENT|FMN_RESTYPE_SOUND
+  int id;
+  void *v;
+  int c;
+  int ready;
+  int waveid; // >0 if there is one
+  int pcmid; // >0 if there is one
+  struct minsyn_env_config envlo,envhi;
+};
+
 struct bigpc_synth_driver_minsyn {
   struct bigpc_synth_driver hdr;
   struct minsyn_voice *voicev;
@@ -99,9 +117,29 @@ struct bigpc_synth_driver_minsyn {
   struct minsyn_printer **printerv;
   int printerc,printera;
   int update_in_progress_framec; // pre-run any new printers to this length (we're in the middle of an update)
+  struct minsyn_resource *resourcev;
+  int resourcec,resourcea;
+  int16_t sine[MINSYN_WAVE_SIZE_SAMPLES]; // reference wave for generating new ones.
+  int instrument_by_chid[16];
 };
 
 #define DRIVER ((struct bigpc_synth_driver_minsyn*)driver)
+
+/* "init" discards any existing resource for this id and returns a fresh one.
+ * "get" only returns existing resources. Getting does not finish decoding.
+ */
+void minsyn_resource_cleanup(struct minsyn_resource *resource);
+struct minsyn_resource *minsyn_resource_init_instrument(struct bigpc_synth_driver *driver,int id);
+struct minsyn_resource *minsyn_resource_init_sound(struct bigpc_synth_driver *driver,int id);
+struct minsyn_resource *minsyn_resource_get_instrument(const struct bigpc_synth_driver *driver,int id);
+struct minsyn_resource *minsyn_resource_get_sound(const struct bigpc_synth_driver *driver,int id);
+
+/* Call each time you want to use a resource.
+ * This sets its "ready" flag, subsequent readies will quickly noop.
+ * Populates (waveid,pcmid,env) as warranted.
+ * Adds waves, pcms, and printers to the driver as warranted.
+ */
+int minsyn_resource_ready(struct bigpc_synth_driver *driver,struct minsyn_resource *resource);
 
 void minsyn_voice_cleanup(struct minsyn_voice *voice);
 void minsyn_voice_release(struct minsyn_voice *voice);
@@ -109,7 +147,12 @@ void minsyn_voice_release(struct minsyn_voice *voice);
 /* (voice->chid,noteid) must be set, and the rest zeroed.
  * No errors. If anything goes wrong, we'll quietly mark the voice defunct.
  */
-void minsyn_voice_init(struct bigpc_synth_driver *driver,struct minsyn_voice *voice,uint8_t velocity);
+void minsyn_voice_init(
+  struct bigpc_synth_driver *driver,
+  struct minsyn_voice *voice,
+  uint8_t velocity,
+  struct minsyn_resource *instrument
+);
 
 void minsyn_playback_cleanup(struct minsyn_playback *playback);
 void minsyn_playback_release(struct minsyn_playback *playback);
@@ -124,6 +167,8 @@ void minsyn_release_all(struct bigpc_synth_driver *driver);
 void minsyn_silence_all(struct bigpc_synth_driver *driver);
 
 struct minsyn_wave *minsyn_get_wave(struct bigpc_synth_driver *driver,int id);
+int minsyn_new_wave_harmonics(struct bigpc_synth_driver *driver,const uint8_t *coefv,int coefc);
+void minsyn_generate_sine(int16_t *v,int c); // should only be done once; after init use DRIVER->sine
 
 void minsyn_pcm_del(struct minsyn_pcm *pcm);
 int minsyn_pcm_ref(struct minsyn_pcm *pcm);

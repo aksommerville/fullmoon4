@@ -15,6 +15,8 @@ So instruments are qualified by their synthesizer ID:
 | Qualifier | Synthesizer |
 |-----------|-------------|
 |         1 | WebAudio    |
+|         2 | minsyn      |
+|         3 | stdsyn      |
 
 Each input file contains all of the instruments for one synthesizer.
 
@@ -215,3 +217,54 @@ OR
 All `v` must be two or four hexadecimal digits.
 All `t` are in decimal milliseconds, no fraction.
 If any initial or final value is given, they must all be given.
+
+## Minsyn Input Format
+
+Instruments are defined by a wave and envelope.
+
+Waves are a list of harmonic coefficients, integers in 0..255. Keyword `wave`.
+
+Envelope is: `atktlo atkvlo dectlo susvlo rlstlo .. atkthi atkvhi decthi susvhi rlsthi`. Keyword `env`.
+
+You can omit `..` and everything after. Beyond that, everything is required.
+Times are in milliseconds and levels in 0..255.
+
+Example instrument:
+
+```
+begin 0x01
+  wave 0xa0 0 0x30 0 0x08
+  env 15 0x80 20 0x20 250 .. 10 0xff 15 0x40 400
+end
+```
+
+Sounds. *TODO*
+
+## Minsyn Binary Format
+
+Instrument.
+I might add an envelope-controlled wave mixer, or maybe other functionality.
+The first byte has one bit, in order, for all the features requested.
+Decoder must stop at the first unknown set bit, but is allowed to proceed with whatever it has then.
+Everything is optional, you'll get a sensible default for anything missing.
+
+```
+u8 Features present:
+     0x01 Harmonics
+     0x02 Low envelope
+     0x04 High envelope
+     0xf8 reserved
+If (Harmonics):
+  u8 Count
+  u8... Coefficients
+If (Low envelope):
+  u8 Attack time, ms
+  u8 Attack level
+  u8 Decay time, ms
+  u8 Sustain level
+  u8 Release time, 8ms
+If (High envelope):
+  5 Same as Low envelope
+```
+
+
