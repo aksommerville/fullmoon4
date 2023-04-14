@@ -18,7 +18,7 @@
 #define ALSAPCM_CHANC_MIN      1
 #define ALSAPCM_CHANC_MAX     16
 #define ALSAPCM_BUF_MIN       64
-#define ALSAPCM_BUF_MAX    16384
+#define ALSAPCM_BUF_MAX     4096
 
 struct alsapcm;
 
