@@ -53,7 +53,8 @@ struct midi_file {
   int usperqnotecapa;
   int loop_set;
   int extra_delay; // frames
-  double frames_per_tick;
+  //double frames_per_tick;//XXX try ints
+  int frames_per_tick;
 
   uint16_t format;
   uint16_t track_count;
