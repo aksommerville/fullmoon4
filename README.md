@@ -23,7 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] bigpc: Stop music while violin up
 - [x] On Pi, I'm hearing timing flaws in the songs, enough to be a distraction. Problem with midi_file?
 - [ ] Try moving the desert entrance south to mitigate the fast-switch of songs.
-- [ ] raspi: Charms in treasure menu aren't rotating left of center
+- [x] raspi: Charms in treasure menu aren't rotating left of center
 - [x] raspi: Feather down, it's using the wrong transform or something.
 - - Using BCM hacks on the nuc, I do get the feather thing but do not get the charms things.
 

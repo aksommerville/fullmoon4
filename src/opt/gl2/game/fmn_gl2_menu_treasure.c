@@ -18,7 +18,7 @@ static void fmn_gl2_treasure_charms(struct bigpc_render_driver *driver,struct bi
   float midy=DRIVER->mainfb.texture.h*0.5f+DRIVER->game.tilesize;
   float radius=48.0f+sinf(((menu->framec%FMN_GL2_TREASURE_PULSE_PERIOD)*M_PI*2.0f)/FMN_GL2_TREASURE_PULSE_PERIOD)*12.0f;
   float wobble=sinf(((menu->framec%FMN_GL2_TREASURE_WOBBLE_PERIOD)*M_PI*2.0f)/FMN_GL2_TREASURE_WOBBLE_PERIOD);
-  uint8_t wobbleq=wobble*40.0f; // 128/pi but anywhere in the ballpark is fine
+  int8_t wobbleq=wobble*40.0f; // 128/pi but anywhere in the ballpark is fine
   float t=((menu->framec%FMN_GL2_TREASURE_CHARM_PERIOD)*M_PI*2.0f)/FMN_GL2_TREASURE_CHARM_PERIOD;
   float dt=(M_PI*2.0f)/FMN_GL2_TREASURE_CHARM_COUNT;
   const uint8_t tileidv[]={0x0d,0x0e,0x0f,0x1d,0x1e,0x1f};

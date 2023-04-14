@@ -98,7 +98,7 @@ void fmn_gl2_draw_mintile(const struct fmn_gl2_vertex_mintile *vtxv,int vtxc);
 struct fmn_gl2_vertex_maxtile {
   GLshort x,y;
   GLubyte tileid;
-  GLubyte rotate; // 1/256 turns clockwise
+  GLbyte rotate; // 1/256 turns clockwise
   GLubyte size;
   GLubyte xform;
   GLubyte tr,tg,tb,ta; // tint
