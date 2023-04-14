@@ -4,7 +4,7 @@
 raspi_MIDDIR:=mid/raspi
 raspi_OUTDIR:=out/raspi
 
-raspi_OPT_ENABLE:=bcm evdev alsa gl2 stdsyn minsyn bigpc genioc linux datafile png fmstore inmgr midi
+raspi_OPT_ENABLE:=bcm evdev alsa gl2 minsyn bigpc genioc linux datafile png fmstore inmgr midi fontosaur
 
 raspi_EXE:=$(raspi_OUTDIR)/fullmoon
 raspi_DATA:=$(raspi_OUTDIR)/data
