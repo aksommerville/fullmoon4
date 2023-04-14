@@ -27,8 +27,8 @@ static const char fmn_gl2_vsrc_mintile[]=
 "  else if (axform<2.5) { vxformx=vec2( 1.0, 0.0); vxformy=vec2( 0.0,-1.0); }\n"
 "  else if (axform<3.5) { vxformx=vec2(-1.0, 0.0); vxformy=vec2( 0.0,-1.0); }\n"
 "  else if (axform<4.5) { vxformx=vec2( 0.0, 1.0); vxformy=vec2( 1.0, 0.0); }\n"
-"  else if (axform<5.5) { vxformx=vec2( 0.0, 1.0); vxformy=vec2(-1.0, 0.0); }\n"
-"  else if (axform<6.5) { vxformx=vec2( 0.0,-1.0); vxformy=vec2( 1.0, 0.0); }\n"
+"  else if (axform<5.5) { vxformx=vec2( 0.0,-1.0); vxformy=vec2( 1.0, 0.0); }\n"
+"  else if (axform<6.5) { vxformx=vec2( 0.0, 1.0); vxformy=vec2(-1.0, 0.0); }\n"
 "  else                 { vxformx=vec2( 0.0,-1.0); vxformy=vec2(-1.0, 0.0); }\n"
 #else
 "       if (axform<0.5) vxform=mat2x3(  1.0, 0.0,0.0,  0.0, 1.0,0.0 );\n" // natural
