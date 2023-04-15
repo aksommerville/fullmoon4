@@ -46,9 +46,11 @@ int bigpc_init(int argc,char **argv) {
   if ((err=bigpc_config_ready())<0) return err;
   
   if (!bigpc.config.data_path) {
-    //TODO Locate data file on our own.
-    fprintf(stderr,"%s: Please indicate data file as '--data=PATH'\n",bigpc.exename);
-    return -2;
+    bigpc_config_guess_data_path();
+    if (!bigpc.config.data_path) {
+      fprintf(stderr,"%s: Please indicate data file as '--data=PATH'\n",bigpc.exename);
+      return -2;
+    }
   }
   if (!(bigpc.datafile=fmn_datafile_open(bigpc.config.data_path))) {
     fprintf(stderr,"%s: Failed to read data file.\n",bigpc.config.data_path);

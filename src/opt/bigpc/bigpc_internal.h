@@ -105,6 +105,7 @@ void bigpc_config_cleanup(struct bigpc_config *config);
 int bigpc_configure_argv(int argc,char **argv);
 int bigpc_configure_kv(const char *k,int kc,const char *v,int vc);
 int bigpc_config_ready();
+int bigpc_config_guess_data_path();
 
 void bigpc_signal_init();
 

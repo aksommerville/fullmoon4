@@ -228,3 +228,28 @@ int bigpc_config_ready() {
   
   return 0;
 }
+
+/* Guess data_path.
+ */
+ 
+int bigpc_config_guess_data_path() {
+  if (bigpc.config.data_path) return 0;
+  
+  // If exename contains a slash, try its dirname plus "/data".
+  int eslashp=-1;
+  int i=0;
+  for (;bigpc.exename[i];i++) {
+    if (bigpc.exename[i]=='/') eslashp=i;
+  }
+  if (eslashp>=0) {
+    int pathlen=eslashp+5;
+    if (!(bigpc.config.data_path=malloc(pathlen+1))) return -1;
+    memcpy(bigpc.config.data_path,bigpc.exename,eslashp);
+    memcpy(bigpc.config.data_path+eslashp,"/data",6);
+    fprintf(stderr,"%s: '--data=PATH' not provided. Guessing '%s'\n",bigpc.exename,bigpc.config.data_path);
+    return 0;
+  }
+  
+  // Doubtless plenty of other guesses we could make, but I'm leaving it here for now.
+  return -1;
+}
