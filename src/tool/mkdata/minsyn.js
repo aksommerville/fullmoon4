@@ -96,13 +96,221 @@ class MinsynSound {
     this.path = path;
     this.lineno = lineno;
     this.type = "sound";
+    this.lenms = 0;
+    
+    // We encode on the fly.
+    this.dst = Buffer.alloc(1024);
+    this.dstc = 0;
   }
   
   encode() {
-    return Buffer.alloc(0);
+    const dst = Buffer.alloc(this.dstc);
+    this.dst.copy(dst, 0, 0, this.dstc);
+    return dst;
+  }
+  
+  _u0_8(params) {
+    if (params.length < 1) throw new Error(`Expected u0.8 before end of line`);
+    let v = +params[0];
+    if (isNaN(v)) throw new Error(`Expected u0.8, found ${JSON.stringify(params[0])}`);
+    v = ~~(v * 256);
+    if (v <= 0) this.dst[this.dstc++] = 0x00;
+    else if (v > 0xff) this.dst[this.dstc++] = 0xff;
+    else this.dst[this.dstc++] = v;
+    params.splice(0, 1);
+  }
+  _u4_4(params) {
+    if (params.length < 1) throw new Error(`Expected u4.4 before end of line`);
+    let v = +params[0];
+    if (isNaN(v)) throw new Error(`Expected u4.4, found ${JSON.stringify(params[0])}`);
+    v = ~~(v * 16);
+    if (v <= 0) this.dst[this.dstc++] = 0x00;
+    else if (v > 0xff) this.dst[this.dstc++] = 0xff;
+    else this.dst[this.dstc++] = v;
+    params.splice(0, 1);
+  }
+  _u8_8(params) {
+    if (params.length < 1) throw new Error(`Expected u8.8 before end of line`);
+    let v = +params[0];
+    if (isNaN(v)) throw new Error(`Expected u8.8, found ${JSON.stringify(params[0])}`);
+    v = ~~(v * 256);
+    if (v <= 0) { this.dst[this.dstc++] = 0x00; this.dst[this.dstc++] = 0x00; }
+    else if (v > 0xffff) { this.dst[this.dstc++] = 0xff; this.dst[this.dstc++] = 0xff; }
+    else { this.dst[this.dstc++] = v >> 8; this.dst[this.dstc++] = v; }
+    params.splice(0, 1);
+  }
+  
+  _env(params) {
+    const closep = params.indexOf(")");
+    if ((params[0] !== "(") || (closep < 0)) throw new Error(`Expected parenthesized envelope.`);
+    if (closep === 1) throw new Error(`Envelope must contain at least one value.`);
+    if (closep & 1) throw new Error(`Envelope must have an odd member count ( LEVEL [TIME LEVEL...] )`);
+    
+    let v = +params[1];
+    if (isNaN(v)) throw new Error(`Expected integer in 0..65535, found ${JSON.stringify(params[1])}`);
+    if (v < 0) { this.dst[this.dstc++] = 0x00; this.dst[this.dstc++] = 0x00; }
+    else if (v > 0xffff) { this.dst[this.dstc++] = 0xff; this.dst[this.dstc++] = 0xff; }
+    else { this.dst[this.dstc++] = v >> 8; this.dst[this.dstc++] = v; }
+    
+    const countp = this.dstc++;
+    let paramsp = 2;
+    let wildcardp = -1; // in (this.dst)
+    let totalms = 0;
+    let count = 0;
+    while (paramsp < closep) {
+    
+      if (params[paramsp] === "*") {
+        if (wildcardp >= 0) throw new Error(`Envelope contains more than one wildcard.`);
+        wildcardp = this.dstc;
+        this.dstc += 2;
+      } else {
+        v = +params[paramsp];
+        if (isNaN(v)) throw new Error(`Expected integer in 0..65535, found ${JSON.stringify(params[paramsp])}`);
+        if (v < 0) { this.dst[this.dstc++] = 0x00; this.dst[this.dstc++] = 0x00; }
+        else if (v > 0xffff) { this.dst[this.dstc++] = 0xff; this.dst[this.dstc++] = 0xff; }
+        else { this.dst[this.dstc++] = v >> 8; this.dst[this.dstc++] = v; }
+        totalms += v;
+      }
+      paramsp++;
+    
+      v = +params[paramsp];
+      if (isNaN(v)) throw new Error(`Expected integer in 0..65535, found ${JSON.stringify(params[paramsp])}`);
+      if (v < 0) { this.dst[this.dstc++] = 0x00; this.dst[this.dstc++] = 0x00; }
+      else if (v > 0xffff) { this.dst[this.dstc++] = 0xff; this.dst[this.dstc++] = 0xff; }
+      else { this.dst[this.dstc++] = v >> 8; this.dst[this.dstc++] = v; }
+      paramsp++;
+      
+      count++;
+    }
+    
+    if (count > 0xff) throw new Error(`Too many entries in envelope, limit 255. (how the heck...)`);
+    this.dst[countp] = count;
+    
+    if (totalms > this.lenms) {
+      throw new Error(`Envelope length ${totalms} in sound length ${this.lenms}`);
+    }
+    if (wildcardp >= 0) {
+      const fill = this.lenms - totalms;
+      this.dst[wildcardp] = fill >> 8;
+      this.dst[wildcardp + 1] = fill;
+    }
+    
+    params.splice(0, closep + 1);
+  }
+  
+  _shape(params) {
+    if (params.length < 1) throw new Error(`Expected wave shape before end of line`);
+    switch (params[0]) {
+      case "sine":     this.dst[this.dstc++] = 200; params.splice(0, 1); return;
+      case "square":   this.dst[this.dstc++] = 201; params.splice(0, 1); return;
+      case "sawtooth": this.dst[this.dstc++] = 202; params.splice(0, 1); return;
+      case "triangle": this.dst[this.dstc++] = 203; params.splice(0, 1); return;
+    }
+    if (params.length > 0xff) throw new Error(`Too many coefficients, limit 255.`);
+    this.dst[this.dstc++] = params.length;
+    for (const param of params) {
+      const v = +param;
+      if (isNaN(v)) throw new Error(`Expected integer in 0..255, found ${JSON.stringify(param)}`);
+      if (v < 0) this.dst[this.dstc++] = 0x00;
+      else if (v > 0xff) this.dst[this.dstc++] = 0xff;
+      else this.dst[this.dstc++] = v;
+    }
+    params.splice(0, params.length);
+  }
+  
+  _cmd_fm(params) {
+    //fm ( RATE_ENV ) MODRATE ( RANGE_ENV ) SHAPE
+    //0x01 FM (...rate_env,u4.4 modrate,...range_env,...shape)
+    this.dst[this.dstc++] = 0x01;
+    this._env(params);
+    this._u4_4(params);
+    this._env(params);
+    this._shape(params);
+    if (params.length) throw new Error(`Unexpected extra tokens`);
+  }
+  
+  _cmd_wave(params) {
+    //wave ( RATE_ENV ) SHAPE
+    //0x02 WAVE (...rate_env,...shape)
+    this.dst[this.dstc++] = 0x02;
+    this._env(params);
+    this._shape(params);
+    if (params.length) throw new Error(`Unexpected extra tokens`);
+  }
+  
+  _cmd_noise(params) {
+    //noise
+    //0x03 NOISE ()
+    this.dst[this.dstc++] = 0x03;
+    if (params.length) throw new Error(`Unexpected extra tokens`);
+  }
+  
+  _cmd_env(params) {
+    //env ( ENV )
+    //0x04 ENV (...env)
+    this.dst[this.dstc++] = 0x04;
+    this._env(params);
+    if (params.length) throw new Error(`Unexpected extra tokens`);
+  }
+  
+  _cmd_mlt(params) {
+    //mlt SCALAR
+    //0x05 MLT (u8.8)
+    this.dst[this.dstc++] = 0x05;
+    this._u8_8(params);
+    if (params.length) throw new Error(`Unexpected extra tokens`);
+  }
+  
+  _cmd_delay(params) {
+    //delay PERIOD_SECONDS DRY WET STORE FEEDBACK
+    //0x06 DELAY (u0.8 period,u0.8 dry,u0.8 wet,u0.8 store,u0.8 feedback)
+    this.dst[this.dstc++] = 0x06;
+    this._u0_8(params);
+    this._u0_8(params);
+    this._u0_8(params);
+    this._u0_8(params);
+    this._u0_8(params);
+    if (params.length) throw new Error(`Unexpected extra tokens`);
+  }
+  
+  _cmd_bandpass(params) {
+    //bandpass MID_HZ RANGE_HZ
+    //0x07 BANDPASS (u16 mid,u16 range)
   }
   
   receiveLine(words, path, lineno) {
+    try {
+    
+      // First command must be "len SECONDS".
+      if (!this.dstc) {
+        if ((words[0] !== "len") || (words.length !== 2)) throw new Error(`First command must be "len SECONDS"`);
+        let seconds = +words[1];
+        if (isNaN(seconds)) throw new Error(`Expected seconds in 0..2, found ${JSON.stringify(words[1])}`);
+        this.lenms = ~~(seconds * 1000);
+        seconds = ~~(seconds * 128);
+        if (seconds <= 0) this.dst[this.dstc++] = 0x00;
+        else if (seconds > 0xff) this.dst[this.dstc++] = 0xff;
+        else this.dst[this.dstc++] = seconds;
+        return;
+      }
+      
+      // We could also assert that the second command be "fm", "wave", or "noise", and that those not occur elsewhere.
+      // But that's not a structural requirement so whatever.
+      switch (words[0]) {
+        case "fm": return this._cmd_fm(words.slice(1));
+        case "wave": return this._cmd_wave(words.slice(1));
+        case "noise": return this._cmd_noise(words.slice(1));
+        case "env": return this._cmd_env(words.slice(1));
+        case "mlt": return this._cmd_mlt(words.slice(1));
+        case "delay": return this._cmd_delay(words.slice(1));
+        case "bandpass": return this._cmd_bandpass(words.slice(1));
+      }
+      
+      throw new Error(`Unexpected sound command ${JSON.stringify(words[0])}`);
+    } catch (e) {
+      e.message = `${path}:${lineno}: ${e.message}`;
+      throw e;
+    }
   }
 }
 

@@ -26,6 +26,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] raspi: Charms in treasure menu aren't rotating left of center
 - [x] raspi: Feather down, it's using the wrong transform or something.
 - - Using BCM hacks on the nuc, I do get the feather thing but do not get the charms things.
+- [ ] Drop the BCM hacks condition, we can do it the bcm way everywhere.
+- [ ] Make each song use its own instruments, no more sharing.
 
 ### May
 

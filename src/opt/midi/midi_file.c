@@ -33,14 +33,12 @@ int midi_file_ref(struct midi_file *file) {
  */
  
 static void midi_file_tempo_changed(struct midi_file *file) {
-  //file->frames_per_tick=((double)file->usperqnote*(double)file->output_rate)/(file->division*1000000.0);
   if (file->division) {
     file->frames_per_tick=((int64_t)file->usperqnote*(int64_t)file->output_rate)/(int64_t)(file->division*1000000ll);
     if (file->frames_per_tick<1) file->frames_per_tick=1;
   } else {
     file->frames_per_tick=1000;
   }
-  fprintf(stderr,"frames_per_tick=%lld usperqnote=%d output_rate=%d division=%d\n",(long long)file->frames_per_tick,file->usperqnote,file->output_rate,file->division);
 }
 
 /* Receive MThd.
@@ -387,8 +385,6 @@ static int midi_file_ticks_from_frames(struct midi_file *file,int framec,int *re
   int tickc=(int)(framec/file->frames_per_tick);
   if (tickc<0) tickc=0;
   if (remainder) {
-    //int subframec=(int)(file->frames_per_tick*tickc);
-    //if (subframec<framec) *remainder=framec-subframec;
     *remainder=framec%file->frames_per_tick;
   }
   return tickc;

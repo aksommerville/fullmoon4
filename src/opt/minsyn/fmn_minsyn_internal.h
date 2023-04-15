@@ -11,6 +11,7 @@
 #include "opt/bigpc/bigpc_audio.h"
 #include "opt/midi/midi.h"
 #include "opt/datafile/fmn_datafile.h"
+#include "opt/pcmprint/pcmprint.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,6 +88,7 @@ struct minsyn_wave {
 
 struct minsyn_printer {
   struct minsyn_pcm *pcm;
+  struct pcmprint *pcmprint;
   int p;
 };
 
@@ -172,9 +174,14 @@ void minsyn_generate_sine(int16_t *v,int c); // should only be done once; after 
 
 void minsyn_pcm_del(struct minsyn_pcm *pcm);
 int minsyn_pcm_ref(struct minsyn_pcm *pcm);
+struct minsyn_pcm *minsyn_pcm_by_id(const struct bigpc_synth_driver *driver,int id);
+struct minsyn_pcm *minsyn_pcm_new(struct bigpc_synth_driver *driver,int c); // => WEAK
 
 void minsyn_printer_del(struct minsyn_printer *printer);
 int minsyn_printer_update(struct minsyn_printer *printer,int c); // <=0 if terminated
+
+// (pcmprint) HANDOFF, (pcm) STRONG, returns WEAK.
+struct minsyn_printer *minsyn_printer_new(struct bigpc_synth_driver *driver,struct pcmprint *pcmprint,struct minsyn_pcm *pcm);
 
 void minsyn_env_reset(struct minsyn_env *env,uint8_t velocity,int mainrate);
 void minsyn_env_release(struct minsyn_env *env);

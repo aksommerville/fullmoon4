@@ -182,6 +182,10 @@ void minsyn_silence_all(struct bigpc_synth_driver *driver) {
  */
  
 static int _minsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force) {
+
+  fprintf(stderr,"%s:%d: music temporarily disabled\n",__FILE__,__LINE__);
+  return 0;
+
   if (srcc<0) return -1;
   if (!srcc) {
     if (!DRIVER->song) return 0;
@@ -265,12 +269,24 @@ static void minsyn_note_on(struct bigpc_synth_driver *driver,uint8_t chid,uint8_
     
   } else if (chid==0x0f) { // channel 15 is raw pcm
     struct minsyn_resource *resource=minsyn_resource_get_sound(driver,noteid);
-    if (!resource) return;
-    if (minsyn_resource_ready(driver,resource)<0) return;
-    struct minsyn_pcm *pcm=0;//TODO acquire pcm per noteid
-    if (!pcm) return;
+    if (!resource) {
+      fprintf(stderr,"%s: sound %d not found\n",__func__,noteid);
+      return;
+    }
+    if (minsyn_resource_ready(driver,resource)<0) {
+      fprintf(stderr,"minsyn_resource_ready sound:%d error\n",resource->id);
+      return;
+    }
+    struct minsyn_pcm *pcm=minsyn_pcm_by_id(driver,resource->pcmid);
+    if (!pcm) {
+      fprintf(stderr,"%s pcm %d not in minsyn toc\n",__func__,resource->pcmid);
+      return;
+    }
     struct minsyn_playback *playback=minsyn_playback_alloc(driver);
-    if (!playback) return;
+    if (!playback) {
+      fprintf(stderr,"%s failed to allocate a playback\n",__func__);
+      return;
+    }
     memset(playback,0,sizeof(struct minsyn_playback));
     playback->chid=chid;
     playback->noteid=noteid;
@@ -288,6 +304,8 @@ static void _minsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t
     case MIDI_OPCODE_NOTE_ON: minsyn_note_on(driver,chid,a,b); break;
     case MIDI_OPCODE_PROGRAM: if (chid<0x10) DRIVER->instrument_by_chid[chid]=a; break;
     case MIDI_OPCODE_RESET: minsyn_silence_all(driver); break;
+    // 0x98 is a Full Moon specific "On and off", mostly for sound effects.
+    case 0x98: minsyn_note_on(driver,chid,a,b); if (chid!=0x0f) minsyn_release_chid_noteid(driver,chid,a); break;
   }
 }
 

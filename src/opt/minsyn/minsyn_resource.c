@@ -185,7 +185,33 @@ static int minsyn_resource_decode_instrument(struct bigpc_synth_driver *driver,s
  */
  
 static int minsyn_resource_decode_sound(struct bigpc_synth_driver *driver,struct minsyn_resource *resource) {
-  fprintf(stderr,"TODO %s %d c=%d\n",__func__,resource->id,resource->c);
+  
+  struct pcmprint *pcmprint=pcmprint_new(driver->rate,resource->v,resource->c);
+  if (!pcmprint) {
+    fprintf(stderr,"Failed to decode %d-byte program for sound:%d.\n",resource->c,resource->id);
+    return -1;
+  }
+  int c=pcmprint_get_length(pcmprint);
+  if (c<1) c=1;
+  
+  struct minsyn_pcm *pcm=minsyn_pcm_new(driver,c);
+  if (!pcm) {
+    pcmprint_del(pcmprint);
+    return -1;
+  }
+  resource->pcmid=pcm->id;
+  
+  struct minsyn_printer *printer=minsyn_printer_new(driver,pcmprint,pcm);
+  if (!printer) {
+    pcmprint_del(pcmprint);
+    // ok to leave (pcm) installed
+    return -1;
+  }
+  
+  if (DRIVER->update_in_progress_framec) {
+    minsyn_printer_update(printer,DRIVER->update_in_progress_framec);
+  }
+  
   return 0;
 }
 

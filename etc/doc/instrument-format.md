@@ -238,7 +238,26 @@ begin 0x01
 end
 ```
 
-Sounds. *TODO*
+Sound format is similar to WebAudio but simpler.
+There's no mixing, just one channel per sound.
+And since we operate in a streaming fashion, post-normalization is not possible.
+
+```
+len SECONDS
+fm ( RATE_ENV ) MODRATE ( RANGE_ENV ) SHAPE
+wave ( RATE_ENV ) SHAPE
+noise
+env ( ENV )
+mlt SCALAR
+delay PERIOD_SECONDS DRY WET STORE FEEDBACK
+bandpass MID_HZ RANGE_HZ
+```
+
+`len` must be first, and must be followed by one of `fm`, `wave`, `noise`, which overwrite the signal.
+
+ENV are integers: `LEVEL [MS LEVEL...]`, one time may be replaced by `*` to fill in the remainder.
+
+SHAPE is one of ("sine", "square", "sawtooth", "triangle"), or a list of integer in 0..255.
 
 ## Minsyn Binary Format
 
@@ -267,4 +286,23 @@ If (High envelope):
   5 Same as Low envelope
 ```
 
+Sound.
 
+```
+u1.7 Length
+... Commands:
+  u8 Opcode
+  ... Params
+
+0x01 FM (...rate_env,u4.4 modrate,...range_env,...shape)
+0x02 WAVE (...rate_env,...shape)
+0x03 NOISE ()
+0x04 ENV (...env)
+0x05 MLT (u8.8)
+0x06 DELAY (u0.8 period,u0.8 dry,u0.8 wet,u0.8 store,u0.8 feedback)
+0x07 BANDPASS (u16 mid,u16 range)
+
+env: u16 level,u8 count,count*(u16 ms,u16 level)
+shape: u8 name: (200,201,202,203,204)=(sine,square,sawtooth,triangle,noise)
+   OR: u8 coefc(<200),u8*coefc coefv
+```

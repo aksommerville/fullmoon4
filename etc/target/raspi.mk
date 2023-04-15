@@ -1,10 +1,10 @@
 # raspi.mk
-# Basically the same thing as Linux, but there's a special video driver "bcm".
+# Basically the same thing as Linux, but there's a special video driver "bcm", and "stdsyn" is not an option.
 
 raspi_MIDDIR:=mid/raspi
 raspi_OUTDIR:=out/raspi
 
-raspi_OPT_ENABLE:=bcm evdev alsa gl2 minsyn bigpc genioc linux datafile png fmstore inmgr midi fontosaur
+raspi_OPT_ENABLE:=bcm evdev alsa gl2 minsyn bigpc genioc linux datafile png fmstore inmgr midi fontosaur pcmprint
 
 raspi_EXE:=$(raspi_OUTDIR)/fullmoon
 raspi_DATA:=$(raspi_OUTDIR)/data
