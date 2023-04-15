@@ -19,7 +19,7 @@ all:$1-all
 # Discover input files, compile code, link the executable...
 
 $1_SRCPAT:=src/app/% $$($1_MIDDIR)/generated/% $(foreach U,$($1_OPT_ENABLE),src/opt/$U/%)
-$1_SRCFILES:=$$(filter $$($1_SRCPAT),$(SRCFILES) $$(addprefix $$($1_MIDDIR)/generated/,$(GENERATED_FILES)))
+$1_SRCFILES:=$$(filter-out $$($1_SRCFILES_FILTER_OUT),$$(filter $$($1_SRCPAT),$(SRCFILES) $$(addprefix $$($1_MIDDIR)/generated/,$(GENERATED_FILES))))
 
 $1_CFILES:=$$(filter %.c %.m %.cpp %.S,$$($1_SRCFILES))
 $1_OFILES:=$$(addsuffix .o,$$(patsubst src/%,$$($1_MIDDIR)/%,$$(basename $$($1_CFILES))))
@@ -59,10 +59,6 @@ $1_DATA_IN:=$(filter-out src/data/chalk/%,$(filter src/data/%,$(SRCFILES)))
 $1_DATA_MID:=$$(patsubst src/data/%,$($1_MIDDIR)/data/%,$$($1_DATA_IN))
 
 $2:$$($1_DATA_MID) $$(MKDATA_SOURCES);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --archive -o$$@ $$($1_DATA_MID)
-
-#XXX This forces us to rebuild every resource every time a tool changes. It's becoming unworkable as I tweak the synth tools.
-# No PRECMD for this one, because it's helpful to see the last directory in addition to the basename:
-#$($1_MIDDIR)/data/%:src/data/% $$(MKDATA_SOURCES);echo "  $1 $$*" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
 
 # This approach is messy and decidedly imperfect.
 # But it does at least seem to achieve my immediate goal, editing the synth tools without having to rebuild all the maps and sprites and such.

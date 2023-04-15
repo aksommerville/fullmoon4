@@ -49,7 +49,10 @@ function readTrack(src, path) {
             if (!report.drums) report.drums = [];
             if (report.drums.indexOf(note) < 0) report.drums.push(note);
           }
-          if (!report.programs) report.notesWithoutProgram = true;
+          if (!report.programs) {
+            if ((lead & 0x0f) === 0x0f) ; // it's normal for us to play drums without setting program
+            else report.notesWithoutProgram = true;
+          }
         } break;
       
       case 0xa0: srcp += 2; report.hasNoteAdjust = true; break;
