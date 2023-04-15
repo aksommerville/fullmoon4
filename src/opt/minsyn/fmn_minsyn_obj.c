@@ -182,10 +182,6 @@ void minsyn_silence_all(struct bigpc_synth_driver *driver) {
  */
  
 static int _minsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force) {
-
-  fprintf(stderr,"%s:%d: music temporarily disabled\n",__FILE__,__LINE__);
-  return 0;
-
   if (srcc<0) return -1;
   if (!srcc) {
     if (!DRIVER->song) return 0;

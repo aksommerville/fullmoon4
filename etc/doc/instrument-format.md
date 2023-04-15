@@ -294,7 +294,7 @@ u1.7 Length
   u8 Opcode
   ... Params
 
-0x01 FM (...rate_env,u4.4 modrate,...range_env,...shape)
+0x01 FM (...rate_env,u4.4 modrate,...range_env,...shape) # range_env values in thousandths
 0x02 WAVE (...rate_env,...shape)
 0x03 NOISE ()
 0x04 ENV (...env)

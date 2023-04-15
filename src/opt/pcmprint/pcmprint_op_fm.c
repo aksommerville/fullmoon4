@@ -50,6 +50,8 @@ static int _fm_decode(struct pcmprint_op *op,const uint8_t *src,int srcc) {
   OP->modrate*=M_PI*2.0f;
 
   if ((err=pcmprint_env_decode(&OP->rangeenv,src+srcp,srcc-srcp,op->pcmprint->rate))<0) return err; srcp+=err;
+  pcmprint_env_scale(&OP->rangeenv,65.536f);
+  
   if ((err=pcmprint_oscillator_decode(&OP->osc,src+srcp,srcc-srcp,op->pcmprint))<0) return err; srcp+=err;
   
   op->update=_fm_update;
