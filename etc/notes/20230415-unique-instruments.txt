@@ -1,0 +1,86 @@
+2023-04-15T07:40
+
+Modify songs and synth config to make each song use its own instruments.
+Start by assigning unique program IDs to each song, and record what they used to be.
+Remember to update both WebAudio and minsyn configs.
+
+Initial report from etc/tool/song_review.js:
+
+{"path":"src/data/song/1-tangled_vine.mid","length":6011,"drums":[36,51,40,49,38,52],"programs":[20,4,7,5,9]}
+{"path":"src/data/song/2-seven_circles.mid","length":10951,"programs":[8,4,9,5]}
+{"path":"src/data/song/3-toil_and_trouble.mid","length":6335,"programs":[4,8,7]}
+{"path":"src/data/song/4-eye_of_newt.mid","length":8590,"programs":[4,37,3,2,10],"drums":[42,36,40,49],"notesWithoutProgram":true}
+{"path":"src/data/song/5-jaws_of_wrath.mid","length":9788,"drums":[94,36,49,38,42],"notesWithoutProgram":true,"programs":[4,2,11,37],"hasPitchWheel":true}
+{"path":"src/data/song/6-truffles_in_forbidden_sauce.mid","length":2067,"programs":[2,9,8]}
+{"path":"src/data/song/7-seventh_roots_of_unity.mid","length":6360,"programs":[12,9,2]}
+*** program 4 present in both src/data/song/2-seven_circles.mid and src/data/song/1-tangled_vine.mid
+*** program 9 present in both src/data/song/2-seven_circles.mid and src/data/song/1-tangled_vine.mid
+*** program 5 present in both src/data/song/2-seven_circles.mid and src/data/song/1-tangled_vine.mid
+*** program 4 present in both src/data/song/3-toil_and_trouble.mid and src/data/song/1-tangled_vine.mid
+*** program 7 present in both src/data/song/3-toil_and_trouble.mid and src/data/song/1-tangled_vine.mid
+*** program 4 present in both src/data/song/3-toil_and_trouble.mid and src/data/song/2-seven_circles.mid
+*** program 8 present in both src/data/song/3-toil_and_trouble.mid and src/data/song/2-seven_circles.mid
+*** program 4 present in both src/data/song/4-eye_of_newt.mid and src/data/song/1-tangled_vine.mid
+*** program 4 present in both src/data/song/4-eye_of_newt.mid and src/data/song/2-seven_circles.mid
+*** program 4 present in both src/data/song/4-eye_of_newt.mid and src/data/song/3-toil_and_trouble.mid
+*** program 4 present in both src/data/song/5-jaws_of_wrath.mid and src/data/song/1-tangled_vine.mid
+*** program 4 present in both src/data/song/5-jaws_of_wrath.mid and src/data/song/2-seven_circles.mid
+*** program 4 present in both src/data/song/5-jaws_of_wrath.mid and src/data/song/3-toil_and_trouble.mid
+*** program 4 present in both src/data/song/5-jaws_of_wrath.mid and src/data/song/4-eye_of_newt.mid
+*** program 2 present in both src/data/song/5-jaws_of_wrath.mid and src/data/song/4-eye_of_newt.mid
+*** program 37 present in both src/data/song/5-jaws_of_wrath.mid and src/data/song/4-eye_of_newt.mid
+*** program 9 present in both src/data/song/6-truffles_in_forbidden_sauce.mid and src/data/song/1-tangled_vine.mid
+*** program 9 present in both src/data/song/6-truffles_in_forbidden_sauce.mid and src/data/song/2-seven_circles.mid
+*** program 8 present in both src/data/song/6-truffles_in_forbidden_sauce.mid and src/data/song/2-seven_circles.mid
+*** program 8 present in both src/data/song/6-truffles_in_forbidden_sauce.mid and src/data/song/3-toil_and_trouble.mid
+*** program 2 present in both src/data/song/6-truffles_in_forbidden_sauce.mid and src/data/song/4-eye_of_newt.mid
+*** program 2 present in both src/data/song/6-truffles_in_forbidden_sauce.mid and src/data/song/5-jaws_of_wrath.mid
+*** program 9 present in both src/data/song/7-seventh_roots_of_unity.mid and src/data/song/1-tangled_vine.mid
+*** program 9 present in both src/data/song/7-seventh_roots_of_unity.mid and src/data/song/2-seven_circles.mid
+*** program 2 present in both src/data/song/7-seventh_roots_of_unity.mid and src/data/song/4-eye_of_newt.mid
+*** program 2 present in both src/data/song/7-seventh_roots_of_unity.mid and src/data/song/5-jaws_of_wrath.mid
+*** program 9 present in both src/data/song/7-seventh_roots_of_unity.mid and src/data/song/6-truffles_in_forbidden_sauce.mid
+*** program 2 present in both src/data/song/7-seventh_roots_of_unity.mid and src/data/song/6-truffles_in_forbidden_sauce.mid
+
+1-tangled_vine.mid
+  2 <= 20
+  3 <= 4
+  4 <= 7
+  5 <= 5
+  6 <= 9
+  
+2-seven_circles.mid
+  7 <= 8
+  8 <= 4
+  9 <= 9
+  10 <= 5
+  
+3-toil_and_trouble.mid
+  11 <= 4
+  12 <= 8
+  13 <= 7
+  
+4-eye_of_newt.mid
+*notesWithoutProgram*
+  14 <= 4
+  15 <= 37
+  16 <= 3
+  17 <= 2
+  18 <= 10
+  
+5-jaws_of_wrath.mid
+*notesWithoutProgram*
+  19 <= 4
+  20 <= 2
+  21 <= 11
+  22 <= 37
+  
+6-truffles_in_forbidden_sauce.mid
+  23 <= 2
+  24 <= 9
+  25 <= 8
+  
+7-seventh_roots_of_unity.mid
+  26 <= 12
+  27 <= 9
+  28 <= 2

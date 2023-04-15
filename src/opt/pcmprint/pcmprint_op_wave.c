@@ -34,7 +34,7 @@ static void _wave_update(float *v,int c,struct pcmprint_op *op) {
 static int _wave_decode(struct pcmprint_op *op,const uint8_t *src,int srcc) {
   int srcp=0,err;
   if ((err=pcmprint_env_decode(&OP->rateenv,src,srcc,op->pcmprint->rate))<0) return err; srcp+=err;
-  pcmprint_env_scale(&OP->rateenv,op->pcmprint->rate*65536.0f); // funny how this works out. scale the normalized rate up to 32 bits
+  pcmprint_env_scale(&OP->rateenv,65536.0f/op->pcmprint->rate);
   if ((err=pcmprint_oscillator_decode(&OP->osc,src+srcp,srcc-srcp,op->pcmprint))<0) return err; srcp+=err;
   op->update=_wave_update;
   return srcp;

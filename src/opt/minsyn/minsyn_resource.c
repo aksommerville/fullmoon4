@@ -109,7 +109,7 @@ static int minsyn_instrument_decode_wave(struct bigpc_synth_driver *driver,struc
   int srcp=1;
   if (srcp>srcc-coefc) return -1;
   
-  int waveid=minsyn_new_wave_harmonics(driver,src,coefc);
+  int waveid=minsyn_new_wave_harmonics(driver,src+1,coefc);
   if (waveid<0) return -1;
   srcp+=coefc;
   resource->waveid=waveid;

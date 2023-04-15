@@ -43,7 +43,7 @@ static int _fm_decode(struct pcmprint_op *op,const uint8_t *src,int srcc) {
   int srcp=0,err;
 
   if ((err=pcmprint_env_decode(&OP->rateenv,src,srcc,op->pcmprint->rate))<0) return err; srcp+=err;
-  pcmprint_env_scale(&OP->rateenv,op->pcmprint->rate/65536.0f);
+  pcmprint_env_scale(&OP->rateenv,65536.0f/op->pcmprint->rate);
 
   if (srcp>=srcc) return -1;
   OP->modrate=src[srcp++]/16.0f;

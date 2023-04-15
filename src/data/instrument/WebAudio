@@ -9,9 +9,14 @@ begin 0x01
   wheelRange 600
 end
 
-#-------------------------------------- Final Instruments ----------------------------------
+#--- Tangled Vine ---
 
-begin 0x04 # synth bass
+begin 2
+  wave triangle
+  env 30 80 30 60 150 .. 20 ff 20 a0 150
+end
+
+begin 3
   wave sine
   env 30 80 40 40 200 .. 20 ff 25 80 300
   modRate 0.5
@@ -19,7 +24,34 @@ begin 0x04 # synth bass
   modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
 end
 
-begin 0x08 # gentle organ (toil_and_trouble lead)
+begin 4
+  bpq 80
+  bpq2 3
+  bpBoost 200
+  env 40 80 80 30 200 .. 10 ff 40 80 400
+  wheelRange 1200
+end
+
+begin 5
+  wave ffff 0000 8000 0000 1000
+  modRate 2
+  modRange 3
+  modEnv ff 40 00 20 10 0 10 .. ff 10 00 30 80 0 80
+  modRangeLfoRate 1
+  env 20 40 20 08 100 .. 10 ff 30 20 400
+end
+
+begin 6
+  wave ffff 1000 6000 0080 1000
+  modRate 1
+  modRange 1
+  env 20 50 30 10 100 .. 10 ff 20 40 300
+  wheelRange 600
+end
+
+#--- Seven Circles ---
+
+begin 7
   wave 0000 ffff 2888 4111 0000 0111
   env 20 80 20 20 300 .. 10 ff 20 50 600
   modRate 2
@@ -29,15 +61,23 @@ begin 0x08 # gentle organ (toil_and_trouble lead)
   wheelRange 200
 end
 
-begin 0x07 # vague wind
-  bpq 80
-  bpq2 3
-  bpBoost 200
-  env 40 80 80 30 200 .. 10 ff 40 80 400
-  wheelRange 1200
+begin 8
+  wave sine
+  env 30 80 40 40 200 .. 20 ff 25 80 300
+  modRate 0.5
+  modRange 1.5
+  modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
 end
 
-begin 0x05 # fancy pluck
+begin 9
+  wave ffff 1000 6000 0080 1000
+  modRate 1
+  modRange 1
+  env 20 50 30 10 100 .. 10 ff 20 40 300
+  wheelRange 600
+end
+
+begin 10
   wave ffff 0000 8000 0000 1000
   modRate 2
   modRange 3
@@ -46,50 +86,45 @@ begin 0x05 # fancy pluck
   env 20 40 20 08 100 .. 10 ff 30 20 400
 end
 
-begin 0x09 # versatile lead
-  wave ffff 1000 6000 0080 1000
-  modRate 1
-  modRange 1
-  env 20 50 30 10 100 .. 10 ff 20 40 300
-  wheelRange 600
-end
+#--- Toil and Trouble ---
 
-begin 0x0a # bow-wow circus lead
+begin 11
   wave sine
-  modRate 1
-  modRange 3
-  modRangeLfoRate 1
-  env 40 a0 40 20 100 .. 10 ff 40 40 300
+  env 30 80 40 40 200 .. 20 ff 25 80 300
+  modRate 0.5
+  modRange 1.5
+  modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
 end
 
 begin 12
+  wave 0000 ffff 2888 4111 0000 0111
+  env 20 80 20 20 300 .. 10 ff 20 50 600
+  modRate 2
+  modRange 0.4
+  modEnv ff 20 00 40 c0 100 80
+  modRangeLfoRate 1.1
+  wheelRange 200
+end
+
+begin 13
+  bpq 80
+  bpq2 3
+  bpBoost 200
+  env 40 80 80 30 200 .. 10 ff 40 80 400
+  wheelRange 1200
+end
+
+#--- Eye of Newt ---
+
+begin 14
   wave sine
-  modRate 1
-  modRange 2
-  env 20 80 10 20 100 .. 10 ff 15 20 300
+  env 30 80 40 40 200 .. 20 ff 25 80 300
+  modRate 0.5
+  modRange 1.5
+  modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
 end
 
-#-------------------------------------- Unfinished Instruments -----------------------------
-
-begin 0x02 # Thick siney organ.
-  wave sine
-  env 20 40 20 10 200 .. 5 ff 25 40 500
-  modRate 1
-  modRange 2
-  modEnv 40 50 40 150 40 200 20 .. 00 30 ff 100 80 200 20
-end
-
-begin 0x03 # in-your-face pipe organ
-  wave 4000 0800 2000 0200 1000 0080 0800
-  env 70 60 40 40 500 .. 60 c0 40 a0 800
-end
-
-begin 0x14 # plain tight beep
-  wave triangle
-  env 30 80 30 60 150 .. 20 ff 20 a0 150
-end
-
-begin 0x25 # wicked space guitar
+begin 15
   wave square
   env 10 40 20 40 200 .. 5 ff 20 80 300
   modRate 1
@@ -97,15 +132,46 @@ begin 0x25 # wicked space guitar
   modEnv 00 50 00 400 00 200 00 .. 80 50 c0 400 80 200 00
 end
 
-begin 0x06
-  wave 0000 cccc 0000 6666 0000 2222 0000 0888
-  env 15 ff 30 06 300
-  modRate 12
-  modRange 5
-  modEnv ff 10 c0 30 ff 200 60
+begin 16
+  wave 4000 0800 2000 0200 1000 0080 0800
+  env 70 60 40 40 500 .. 60 c0 40 a0 800
 end
 
-begin 11
+begin 17
+  wave sine
+  env 20 40 20 10 200 .. 5 ff 25 40 500
+  modRate 1
+  modRange 2
+  modEnv 40 50 40 150 40 200 20 .. 00 30 ff 100 80 200 20
+end
+
+begin 18
+  wave sine
+  modRate 1
+  modRange 3
+  modRangeLfoRate 1
+  env 40 a0 40 20 100 .. 10 ff 40 40 300
+end
+
+#--- Jaws of Wrath ---
+
+begin 19
+  wave sine
+  env 30 80 40 40 200 .. 20 ff 25 80 300
+  modRate 0.5
+  modRange 1.5
+  modEnv 80 20 80 50 80 50 80 .. 40 20 ff 50 ff 250 c0
+end
+
+begin 20
+  wave sine
+  env 20 40 20 10 200 .. 5 ff 25 40 500
+  modRate 1
+  modRange 2
+  modEnv 40 50 40 150 40 200 20 .. 00 30 ff 100 80 200 20
+end
+
+begin 21
   wave 0000 ffff 1111 3000 8888
   modRate 3
   modRange 1
@@ -113,98 +179,65 @@ begin 11
   env 20 80 20 20 100 .. 10 ff 10 40 300
 end
 
-# Instrument placeholders.
-begin 13
-  wave sine
-  env 10 80 10 20 100
-end
-begin 14
-  wave sine
-  env 10 80 10 20 100
-end
-begin 15
-  wave sine
-  env 10 80 10 20 100
-end
-begin 16
-  wave sine
-  env 10 80 10 20 100
-end
-begin 17
-  wave sine
-  env 10 80 10 20 100
-end
-begin 18
-  wave sine
-  env 10 80 10 20 100
-end
-begin 19
-  wave sine
-  env 10 80 10 20 100
-end
-begin 21
-  wave sine
-  env 10 80 10 20 100
-end
 begin 22
-  wave sine
-  env 10 80 10 20 100
+  wave square
+  env 10 40 20 40 200 .. 5 ff 20 80 300
+  modRate 1
+  modRange 5
+  modEnv 00 50 00 400 00 200 00 .. 80 50 c0 400 80 200 00
 end
+
+#--- Truffles in Forbidden Sauce ---
+
 begin 23
   wave sine
-  env 10 80 10 20 100
+  env 20 40 20 10 200 .. 5 ff 25 40 500
+  modRate 1
+  modRange 2
+  modEnv 40 50 40 150 40 200 20 .. 00 30 ff 100 80 200 20
 end
+
 begin 24
-  wave sine
-  env 10 80 10 20 100
+  wave ffff 1000 6000 0080 1000
+  modRate 1
+  modRange 1
+  env 20 50 30 10 100 .. 10 ff 20 40 300
+  wheelRange 600
 end
+
 begin 25
-  wave sine
-  env 10 80 10 20 100
+  wave 0000 ffff 2888 4111 0000 0111
+  env 20 80 20 20 300 .. 10 ff 20 50 600
+  modRate 2
+  modRange 0.4
+  modEnv ff 20 00 40 c0 100 80
+  modRangeLfoRate 1.1
+  wheelRange 200
 end
+
+#--- Seventh Roots of Unity ---
+
 begin 26
   wave sine
-  env 10 80 10 20 100
+  modRate 1
+  modRange 2
+  env 20 80 10 20 100 .. 10 ff 15 20 300
 end
+
 begin 27
-  wave sine
-  env 10 80 10 20 100
+  wave ffff 1000 6000 0080 1000
+  modRate 1
+  modRange 1
+  env 20 50 30 10 100 .. 10 ff 20 40 300
+  wheelRange 600
 end
+
 begin 28
   wave sine
-  env 10 80 10 20 100
-end
-begin 29
-  wave sine
-  env 10 80 10 20 100
-end
-begin 30
-  wave sine
-  env 10 80 10 20 100
-end
-begin 31
-  wave sine
-  env 10 80 10 20 100
-end
-begin 32
-  wave sine
-  env 10 80 10 20 100
-end
-begin 33
-  wave sine
-  env 10 80 10 20 100
-end
-begin 34
-  wave sine
-  env 10 80 10 20 100
-end
-begin 35
-  wave sine
-  env 10 80 10 20 100
-end
-begin 36
-  wave sine
-  env 10 80 10 20 100
+  env 20 40 20 10 200 .. 5 ff 25 40 500
+  modRate 1
+  modRange 2
+  modEnv 40 50 40 150 40 200 20 .. 00 30 ff 100 80 200 20
 end
 
 #-------------------------------------- Final Sound Effects --------------------------------
