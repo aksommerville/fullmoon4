@@ -103,7 +103,7 @@ struct minsyn_resource *minsyn_resource_get_sound(const struct bigpc_synth_drive
 /* Decode wave from harmonics.
  */
  
-static int minsyn_instrument_decode_wave(struct bigpc_synth_driver *driver,struct minsyn_resource *resource,const uint8_t *src,int srcc) {
+static int minsyn_instrument_decode_wave(int *dstwaveid,struct bigpc_synth_driver *driver,struct minsyn_resource *resource,const uint8_t *src,int srcc) {
   if (srcc<1) return -1;
   int coefc=src[0];
   int srcp=1;
@@ -112,7 +112,7 @@ static int minsyn_instrument_decode_wave(struct bigpc_synth_driver *driver,struc
   int waveid=minsyn_new_wave_harmonics(driver,src+1,coefc);
   if (waveid<0) return -1;
   srcp+=coefc;
-  resource->waveid=waveid;
+  *dstwaveid=waveid;
   
   return srcp;
 }
@@ -139,9 +139,12 @@ static void minsyn_env_config_default(struct minsyn_env_config *env,int rate) {
   env->rlsc=(100*rate)/1000;
 }
  
-static void minsyn_instrument_set_default_env(struct bigpc_synth_driver *driver,struct minsyn_resource *resource) {
-  minsyn_env_config_default(&resource->envlo,driver->rate);
-  memcpy(&resource->envhi,&resource->envlo,sizeof(struct minsyn_env_config));
+static void minsyn_instrument_set_default_env(
+  struct minsyn_env_config *lo,struct minsyn_env_config *hi,
+  struct bigpc_synth_driver *driver,struct minsyn_resource *resource
+) {
+  minsyn_env_config_default(lo,driver->rate);
+  memcpy(hi,lo,sizeof(struct minsyn_env_config));
 }
 
 /* Decode instrument, install objects, update entry.
@@ -154,13 +157,13 @@ static int minsyn_resource_decode_instrument(struct bigpc_synth_driver *driver,s
   int srcp=1,err;
   
   if (features&0x01) { // wave from harmonics
-    if ((err=minsyn_instrument_decode_wave(driver,resource,src+srcp,resource->c-srcp))<0) return err;
+    if ((err=minsyn_instrument_decode_wave(&resource->waveid,driver,resource,src+srcp,resource->c-srcp))<0) return err;
     srcp+=err;
   }
   
   switch (features&0x06) { // low+high envelope
     case 0x00: {
-        minsyn_instrument_set_default_env(driver,resource);
+        minsyn_instrument_set_default_env(&resource->envlo,&resource->envhi,driver,resource);
       } break;
     case 0x02:
     case 0x04: { // low or high only. same thing, we use the same envelope for both.
@@ -177,7 +180,32 @@ static int minsyn_resource_decode_instrument(struct bigpc_synth_driver *driver,s
         srcp+=5;
       } break;
   }
-        
+  
+  if (features&0x08) { // 'b' wave from harmonics
+    if ((err=minsyn_instrument_decode_wave(&resource->bwaveid,driver,resource,src+srcp,resource->c-srcp))<0) return err;
+    srcp+=err;
+  }
+  
+  switch (features&0x30) { // low+high mix envelope
+    case 0x00: {
+        minsyn_instrument_set_default_env(&resource->mixenvlo,&resource->mixenvhi,driver,resource);
+      } break;
+    case 0x10:
+    case 0x20: { // low or high only. same thing, we use the same envelope for both.
+        if (srcp>resource->c-5) return -1;
+        minsyn_instrument_decode_env(&resource->mixenvlo,driver,src+srcp);
+        srcp+=5;
+        memcpy(&resource->mixenvhi,&resource->mixenvlo,sizeof(struct minsyn_env_config));
+      } break;
+    case 0x30: {
+        if (srcp>resource->c-10) return -1;
+        minsyn_instrument_decode_env(&resource->mixenvlo,driver,src+srcp);
+        srcp+=5;
+        minsyn_instrument_decode_env(&resource->mixenvhi,driver,src+srcp);
+        srcp+=5;
+      } break;
+  }
+
   return 0;
 }
 

@@ -58,6 +58,10 @@ struct minsyn_voice {
   uint32_t p;
   uint32_t dp;
   struct minsyn_env env;
+  
+  // Experimental wave mixer:
+  const int16_t *bv;
+  struct minsyn_env mixenv;
 };
 
 /* minsyn_playback for PCM at the natural rate with an optional loop.
@@ -103,6 +107,8 @@ struct minsyn_resource {
   int waveid; // >0 if there is one
   int pcmid; // >0 if there is one
   struct minsyn_env_config envlo,envhi;
+  int bwaveid;
+  struct minsyn_env_config mixenvlo,mixenvhi;
 };
 
 struct bigpc_synth_driver_minsyn {

@@ -46,6 +46,23 @@ void minsyn_voice_init(
   voice->env.susvhi=instrument->envhi.susv;
   voice->env.rlschi=instrument->envhi.rlsc;
   minsyn_env_reset(&voice->env,velocity,driver->rate);
+  
+  if (instrument->bwaveid) {
+    if (wave=minsyn_get_wave(driver,instrument->bwaveid)) {
+      voice->bv=wave->v;
+      voice->mixenv.atkclo=instrument->mixenvlo.atkc;
+      voice->mixenv.atkvlo=instrument->mixenvlo.atkv;
+      voice->mixenv.decclo=instrument->mixenvlo.decc;
+      voice->mixenv.susvlo=instrument->mixenvlo.susv;
+      voice->mixenv.rlsclo=instrument->mixenvlo.rlsc;
+      voice->mixenv.atkchi=instrument->mixenvhi.atkc;
+      voice->mixenv.atkvhi=instrument->mixenvhi.atkv;
+      voice->mixenv.decchi=instrument->mixenvhi.decc;
+      voice->mixenv.susvhi=instrument->mixenvhi.susv;
+      voice->mixenv.rlschi=instrument->mixenvhi.rlsc;
+      minsyn_env_reset(&voice->mixenv,velocity,driver->rate);
+    }
+  }
 
   voice->p=0;
   if (!(voice->dp=minsyn_dp_for_noteid(driver,voice->noteid))) {
@@ -69,6 +86,7 @@ void minsyn_playback_init(struct bigpc_synth_driver *driver,struct minsyn_playba
 void minsyn_voice_release(struct minsyn_voice *voice) {
   voice->chid=voice->noteid=0xff;
   minsyn_env_release(&voice->env);
+  minsyn_env_release(&voice->mixenv);
 }
 
 void minsyn_playback_release(struct minsyn_playback *playback) {
@@ -81,9 +99,20 @@ void minsyn_playback_release(struct minsyn_playback *playback) {
 
 void minsyn_voice_update(int16_t *v,int c,struct minsyn_voice *voice) {
   if (!voice->v) return;
-  for (;c-->0;v++) {
-    (*v)+=(voice->v[voice->p>>MINSYN_WAVE_SHIFT]*minsyn_env_next(&voice->env))>>8;
-    voice->p+=voice->dp;
+  if (voice->bv) {
+    for (;c-->0;v++) {
+      int a=voice->v[voice->p>>MINSYN_WAVE_SHIFT];
+      int b=voice->bv[voice->p>>MINSYN_WAVE_SHIFT];
+      int mix=minsyn_env_next(&voice->mixenv);
+      a=(a*(0xff-mix)+b*mix)>>8;
+      (*v)+=(a*minsyn_env_next(&voice->env))>>8;
+      voice->p+=voice->dp;
+    }
+  } else {
+    for (;c-->0;v++) {
+      (*v)+=(voice->v[voice->p>>MINSYN_WAVE_SHIFT]*minsyn_env_next(&voice->env))>>8;
+      voice->p+=voice->dp;
+    }
   }
   if (voice->env.term) {
     voice->v=0;

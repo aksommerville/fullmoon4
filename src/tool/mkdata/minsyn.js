@@ -2,6 +2,9 @@
 const FEATURE_HARMONICS = 0x01;
 const FEATURE_LOW_ENV = 0x02;
 const FEATURE_HIGH_ENV = 0x04;
+const FEATURE_MIXWAVE_HARMONICS = 0x08;
+const FEATURE_LOW_MIXENV = 0x10;
+const FEATURE_HIGH_MIXENV = 0x20;
 
 /* Instrument.
  ****************************************************************/
@@ -15,6 +18,8 @@ class MinsynInstrument {
     this.commands = { // null or array of strings
       wave: null,
       env: null,
+      mixwave: null,
+      mixenv: null,
     };
   }
   
@@ -30,6 +35,14 @@ class MinsynInstrument {
         throw new Error(`${this.path}:${this.lineno}: Malformed 'env' command. Must be 5 or 11 tokens`);
       }
       dstp = this._encodeEnvelope(dst, dstp, this.commands.env.slice(6));
+    }
+    if (this.features & FEATURE_MIXWAVE_HARMONICS) dstp = this._encodeHarmonics(dst, dstp, this.commands.mixwave);
+    if (this.features & FEATURE_LOW_MIXENV) dstp = this._encodeEnvelope(dst, dstp, this.commands.mixenv.slice(0, 5));
+    if (this.features & FEATURE_HIGH_MIXENV) {
+      if ((this.commands.mixenv.length !== 11) || (this.commands.mixenv[5] !== "..")) {
+        throw new Error(`${this.path}:${this.lineno}: Malformed 'mixenv' command. Must be 5 or 11 tokens`);
+      }
+      dstp = this._encodeEnvelope(dst, dstp, this.commands.mixenv.slice(6));
     }
     if (dstp !== dst.length) throw new Error(`${this.path}:${this.lineno}: Internal encoder error! Expected ${dst.length} bytes but produced ${dstp}`);
     return dst;
@@ -54,6 +67,18 @@ class MinsynInstrument {
       dstc += 5;
       if (this.commands.env.length > 5) {
         this.features |= FEATURE_HIGH_ENV;
+        dstc += 5;
+      }
+    }
+    if (this.commands.mixwave) {
+      this.features |= FEATURE_MIXWAVE_HARMONICS;
+      dstc += 1 + this.commands.mixwave.length;
+    }
+    if (this.commands.mixenv) {
+      this.features |= FEATURE_LOW_MIXENV;
+      dstc += 5;
+      if (this.commands.mixenv.length > 5) {
+        this.features |= FEATURE_HIGH_MIXENV;
         dstc += 5;
       }
     }

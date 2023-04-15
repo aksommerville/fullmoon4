@@ -88,7 +88,8 @@ static void _minsyn_update_mono(int16_t *v,int c,struct bigpc_synth_driver *driv
       if (updc) { // no song event; proceed with signal
         if (updc>c) updc=c;
       } else {
-        driver->type->event(driver,event.chid,event.opcode,event.a,event.b);
+        if (event.opcode==0xff) ; // Ignore Meta events; we would interpret them as System Reset.
+        else driver->type->event(driver,event.chid,event.opcode,event.a,event.b);
         continue;
       }
     }

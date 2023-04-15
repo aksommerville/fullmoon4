@@ -1,5 +1,88 @@
 #include "alsapcm_internal.h"
 
+/* Optional master level check.
+ * For troubleshooting and audio design. Don't leave enabled!
+ */
+
+#define MASTER_LEVEL_CHECK_ENABLE 0
+
+/* Check period in seconds, but we treat the signal as mono.
+ * So if it's stereo, we will report twice as fast.
+ */
+#define MASTER_LEVEL_CHECK_PERIOD 1.0
+
+#define MASTER_LEVEL_CHECK_REPORT_WIDTH 75 /* in terminal columns */
+
+#if MASTER_LEVEL_CHECK_ENABLE
+  #include <math.h>
+  
+  static float master_peak=0.0f;
+  static float master_sqsum=0.0f;
+  static int master_count=0;
+  static int master_period=0;
+  
+  // Finalize and dump current state, then reset for the next cycle.
+  static void master_level_check_report() {
+    float rms=sqrtf(master_sqsum/master_count);
+    
+    char report[MASTER_LEVEL_CHECK_REPORT_WIDTH];
+    int rmsp=rms*MASTER_LEVEL_CHECK_REPORT_WIDTH;
+    int peakp=master_peak*MASTER_LEVEL_CHECK_REPORT_WIDTH;
+    if (rmsp<0) rmsp=0;
+    if (peakp>=MASTER_LEVEL_CHECK_REPORT_WIDTH) peakp=MASTER_LEVEL_CHECK_REPORT_WIDTH-1;
+    else if (peakp<1) peakp=1;
+    if (rmsp>=peakp) rmsp=peakp-1;
+    memset(report,'X',rmsp);
+    memset(report+rmsp,'-',peakp-rmsp);
+    memset(report+peakp,' ',sizeof(report)-peakp);
+    report[MASTER_LEVEL_CHECK_REPORT_WIDTH-1]='|';
+    report[rmsp]='R';
+    report[peakp]='!';
+    fprintf(stderr,"%.*s\n",MASTER_LEVEL_CHECK_REPORT_WIDTH,report);
+    
+    master_count=0;
+    master_peak=0.0f;
+    master_sqsum=0.0f;
+  }
+  
+  // Read the signal and update counts. Caller ensures it's within one period.
+  static void master_level_check_update(const int16_t *v,int c) {
+    master_count+=c;
+    for (;c-->0;v++) {
+      float fv=(float)*v;
+      if (fv<0.0f) fv=-fv;
+      fv/=32768.0f;
+      if (fv>master_peak) master_peak=fv;
+      master_sqsum+=fv*fv;
+    }
+  }
+
+  static void master_level_check(const int16_t *v,int c,int rate,int chanc) {
+    if (!master_period) {
+      master_period=(MASTER_LEVEL_CHECK_PERIOD*rate)/chanc;
+      if (master_period<1) {
+        master_period=1000;
+        fprintf(stderr,
+          "%s:%d: MASTER_LEVEL_CHECK_PERIOD too small (%f, with main rate %d and chanc %d). Raised to %d samples.\n",
+          __FILE__,__LINE__,MASTER_LEVEL_CHECK_PERIOD,rate,chanc,master_period
+        );
+      } else {
+        fprintf(stderr,"%s:%d: MASTER_LEVEL_CHECK_ENABLE set, will dump audio output levels.\n",__FILE__,__LINE__);
+      }
+    }
+    while (c>0) {
+      int updc=master_period-master_count;
+      if (updc>c) updc=c;
+      master_level_check_update(v,updc);
+      v+=updc;
+      c-=updc;
+      if (master_count>=master_period) {
+        master_level_check_report();
+      }
+    }
+  }
+#endif
+
 /* I/O thread.
  */
  
@@ -18,6 +101,10 @@ static void *alsapcm_iothd(void *arg) {
       memset(alsapcm->buf,0,alsapcm->bufa<<1);
     }
     pthread_mutex_unlock(&alsapcm->iomtx);
+    
+    #if MASTER_LEVEL_CHECK_ENABLE
+      master_level_check(alsapcm->buf,alsapcm->bufa,alsapcm->rate,alsapcm->chanc);
+    #endif
     
     const uint8_t *src=(uint8_t*)alsapcm->buf;
     int srcc=alsapcm->bufa<<1; // bytes (from samples)

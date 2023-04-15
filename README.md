@@ -27,11 +27,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] raspi: Feather down, it's using the wrong transform or something.
 - - Using BCM hacks on the nuc, I do get the feather thing but do not get the charms things.
 - [ ] Drop the BCM hacks condition, we can do it the bcm way everywhere.
-- [ ] Make each song use its own instruments, no more sharing.
+- [x] Make each song use its own instruments, no more sharing.
 - [x] minsyn: Are notes playing an octave high or something? Sounds much higher than in WebAudio.
 - [x] And sound effects are low. The hell? ...oops, denormalized rates backward from 64k.
 - [ ] gl2: Fade out at game end
 - [ ] minpc+web: Stop music at the moment the werewolf dies.
+- [x] minsyn, notes aborting or something? it's noticeable in Eye of Newt.
+- - There's a Meta End of Track right there, and the effect moves when I move the event.
+- - Meta 0xff, we read that as real-time System Reset, oops.
 
 ### May
 
