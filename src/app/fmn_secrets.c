@@ -25,8 +25,13 @@ void fmn_secrets_refresh_for_map() {
   for (;i-->0;door++) {
     if (!door->mapid&&(door->dstx==0x30)) { // buried_treasure
       if (buried_treasure) {
+        // already have a buried treasure, ignore this one
       } else if (door->extra&&fmn_gs_get_bit(door->extra)) {
-        // already have it, no real treasure here
+        // already have it (per gsbit), no real treasure here
+      } else if (door->dsty>=FMN_ITEM_COUNT) {
+        // invalid buried_treasure!
+      } else if (fmn_global.itemv[door->dsty]&&!fmn_item_default_quantities[door->dsty]) {
+        // already have it (non-quantity item), no real treasure here
       } else {
         buried_treasure=door;
       }

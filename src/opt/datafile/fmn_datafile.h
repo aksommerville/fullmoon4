@@ -7,6 +7,8 @@
  * datafile's responsibility ends with the resources' serial data.
  * No decoding or specific resource-type knowledge here, that's somebody else's problem.
  * So when you're loading something, consider first whether there is an intermediate service handling that.
+ * ...update: OK, we are going to provide analysis services that run directly on encoded resources.
+ * Maps for example.
  */
  
 #ifndef FMN_DATAFILE_H
@@ -61,5 +63,19 @@ int fmn_datafile_get_any(void *dstpp,struct fmn_datafile *file,uint16_t type,uin
 
 int fmn_file_read(void *dstpp,const char *path);
 int fmn_file_write(const char *path,const void *src,int srcc);
+
+/* Knowledge of specific resource type formats.
+ ************************************************************/
+
+// (argc) is usually knowable from (opcode), but 0xc0..0xff are variable-length.
+int fmn_map_for_each_command(
+  const void *v,int c,
+  int (*cb)(uint8_t opcode,const uint8_t *argv,int argc,void *userdata),
+  void *userdata
+);
+
+// If it has a concept of location, populate (xy), usually in (0,0..FMN_COLC-1,FMN_ROWC-1), and return nonzero.
+// You get a sensible result in (xy) regardless of the return value; it defaults to the center of the screen.
+int fmn_map_location_for_command(int16_t *xy,uint8_t opcode,const uint8_t *argv,int argc);
 
 #endif

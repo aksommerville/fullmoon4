@@ -33,9 +33,11 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] minsyn, notes aborting or something? it's noticeable in Eye of Newt.
 - - There's a Meta End of Track right there, and the effect moves when I move the event.
 - - Meta 0xff, we read that as real-time System Reset, oops.
-- [ ] Give the rabbit a pond.
-- [ ] bigpc: map analysis (crow)
+- [x] Give the rabbit a pond.
+- [x] bigpc: map analysis (crow)
 - [x] bigpc: Suppress duplicate sound effects (eg bell, first stroke is noticeably louder)
+- [x] Compass points to buried treasures we already have, see fmn_secrets.c
+- - ...was only happening for non-quantity treasures, so it wouldn't have happened in real life (we don't bury those). fixed anyway.
 
 ### May
 
@@ -86,7 +88,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] verify: Resources named by sprite config, eg chalkguard strings
 - [ ] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
+- [ ] verify: Map flag commands eg ANCILLARY must come before sprites and doors.
+- [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
+- [ ] Summoning the crow potentially examines every command in every map, every time. Can we pre-index all that by itemid?
 - [ ] Maps for full game.
 - [ ] Pumpkin protection: Ensure she can't travel too far as a pumpkin, and can't get trapped in the reachable area.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js

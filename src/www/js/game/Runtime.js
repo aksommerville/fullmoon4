@@ -420,7 +420,6 @@ export class Runtime {
     else map = this.dataService.getMap(mapIdOrMapOrFalse);
     if (!map) return 0;
     return this.firstDirectionFromMapToMap(this.map, map);
-    return 0;
   }
   
   firstDirectionFromMapToMap(from, to) {

@@ -202,59 +202,21 @@ static void bigpc_autobloom_plants() {
   }
 }
 
-/* Load map.
+/* Load map: dispatch one command.
  */
  
-static int fmn_load_map_cb(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
-  *(const void**)userdata=v;
-  return c;
-}
- 
-int8_t fmn_load_map(
-  uint16_t mapid,
+struct fmn_load_map_context {
+  int use_initial_sketches;
   void (*cb_spawn)(
     int8_t x,int8_t y,
     uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3,
     const uint8_t *cmdv,uint16_t cmdc
-  )
-) {
-  const uint8_t *serial=0;
-  int serialp=FMN_COLC*FMN_ROWC;
-  int serialc=fmn_datafile_for_each_of_id(bigpc.datafile,FMN_RESTYPE_MAP,mapid,fmn_load_map_cb,&serial);
-  if (serialc<serialp) return -1;
-  
-  fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
-  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
-  
-  bigpc.mapid=mapid;
-  memcpy(fmn_global.map,serial,serialp);
-  bigpc_clear_map_commands();
-  
-  // Apply plants and sketches from session store before decoding the map's commands.
-  // This is important for sketches: We want the map-command ones only if there are none from the store.
-  int use_initial_sketches=1;
-  fmstore_write_plants_to_globals(bigpc.fmstore,bigpc.mapid);
-  fmstore_write_sketches_to_globals(bigpc.fmstore,bigpc.mapid);
-  if (fmn_global.sketchc) use_initial_sketches=0;
-
-  while (serialp<serialc) {
-    uint8_t opcode=serial[serialp++];
-    int paylen;
-    switch (opcode&0xe0) {
-      case 0x00: paylen=0; break;
-      case 0x20: paylen=1; break;
-      case 0x40: paylen=2; break;
-      case 0x60: paylen=4; break;
-      case 0x80: paylen=6; break;
-      case 0xa0: paylen=8; break;
-      case 0xc0: if (serialp>=serialc) paylen=opcode=0; else paylen=serial[serialp++]; break;
-      default: paylen=opcode=0;
-    }
-    if (!opcode) break;
-    if (serialp>serialc-paylen) break;
-    const uint8_t *arg=serial+serialp;
-    serialp+=paylen;
-    switch (opcode) {
+  );
+};
+ 
+static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,void *userdata) {
+  struct fmn_load_map_context *ctx=userdata;
+  switch (opcode) {
     
       case 0x01: fmn_global.mapdark=1; break;
       case 0x02: fmn_global.indoors=1; break;
@@ -272,23 +234,58 @@ int8_t fmn_load_map(
       case 0x44: bigpc_add_transmogrify(arg[0],arg[1]); break;
       
       case 0x60: bigpc_add_door(arg[0],0,(arg[1]<<8)|arg[2],arg[3]%FMN_COLC,arg[3]/FMN_COLC); break;
-      case 0x61: if (use_initial_sketches) bigpc_add_sketch(arg[0],(arg[1]<<16)|(arg[2]<<8)|arg[3]); break;
+      case 0x61: if (ctx->use_initial_sketches) bigpc_add_sketch(arg[0],(arg[1]<<16)|(arg[2]<<8)|arg[3]); break;
       case 0x62: bigpc_add_door(arg[0],(arg[1]<<16)|arg[2],0,0x30,arg[3]); break;
       case 0x63: bigpc_add_callback(arg[0],(arg[1]<<8)|arg[2],arg[3]); break;
       
-      case 0x80: if (cb_spawn) {
+      case 0x80: if (ctx->cb_spawn) {
           int8_t x=arg[0]%FMN_COLC,y=arg[0]/FMN_COLC;
           uint16_t spriteid=(arg[1]<<8)|arg[2];
           uint8_t arg0=arg[3],arg1=arg[4],arg2=arg[5],arg3=0;
           const uint8_t *cmdv=0;
           int cmdc=fmn_datafile_for_each_of_id(bigpc.datafile,FMN_RESTYPE_SPRITE,spriteid,bigpc_cb_pick_sprite,&cmdv);
           if ((cmdc<0)||(cmdc>0xffff)) cmdc=0;
-          cb_spawn(x,y,spriteid,arg0,arg1,arg2,arg3,cmdv,cmdc);
+          ctx->cb_spawn(x,y,spriteid,arg0,arg1,arg2,arg3,cmdv,cmdc);
         } break;
         
       case 0x81: bigpc_add_door(arg[0],(arg[1]<<8)|arg[2],(arg[3]<<8)|arg[4],arg[5]%FMN_COLC,arg[5]/FMN_COLC); break;
-    }
   }
+  return 0;
+}
+
+/* Load map.
+ */
+ 
+int8_t fmn_load_map(
+  uint16_t mapid,
+  void (*cb_spawn)(
+    int8_t x,int8_t y,
+    uint16_t spriteid,uint8_t arg0,uint8_t arg1,uint8_t arg2,uint8_t arg3,
+    const uint8_t *cmdv,uint16_t cmdc
+  )
+) {
+  const uint8_t *serial=0;
+  int serialc=fmn_datafile_get_any(&serial,bigpc.datafile,FMN_RESTYPE_MAP,mapid);
+  if (serialc<FMN_COLC*FMN_ROWC) return -1;
+  
+  fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
+  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
+  
+  bigpc.mapid=mapid;
+  memcpy(fmn_global.map,serial,FMN_COLC*FMN_ROWC);
+  bigpc_clear_map_commands();
+  
+  // Apply plants and sketches from session store before decoding the map's commands.
+  // This is important for sketches: We want the map-command ones only if there are none from the store.
+  struct fmn_load_map_context ctx={
+    .use_initial_sketches=1,
+    .cb_spawn=cb_spawn,
+  };
+  fmstore_write_plants_to_globals(bigpc.fmstore,bigpc.mapid);
+  fmstore_write_sketches_to_globals(bigpc.fmstore,bigpc.mapid);
+  if (fmn_global.sketchc) ctx.use_initial_sketches=0;
+
+  fmn_map_for_each_command(serial,serialc,fmn_load_map_cb_command,&ctx);
   
   bigpc_load_cellphysics();
   bigpc_autobloom_plants();
@@ -465,28 +462,6 @@ uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id) {
   return srcc;
 }
 
-/* Find a command in nearby maps, for the compass.
- */
- 
-uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v) {
-  fmn_log("TODO %s",__func__);
-  xy[0]=xy[1]=0;
-  return 0;
-}
-
-/* Directions to item or map, for the crow.
- */
- 
-uint8_t fmn_find_direction_to_item(uint8_t itemid) {
-  fmn_log("TODO %s",__func__);
-  return 0;
-}
-
-uint8_t fmn_find_direction_to_map(uint16_t mapid) {
-  fmn_log("TODO %s",__func__);
-  return 0;
-}
-
 /* Trigger map callbacks.
  */
  
@@ -498,3 +473,7 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
     cb(reg->cbid,reg->param,userdata);
   }
 }
+
+/* fmn_find_map_command, fmn_find_direction_to_item, fmn_find_direction_to_map
+ * are part of the platform API, but have their own home in bigpc_map_analysis.c
+ */
