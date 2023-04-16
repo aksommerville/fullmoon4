@@ -175,6 +175,22 @@ void fmn_gl2_game_render_world(struct bigpc_render_driver *driver) {
   
   // Weather.
   fmn_gl2_game_render_weather(driver);
+  
+  // Game-over fade out.
+  if (fmn_global.werewolf_dead||fmn_global.hero_dead) {
+    if (fmn_global.terminate_time>=1.0f) {
+      // display as usual
+    } else {
+      // fade out
+      int alpha=fmn_global.terminate_time*255.0f;
+      if (alpha>0xff) alpha=0;
+      else if (alpha<0) alpha=0xff;
+      else alpha=0xff-alpha;
+      uint32_t rgba=alpha;
+      fmn_gl2_program_use(driver,&DRIVER->program_raw);
+      fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,rgba);
+    }
+  }
 }
 
 /* Render.

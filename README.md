@@ -19,8 +19,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Try moving the desert entrance south to mitigate the fast-switch of songs.
 - - Or maybe wall off desert from forest?
 - [x] Drop the BCM hacks condition, we can do it the bcm way everywhere.
-- [ ] gl2: Fade out at game end
-- [ ] minpc+web: Stop music at the moment the werewolf dies.
+- [x] gl2: Fade out at game end
+- [x] minpc+web: Stop music at the moment the werewolf dies.
 
 ### May
 
@@ -31,9 +31,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
 - - Probly no need for thumb drives if we've only got the demo.
-- - [ ] Big banner. Try sewing this instead of buying one.
-- - [ ] Stuffed werewolf.
+- - [x] Big banner. Try sewing this instead of buying one.
+- - [ ] Stuffed werewolf. Don't try sewing this. Know your limits, sir.
 - - [ ] Feathers with sharp pins at the tip so we can impale the werewolf with them.
+- - - Got feathers but the mechanics of impalement still unclear, until we get the werewolf.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Lively intro splash.

@@ -100,6 +100,7 @@ extern struct bigpc {
   int map_callbackc,map_callbacka;
   
   int pause_for_violin;
+  int werewolf_dead;
   
   struct bigpc_sound_blackout {
     uint16_t sfxid;

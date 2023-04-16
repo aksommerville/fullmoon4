@@ -133,6 +133,20 @@ static void bigpc_check_violin() {
   }
 }
 
+/* When the werewolf gets killed, stop background music.
+ */
+ 
+static void bigpc_check_dead_werewolf() {
+  if (fmn_global.werewolf_dead) {
+    if (!bigpc.werewolf_dead) {
+      bigpc.werewolf_dead=1;
+      bigpc_play_song(0xff);
+    }
+  } else {
+    bigpc.werewolf_dead=0;
+  }
+}
+
 /* Update.
  */
  
@@ -149,6 +163,7 @@ int bigpc_update() {
   
   // Miscellaneous high-level business logic that had to live here.
   bigpc_check_violin();
+  bigpc_check_dead_werewolf();
   
   // Update game or top menu.
   if (bigpc.menuc) {
