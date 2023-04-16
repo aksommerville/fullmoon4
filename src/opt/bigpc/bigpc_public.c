@@ -111,6 +111,27 @@ static void bigpc_pop_menu() {
   }
 }
 
+/* Pause/resume song in response to violin.
+ */
+ 
+static void bigpc_check_violin() {
+  if (bigpc.pause_for_violin) {
+    if (fmn_global.active_item!=FMN_ITEM_VIOLIN) {
+      bigpc.pause_for_violin=0;
+      if (bigpc_audio_lock(bigpc.audio)>=0) {
+        bigpc_synth_pause_song(bigpc.synth,0);
+        bigpc_audio_unlock(bigpc.audio);
+      }
+    }
+  } else if (fmn_global.active_item==FMN_ITEM_VIOLIN) {
+    bigpc.pause_for_violin=1;
+    if (bigpc_audio_lock(bigpc.audio)>=0) {
+      bigpc_synth_pause_song(bigpc.synth,1);
+      bigpc_audio_unlock(bigpc.audio);
+    }
+  }
+}
+
 /* Update.
  */
  
@@ -124,6 +145,9 @@ int bigpc_update() {
   while (i-->0) {
     if (bigpc_input_driver_update(bigpc.inputv[i])<0) return -1;
   }
+  
+  // Miscellaneous high-level business logic that had to live here.
+  bigpc_check_violin();
   
   // Update game or top menu.
   if (bigpc.menuc) {

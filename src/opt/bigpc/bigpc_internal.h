@@ -99,6 +99,8 @@ extern struct bigpc {
   } *map_callbackv;
   int map_callbackc,map_callbacka;
   
+  int pause_for_violin;
+  
 } bigpc;
 
 void bigpc_config_cleanup(struct bigpc_config *config);

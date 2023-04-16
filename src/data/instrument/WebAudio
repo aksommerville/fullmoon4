@@ -1,5 +1,4 @@
-# Instrument 1 should not be used in final songs.
-# Keeping it for temporary work. Will change often.
+# Instrument 1 is Dot's violin.
 
 begin 0x01
   wave ffff 1000 6000 0080 1000

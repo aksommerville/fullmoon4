@@ -106,3 +106,8 @@ int bigpc_synth_play_song(struct bigpc_synth_driver *driver,const void *src,int 
   if (!driver->type->play_song) return -1;
   return driver->type->play_song(driver,src,srcc,force);
 }
+
+void bigpc_synth_pause_song(struct bigpc_synth_driver *driver,int pause) {
+  if (!driver||!driver->type->pause_song) return;
+  driver->type->pause_song(driver,pause);
+}

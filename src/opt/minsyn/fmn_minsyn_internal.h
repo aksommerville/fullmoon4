@@ -129,6 +129,7 @@ struct bigpc_synth_driver_minsyn {
   int resourcec,resourcea;
   int16_t sine[MINSYN_WAVE_SIZE_SAMPLES]; // reference wave for generating new ones.
   int instrument_by_chid[16];
+  int songpause;
 };
 
 #define DRIVER ((struct bigpc_synth_driver_minsyn*)driver)

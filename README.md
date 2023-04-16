@@ -14,13 +14,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [ ] Linux DRM platform, why not.
-- - [ ] stdsyn
-- - [ ] minsyn
+- - [x] minsyn
 - - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - - - Prediction: A native build will run like butter, no strain at all.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
-- [ ] bigpc: Stop music while violin up
+- [x] bigpc: Stop music while violin up
 - [x] On Pi, I'm hearing timing flaws in the songs, enough to be a distraction. Problem with midi_file?
 - [ ] Try moving the desert entrance south to mitigate the fast-switch of songs.
 - [x] raspi: Charms in treasure menu aren't rotating left of center
@@ -35,6 +34,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] minsyn, notes aborting or something? it's noticeable in Eye of Newt.
 - - There's a Meta End of Track right there, and the effect moves when I move the event.
 - - Meta 0xff, we read that as real-time System Reset, oops.
+- [ ] Give the rabbit a pond.
 
 ### May
 
@@ -64,6 +64,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] UI for saved game management.
 - [ ] Building resources is too slow. Rewrite all those Node tools in C.
 - [ ] Soft render.
+- [ ] stdsyn. Or drop it, maybe minsyn is adequate?
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.

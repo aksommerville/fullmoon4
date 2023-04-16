@@ -68,6 +68,13 @@ void bigpc_synth_silence_all(struct bigpc_synth_driver *driver);
  */
 int bigpc_synth_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force);
 
+/* When the song is paused, all notes get released, and it stops playing until you resume.
+ * There will be a little bit of inconsistency on the resume, when notes expected on are in fact off.
+ * Manual event processing continues as usual.
+ * Intended for the Violin.
+ */
+void bigpc_synth_pause_song(struct bigpc_synth_driver *driver,int pause);
+
 /* Type.
  *************************************************/
  
@@ -83,6 +90,7 @@ struct bigpc_synth_type {
   int (*set_sound)(struct bigpc_synth_driver *driver,int id,const void *src,int srcc);
   void (*event)(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
   int (*play_song)(struct bigpc_synth_driver *driver,const void *src,int srcc,int force);
+  void (*pause_song)(struct bigpc_synth_driver *driver,int pause);
 };
 
 const struct bigpc_synth_type *bigpc_synth_type_by_index(int p);

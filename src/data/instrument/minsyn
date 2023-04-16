@@ -2,6 +2,12 @@
 
 #----------------------------------- Instruments ---------------------------------------------
 
+# Program 1 is Dot's violin.
+begin 1
+  wave 0x80 0x50 0x30 0x10 0x08 0x03
+  env 80 0x50 40 0x40 200
+end
+
 #--- Tangled Vine ---
 begin 2 # lead
   wave 0x50 0 0x20 0 0x08

@@ -76,7 +76,7 @@ static void _minsyn_update_mono(int16_t *v,int c,struct bigpc_synth_driver *driv
   while (c>0) {
   
     int updc=c;
-    if (DRIVER->song) {
+    if (DRIVER->song&&!DRIVER->songpause) {
       struct midi_event event={0};
       updc=midi_file_next(&event,DRIVER->song,0);
       if (updc<0) {
@@ -97,7 +97,7 @@ static void _minsyn_update_mono(int16_t *v,int c,struct bigpc_synth_driver *driv
     minsyn_generate_signal(v,updc,driver);
     v+=updc;
     c-=updc;
-    if (DRIVER->song) midi_file_advance(DRIVER->song,updc);
+    if (DRIVER->song&&!DRIVER->songpause) midi_file_advance(DRIVER->song,updc);
   }
   minsyn_drop_defunct_voices(driver);
   DRIVER->update_in_progress_framec=0;
@@ -254,7 +254,6 @@ static void minsyn_note_on(struct bigpc_synth_driver *driver,uint8_t chid,uint8_
 
   if (chid<0x0f) { // channel 0..14 are tuned voices
     struct minsyn_resource *resource=minsyn_resource_get_instrument(driver,DRIVER->instrument_by_chid[chid]);
-    //fprintf(stderr,"%s chid=%d noteid=%d insid=%d resource=%p\n",__func__,chid,noteid,DRIVER->instrument_by_chid[chid],resource);
     if (!resource) return;
     if (minsyn_resource_ready(driver,resource)<0) return;
     struct minsyn_voice *voice=minsyn_voice_alloc(driver);
@@ -306,6 +305,20 @@ static void _minsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t
   }
 }
 
+/* Pause song.
+ */
+ 
+static void _minsyn_pause_song(struct bigpc_synth_driver *driver,int pause) {
+  if (pause) {
+    if (DRIVER->songpause) return;
+    DRIVER->songpause=1;
+    minsyn_release_all(driver);
+  } else {
+    if (!DRIVER->songpause) return;
+    DRIVER->songpause=0;
+  }
+}
+
 /* Type.
  */
  
@@ -320,4 +333,5 @@ const struct bigpc_synth_type bigpc_synth_type_minsyn={
   .set_sound=_minsyn_set_sound,
   .play_song=_minsyn_play_song,
   .event=_minsyn_event,
+  .pause_song=_minsyn_pause_song,
 };
