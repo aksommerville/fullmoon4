@@ -13,31 +13,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [x] Linux DRM platform, why not.
-- - [x] minsyn
-- [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
+- [ ] MacOS native platform.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
-- [x] bigpc: Stop music while violin up
-- [x] On Pi, I'm hearing timing flaws in the songs, enough to be a distraction. Problem with midi_file?
 - [ ] Try moving the desert entrance south to mitigate the fast-switch of songs.
-- [x] raspi: Charms in treasure menu aren't rotating left of center
-- [x] raspi: Feather down, it's using the wrong transform or something.
-- - Using BCM hacks on the nuc, I do get the feather thing but do not get the charms things.
-- [ ] Drop the BCM hacks condition, we can do it the bcm way everywhere.
-- [x] Make each song use its own instruments, no more sharing.
-- [x] minsyn: Are notes playing an octave high or something? Sounds much higher than in WebAudio.
-- [x] And sound effects are low. The hell? ...oops, denormalized rates backward from 64k.
+- - Or maybe wall off desert from forest?
+- [x] Drop the BCM hacks condition, we can do it the bcm way everywhere.
 - [ ] gl2: Fade out at game end
 - [ ] minpc+web: Stop music at the moment the werewolf dies.
-- [x] minsyn, notes aborting or something? it's noticeable in Eye of Newt.
-- - There's a Meta End of Track right there, and the effect moves when I move the event.
-- - Meta 0xff, we read that as real-time System Reset, oops.
-- [x] Give the rabbit a pond.
-- [x] bigpc: map analysis (crow)
-- [x] bigpc: Suppress duplicate sound effects (eg bell, first stroke is noticeably louder)
-- [x] Compass points to buried treasures we already have, see fmn_secrets.c
-- - ...was only happening for non-quantity treasures, so it wouldn't have happened in real life (we don't bury those). fixed anyway.
 
 ### May
 
