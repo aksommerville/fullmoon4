@@ -1,16 +1,26 @@
 #include "../fmn_gl2_internal.h"
 #include "app/hero/fmn_hero.h"
 
-void fmn_gl2_game_render_world(struct bigpc_render_driver *driver);
+void fmn_gl2_game_render_world(struct bigpc_render_driver *driver,int include_hero);
 
 /* Transition beginning. Capture "from" image.
  */
  
 void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver) {
+  switch (DRIVER->game.transition) {
+    case FMN_TRANSITION_PAN_LEFT:
+    case FMN_TRANSITION_PAN_RIGHT:
+    case FMN_TRANSITION_PAN_UP:
+    case FMN_TRANSITION_PAN_DOWN: {
+        DRIVER->game.hero_above_transition=1;
+      } break;
+    default: DRIVER->game.hero_above_transition=0;
+  }
+  
   fmn_gl2_framebuffer_use(driver,&DRIVER->game.transitionfrom);
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   driver->transition_in_progress=1;
-  fmn_gl2_game_render_world(driver);
+  fmn_gl2_game_render_world(driver,DRIVER->game.hero_above_transition?0:1);
   driver->transition_in_progress=0;
   
   // Capture color and "from" position, in case we need them.
@@ -198,4 +208,18 @@ void fmn_gl2_game_transition_apply(
     0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,
     0,DRIVER->game.transitionto.texture.h,DRIVER->game.transitionto.texture.w,-DRIVER->game.transitionto.texture.h
   );
+  DRIVER->game.hero_above_transition=0;
+}
+
+/* Offset for hero.
+ */
+ 
+void fmn_gl2_transition_get_hero_offset(int16_t *x,int16_t *y,struct bigpc_render_driver *driver) {
+  *x=*y=0;
+  switch (DRIVER->game.transition) {
+    case FMN_TRANSITION_PAN_LEFT: *x=(DRIVER->game.transitionp*DRIVER->mainfb.texture.w)/DRIVER->game.transitionc-DRIVER->mainfb.texture.w; break;
+    case FMN_TRANSITION_PAN_RIGHT: *x=DRIVER->mainfb.texture.w-(DRIVER->game.transitionp*DRIVER->mainfb.texture.w)/DRIVER->game.transitionc; break;
+    case FMN_TRANSITION_PAN_UP: *y=(DRIVER->game.transitionp*DRIVER->mainfb.texture.h)/DRIVER->game.transitionc-DRIVER->mainfb.texture.h; break;
+    case FMN_TRANSITION_PAN_DOWN: *y=DRIVER->mainfb.texture.h-(DRIVER->game.transitionp*DRIVER->mainfb.texture.h)/DRIVER->game.transitionc; break;
+  }
 }

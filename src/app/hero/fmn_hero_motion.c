@@ -431,6 +431,7 @@ void fmn_hero_kill(struct fmn_sprite *assailant) {
   struct fmn_sprite *hero=fmn_hero.sprite;
   fmn_hero_walk_end();
   fmn_hero_item_end();
+  fmn_hero_kill_velocity();
   fmn_global.damage_count++;
   fmn_global.hero_dead=1;
   fmn_global.terminate_time=5.0f;

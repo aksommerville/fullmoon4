@@ -162,6 +162,7 @@ struct fmn_gl2_game {
   struct fmn_gl2_framebuffer transitionfrom,transitionto;
   uint32_t transitioncolor; // for fade. rgbx
   int16_t transitionfromx,transitionfromy,transitiontox,transitiontoy; // for spotlight
+  int hero_above_transition;
   struct fmn_gl2_vertex_raw particlev[FMN_GL2_PARTICLE_LIMIT];
   int particlec;
   float illuminationp;
@@ -186,6 +187,8 @@ void fmn_gl2_game_transition_apply(
   int transition,int p,int c,
   struct fmn_gl2_framebuffer *from,struct fmn_gl2_framebuffer *to
 );
+
+void fmn_gl2_transition_get_hero_offset(int16_t *x,int16_t *y,struct bigpc_render_driver *driver);
 
 /* Chalk bits are 0x000fffff, and points are (0,0) thru (2,2).
  * Pack the points in the four low nybbles:

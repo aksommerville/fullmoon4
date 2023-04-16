@@ -2,8 +2,8 @@
 
 void fmn_gl2_game_freshen_map(struct bigpc_render_driver *driver);
 void fmn_gl2_game_render_HERO(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
-void fmn_gl2_render_hero_underlay(struct bigpc_render_driver *driver);
-void fmn_gl2_render_hero_overlay(struct bigpc_render_driver *driver);
+void fmn_gl2_render_hero_underlay(struct bigpc_render_driver *driver,int16_t addx,int16_t addy);
+void fmn_gl2_render_hero_overlay(struct bigpc_render_driver *driver,int16_t addx,int16_t addy);
 void fmn_gl2_game_render_FIRENOZZLE(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
 void fmn_gl2_game_render_FIREWALL(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
 void fmn_gl2_game_render_DOUBLEWIDE(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
@@ -70,6 +70,37 @@ int fmn_gl2_game_add_mintile_vtx_pixcoord(
   return 0;
 }
 
+/* Special case for the hero sprite, when we draw her above the transition in progress.
+ */
+ 
+static void fmn_gl2_find_and_render_hero_over_transition(struct bigpc_render_driver *driver) {
+  struct fmn_sprite_header **spritev=fmn_global.spritev;
+  int spritec=fmn_global.spritec;
+  DRIVER->game.mintile_vtxc=0;
+  for (;spritec-->0;spritev++) {
+    struct fmn_sprite_header *s=*spritev;
+    if (s->style==FMN_SPRITE_STYLE_HERO) {
+      int16_t dx=0,dy=0;
+      fmn_gl2_transition_get_hero_offset(&dx,&dy,driver);
+      fmn_gl2_render_hero_underlay(driver,dx,dy);
+      fmn_gl2_game_render_HERO(driver,s);
+      fmn_gl2_render_hero_overlay(driver,dx,dy);
+      if (DRIVER->game.mintile_vtxc) {
+        if (fmn_gl2_texture_use(driver,s->imageid)<0) return;
+        struct fmn_gl2_vertex_mintile *vtx=DRIVER->game.mintile_vtxv;
+        int i=DRIVER->game.mintile_vtxc;
+        for (;i-->0;vtx++) {
+          vtx->x+=dx;
+          vtx->y+=dy;
+        }
+        fmn_gl2_program_use(driver,&DRIVER->program_mintile);
+        fmn_gl2_draw_mintile(DRIVER->game.mintile_vtxv,DRIVER->game.mintile_vtxc);
+      }
+      return;
+    }
+  }
+}
+
 /* Sprites.
  * Caller can and should request more than one sprite at a time,
  * but they must be on the same image and only use mintile shader.
@@ -79,7 +110,8 @@ int fmn_gl2_game_add_mintile_vtx_pixcoord(
 static void fmn_gl2_game_render_sprites(
   struct bigpc_render_driver *driver,
   struct fmn_sprite_header **spritev,
-  int spritec
+  int spritec,
+  int include_hero
 ) {
   if (fmn_gl2_texture_use(driver,(*spritev)->imageid)<0) return;
   DRIVER->game.mintile_vtxc=0;
@@ -87,7 +119,7 @@ static void fmn_gl2_game_render_sprites(
     struct fmn_sprite_header *s=*spritev;
     switch (s->style) {
       case FMN_SPRITE_STYLE_TILE: fmn_gl2_game_add_mintile_vtx(driver,s->x,s->y,s->tileid,s->xform); break;
-      case FMN_SPRITE_STYLE_HERO: fmn_gl2_game_render_HERO(driver,s); break;
+      case FMN_SPRITE_STYLE_HERO: if (!include_hero) continue; fmn_gl2_game_render_HERO(driver,s); break;
       case FMN_SPRITE_STYLE_FOURFRAME: fmn_gl2_game_add_mintile_vtx(driver,s->x,s->y,s->tileid+((DRIVER->game.framec>>3)&3),s->xform); break;
       case FMN_SPRITE_STYLE_FIRENOZZLE: fmn_gl2_game_render_FIRENOZZLE(driver,s); break;
       case FMN_SPRITE_STYLE_FIREWALL: fmn_gl2_game_render_FIREWALL(driver,s); break;
@@ -129,9 +161,11 @@ static inline int fmn_gl2_sprite_style_uses_mintile(int style) {
 }
 
 /* Render to the currently-bound framebuffer, all the diegetic stuff subject to transitions.
+ * Normally (include_hero) is true, you want to draw her.
+ * That's false during transitions, when we might very carefully draw her above the combined buffers
  */
  
-void fmn_gl2_game_render_world(struct bigpc_render_driver *driver) {
+void fmn_gl2_game_render_world(struct bigpc_render_driver *driver,int include_hero) {
   
   // Map.
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
@@ -142,8 +176,8 @@ void fmn_gl2_game_render_world(struct bigpc_render_driver *driver) {
   );
   
   // Hero underlay: Shovel focus and broom shadow.
-  if (!driver->transition_in_progress) {
-    fmn_gl2_render_hero_underlay(driver);
+  if (!driver->transition_in_progress&&include_hero) {
+    fmn_gl2_render_hero_underlay(driver,0,0);
   }
   
   // Darkness is weather, but it's below the sprites.
@@ -162,15 +196,15 @@ void fmn_gl2_game_render_world(struct bigpc_render_driver *driver) {
           c++;
         }
       }
-      fmn_gl2_game_render_sprites(driver,p,c);
+      fmn_gl2_game_render_sprites(driver,p,c,include_hero);
       p+=c;
       i+=c;
     }
   }
   
   // Hero overlay: Compass and show-off-item.
-  if (!driver->transition_in_progress) {
-    fmn_gl2_render_hero_overlay(driver);
+  if (!driver->transition_in_progress&&include_hero) {
+    fmn_gl2_render_hero_overlay(driver,0,0);
   }
   
   // Weather.
@@ -219,16 +253,19 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
   // No transition? Draw direct into main.
   if (DRIVER->game.transition) {
     fmn_gl2_framebuffer_use(driver,&DRIVER->game.transitionto);
-    fmn_gl2_game_render_world(driver);
+    fmn_gl2_game_render_world(driver,DRIVER->game.hero_above_transition?0:1);
     fmn_gl2_framebuffer_use(driver,&DRIVER->mainfb);
     fmn_gl2_game_transition_apply(
       driver,
       DRIVER->game.transition,DRIVER->game.transitionp,DRIVER->game.transitionc,
       &DRIVER->game.transitionfrom,&DRIVER->game.transitionto
     );
+    if (DRIVER->game.hero_above_transition) {
+      fmn_gl2_find_and_render_hero_over_transition(driver);
+    }
   } else {
     fmn_gl2_framebuffer_use(driver,&DRIVER->mainfb);
-    fmn_gl2_game_render_world(driver);
+    fmn_gl2_game_render_world(driver,1);
   }
   
   // The violin chart is its own thing, above transitions but below menus.

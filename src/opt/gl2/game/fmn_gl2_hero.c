@@ -363,7 +363,7 @@ static int fmn_gl2_find_hero(struct fmn_sprite *sprite,void *userdata) {
   return 0;
 }
  
-static void fmn_gl2_hero_underlay_broom(struct bigpc_render_driver *driver) {
+static void fmn_gl2_hero_underlay_broom(struct bigpc_render_driver *driver,int16_t addx,int16_t addy) {
   if (DRIVER->game.framec&1) return;
   struct fmn_sprite *sprite=0;
   fmn_sprites_for_each(fmn_gl2_find_hero,&sprite);
@@ -371,8 +371,8 @@ static void fmn_gl2_hero_underlay_broom(struct bigpc_render_driver *driver) {
   if (fmn_gl2_texture_use(driver,sprite->imageid)<0) return;
   fmn_gl2_program_use(driver,&DRIVER->program_mintile);
   struct fmn_gl2_vertex_mintile vtx={
-    .x=sprite->x*DRIVER->game.tilesize,
-    .y=(sprite->y+0.3f)*DRIVER->game.tilesize,
+    .x=sprite->x*DRIVER->game.tilesize+addx,
+    .y=(sprite->y+0.3f)*DRIVER->game.tilesize+addy,
     .tileid=(DRIVER->game.framec&32)?0x67:0x77,
     .xform=0,
   };
@@ -380,7 +380,8 @@ static void fmn_gl2_hero_underlay_broom(struct bigpc_render_driver *driver) {
 }
 
 // also used for seeds and pitcher
-static void fmn_gl2_hero_underlay_shovel(struct bigpc_render_driver *driver) {
+static void fmn_gl2_hero_underlay_shovel(struct bigpc_render_driver *driver,int16_t addx,int16_t addy) {
+  if (addx||addy) return; // don't draw this while transitioning
   if ((fmn_global.shovelx<0)||(fmn_global.shovelx>=FMN_COLC)) return;
   if ((fmn_global.shovely<0)||(fmn_global.shovely>=FMN_ROWC)) return;
   if (fmn_gl2_texture_use(driver,2)<0) return;
@@ -394,15 +395,15 @@ static void fmn_gl2_hero_underlay_shovel(struct bigpc_render_driver *driver) {
   fmn_gl2_draw_mintile(&vtx,1);
 }
  
-void fmn_gl2_render_hero_underlay(struct bigpc_render_driver *driver) {
+void fmn_gl2_render_hero_underlay(struct bigpc_render_driver *driver,int16_t addx,int16_t addy) {
   if (fmn_global.hero_dead) return;
   switch (fmn_global.active_item) {
-    case FMN_ITEM_BROOM: fmn_gl2_hero_underlay_broom(driver); return;
+    case FMN_ITEM_BROOM: fmn_gl2_hero_underlay_broom(driver,addx,addy); return;
   }
   if (fmn_global.itemv[fmn_global.selected_item]) switch (fmn_global.selected_item) {
-    case FMN_ITEM_SHOVEL: fmn_gl2_hero_underlay_shovel(driver); return;
-    case FMN_ITEM_SEED: if (fmn_global.itemqv[FMN_ITEM_SEED]) fmn_gl2_hero_underlay_shovel(driver); return;
-    case FMN_ITEM_PITCHER: if (fmn_global.itemqv[FMN_ITEM_PITCHER]) fmn_gl2_hero_underlay_shovel(driver); return;
+    case FMN_ITEM_SHOVEL: fmn_gl2_hero_underlay_shovel(driver,addx,addy); return;
+    case FMN_ITEM_SEED: if (fmn_global.itemqv[FMN_ITEM_SEED]) fmn_gl2_hero_underlay_shovel(driver,addx,addy); return;
+    case FMN_ITEM_PITCHER: if (fmn_global.itemqv[FMN_ITEM_PITCHER]) fmn_gl2_hero_underlay_shovel(driver,addx,addy); return;
   }
 }
 
@@ -483,7 +484,8 @@ static void fmn_gl2_hero_overlay_showoff(struct bigpc_render_driver *driver) {
   fmn_gl2_draw_mintile(&vtx,1);
 }
  
-void fmn_gl2_render_hero_overlay(struct bigpc_render_driver *driver) {
+void fmn_gl2_render_hero_overlay(struct bigpc_render_driver *driver,int16_t addx,int16_t addy) {
+  if (addx||addy) return;
   if (fmn_global.hero_dead) return;
   if (fmn_global.itemv[fmn_global.selected_item]) switch (fmn_global.selected_item) {
     case FMN_ITEM_COMPASS: fmn_gl2_hero_overlay_compass(driver); break;
