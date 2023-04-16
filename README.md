@@ -13,16 +13,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [x] MacOS native platform.
 - [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
-- [x] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
-- [x] Try moving the desert entrance south to mitigate the fast-switch of songs.
-- - Or maybe wall off desert from forest?
-- [x] Drop the BCM hacks condition, we can do it the bcm way everywhere.
-- [x] gl2: Fade out at game end
-- [x] minpc+web: Stop music at the moment the werewolf dies.
-- [x] Restarting after game over, hero velocity didn't zero as expected.
-- [ ] minsyn: Sound effects go haywire sometimes (just noise/bandpass ones? not certain)
+- [x] minsyn: Sound effects go haywire sometimes (just noise/bandpass ones? not certain)
+- - Actually, it was ones with delay: We forgot to zero the delay ring buffer.
 
 ### May
 
@@ -33,7 +26,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
 - - Probly no need for thumb drives if we've only got the demo.
-- - [x] Big banner. Try sewing this instead of buying one.
 - - [ ] Stuffed werewolf. Don't try sewing this. Know your limits, sir.
 - - [ ] Feathers with sharp pins at the tip so we can impale the werewolf with them.
 - - - Got feathers but the mechanics of impalement still unclear, until we get the werewolf.
@@ -51,6 +43,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### After GDEX
 
+- [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
+- [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] inmgr: Real input mapping.
 - [ ] UI for saved game management.
 - [ ] Building resources is too slow. Rewrite all those Node tools in C.

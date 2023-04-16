@@ -42,7 +42,7 @@ static int _delay_decode(struct pcmprint_op *op,const uint8_t *src,int srcc) {
   
   OP->c=(src[0]*op->pcmprint->rate)>>8;
   if (OP->c<1) OP->c=1;
-  if (!(OP->v=malloc(sizeof(float)*OP->c))) return -1;
+  if (!(OP->v=calloc(sizeof(float),OP->c))) return -1;
   
   OP->dry=src[1]/256.0f;
   OP->wet=src[2]/256.0f;

@@ -1,4 +1,6 @@
 #include "genioc_internal.h"
+#include <stdlib.h>
+#include <time.h>
 
 struct genioc genioc={0};
 
@@ -7,6 +9,7 @@ struct genioc genioc={0};
  
 int main(int argc,char **argv) {
   int err;
+  srand(time(0));
   genioc_set_frame_rate(60);
   if ((argc=genioc_client_preprocess_argv(argc,argv))<0) {
     if (argc!=-2) fprintf(stderr,"Error processing arguments.\n");
