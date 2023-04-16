@@ -9,8 +9,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#define GL_GLEXT_PROTOTYPES 1
-#include <GL/gl.h>
+
+#if FMN_USE_macos
+  #define GL_GLEXT_PROTOTYPES 1
+  #include <OpenGL/gl.h>
+  #define GL_PROGRAM_POINT_SIZE 0x8642
+  #define glDeleteFramebuffers glDeleteFramebuffersEXT
+  #define glGenFramebuffers glGenFramebuffersEXT
+  #define glBindFramebuffer glBindFramebufferEXT
+  #define glFramebufferTexture2D glFramebufferTexture2DEXT
+  #define glCheckFramebufferStatus glCheckFramebufferStatusEXT
+#else
+  #define GL_GLEXT_PROTOTYPES 1
+  #include <GL/gl.h>
+#endif
 
 //TODO What's the right way to determine the GLSL version?
 #if FMN_USE_bcm

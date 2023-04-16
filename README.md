@@ -13,8 +13,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [ ] MacOS native platform.
-- [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
+- [x] MacOS native platform.
+- [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [x] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
 - [x] Try moving the desert entrance south to mitigate the fast-switch of songs.
 - - Or maybe wall off desert from forest?
@@ -22,6 +22,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] gl2: Fade out at game end
 - [x] minpc+web: Stop music at the moment the werewolf dies.
 - [x] Restarting after game over, hero velocity didn't zero as expected.
+- [ ] minsyn: Sound effects go haywire sometimes (just noise/bandpass ones? not certain)
 
 ### May
 

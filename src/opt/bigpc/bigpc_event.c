@@ -57,7 +57,7 @@ void bigpc_cb_pcm_out(void *v,int c,struct bigpc_audio_driver *driver) {
  */
 
 static int bigpc_cb_report_button(int btnid,int usage,int lo,int hi,int value,void *userdata) {
-  //fprintf(stderr,"  id=%08x usage=%08x range=%d..%d value=%d\n",btnid,usage,lo,hi,value);
+  fprintf(stderr,"  id=%08x usage=%08x range=%d..%d value=%d\n",btnid,usage,lo,hi,value);
   int devid=*(int*)userdata;
   inmgr_device_capability(bigpc.inmgr,devid,btnid,usage,lo,hi,value);
   return 0;

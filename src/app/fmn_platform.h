@@ -16,11 +16,17 @@
 #include <limits.h>
 #include <stddef.h>
 #include <math.h> /* I'll add implementations as they become needed. See src/platform/fmn_platform_libm.c */
-void *memcpy(void *dst,const void *src,size_t c);
-void *memmove(void *dst,const void *src,size_t c);
-void *memset(void *dst,int src,size_t c);
-int memcmp(const void *a,const void *b,size_t c);
-int rand();
+#if FMN_USE_macos
+  // Seems that my MacOS libc has memcpy as a macro. No worries, under macos we're definitely using a real libc, use the real headers.
+  #include <stdlib.h>
+  #include <string.h>
+#else
+  void *memcpy(void *dst,const void *src,size_t c);
+  void *memmove(void *dst,const void *src,size_t c);
+  void *memset(void *dst,int src,size_t c);
+  int memcmp(const void *a,const void *b,size_t c);
+  int rand();
+#endif
 
 #define FMN_COLC 20
 #define FMN_ROWC 12
