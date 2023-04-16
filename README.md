@@ -13,10 +13,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [ ] Linux DRM platform, why not.
+- [x] Linux DRM platform, why not.
 - - [x] minsyn
-- - [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
-- - - Prediction: A native build will run like butter, no strain at all.
+- [ ] After that works, try for MacOS too. Web works on the MacBook but it's a strain.
 - [ ] Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Web and gl2 renderers: Can we draw the hero on top, after pan transitions? So she's not cut in half.
 - [x] bigpc: Stop music while violin up
@@ -35,6 +34,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - There's a Meta End of Track right there, and the effect moves when I move the event.
 - - Meta 0xff, we read that as real-time System Reset, oops.
 - [ ] Give the rabbit a pond.
+- [ ] bigpc: map analysis (crow)
+- [x] bigpc: Suppress duplicate sound effects (eg bell, first stroke is noticeably louder)
 
 ### May
 
@@ -57,6 +58,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Make up a new item to take Corn's place, and one for the zero slot. Fill all 16 slots. (mind that item zero comes into play then)
 - - [ ] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
+- [ ] Two sets of map resource: Demo and Full. I think other resources don't matter, let tree-shaking handle it.
+- [ ] Tree-shake resources when packing.
 
 ### After GDEX
 

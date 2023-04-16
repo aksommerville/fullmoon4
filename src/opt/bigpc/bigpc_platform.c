@@ -432,6 +432,7 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
  */
  
 void fmn_sound_effect(uint16_t sfxid) {
+  if (!bigpc_check_sound_blackout(sfxid)) return;
   if (bigpc_audio_lock(bigpc.audio)>=0) {
     uint8_t chid=0x0f;
     uint8_t opcode=0x98;

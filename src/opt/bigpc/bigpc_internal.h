@@ -101,6 +101,11 @@ extern struct bigpc {
   
   int pause_for_violin;
   
+  struct bigpc_sound_blackout {
+    uint16_t sfxid;
+    int64_t realtime;
+  } *sound_blackoutv;
+  int sound_blackoutc,sound_blackouta;
 } bigpc;
 
 void bigpc_config_cleanup(struct bigpc_config *config);
@@ -121,6 +126,9 @@ int bigpc_input_init();
 void bigpc_ignore_next_button();
 
 void bigpc_play_song(uint8_t songid);
+
+// Nonzero if it's ok to play this sound. Updates all blackout state based on bigpc.clock.last_real_time_us.
+int bigpc_check_sound_blackout(uint16_t sfxid);
 
 void bigpc_cb_close(struct bigpc_video_driver *driver);
 void bigpc_cb_focus(struct bigpc_video_driver *driver,int focus);
