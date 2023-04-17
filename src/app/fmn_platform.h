@@ -487,4 +487,9 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
 #define FMN_MAP_EVID_LOADED     0x01
 #define FMN_MAP_EVID_UNLOAD     0x02
 
+/* Maybe just for demo and beta test?
+ * Capture business events to a machine-readable log I can examine later.
+ */
+void fmn_log_event(const char *key,const char *fmt,...);
+
 #endif

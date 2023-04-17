@@ -336,7 +336,10 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   if (fmn_global.hero_dead) return 0;
   struct fmn_sprite *hero=fmn_hero.sprite;
   
-  if (fmn_hero_suppress_injury_if_applicable(hero,x,y,assailant)) return 0;
+  if (fmn_hero_suppress_injury_if_applicable(hero,x,y,assailant)) {
+    fmn_log_event("injury-suppressed","%d",assailant?assailant->controller:0);
+    return 0;
+  }
   
   if (fmn_global.injury_time>0.0f) {
     float time_since=FMN_HERO_INJURY_TIME-fmn_global.injury_time;
@@ -344,9 +347,12 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
       return 0;
     } else if (time_since<FMN_HERO_DOUBLE_INJURY_TIME) {
       fmn_hero_return_to_map_entry();
+      fmn_log_event("grievous-injury","%d",assailant?assailant->controller:0);
       return 1;
     }
   }
+  
+  fmn_log_event("injury","%d",assailant?assailant->controller:0);
   
   // Getting injured implicitly ends any action in flight (broom, in particular).
   // Player won't be able to restart it until the injury exposure is complete.
@@ -416,6 +422,7 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
 uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
   if (fmn_global.hero_dead) return 0;
   if (fmn_global.curse_time>0.0f) return 0;
+  fmn_log_event("curse","");
   fmn_global.damage_count++;
   fmn_global.curse_time=FMN_HERO_CURSE_TIME;
   fmn_sound_effect(FMN_SFX_CURSE);
@@ -428,6 +435,7 @@ uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
  
 void fmn_hero_kill(struct fmn_sprite *assailant) {
   if (fmn_global.hero_dead) return;
+  fmn_log_event("hero-kill","%d",assailant?assailant->controller:0);
   struct fmn_sprite *hero=fmn_hero.sprite;
   fmn_hero_walk_end();
   fmn_hero_item_end();

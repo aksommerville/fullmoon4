@@ -68,3 +68,6 @@ uint8_t fmn_find_direction_to_map(uint16_t mapid) {
 
 void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void *userdata),void *userdata) {
 }
+
+void fmn_log_event(const char *key,const char *fmt,...) {
+}

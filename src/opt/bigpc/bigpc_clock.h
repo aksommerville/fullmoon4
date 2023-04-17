@@ -31,6 +31,7 @@ struct bigpc_clock {
   
   // For your curiosity only.
   int64_t first_real_time_us;
+  int framec,skipc; // Count of "update" and "skip" calls.
 };
 
 void bigpc_clock_reset(struct bigpc_clock *clock);

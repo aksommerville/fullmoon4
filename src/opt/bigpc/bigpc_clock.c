@@ -59,6 +59,7 @@ static int64_t bigpc_clock_update_real_time(struct bigpc_clock *clock) {
  */
 
 uint32_t bigpc_clock_update(struct bigpc_clock *clock) {
+  clock->framec++;
   int64_t elapsed_us=bigpc_clock_update_real_time(clock);
   int32_t elapsed_ms=elapsed_us/1000;
   clock->skew_us=elapsed_us%1000;
@@ -81,6 +82,7 @@ uint32_t bigpc_clock_update(struct bigpc_clock *clock) {
  */
  
 void bigpc_clock_skip(struct bigpc_clock *clock) {
+  clock->skipc++;
   int64_t elapsed_us=bigpc_clock_update_real_time(clock);
   clock->skew_us=0;
 }

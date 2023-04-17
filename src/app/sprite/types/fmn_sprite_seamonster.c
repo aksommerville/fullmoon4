@@ -312,6 +312,7 @@ static void _seamonster_game_event(void *userdata,uint16_t eventid,void *payload
         uint8_t gameid=((struct fmn_sprite*)payload)->argv[0];
         if (gameid==1) { // SEAMONSTER_PONG
           if (!defeated) {
+            fmn_log_event("thingpong-win","");
             defeated=1;
             seamonster_begin_SWIM(sprite);
           }
@@ -321,6 +322,7 @@ static void _seamonster_game_event(void *userdata,uint16_t eventid,void *payload
         uint8_t gameid=((struct fmn_sprite*)payload)->argv[0];
         if (gameid==1) { // SEAMONSTER_PONG
           if (!defeated&&!tileextra) {
+            fmn_log_event("thingpong-lose","");
             tileextra=0x10;
             sprite->tileid+=0x10;
           }

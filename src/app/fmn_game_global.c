@@ -97,10 +97,12 @@ static void fmn_game_navigate(int8_t dx,int8_t dy) {
 static void fmn_transmogrify(uint8_t mode,uint8_t state) {
   if (fmn_global.transmogrification==state) {
     if (!(mode&0x40)) return;
+    fmn_log_event("unpumpkin","");
     fmn_global.transmogrification=0;
     fmn_sound_effect(FMN_SFX_UNPUMPKIN);
   } else {
     if (!(mode&0x80)) return;
+    fmn_log_event("pumpkin","");
     fmn_global.transmogrification=state;
     fmn_sound_effect(FMN_SFX_PUMPKIN);
   }
@@ -189,6 +191,7 @@ uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
   
   // First time picking something up, do the bells and whistles.
   if (!fmn_global.itemv[itemid]) {
+    fmn_log_event("item-first","%d*%d",itemid,quantity);
     fmn_global.itemv[itemid]=1;
     fmn_global.selected_item=itemid;
     fmn_sound_effect(FMN_SFX_ITEM_MAJOR);
@@ -197,6 +200,7 @@ uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
     
   // Subsequent pick-ups, do a more passive celebration.
   } else {
+    fmn_log_event("item-more","%d*%d",itemid,quantity);
     fmn_global.show_off_item=itemid;
     fmn_global.show_off_item_time=0xff;
     fmn_sound_effect(FMN_SFX_ITEM_MINOR);
@@ -346,6 +350,7 @@ static float fmn_weather_update(float elapsed) {
  */
  
 static void cb_game_over_ok() {
+  fmn_log_event("restart","");
   fmn_global.hero_dead=0;
   fmn_global.werewolf_dead=0;
   fmn_hero_kill_velocity();
@@ -526,6 +531,7 @@ static int fmn_spell_cast_1(struct fmn_sprite *sprite,void *userdata) {
  
 void fmn_spell_cast(uint8_t spellid) {
   //fmn_log("%s %d",__func__,spellid);
+  fmn_log_event("spell","%d",spellid);
   fmn_sprites_for_each(fmn_spell_cast_1,(void*)(uintptr_t)spellid);
   switch (spellid) {
     case FMN_SPELLID_BLOOM: fmn_bloom_plants(); break;
@@ -594,6 +600,7 @@ void fmn_gs_drop_listeners() {
 void fmn_gs_notify(uint16_t p,uint16_t c) {
   if (c==1) { //TODO listening on multiple bits, i haven't thought it through yet
     uint8_t v=(fmn_global.gs[p>>3]&(0x80>>(p&7)))?1:0;
+    fmn_log_event("gsbit","%d=%d",p,v);
     uint16_t i=fmn_gs_listenerc;
     while (i-->0) {
       const struct fmn_gs_listener *listener=fmn_gs_listenerv+i;
@@ -621,6 +628,7 @@ void fmn_gs_set_bit(uint16_t p,uint8_t v) {
     if (!(fmn_global.gs[bytep]&mask)) return;
     fmn_global.gs[bytep]&=~mask;
   }
+  fmn_log_event("gsbit","%d=%d",p,v);
   uint16_t i=fmn_gs_listenerc;
   while (i-->0) {
     const struct fmn_gs_listener *listener=fmn_gs_listenerv+i;

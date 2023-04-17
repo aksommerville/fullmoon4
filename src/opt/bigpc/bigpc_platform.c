@@ -3,22 +3,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-/* Log.
- */
- 
-void fmn_log(const char *fmt,...) {
-  if (!fmt||!fmt[0]) return;
-  char buf[256];
-  va_list vargs;
-  va_start(vargs,fmt);
-  int bufc=vsnprintf(buf,sizeof(buf),fmt,vargs);
-  if ((bufc<0)||(bufc>=sizeof(buf))) { // sic >= not > because vsnprintf can negative-terminate
-    fprintf(stderr,"fmn_log: Message too long. Format string: %.100s\n",fmt);
-  } else {
-    fprintf(stderr,"%.*s\n",bufc,buf);
-  }
-}
-
 /* Hard abort.
  */
  
@@ -30,6 +14,8 @@ void fmn_abort() {
  */
  
 void _fmn_begin_menu(int prompt,...) {
+
+  fmn_log_event("menu","%d",prompt);
   
   if (bigpc.menuc>=bigpc.menua) {
     int na=bigpc.menua+8;
@@ -264,6 +250,8 @@ int8_t fmn_load_map(
     const uint8_t *cmdv,uint16_t cmdc
   )
 ) {
+  fmn_log_event("map","%d",mapid);
+  
   const uint8_t *serial=0;
   int serialc=fmn_datafile_get_any(&serial,bigpc.datafile,FMN_RESTYPE_MAP,mapid);
   if (serialc<FMN_COLC*FMN_ROWC) return -1;
@@ -331,6 +319,7 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
     for (;i-->0;already++) {
       if (already->x!=x) continue;
       if (already->y!=y) continue;
+      fmn_log_event("double-plant","%d,%d",x,y);
       return -1;
     }
   }
@@ -345,11 +334,14 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
     for (;i-->0;q++) {
       if ((q->state==FMN_PLANT_STATE_NONE)||(q->state==FMN_PLANT_STATE_DEAD)) {
         plant=q;
+        fmn_log_event("reuse-plant","%d,%d",x,y);
         break;
       }
     }
   }
   if (!plant) return -1;
+  
+  fmn_log_event("plant","%d,%d",x,y);
   
   if (fmn_global.map[y*FMN_COLC+x]==0x0f) {
     fmn_global.map[y*FMN_COLC+x]=0x00;
@@ -410,6 +402,7 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
       }
     }
     if (!sketch) return -1;
+    fmn_log_event("sketch","%d,%d 0x%x",x,y,sketch->bits);
     sketch->x=x;
     sketch->y=y;
     sketch->pad=0;
@@ -475,5 +468,6 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
 }
 
 /* fmn_find_map_command, fmn_find_direction_to_item, fmn_find_direction_to_map
- * are part of the platform API, but have their own home in bigpc_map_analysis.c
+ * are part of the platform API, but have their own home in bigpc_map_analysis.c.
+ * fmn_log and fmn_log_event live in bigpc_log.c.
  */

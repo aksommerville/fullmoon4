@@ -64,6 +64,7 @@ struct bigpc_config {
   char *render_drivers;
   
   char *data_path;
+  char *log_path;
 };
 
 extern struct bigpc {
@@ -107,6 +108,8 @@ extern struct bigpc {
     int64_t realtime;
   } *sound_blackoutv;
   int sound_blackoutc,sound_blackouta;
+  
+  FILE *logfile;
 } bigpc;
 
 void bigpc_config_cleanup(struct bigpc_config *config);
@@ -130,6 +133,8 @@ void bigpc_play_song(uint8_t songid);
 
 // Nonzero if it's ok to play this sound. Updates all blackout state based on bigpc.clock.last_real_time_us.
 int bigpc_check_sound_blackout(uint16_t sfxid);
+
+int bigpc_log_init();
 
 void bigpc_cb_close(struct bigpc_video_driver *driver);
 void bigpc_cb_focus(struct bigpc_video_driver *driver,int focus);

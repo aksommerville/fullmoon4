@@ -67,6 +67,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_find_direction_to_item = (itemid) => this.findDirectionToItem(itemid);
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
+    this.wasmLoader.env.fmn_log_event = (key, fmt, varags) => {};
     
     // Fetch the data archive and wasm asap. This doesn't start the game or anything.
     this.preloadAtConstruction = Promise.all([
@@ -217,6 +218,8 @@ export class Runtime {
   loadMap(mapId, cbSpawn) {
     this.dropWitheredPlants();
     const map = this.dataService.getMap(mapId);
+void fmn_log_set_time(uint32_t abstime_ms);
+void fmn_log_event(const char *key,const char *fmt,...);
     if (!map) return 0;
     cbSpawn = this.wasmLoader.instance.exports.__indirect_function_table.get(cbSpawn);
     this.map = map;

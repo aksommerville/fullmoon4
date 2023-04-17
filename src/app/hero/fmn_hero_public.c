@@ -148,7 +148,7 @@ uint8_t fmn_hero_get_quantized_position(int8_t *x,int8_t *y) {
  */
  
 void fmn_hero_get_position(float *x,float *y) {
-  if (fmn_global.hero_dead) {
+  if (fmn_global.hero_dead||!fmn_hero.sprite) {
     *x=*y=0.0f;
   } else {
     *x=fmn_hero.sprite->x;

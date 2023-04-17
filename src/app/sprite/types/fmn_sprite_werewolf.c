@@ -356,6 +356,7 @@ static uint8_t werewolf_check_missiles(struct fmn_sprite *sprite) {
  */
  
 static void werewolf_die(struct fmn_sprite *sprite) {
+  fmn_log_event("kill-werewolf","");
   fmn_sprite_generate_soulballs(sprite->x,sprite->y,6);
   fmn_sound_effect(FMN_SFX_KILL_WEREWOLF);
   WEREWOLF_SET_HITBOX(BACK)

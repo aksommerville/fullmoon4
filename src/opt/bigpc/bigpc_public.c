@@ -33,6 +33,7 @@ void bigpc_quit() {
   inmgr_del(bigpc.inmgr);
   if (bigpc.map_callbackv) free(bigpc.map_callbackv);
   if (bigpc.sound_blackoutv) free(bigpc.sound_blackoutv);
+  if (bigpc.logfile) fclose(bigpc.logfile);
   
   memset(&bigpc,0,sizeof(struct bigpc));
   bigpc.exename="fullmoon";
@@ -58,6 +59,7 @@ int bigpc_init(int argc,char **argv) {
     return -2;
   }
   if (!(bigpc.fmstore=fmstore_new())) return -1;
+  if ((err=bigpc_log_init())<0) return err;
   
   bigpc_signal_init();
   if ((err=bigpc_video_init())<0) return err;

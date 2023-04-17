@@ -18,7 +18,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Actually, it was ones with delay: We forgot to zero the delay ring buffer.
 - [x] bigpc: violin staff lines are one beat late of where i expect.
 - - Fine against the audible metronome, just a display thing.
-- [ ] Gather stats automatically:
+- [x] Gather stats automatically:
 - - Where do players drop off?
 - - Time to victory.
 - - Items at victory.
@@ -57,6 +57,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
 - [ ] Two sets of map resource: Demo and Full. I think other resources don't matter, let tree-shaking handle it.
 - [ ] Tree-shake resources when packing.
+- [ ] Scripts to analyze logs.
 
 ### After GDEX
 
