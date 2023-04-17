@@ -16,6 +16,22 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [x] minsyn: Sound effects go haywire sometimes (just noise/bandpass ones? not certain)
 - - Actually, it was ones with delay: We forgot to zero the delay ring buffer.
+- [x] bigpc: violin staff lines are one beat late of where i expect.
+- - Fine against the audible metronome, just a display thing.
+- [ ] Gather stats automatically:
+- - Where do players drop off?
+- - Time to victory.
+- - Items at victory.
+- - Injuries, where?
+- - Do they ever summon a bird?
+- - Mind-control a racoon?
+- - All songs and spells cast. Where and when.
+- - Thingpong.
+- - Feather emergency exit.
+- - Moonsong emergency exit.
+- - Restart after Game Over.
+- - Is it reasonable to record a session's entire travel history? Maybe just at map level?
+- [ ] Playtest on the Asus again soon, now that Linux is stable.
 
 ### May
 
@@ -26,12 +42,13 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
 - - Probly no need for thumb drives if we've only got the demo.
-- - [x] Stuffed werewolf. Don't try sewing this. Know your limits, sir.
+- - [x] Stuffed werewolf. Don't try sewing this. Know your limits, sir. ...ordered
 - - [ ] Feathers with sharp pins at the tip so we can impale the werewolf with them.
 - - - Got feathers but the mechanics of impalement still unclear, until we get the werewolf.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Lively intro splash.
+- [ ] Idle restart.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
 - [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".

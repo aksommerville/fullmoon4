@@ -4,7 +4,7 @@
 /* Violin chart context, generated from scratch every frame.
  */
  
-#define FMN_GL2_VIOLIN_BAR_LIMIT 6
+#define FMN_GL2_VIOLIN_BAR_LIMIT 7
  
 struct fmn_gl2_violin_context {
   int16_t x,y,w,h; // full bounds within mainfb
@@ -56,6 +56,7 @@ static void fmn_gl2_violin_begin(struct fmn_gl2_violin_context *ctx,struct bigpc
   float position_in_bar=((fmn_global.violin_songp&3)+fmn_global.violin_clock)/4.0f;
   int16_t x=ctx->x-(int16_t)(position_in_bar*bar_spacing);
   int16_t leftx=x+(note_spacing>>1);
+  x-=note_spacing;
   struct fmn_gl2_violin_bar *bar=ctx->barv;
   int barc=0;
   for (;(x<ctx->x+ctx->w)&&(barc<FMN_GL2_VIOLIN_BAR_LIMIT);x+=bar_spacing,bar++,barc++) {
