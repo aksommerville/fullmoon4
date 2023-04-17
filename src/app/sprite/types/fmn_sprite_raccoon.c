@@ -260,6 +260,32 @@ static void raccoon_check_catch(struct fmn_sprite *sprite) {
   fmn_sprites_for_each(raccoon_check_catch_1,sprite);
 }
 
+/* Enchanted.
+ */
+ 
+static void raccoon_update_ENCHANTED(struct fmn_sprite *sprite,float elapsed) {
+  if (fmn_global.active_item==FMN_ITEM_FEATHER) {
+    animclock+=elapsed;
+    if (animclock>=1.0f) animclock-=1.0f;
+    uint8_t animframe=0;
+    switch ((int)(animclock*4.0f)) {
+      case 0: animframe=0; break;
+      case 1: animframe=1; break;
+      case 2: animframe=0; break;
+      case 3: animframe=2; break;
+    }
+    sprite->tileid=tileid0+animframe;
+    switch (fmn_global.facedir) {
+      case FMN_DIR_W: sprite->x-=RACCOON_WALK_SPEED*elapsed; break;
+      case FMN_DIR_E: sprite->x+=RACCOON_WALK_SPEED*elapsed; break;
+      case FMN_DIR_N: sprite->y-=RACCOON_WALK_SPEED*elapsed; break;
+      case FMN_DIR_S: sprite->y+=RACCOON_WALK_SPEED*elapsed; break;
+    }
+  } else {
+    sprite->tileid=tileid0;
+  }
+}
+
 /* Update.
  */
  
@@ -280,6 +306,15 @@ static void _raccoon_update(struct fmn_sprite *sprite,float elapsed) {
   // In any stage except BRANDISH, try to catch flying acorns.
   if (stage!=RACCOON_STAGE_BRANDISH) {
     raccoon_check_catch(sprite);
+  }
+  
+  // If enchanted, it's a different thing.
+  // (this i guess ought to be its own stage...)
+  // But BRANDISH overrides, if you enchant him while he's holding an acorn.
+  if (enchanted) {
+    if (stage==RACCOON_STAGE_BRANDISH) raccoon_update_BRANDISH(sprite,elapsed);
+    else raccoon_update_ENCHANTED(sprite,elapsed);
+    return;
   }
 
   switch (stage) {

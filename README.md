@@ -20,7 +20,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### May
 
 - [x] Trick floor: Would it help to gently suck the hero into the center of each tile? to prevent overstepping, i mean
-- [ ] Raccoon mind control: Don't wait for the decision cycle, make it immediate.
+- [x] Raccoon mind control: Don't wait for the decision cycle, make it immediate.
 - [ ] Order merch.
 - - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
