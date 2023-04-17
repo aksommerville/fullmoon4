@@ -19,14 +19,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
-- [ ] Trick floor: Would it help to gently suck the hero into the center of each tile? to prevent overstepping, i mean
+- [x] Trick floor: Would it help to gently suck the hero into the center of each tile? to prevent overstepping, i mean
 - [ ] Raccoon mind control: Don't wait for the decision cycle, make it immediate.
 - [ ] Order merch.
 - - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
 - - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
 - - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
 - - Probly no need for thumb drives if we've only got the demo.
-- - [ ] Stuffed werewolf. Don't try sewing this. Know your limits, sir.
+- - [x] Stuffed werewolf. Don't try sewing this. Know your limits, sir.
 - - [ ] Feathers with sharp pins at the tip so we can impale the werewolf with them.
 - - - Got feathers but the mechanics of impalement still unclear, until we get the werewolf.
 - [ ] Beta test.

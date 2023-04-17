@@ -231,10 +231,27 @@ static void trickfloor_generate_hazard() {
   hazard->radius=0.5f;
 }
 
+/* EXPERIMENTAL. Nudge the hero gently toward the center of her cell.
+ */
+ 
+static void trickfloor_nudge_to_center(float herox,float heroy,float elapsed) {
+  float dummy;
+  float modx=modff(herox,&dummy);
+  float mody=modff(heroy,&dummy);
+  const float nudge_rate=0.5f;
+  const float close_enough=0.02f;
+  float dstx=herox,dsty=heroy;
+  if (modx<0.5f-close_enough) dstx+=nudge_rate*elapsed;
+  else if (modx>0.5f+close_enough) dstx-=nudge_rate*elapsed;
+  if (mody<0.5f-close_enough) dsty+=nudge_rate*elapsed;
+  else if (mody>0.5f+close_enough) dsty-=nudge_rate*elapsed;
+  fmn_hero_set_position(dstx,dsty);
+}
+
 /* Track the hero's position, quantized to cells, and update things when she changes cell.
  */
  
-static void trickfloor_check_hero() {
+static void trickfloor_check_hero(float elapsed) {
 
   // Drop any tracking state if she left the ground.
   if (!fmn_hero_feet_on_ground()) {
@@ -250,7 +267,12 @@ static void trickfloor_check_hero() {
   fmn_hero_get_position(&herox,&heroy);
   uint8_t herocol=(uint8_t)herox;
   uint8_t herorow=(uint8_t)heroy;
-  if ((herocol==trickfloor_herox)&&(herorow==trickfloor_heroy)) return;
+  if ((herocol==trickfloor_herox)&&(herorow==trickfloor_heroy)) {
+    if ((herocol>=trickfloor_bounds.x)&&(herorow>=trickfloor_bounds.y)&&(herocol<trickfloor_bounds.x+trickfloor_bounds.w)&&(herorow<trickfloor_bounds.y+trickfloor_bounds.h)) {
+      trickfloor_nudge_to_center(herox,heroy,elapsed);
+    }
+    return;
+  }
   if ((herocol>=FMN_COLC)||(herorow>=FMN_ROWC)) return;
   trickfloor_herox=herocol;
   trickfloor_heroy=herorow;
@@ -324,7 +346,7 @@ static void trickfloor_update_compass() {
  
 static void _trickfloor_class_update(void *userdata,float elapsed) {
   if (trickfloor_pathc<1) return;
-  trickfloor_check_hero();
+  trickfloor_check_hero(elapsed);
   trickfloor_update_compass();
 }
 
