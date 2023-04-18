@@ -35,6 +35,7 @@ void _fmn_begin_menu(int prompt,...) {
     case FMN_MENU_TREASURE: menu=bigpc_menu_new_TREASURE(); break;
     case FMN_MENU_VICTORY: menu=bigpc_menu_new_VICTORY(); break;
     case FMN_MENU_GAMEOVER: menu=bigpc_menu_new_GAMEOVER(); break;
+    case FMN_MENU_HELLO: menu=bigpc_menu_new_HELLO(); break;
   }
   if (!menu) return;
   
@@ -60,6 +61,7 @@ void _fmn_begin_menu(int prompt,...) {
   switch (prompt) {
     case FMN_MENU_VICTORY: bigpc_play_song(7); break;
     case FMN_MENU_GAMEOVER: bigpc_play_song(6); break;
+    case FMN_MENU_HELLO: bigpc_play_song(1); break;
   }
 }
 

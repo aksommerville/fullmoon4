@@ -418,6 +418,7 @@ void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*
 #define FMN_MENU_TREASURE -3 /* opt1=itemid, cb1=required */
 #define FMN_MENU_VICTORY -4
 #define FMN_MENU_GAMEOVER -5
+#define FMN_MENU_HELLO -6
 
 /* Prepare a transition while in the "from" state, and declare what style you will want.
  * Then make your changes, and either commit or cancel it.

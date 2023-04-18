@@ -112,6 +112,7 @@ export class Constants {
     this.MENU_TREASURE = -3;
     this.MENU_VICTORY = -4;
     this.MENU_GAMEOVER = -5;
+    this.MENU_HELLO = -6;
   }
 }
 

@@ -111,6 +111,7 @@ static void bigpc_pop_menu() {
   
   switch (prompt) {
     case FMN_MENU_VICTORY: bigpc_reset(); break;
+    case FMN_MENU_HELLO: bigpc_play_song(3); break;
   }
 }
 

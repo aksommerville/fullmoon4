@@ -14,7 +14,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
-- [ ] Lively intro splash.
+- [x] Lively intro splash.
 - [ ] Idle restart.
 - [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Make up a new item to take Corn's place, and one for the zero slot. Fill all 16 slots. (mind that item zero comes into play then)

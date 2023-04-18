@@ -34,6 +34,7 @@ struct bigpc_menu *bigpc_menu_new_CHALK();
 struct bigpc_menu *bigpc_menu_new_TREASURE();
 struct bigpc_menu *bigpc_menu_new_VICTORY();
 struct bigpc_menu *bigpc_menu_new_GAMEOVER();
+struct bigpc_menu *bigpc_menu_new_HELLO();
 
 /* After a successful 'new', add zero or more options, then 'ready'.
  */
