@@ -1,0 +1,7 @@
+controller tree
+image sprites
+tile 0xbb
+style tile
+physics sprites solid hole
+radius 0.5
+invmass 0

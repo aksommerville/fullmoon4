@@ -85,8 +85,8 @@
 #define FMN_PITCHER_CONTENT_HONEY 3
 #define FMN_PITCHER_CONTENT_SAP   4
 
-#define FMN_ITEM_NONE            0
-#define FMN_ITEM_CORN            1
+#define FMN_ITEM_USE_THIS_FOR_SOMETHING 0
+#define FMN_ITEM_HAT             1
 #define FMN_ITEM_PITCHER         2
 #define FMN_ITEM_SEED            3
 #define FMN_ITEM_COIN            4
@@ -274,6 +274,7 @@ struct fmn_door {
    *  - transmogrify: mapid==0, dstx=0x80(to),0x40(from),0xc0(toggle), dsty=state(nonzero)
    *  - buried_treasure: mapid==0, dstx=0x30, dsty=itemid, extra=gsbit
    *  - buried_door: extra=gsbit(nonzero)
+   *  - event_trigger: mapid==0, dstx=0x20, extra=eventid. See fmn_game_event_listen. (in fmn_game, not platform)
    */
 };
 

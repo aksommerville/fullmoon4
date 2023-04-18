@@ -18,7 +18,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Idle restart.
 - [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Make up a new item to take Corn's place, and one for the zero slot. Fill all 16 slots. (mind that item zero comes into play then)
-- - [ ] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
+- - [x] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
+- - [ ] One more...
 - [ ] Replace village music, now that we have a hello splash. I'm thinking All the Colors of Water.
 
 ### May

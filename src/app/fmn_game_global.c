@@ -8,7 +8,6 @@
  
 int fmn_game_init() {
   fmn_clear_free_birds();
-  fmn_global.itemv[FMN_ITEM_NONE]=1; // let it show an icon in the inventory, so it doesn't look like an item not found yet
   fmn_hero_kill_velocity();
   
   if (fmn_game_load_map(1)<1) return -1;
@@ -125,8 +124,12 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
     
     // Some things masquerade as doors, but are in fact something very else.
     if (!door->mapid) {
-      if ((door->dsty>0)&&(door->dsty<0x40)&&(door->dstx&0xc0)&&!(door->dstx&0x3f)) {
+      if ((door->dsty>0)&&(door->dsty<0x40)&&(door->dstx&0xc0)&&!(door->dstx&0x3f)) { // transmogrify
         fmn_transmogrify(door->dstx,door->dsty);
+        continue;
+      }
+      if (door->dstx==0x20) { // event_trigger
+        fmn_game_event_broadcast(door->extra,0);
         continue;
       }
       continue;

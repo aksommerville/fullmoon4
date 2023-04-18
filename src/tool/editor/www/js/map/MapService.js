@@ -186,6 +186,14 @@ export class MapService {
                 dsty: +command[6],
               });
             } break;
+          case "event_trigger": {
+              const x = +command[1], y = +command[2];
+              pois.push({
+                type: "event_trigger",
+                x, y,
+                eventid: +command[3],
+              });
+            } break;
         }
       }
     }
@@ -232,6 +240,7 @@ export class MapService {
       case "sketch": command[1] = x.toString(); command[2] = y.toString(); break;
       case "buried_treasure": command[1] = x.toString(); command[2] = y.toString(); break;
       case "buried_door": command[1] = x.toString(); command[2] = y.toString(); break;
+      case "event_trigger": command[1] = x.toString(); command[2] = y.toString(); break;
     }
     if (remoteMapHandle[0]) {
       // dirtying resources is really not our job, but we don't have any other way to tell our caller that it happened.
@@ -331,6 +340,16 @@ export class MapService {
             if (+command[2] !== poi.y) continue;
             if (command[3] !== poi.gsbit) continue;
             if (command[4] !== poi.mapId) continue;
+            return command;
+          }
+        } break;
+        
+      case "event_trigger": {
+          for (const command of map.commands) {
+            if (command[0] !== "event_trigger") continue;
+            if (+command[1] !== poi.x) continue;
+            if (+command[2] !== poi.y) continue;
+            if (+command[3] !== poi.eventid) continue;
             return command;
           }
         } break;

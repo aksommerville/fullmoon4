@@ -6,7 +6,7 @@ const linewise = require("./linewise.js");
  
 const ITEM_NAMES = [
   "NONE",
-  "", // previously CORN, currently available
+  "HAT",
   "PITCHER",
   "SEED",
   "COIN",

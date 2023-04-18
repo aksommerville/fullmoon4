@@ -34,6 +34,7 @@ export class FullmoonMap {
       case 0x60: // DOOR
       case 0x61: // SKETCH
       case 0x80: // SPRITE
+      case 0x64: // EVENT_TRIGGER
           return [argv[argp] % 20, Math.floor(argv[argp] / 20)];
     }
     return [10, 6]; // Middle of screen, for commands without a location.
@@ -150,6 +151,16 @@ export class FullmoonMap {
             evid: v[argp],
             cbid: (v[argp + 1] << 8) | v[argp + 2],
             param: v[argp + 3],
+          });
+          break;
+          
+        case 0x64: this.doors.push({ // event_trigger
+            x: v[argp] % constants.COLC,
+            y: Math.floor(v[argp] / constants.COLC),
+            mapId: 0,
+            dstx: 0x20,
+            dsty: 0,
+            extra: (v[argp + 1] << 8) | v[argp + 2],
           });
           break;
           

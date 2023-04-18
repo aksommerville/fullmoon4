@@ -49,17 +49,23 @@ static void fmn_gl2_game_render_HERO_injury(struct bigpc_render_driver *driver,s
   float hatdy=0.0f;
   if (fmn_global.transmogrification==1) { // pumpkin
     if (DRIVER->game.framec&4) {
-      tileid_hat=0x33;
+      tileid_hat=(fmn_global.selected_item==FMN_ITEM_HAT)?0x0f:0x33;
       tileid_body=0x2e;
     } else {
-      tileid_hat=0x03;
+      tileid_hat=(fmn_global.selected_item==FMN_ITEM_HAT)?0x0e:0x03;
       tileid_body=0x2d;
     }
     hatdy=-0.375f;
   } else { // normal
-    tileid_hat=(DRIVER->game.framec&4)?0x03:0x33;
-    tileid_head=tileid_hat+0x10;
-    tileid_body=tileid_hat+0x20;
+    if (fmn_global.selected_item==FMN_ITEM_HAT) {
+      tileid_hat=(DRIVER->game.framec&4)?0x0e:0x0f;
+      tileid_head=(DRIVER->game.framec&4)?0x13:0x43;
+      tileid_body=(DRIVER->game.framec&4)?0x23:0x53;
+    } else {
+      tileid_hat=(DRIVER->game.framec&4)?0x03:0x33;
+      tileid_head=tileid_hat+0x10;
+      tileid_body=tileid_hat+0x20;
+    }
     hatdy=-0.75f;
   }
   if (fmn_global.injury_time>=0.8f) ;
@@ -76,6 +82,15 @@ static void fmn_gl2_game_render_HERO_pumpkin(struct bigpc_render_driver *driver,
   uint8_t tileid_body=0x1d;
   uint8_t tileid_hat=0x00;
   float hatdy=-0.375f;
+  if (fmn_global.selected_item==FMN_ITEM_HAT) {
+    switch (tileid_hat) {
+      case 0x00: tileid_hat=0x3c; break;
+      case 0x01: tileid_hat=0x3d; break;
+      case 0x02: tileid_hat=0x3e; break;
+      case 0x1b: tileid_hat=0x3c; break;
+      case 0x1c: tileid_hat=0x3f; break;
+    }
+  }
   if (fmn_global.walking) switch (DRIVER->game.framec&0x18) {
     case 0x08: tileid_body+=0x01; break;
     case 0x18: tileid_body+=0x02; break;
@@ -161,7 +176,17 @@ static void fmn_gl2_game_render_HERO_head(struct bigpc_render_driver *driver,str
 }
 
 static void fmn_gl2_game_render_HERO_hat(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite,uint8_t tileid,uint8_t xform) {
-  fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-0.75f,tileid,xform);
+  float dy=-0.75f;
+  if (fmn_global.selected_item==FMN_ITEM_HAT) {
+    switch (tileid) {
+      case 0x00: tileid=0x3c; break;
+      case 0x01: tileid=0x3d; break;
+      case 0x02: tileid=0x3e; break;
+      case 0x1b: tileid=0x3c; break;
+      case 0x1c: tileid=0x3f; break;
+    }
+  }
+  fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y+dy,tileid,xform);
 }
 
 /* Items in hand.

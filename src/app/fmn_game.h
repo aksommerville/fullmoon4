@@ -77,6 +77,7 @@ void fmn_game_event_unlisten_all();
 #define FMN_GAME_EVENT_MISSILE_OOB 1 /* Missile sprite terminating due to off screen. payload=sprite */
 #define FMN_GAME_EVENT_SCOREBOARD_WIN 2 /* payload=sprite. argv[0]=gameid */
 #define FMN_GAME_EVENT_SCOREBOARD_LOSE 3
+#define FMN_GAME_EVENT_BALCONY 4
 
 /* Extra mechanism for arbitrary update logic.
  * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.

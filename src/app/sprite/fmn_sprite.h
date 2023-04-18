@@ -147,6 +147,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_losthat       43
 #define FMN_SPRCTL_scoreboard    44
 #define FMN_SPRCTL_trickfloor    45
+#define FMN_SPRCTL_tree          46
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -194,7 +195,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(deadwitch) \
   _(losthat) \
   _(scoreboard) \
-  _(trickfloor)
+  _(trickfloor) \
+  _(tree)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

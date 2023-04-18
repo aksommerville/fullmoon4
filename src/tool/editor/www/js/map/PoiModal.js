@@ -60,6 +60,7 @@ export class PoiModal {
     this.dom.spawn(typeSelect, "OPTION", { value: "sketch" }, "sketch");
     this.dom.spawn(typeSelect, "OPTION", { value: "buried_treasure" }, "buried_treasure");
     this.dom.spawn(typeSelect, "OPTION", { value: "buried_door" }, "buried_door");
+    this.dom.spawn(typeSelect, "OPTION", { value: "event_trigger" }, "event_trigger");
     
     this.dom.spawn(permanentForm, "INPUT", {
       type: "number",
@@ -130,6 +131,7 @@ export class PoiModal {
       case "sketch": this.buildSketchForm(table); break;
       case "buried_treasure": this.buildBuriedTreasureForm(table); break;
       case "buried_door": this.buildBuriedDoorForm(table); break;
+      case "event_trigger": this.buildEventTriggerForm(table); break;
     }
   }
   
@@ -172,6 +174,10 @@ export class PoiModal {
     this.addNumberRow(table, "dstx", 0, FullmoonMap.COLC - 1, this.poi ? this.poi.dstx : 0);
     this.addNumberRow(table, "dsty", 0, FullmoonMap.ROWC - 1, this.poi ? this.poi.dsty : 0);
     if (!this.poi) this.addCheckboxRow(table, "createRemote", true);
+  }
+  
+  buildEventTriggerForm(table) {
+    this.addNumberRow(table, "eventid", 0, 65535, this.poi ? this.poi.eventid : 0);
   }
   
   reprSpriteId(id) {
@@ -311,6 +317,10 @@ export class PoiModal {
         
       case "buried_door": {
           return ["buried_door", poi.x.toString(), poi.y.toString(), poi.gsbit.toString(), poi.mapId.toString(), poi.dstx.toString(), poi.dsty.toString()];
+        }
+        
+      case "event_trigger": {
+          return ["event_trigger", poi.x.toString(), poi.y.toString(), poi.eventid.toString()];
         }
     }
     return null;
