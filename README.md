@@ -14,47 +14,19 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
-- [x] minsyn: Sound effects go haywire sometimes (just noise/bandpass ones? not certain)
-- - Actually, it was ones with delay: We forgot to zero the delay ring buffer.
-- [x] bigpc: violin staff lines are one beat late of where i expect.
-- - Fine against the audible metronome, just a display thing.
-- [x] Gather stats automatically:
-- - Where do players drop off?
-- - Time to victory.
-- - Items at victory.
-- - Injuries, where?
-- - Do they ever summon a bird?
-- - Mind-control a racoon?
-- - All songs and spells cast. Where and when.
-- - Thingpong.
-- - Feather emergency exit.
-- - Moonsong emergency exit.
-- - Restart after Game Over.
-- - Is it reasonable to record a session's entire travel history? Maybe just at map level?
-- [ ] Playtest on the Asus again soon, now that Linux is stable.
+- [ ] Lively intro splash.
+- [ ] Idle restart.
+- [ ] Correct song and sound effect levels. Automated analysis?
+- [ ] Make up a new item to take Corn's place, and one for the zero slot. Fill all 16 slots. (mind that item zero comes into play then)
+- - [ ] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
 
 ### May
 
-- [x] Trick floor: Would it help to gently suck the hero into the center of each tile? to prevent overstepping, i mean
-- [x] Raccoon mind control: Don't wait for the decision cycle, make it immediate.
-- [ ] Order merch.
-- - [ ] Stickers and pins: Stickermule (they do t-shirts too but too expensive)
-- - [ ] T-shirts. (Bolt is cheapest I've found, and they did good with Plunder Squad. UberPrints looks ok but more expensive)
-- - [ ] Baseball cards: Get in touch with Lucas, maybe we can do a full-GDEX set of cards? Emailed 2023-03-11. Gotprint.com: $35/250. 875x1225px
-- - Probly no need for thumb drives if we've only got the demo.
-- - [x] Stuffed werewolf. Don't try sewing this. Know your limits, sir. ...ordered
-- - [ ] Feathers with sharp pins at the tip so we can impale the werewolf with them.
-- - - Got feathers but the mechanics of impalement still unclear, until we get the werewolf.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
-- [ ] Lively intro splash.
-- [ ] Idle restart.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
-- [ ] Correct song and sound effect levels. Automated analysis?
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- [ ] Make up a new item to take Corn's place, and one for the zero slot. Fill all 16 slots. (mind that item zero comes into play then)
-- - [ ] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
 - [ ] Two sets of map resource: Demo and Full. I think other resources don't matter, let tree-shaking handle it.
 - [ ] Tree-shake resources when packing.
 - [ ] Scripts to analyze logs.
@@ -75,6 +47,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Delete maps (and resources in general)
 - - [ ] ImageAllUi: Show names
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
+- [ ] Rekajigger Constants.js, use actual inlinable constants.
 - [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
@@ -93,7 +66,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Maps for full game.
 - [ ] Pumpkin protection: Ensure she can't travel too far as a pumpkin, and can't get trapped in the reachable area.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
-- [ ] Rekajigger Constants.js, use actual inlinable constants.
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Translation.
 - [ ] Web input: Key events are triggering the pause button when focussed. Why isn't it just space bar?
@@ -110,7 +82,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Other platforms:
 - - [ ] Web wrapper eg Electron
 - - [ ] Tiny. I don't think it will work, but prove it.
-- - [ ] MacOS
 - - [ ] Windows
 - - [ ] iOS
 - - [ ] Android
