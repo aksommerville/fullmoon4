@@ -33,5 +33,6 @@ int bigpc_update();
 struct bigpc_menu *bigpc_get_menu();
 
 uint32_t bigpc_get_game_time_ms();
+int bigpc_get_idle_warning_time_s();
 
 #endif

@@ -1,4 +1,5 @@
 #include "../fmn_gl2_internal.h"
+#include "opt/fontosaur/fontosaur.h"
 
 void fmn_gl2_game_freshen_map(struct bigpc_render_driver *driver);
 void fmn_gl2_game_render_HERO(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite);
@@ -25,6 +26,7 @@ void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver) {
   if (DRIVER->game.mintile_vtxv) free(DRIVER->game.mintile_vtxv);
   fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionfrom);
   fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionto);
+  fmn_gl2_texture_cleanup(&DRIVER->game.idle_warning_texture);
 }
 
 /* Init.
@@ -227,6 +229,53 @@ void fmn_gl2_game_render_world(struct bigpc_render_driver *driver,int include_he
   }
 }
 
+/* Idle warning.
+ */
+ 
+static void fmn_gl2_render_idle_warning(struct bigpc_render_driver *driver,int s) {
+
+  fmn_gl2_program_use(driver,&DRIVER->program_raw);
+  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,0xff000080);
+
+  if (fmn_gl2_texture_use(driver,14)>=0) {
+    fmn_gl2_program_use(driver,&DRIVER->program_decal);
+    int16_t srcx=0,srcy=DRIVER->game.tilesize*12;
+    int16_t w=DRIVER->game.tilesize*7,h=DRIVER->game.tilesize*4;
+    int16_t dstx=(DRIVER->mainfb.texture.w>>1)-(w>>1);
+    int16_t dsty=(DRIVER->mainfb.texture.h>>1)-(h>>1);
+    fmn_gl2_draw_decal(dstx,dsty,w,h,srcx,srcy,w,h);
+    
+    if (DRIVER->game.idle_warning_time!=s) {
+      DRIVER->game.idle_warning_time=s;
+      char text[2];
+      int textc;
+      if (s>=10) {
+        text[0]='0'+(s%100)/10;
+        text[1]='0'+s%10;
+        textc=2;
+      } else {
+        text[0]='0'+s;
+        textc=1;
+      }
+      struct fontosaur_image image={0};
+      if (fontosaur_render_text(&image,driver->datafile,16,32,0,0xffffffff,0,text,textc)>=0) {
+        fmn_gl2_texture_cleanup(&DRIVER->game.idle_warning_texture);
+        fmn_gl2_texture_init_rgba(&DRIVER->game.idle_warning_texture,image.w,image.h,image.v);
+      }
+      fontosaur_image_cleanup(&image);
+    }
+    
+    // Countdown is centered at 2/3,3/4
+    fmn_gl2_texture_use_object(driver,&DRIVER->game.idle_warning_texture);
+    int16_t tw=DRIVER->game.idle_warning_texture.w;
+    int16_t th=DRIVER->game.idle_warning_texture.h;
+    int16_t tdstx=dstx+(w*2)/3-(tw>>1);
+    int16_t tdsty=dsty+((h*3)>>2)-(th>>1);
+    fmn_gl2_program_use(driver,&DRIVER->program_recal);
+    fmn_gl2_draw_recal(&DRIVER->program_recal,tdstx,tdsty,tw,th,0,0,tw,th,(DRIVER->game.framec&8)?0xff0000ff:0x200000ff);
+  }
+}
+
 /* Render.
  */
  
@@ -273,7 +322,13 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
     fmn_gl2_render_violin(driver);
   }
   
-  // Finally, if there's a menu it goes on top.
+  // If there's a menu it goes on top.
   struct bigpc_menu *menu=bigpc_get_menu();
   if (menu) fmn_gl2_render_menu(driver,menu);
+  
+  // On even topper, the idle warning if applicable.
+  int idle_time=bigpc_get_idle_warning_time_s();
+  if (idle_time) {
+    fmn_gl2_render_idle_warning(driver,idle_time);
+  }
 }

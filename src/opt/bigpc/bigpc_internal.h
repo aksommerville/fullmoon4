@@ -46,6 +46,11 @@
 // Unclear why this isn't part of the client.
 #define BIGPC_PLANT_FLOWER_TIME 20000
 
+// Idle restart. Set both to zero to disable this behavior. Both in microseconds.
+// We definitely don't want this in production, and definitely do want it for demo kiosks.
+#define BIGPC_IDLE_RESTART_WARN_TIME (30*1000000ll)
+#define BIGPC_IDLE_RESTART_TIME      (45*1000000ll)
+
 struct bigpc_config {
   char *video_drivers;
   int video_fullscreen;
@@ -87,6 +92,9 @@ extern struct bigpc {
   
   uint8_t input_state;
   int devid_keyboard;
+  int64_t last_input_time; // real us
+  uint8_t pvinput;
+  uint8_t idle_warning_time; // number to show, seconds. zero for none
   
   // Last in the list is on top.
   struct bigpc_menu **menuv;

@@ -163,13 +163,14 @@ void fmn_hero_set_position(float x,float y) {
 }
 
 void fmn_hero_kill_velocity() {
-  if (fmn_global.hero_dead) return;
   fmn_hero.walkforce=0.0f;
-  fmn_hero.sprite->velx=0.0f;
-  fmn_hero.sprite->vely=0.0f;
   fmn_hero.velx=0.0f;
   fmn_hero.vely=0.0f;
   fmn_global.walking=0;
+  if (fmn_hero.sprite) {
+    fmn_hero.sprite->velx=0.0f;
+    fmn_hero.sprite->vely=0.0f;
+  }
 }
 
 /* Check feet.

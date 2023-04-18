@@ -178,6 +178,8 @@ struct fmn_gl2_game {
   struct fmn_gl2_vertex_raw particlev[FMN_GL2_PARTICLE_LIMIT];
   int particlec;
   float illuminationp;
+  struct fmn_gl2_texture idle_warning_texture;
+  int idle_warning_time;
 };
 
 void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver);

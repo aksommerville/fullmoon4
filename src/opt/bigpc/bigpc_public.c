@@ -61,6 +61,10 @@ int bigpc_init(int argc,char **argv) {
   if (!(bigpc.fmstore=fmstore_new())) return -1;
   if ((err=bigpc_log_init())<0) return err;
   
+  if (BIGPC_IDLE_RESTART_TIME) {
+    fprintf(stderr,"%s: Idle restart time %d. Don't release into prod with this set!\n",bigpc.exename,(int)(BIGPC_IDLE_RESTART_TIME/1000000ll));
+  }
+  
   bigpc_signal_init();
   if ((err=bigpc_video_init())<0) return err;
   if ((err=bigpc_audio_init())<0) return err;
@@ -79,6 +83,8 @@ int bigpc_init(int argc,char **argv) {
   
   bigpc_audio_play(bigpc.audio,1);
   bigpc_clock_reset(&bigpc.clock);
+  bigpc.last_input_time=bigpc.clock.last_real_time_us;
+  bigpc.idle_warning_time=0;
   return 0;
 }
 
@@ -97,6 +103,8 @@ static void bigpc_reset() {
     return;
   }
   bigpc_clock_reset(&bigpc.clock);
+  bigpc.last_input_time=bigpc.clock.last_real_time_us;
+  bigpc.idle_warning_time=0;
 }
 
 /* Pop the top menu off the stack.
@@ -150,6 +158,37 @@ static void bigpc_check_dead_werewolf() {
   }
 }
 
+/* Watch for input changes. If input goes dead for a certain interval, show a warning, then revert to hello.
+ * This is for my GDEX kiosk. Probably not appropriate for production.
+ */
+ 
+static void bigpc_check_idle() {
+  if ((bigpc.menuc>=1)&&(bigpc.menuv[bigpc.menuc-1]->prompt==FMN_MENU_HELLO)) {
+    // No idle warning while the hello menu is up; this is where we kick them back to.
+    bigpc.pvinput=bigpc.input_state;
+    bigpc.last_input_time=bigpc.clock.last_real_time_us;
+    bigpc.idle_warning_time=0;
+  } else if (bigpc.input_state!=bigpc.pvinput) {
+    bigpc.pvinput=bigpc.input_state;
+    bigpc.last_input_time=bigpc.clock.last_real_time_us;
+    bigpc.idle_warning_time=0;
+  } else {
+    int64_t idle_time=bigpc.clock.last_real_time_us-bigpc.last_input_time;
+    if (idle_time>=BIGPC_IDLE_RESTART_TIME) {
+      fmn_log_event("idle-restart","");
+      bigpc_reset();
+    } else if (idle_time>=BIGPC_IDLE_RESTART_WARN_TIME) {
+      bigpc.idle_warning_time=(BIGPC_IDLE_RESTART_TIME-idle_time)/1000000ll+1;
+    } else {
+      bigpc.idle_warning_time=0;
+    }
+  }
+}
+
+int bigpc_get_idle_warning_time_s() {
+  return bigpc.idle_warning_time;
+}
+
 /* Update.
  */
  
@@ -167,6 +206,7 @@ int bigpc_update() {
   // Miscellaneous high-level business logic that had to live here.
   bigpc_check_violin();
   bigpc_check_dead_werewolf();
+  bigpc_check_idle();
   
   // Update game or top menu.
   if (bigpc.menuc) {

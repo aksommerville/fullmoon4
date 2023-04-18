@@ -9,6 +9,7 @@
 int fmn_game_init() {
   fmn_clear_free_birds();
   fmn_global.itemv[FMN_ITEM_NONE]=1; // let it show an icon in the inventory, so it doesn't look like an item not found yet
+  fmn_hero_kill_velocity();
   
   if (fmn_game_load_map(1)<1) return -1;
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);

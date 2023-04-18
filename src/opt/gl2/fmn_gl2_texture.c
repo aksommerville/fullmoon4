@@ -6,6 +6,7 @@
  
 void fmn_gl2_texture_cleanup(struct fmn_gl2_texture *texture) {
   if (texture->texid) glDeleteTextures(1,&texture->texid);
+  memset(texture,0,sizeof(struct fmn_gl2_texture));
 }
 
 /* Initialize from RGBA.
