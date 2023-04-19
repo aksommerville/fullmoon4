@@ -21,6 +21,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [x] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
 - - [x] One more...
 - [ ] Replace village music, now that we have a hello splash. I'm thinking All the Colors of Water.
+- [ ] Pi (analogue video only?) framebuffer shows up a few pixels right of the edge, and the console shows thru just a bit.
+- - fmn_bcm.c:81: Changed 100 to 80. Try again.
+- [ ] Pi: Can't exit without SSH. Ensure local keyboard can quit.
+- [x] Don't idle-restart from the victory menu.
 
 ### May
 

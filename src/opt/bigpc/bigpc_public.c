@@ -162,13 +162,18 @@ static void bigpc_check_dead_werewolf() {
  * This is for my GDEX kiosk. Probably not appropriate for production.
  */
  
+static int bigpc_is_idle() {
+  if (bigpc.pvinput!=bigpc.input_state) return 0;
+  if (bigpc.menuc>=1) {
+    int prompt=bigpc.menuv[bigpc.menuc-1]->prompt;
+    if (prompt==FMN_MENU_HELLO) return 0;
+    if (prompt==FMN_MENU_VICTORY) return 0;
+  }
+  return 1;
+}
+ 
 static void bigpc_check_idle() {
-  if ((bigpc.menuc>=1)&&(bigpc.menuv[bigpc.menuc-1]->prompt==FMN_MENU_HELLO)) {
-    // No idle warning while the hello menu is up; this is where we kick them back to.
-    bigpc.pvinput=bigpc.input_state;
-    bigpc.last_input_time=bigpc.clock.last_real_time_us;
-    bigpc.idle_warning_time=0;
-  } else if (bigpc.input_state!=bigpc.pvinput) {
+  if (!bigpc_is_idle()) {
     bigpc.pvinput=bigpc.input_state;
     bigpc.last_input_time=bigpc.clock.last_real_time_us;
     bigpc.idle_warning_time=0;

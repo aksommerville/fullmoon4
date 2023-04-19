@@ -38,10 +38,9 @@ int fmn_bcm_init() {
   if (!(fmn_bcm.vcdisplay=vc_dispmanx_display_open(0))) { fmn_bcm_quit(); return -1; }
   if (!(fmn_bcm.vcupdate=vc_dispmanx_update_start(0))) { fmn_bcm_quit(); return -1; }
 
-  int logw=screenw-100;
+  int logw=screenw-80;
   int logh=screenh-50;
   VC_RECT_T srcr={0,0,screenw<<16,screenh<<16};
-  //VC_RECT_T dstr={0,0,fmn_screenw,fmn_screenh};
   VC_RECT_T dstr={(screenw>>1)-(logw>>1),(screenh>>1)-(logh>>1),logw,logh};
   VC_DISPMANX_ALPHA_T alpha={DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS,0xffffffff};
   if (!(fmn_bcm.vcelement=vc_dispmanx_element_add(
