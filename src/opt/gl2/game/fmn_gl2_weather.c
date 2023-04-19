@@ -126,6 +126,15 @@ void fmn_gl2_render_mapdark(struct bigpc_render_driver *driver) {
  */
  
 void fmn_gl2_game_render_weather(struct bigpc_render_driver *driver) {
+  DRIVER->fbquakex=0;
+  DRIVER->fbquakey=0;
+  if (fmn_global.earthquake_dir) {
+    int phase=(int)(fmn_global.earthquake_time*10.0f)%4;
+    switch (phase) {
+      case 1: DRIVER->fbquakex=1; break;
+      case 3: DRIVER->fbquakex=-1; break;
+    }
+  }
   // Logically there can be rain and wind at the same time.
   // But it never happens by design, and it's convenient to use the same particle buffer for both.
   if (fmn_global.rain_time>0.0f) {

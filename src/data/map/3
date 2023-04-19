@@ -29,3 +29,4 @@ sprite 9 5 3 item:MATCH 0 0
 sprite 7 5 3 item:COIN 0 0
 sprite 5 5 3 item:SEED 0 0
 sprite 9 7 treasure item:HAT 0 0
+sprite 12 7 treasure item:SNOWGLOBE 0 0

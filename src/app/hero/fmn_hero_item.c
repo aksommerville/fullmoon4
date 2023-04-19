@@ -66,7 +66,7 @@ static void fmn_hero_bell_update(float elapsed) {
  */
  
 static void fmn_hero_seed_begin() {
-  fmn_global.active_item=0;
+  fmn_global.active_item=0xff;
   if (!fmn_global.itemqv[FMN_ITEM_SEED]) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
@@ -155,7 +155,7 @@ static struct fmn_sprite *fmn_hero_coin_collision(struct fmn_sprite *coin) {
  
 static void fmn_hero_coin_begin() {
   struct fmn_sprite *hero=fmn_hero.sprite;
-  fmn_global.active_item=0;
+  fmn_global.active_item=0xff;
   if (!fmn_global.itemqv[FMN_ITEM_COIN]) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
@@ -201,7 +201,7 @@ static void fmn_hero_coin_begin() {
  */
  
 static void fmn_hero_cheese_begin() {
-  fmn_global.active_item=0;
+  fmn_global.active_item=0xff;
   if (!fmn_global.itemqv[FMN_ITEM_CHEESE]) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
@@ -366,7 +366,7 @@ static void fmn_hero_shovel_end() {
 
 static void fmn_hero_shovel_update(float elapsed) {
   if (fmn_hero.item_active_time>=FMN_HERO_SHOVEL_TIME) {
-    fmn_global.active_item=0;
+    fmn_global.active_item=0xff;
   }
 }
 
@@ -397,7 +397,7 @@ static uint8_t fmn_hero_broom_ok_to_end() {
 static void fmn_hero_broom_end() {
   if (fmn_hero_broom_ok_to_end()) {
     fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
-    fmn_global.active_item=0;
+    fmn_global.active_item=0xff;
   } else {
     fmn_hero.landing_pending=1;
   }
@@ -411,7 +411,7 @@ static void fmn_hero_broom_update(float elapsed) {
       uint8_t physics=fmn_global.cellphysics[tile];
       if ((physics!=FMN_CELLPHYSICS_HOLE)&&(physics!=FMN_CELLPHYSICS_WATER)) {
         fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
-        fmn_global.active_item=0;
+        fmn_global.active_item=0xff;
         return;
       }
     }
@@ -422,6 +422,39 @@ static void fmn_hero_broom_update(float elapsed) {
 // No feedback in this case, because to the user it seems that nothing changes.
 static void fmn_hero_broom_restart() {
   fmn_hero.landing_pending=0;
+}
+
+/* Snowglobe. Basically the same thing as Wand, but strokes take effect immediately.
+ */
+ 
+static void fmn_hero_snowglobe_begin() {
+  fmn_global.wand_dir=0;
+}
+
+static void fmn_hero_snowglobe_end() {
+}
+ 
+static void fmn_hero_snowglobe_motion(uint8_t bit,uint8_t value) {
+  uint8_t ndir=fmn_global.wand_dir;
+  if (value) {
+    switch (bit) {
+      case FMN_INPUT_LEFT: ndir=FMN_DIR_W; break;
+      case FMN_INPUT_RIGHT: ndir=FMN_DIR_E; break;
+      case FMN_INPUT_UP: ndir=FMN_DIR_N; break;
+      case FMN_INPUT_DOWN: ndir=FMN_DIR_S; break;
+    }
+  } else {
+    switch (bit) {
+      case FMN_INPUT_LEFT: if (fmn_global.wand_dir==FMN_DIR_W) ndir=0; break;
+      case FMN_INPUT_RIGHT: if (fmn_global.wand_dir==FMN_DIR_E) ndir=0; break;
+      case FMN_INPUT_UP: if (fmn_global.wand_dir==FMN_DIR_N) ndir=0; break;
+      case FMN_INPUT_DOWN: if (fmn_global.wand_dir==FMN_DIR_S) ndir=0; break;
+    }
+  }
+  if (ndir==fmn_global.wand_dir) return;
+  if (fmn_global.wand_dir=ndir) {
+    fmn_game_begin_earthquake(fmn_dir_reverse(ndir));
+  }
 }
 
 /* Wand.
@@ -701,7 +734,7 @@ void fmn_hero_item_begin() {
   
   // If some item is already active (selected or otherwise), reject.
   // This is super important: We might have the Broom 'active' after the key released, because she's in a broom-only position.
-  if (fmn_global.active_item) {
+  if (fmn_global.active_item<FMN_ITEM_COUNT) {
     if (fmn_global.active_item==fmn_global.selected_item) switch (fmn_global.active_item) {
       case FMN_ITEM_BROOM: fmn_hero_broom_restart(); return;
     }
@@ -712,6 +745,7 @@ void fmn_hero_item_begin() {
   fmn_global.active_item=fmn_global.selected_item;
   fmn_hero.item_active_time=0;
   switch (fmn_global.active_item) {
+    case FMN_ITEM_SNOWGLOBE: fmn_hero_snowglobe_begin(); break;
     case FMN_ITEM_BELL: fmn_hero_bell_begin(); break;
     case FMN_ITEM_SEED: fmn_hero_seed_begin(); break;
     case FMN_ITEM_COIN: fmn_hero_coin_begin(); break;
@@ -730,12 +764,13 @@ void fmn_hero_item_begin() {
 
 void fmn_hero_item_end() {
   switch (fmn_global.active_item) {
+    case FMN_ITEM_SNOWGLOBE: fmn_hero_snowglobe_end(); break;
     case FMN_ITEM_SHOVEL: fmn_hero_shovel_end(); return;
     case FMN_ITEM_BROOM: fmn_hero_broom_end(); return;
     case FMN_ITEM_WAND: fmn_hero_wand_end(); break;
     case FMN_ITEM_VIOLIN: fmn_hero_violin_end(); break;
   }
-  fmn_global.active_item=0;
+  fmn_global.active_item=0xff;
   // The active item might have suppressed facedir changes. Bump it:
   if (!fmn_hero_facedir_agrees()) {
     fmn_hero_reset_facedir();
@@ -770,6 +805,7 @@ void fmn_hero_item_update(float elapsed) {
 
 uint8_t fmn_hero_item_motion(uint8_t bit,uint8_t value) {
   switch (fmn_global.active_item) {
+    case FMN_ITEM_SNOWGLOBE: fmn_hero_snowglobe_motion(bit,value); return 1;
     case FMN_ITEM_WAND: fmn_hero_wand_motion(bit,value); return 1;
     case FMN_ITEM_VIOLIN: fmn_hero_violin_motion(bit,value); return 1;
   }

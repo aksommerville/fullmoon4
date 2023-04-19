@@ -9,6 +9,7 @@
 int fmn_game_init() {
   fmn_clear_free_birds();
   fmn_hero_kill_velocity();
+  fmn_global.active_item=0xff;
   
   if (fmn_game_load_map(1)<1) return -1;
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
@@ -202,7 +203,7 @@ uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
     fmn_global.itemv[itemid]=1;
     fmn_global.selected_item=itemid;
     fmn_sound_effect(FMN_SFX_ITEM_MAJOR);
-    fmn_begin_menu(FMN_MENU_TREASURE,itemid,cb_modal_dummy);
+    fmn_begin_menu(FMN_MENU_TREASURE,itemid|0x40000000,cb_modal_dummy);
     fmn_hero_kill_velocity();
     
   // Subsequent pick-ups, do a more passive celebration.
@@ -279,6 +280,18 @@ static void fmn_wind_blow(uint8_t dir,float others_time,float hero_time) {
   ctx.dy*=FMN_WIND_RATE;
   fmn_sprites_for_each(fmn_wind_blow_1,&ctx);
 }
+ 
+static void fmn_earthquake_quake(uint8_t dir,float others_time,float hero_time) {
+  // I think earthquakes are the same as wind. We can rethink that later.
+  struct fmn_wind_context ctx={
+    .others_time=others_time,
+    .hero_time=hero_time,
+  };
+  fmn_vector_from_dir(&ctx.dx,&ctx.dy,dir);
+  ctx.dx*=1.0f;
+  ctx.dy*=1.0f;
+  fmn_sprites_for_each(fmn_wind_blow_1,&ctx);
+}
 
 static void fmn_wind_check_blowback(float others_time,float hero_time) {
   // Blowback begins when you cross the midpoint horizontally or vertically, if there is no neighbor in that direction.
@@ -350,7 +363,24 @@ static float fmn_weather_update(float elapsed) {
     fmn_global.blowbackx=0.0f;
     fmn_global.blowbacky=0.0f;
   }
+  if (fmn_global.earthquake_time>0.0f) {
+    if ((fmn_global.earthquake_time-=adjusted)<=0.0f) {
+      fmn_global.earthquake_time=0.0f;
+      fmn_global.earthquake_dir=0;
+    } else {
+      fmn_earthquake_quake(fmn_global.earthquake_dir,adjusted,elapsed);
+    }
+  }
   return adjusted;
+}
+
+/* Begin earthquake.
+ */
+ 
+void fmn_game_begin_earthquake(uint8_t dir) {
+  fmn_global.earthquake_time=1.0f;
+  fmn_global.earthquake_dir=dir;
+  fmn_sound_effect(FMN_SFX_EARTHQUAKE);
 }
 
 /* Callback from Game Over menu.

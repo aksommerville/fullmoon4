@@ -24,8 +24,8 @@ export class RenderHero {
      * (xform) null for default (flip horizontally if facing E or N).
      */
     this.itemCarryLayout = [
-      /* NONE     */ null,
-      /* CORN     */ [0x34, -5, -3, null, null, () => (this.globals.g_itemqv[this.constants.ITEM_CORN] ? this.itemCarryLayout[this.constants.ITEM_CORN] : null)],
+      /* SNOWGLOBE*/ [0x74, -5, -3, null, null, null],
+      /* HAT      */ null,
       /* PITCHER  */ [0x55, -5, -3, null, () => this._animatePitcher(), null],
       /* SEED     */ [0x34, -5, -3, null, null, () => (this.globals.g_itemqv[this.constants.ITEM_SEED] ? this.itemCarryLayout[this.constants.ITEM_SEED] : null)],
       /* COIN     */ [0x44, -5, -3, null, null, () => (this.globals.g_itemqv[this.constants.ITEM_COIN] ? this.itemCarryLayout[this.constants.ITEM_COIN] : null)],
@@ -97,6 +97,7 @@ export class RenderHero {
     switch (this.globals.g_active_item[0]) {
       case this.constants.ITEM_BROOM: return this._renderBroom(ctx, midx, midy, facedir, srcImage);
       case this.constants.ITEM_WAND: return this._renderWand(ctx, midx, midy, facedir, srcImage);
+      case this.constants.ITEM_SNOWGLOBE: return this._renderSnowglobe(ctx, midx, midy,facedir, srcImage);
       case this.constants.ITEM_VIOLIN: return this._renderViolin(ctx, midx, midy, facedir, srcImage);
     }
     
@@ -198,6 +199,7 @@ export class RenderHero {
   
   _renderHat(ctx, midx, midy, facedir, srcImage, col, xform) {
     const tilesize = this.constants.TILESIZE;
+    //TODO membership hat
     this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
   }
   
@@ -233,6 +235,20 @@ export class RenderHero {
       case this.constants.DIR_E: armsTileId = 0x39; armsDx = 3; armsDy = -3; break;
       case this.constants.DIR_S: armsTileId = 0x49; armsDx = 0; armsDy = -2; break;
       case this.constants.DIR_N: armsTileId = 0x59; armsDx = 0; armsDy = -8; break;
+    }
+    this.renderBasics.tile(ctx, midx * tilesize + armsDx, midy * tilesize + armsDy, srcImage, armsTileId, 0);
+  }
+  
+  _renderSnowglobe(ctx, midx, midy, facedir, srcImage) {
+    const tilesize = this.constants.TILESIZE;
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 3, srcImage, 0x09, 0);
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00, 0);
+    let armsTileId = 0x4c, armsDx = 0, armsDy = -3;
+    switch (this.globals.g_wand_dir[0]) {
+      case this.constants.DIR_W: armsTileId = 0x5c; armsDx = -3; armsDy = -3; break;
+      case this.constants.DIR_E: armsTileId = 0x6c; armsDx = 3; armsDy = -3; break;
+      case this.constants.DIR_S: armsTileId = 0x7c; armsDx = 0; armsDy = -2; break;
+      case this.constants.DIR_N: armsTileId = 0x8c; armsDx = 0; armsDy = -8; break;
     }
     this.renderBasics.tile(ctx, midx * tilesize + armsDx, midy * tilesize + armsDy, srcImage, armsTileId, 0);
   }

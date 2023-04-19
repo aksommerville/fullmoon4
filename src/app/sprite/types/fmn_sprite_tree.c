@@ -7,6 +7,8 @@
 #define activated sprite->bv[2]
 #define stage sprite->bv[3]
 #define frame sprite->bv[4]
+#define triggerx sprite->bv[5]
+#define triggery sprite->bv[6]
 #define clock sprite->fv[0]
 #define gsbit sprite->argv[0]
 
@@ -21,6 +23,8 @@
  
 static void _tree_trigger(void *userdata,uint16_t eventid,void *payload) {
   struct fmn_sprite *sprite=userdata;
+  triggerx=sprite->x;
+  triggery=sprite->y;
   if (fmn_global.selected_item!=FMN_ITEM_HAT) return;
   if (activated) return;
   activated=1;
@@ -67,7 +71,10 @@ static void _tree_update(struct fmn_sprite *sprite,float elapsed) {
   if (fmn_global.selected_item!=pvitem) {
     pvitem=fmn_global.selected_item;
     if (pvitem==FMN_ITEM_HAT) {
-      _tree_trigger(sprite,0,0);
+      uint8_t ux=sprite->x,uy=sprite->y;
+      if ((ux==triggerx)&&(uy==triggery)) {
+        _tree_trigger(sprite,0,0);
+      }
     }
   }
   if (!activated) {

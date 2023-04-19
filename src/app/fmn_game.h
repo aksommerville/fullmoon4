@@ -40,6 +40,8 @@ void fmn_add_free_birds(uint8_t c);
 void fmn_clear_free_birds();
 void fmn_update_free_birds();
 
+void fmn_game_begin_earthquake(uint8_t dir);
+
 /* Songs and spells use the same namespace.
  * Both 'eval' return zero if invalid.
  * Caller must trim leading and trailing space.

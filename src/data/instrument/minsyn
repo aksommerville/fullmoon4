@@ -778,3 +778,10 @@ sound UNBURY_DOOR # Same as dig. Do we want some fanfare?
   
   mlt 0.400
 end
+
+sound EARTHQUAKE
+  len 1.000
+  fm ( 80 * 30 ) 0.5 ( 3000 ) sine
+  env ( 0 40 0xffff 40 0x4000 50 0xffff 50 0x4000 50 0xffff 50 0x4000 50 0xffff * 0 )
+  mlt 0.400
+end

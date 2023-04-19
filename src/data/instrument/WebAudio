@@ -876,3 +876,10 @@ sound UNBURY_DOOR # Same as dig. Do we want some fanfare?
   mix 0 1
   norm 0 0.200
 end
+
+sound EARTHQUAKE
+  len 0.250
+  fm 0 ( 50 * 20 ) 0.5 ( 3 ) sine
+  env 0 ( 0 100 0xffffff * 0 )
+  norm 0 0.250
+end

@@ -119,6 +119,18 @@ static void fmn_gl2_game_render_HERO_BROOM(struct bigpc_render_driver *driver,st
   fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-0.8750f+dy,0x02,xform);
 }
 
+static void fmn_gl2_game_render_HERO_SNOWGLOBE(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite) {
+  fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-0.1875f,0x09,0);
+  fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-0.75f,0x00,0);
+  switch (fmn_global.wand_dir) {
+    case FMN_DIR_W: fmn_gl2_game_add_mintile_vtx(driver,sprite->x-0.1875f,sprite->y-0.1875f,0x5c,0); break;
+    case FMN_DIR_E: fmn_gl2_game_add_mintile_vtx(driver,sprite->x+0.1875f,sprite->y-0.1875f,0x6c,0); break;
+    case FMN_DIR_S: fmn_gl2_game_add_mintile_vtx(driver,sprite->x        ,sprite->y-0.1250f,0x7c,0); break;
+    case FMN_DIR_N: fmn_gl2_game_add_mintile_vtx(driver,sprite->x        ,sprite->y-0.5000f,0x8c,0); break;
+    default: fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-0.1875f,0x4c,0); break;
+  }
+}
+
 static void fmn_gl2_game_render_HERO_WAND(struct bigpc_render_driver *driver,struct fmn_sprite_header *sprite) {
   fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-0.1875f,0x09,0);
   fmn_gl2_game_add_mintile_vtx(driver,sprite->x,sprite->y-0.75f,0x00,0);
@@ -197,6 +209,7 @@ static const struct fmn_gl2_hero_item_layout {
   int8_t dx,dy; // pixels, based on 16-pixel tiles
   uint8_t if_qualifier;
 } fmn_gl2_hero_item_layoutv[FMN_ITEM_COUNT]={
+  [FMN_ITEM_SNOWGLOBE]={0x74,-5,-3,0},
   [FMN_ITEM_PITCHER  ]={0x55,-5,-3,0},
   [FMN_ITEM_SEED     ]={0x34,-5,-3,1},
   [FMN_ITEM_COIN     ]={0x44,-5,-3,1},
@@ -337,6 +350,7 @@ void fmn_gl2_game_render_HERO(struct bigpc_render_driver *driver,struct fmn_spri
     return;
   }
   switch (fmn_global.active_item) {
+    case FMN_ITEM_SNOWGLOBE: fmn_gl2_game_render_HERO_SNOWGLOBE(driver,sprite); return;
     case FMN_ITEM_BROOM: fmn_gl2_game_render_HERO_BROOM(driver,sprite); return;
     case FMN_ITEM_WAND: fmn_gl2_game_render_HERO_WAND(driver,sprite); return;
     case FMN_ITEM_VIOLIN: fmn_gl2_game_render_HERO_VIOLIN(driver,sprite); return;

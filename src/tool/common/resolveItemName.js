@@ -5,7 +5,7 @@ const linewise = require("./linewise.js");
  */
  
 const ITEM_NAMES = [
-  "NONE",
+  "SNOWGLOBE",
   "HAT",
   "PITCHER",
   "SEED",

@@ -85,7 +85,7 @@
 #define FMN_PITCHER_CONTENT_HONEY 3
 #define FMN_PITCHER_CONTENT_SAP   4
 
-#define FMN_ITEM_USE_THIS_FOR_SOMETHING 0
+#define FMN_ITEM_SNOWGLOBE       0
 #define FMN_ITEM_HAT             1
 #define FMN_ITEM_PITCHER         2
 #define FMN_ITEM_SEED            3
@@ -170,6 +170,7 @@
 #define FMN_SFX_KILL_WEREWOLF 64
 #define FMN_SFX_UNBURY_TREASURE 65
 #define FMN_SFX_UNBURY_DOOR 66
+#define FMN_SFX_EARTHQUAKE 67
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */
@@ -377,6 +378,9 @@ extern struct fmn_global {
   float blowbacky; // (-1,-1)..(0,0)..(1,1)
   
   uint16_t damage_count;
+  uint8_t pad6;
+  uint8_t earthquake_dir;
+  float earthquake_time;
   
 } fmn_global;
 

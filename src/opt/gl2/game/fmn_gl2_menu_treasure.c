@@ -48,7 +48,7 @@ static void fmn_gl2_treasure_charms(struct bigpc_render_driver *driver,struct bi
  
 void fmn_gl2_render_menu_treasure(struct bigpc_render_driver *driver,struct bigpc_menu *menu) {
   if (menu->optionc<1) return;
-  uint8_t itemid=menu->optionv[0].stringid;
+  uint8_t itemid=menu->optionv[0].stringid&0x0f;
   
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
   fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,0x000000ff);

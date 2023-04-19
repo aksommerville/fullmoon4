@@ -107,6 +107,7 @@ void fmn_hero_motion_input(uint8_t state) {
  
 static uint8_t fmn_hero_should_suppress_motion() {
   switch (fmn_global.active_item) {
+    case FMN_ITEM_SNOWGLOBE: return 1;
     case FMN_ITEM_SHOVEL: return 1;
     case FMN_ITEM_WAND: return 1;
     case FMN_ITEM_PITCHER: return 1;

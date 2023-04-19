@@ -238,6 +238,7 @@ struct bigpc_render_driver_gl2 {
   // Output bounds.
   int pvw,pvh; // total output size, so we can detect changes.
   int dstx,dsty,dstw,dsth;
+  int fbquakex,fbquakey; // earthquake shaking is managed by the final output.
 };
 
 #define DRIVER ((struct bigpc_render_driver_gl2*)driver)

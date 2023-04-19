@@ -271,7 +271,7 @@ export class TreasureMenu {
     this.constants = constants;
     
     if (options.length !== 1) throw new Error(`TreasureMenu requires 1 option, got ${options.length}`);
-    this.itemId = options[0][0];
+    this.itemId = options[0][0] & 0x0f;
     this.nativeCallback = options[0][1];
     
     this.SUSPENSE_TIME = 500;

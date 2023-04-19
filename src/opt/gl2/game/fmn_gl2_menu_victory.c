@@ -29,13 +29,13 @@ static int fmn_gl2_require_menu_victory(struct bigpc_render_driver *driver,struc
   int sec=ms/1000; ms%=1000;
   int min=sec/60; sec%=60;
   int hour=min/60; min%=60;
-  int itemc=0; int i=1; for (;i<FMN_ITEM_COUNT;i++) if (fmn_global.itemv[i]) itemc++;
+  int itemc=0; int i=0; for (;i<FMN_ITEM_COUNT;i++) if (fmn_global.itemv[i]) itemc++;
   int damagec=fmn_global.damage_count;
   
   char text[1024];
   int textc=snprintf(text,sizeof(text),
     "Time: %d:%02d:%02d.%03d\n"
-    "Items: %d/15\n"
+    "Items: %d/16\n"
     "Damage: %d\n"
     "\n"
     "Thanks for playing this\n"

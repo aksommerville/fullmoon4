@@ -81,8 +81,13 @@ static int _gl2_update(struct bigpc_image *fb,struct bigpc_render_driver *driver
   
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   fmn_gl2_texture_use_object(driver,&DRIVER->mainfb.texture);
+  
+  // Shift the output bounds per earthquake.
+  int adjx=(DRIVER->fbquakex*DRIVER->dstw)/DRIVER->mainfb.texture.w;
+  int adjy=(DRIVER->fbquakey*DRIVER->dsth)/DRIVER->mainfb.texture.h;
+  
   fmn_gl2_draw_decal(
-    DRIVER->dstx,DRIVER->dsty,DRIVER->dstw,DRIVER->dsth,
+    DRIVER->dstx+adjx,DRIVER->dsty+adjy,DRIVER->dstw,DRIVER->dsth,
     0,DRIVER->mainfb.texture.h,DRIVER->mainfb.texture.w,-DRIVER->mainfb.texture.h
   );
   

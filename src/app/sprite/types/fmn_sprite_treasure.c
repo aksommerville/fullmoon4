@@ -5,7 +5,7 @@
 #define itemid sprite->argv[0]
 
 static void _treasure_init(struct fmn_sprite *sprite) {
-  if ((itemid<1)||(itemid>=FMN_ITEM_COUNT)||(fmn_global.itemv[itemid]&&!fmn_item_default_quantities[itemid])) {
+  if ((itemid>=FMN_ITEM_COUNT)||(fmn_global.itemv[itemid]&&!fmn_item_default_quantities[itemid])) {
     fmn_sprite_kill(sprite);
     return;
   }

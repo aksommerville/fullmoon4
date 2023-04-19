@@ -86,7 +86,6 @@ void fmn_gl2_render_menu_pause(struct bigpc_render_driver *driver,struct bigpc_m
   // One tile for each item. Qualifiers are not drawn in this pass.
   int itemid=0;
   for (;itemid<FMN_ITEM_COUNT;itemid++) {
-    if (!itemid) continue; // skip the unused "zero" item whether it's set or not
     if (!(fmn_global.itemv[itemid])) continue;
     int16_t col=itemid%colc;
     int16_t row=itemid/colc;
