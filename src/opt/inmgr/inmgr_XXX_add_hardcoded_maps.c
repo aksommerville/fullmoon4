@@ -108,6 +108,7 @@ static const struct inmgr_map inmgr_map_atari_stick[]={
 };
 
 static const struct inmgr_map inmgr_map_atari_gamepad[]={
+		BTNA(0x0001008b,quit) // start
   BTN(0x00010130,USE)
   BTN(0x00010133,MENU)
   HORZ1(0x00030010)

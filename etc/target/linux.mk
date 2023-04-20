@@ -7,7 +7,7 @@ linux_OUTDIR:=out/linux
 
 # Truly optional units, ie you can change these (remember to update LDPOST et al).
 # You must enable at least one of (glx,drm), otherwise you're not going to see anything.
-linux_OPT_ENABLE:=evdev alsa glx drm gl2 soft stdsyn minsyn
+linux_OPT_ENABLE:=evdev alsa glx drm gl2 soft minsyn
 
 # The rest are mandatory, no alternatives:
 linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr midi fontosaur pcmprint
