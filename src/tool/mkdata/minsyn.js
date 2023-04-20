@@ -164,6 +164,16 @@ class MinsynSound {
     else { this.dst[this.dstc++] = v >> 8; this.dst[this.dstc++] = v; }
     params.splice(0, 1);
   }
+  _u16(params) {
+    if (params.length < 1) throw new Error(`Expected u16 before end of line`);
+    let v = +params[0];
+    if (isNaN(v)) throw new Error(`Expected u16, found ${JSON.stringify(params[0])}`);
+    v = ~~v;
+    if (v <= 0) { this.dst[this.dstc++] = 0x00; this.dst[this.dstc++] = 0x00; }
+    else if (v > 0xffff) { this.dst[this.dstc++] = 0xff; this.dst[this.dstc++] = 0xff; }
+    else { this.dst[this.dstc++] = v >> 8; this.dst[this.dstc++] = v; }
+    params.splice(0, 1);
+  }
   
   _env(params) {
     const closep = params.indexOf(")");
@@ -301,6 +311,15 @@ class MinsynSound {
   _cmd_bandpass(params) {
     //bandpass MID_HZ RANGE_HZ
     //0x07 BANDPASS (u16 mid,u16 range)
+    this.dst[this.dstc++] = 0x07;
+    this._u16(params);
+    this._u16(params);
+  }
+  
+  _cmd_new_channel(params) {
+    //new_channel
+    //0x08 NEW_CHANNEL ()
+    this.dst[this.dstc++] = 0x08;
   }
   
   receiveLine(words, path, lineno) {
@@ -329,6 +348,7 @@ class MinsynSound {
         case "mlt": return this._cmd_mlt(words.slice(1));
         case "delay": return this._cmd_delay(words.slice(1));
         case "bandpass": return this._cmd_bandpass(words.slice(1));
+        case "new_channel": return this._cmd_new_channel(words.slice(1));
       }
       
       throw new Error(`Unexpected sound command ${JSON.stringify(words[0])}`);

@@ -48,6 +48,8 @@ struct pcmprint {
   int opc,opa;
   struct pcmprint_wave **wavev;
   int wavec,wavea;
+  float *bouncev;
+  int bouncea;
 };
 
 int pcmprint_decode_program(struct pcmprint *pcmprint,const uint8_t *src,int srcc);

@@ -3,6 +3,7 @@
 
 #include "assist.h"
 #include "opt/datafile/fmn_datafile.h"
+#include "app/fmn_platform.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

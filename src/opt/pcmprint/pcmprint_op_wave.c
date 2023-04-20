@@ -23,7 +23,7 @@ static void _wave_del(struct pcmprint_op *op) {
  
 static void _wave_update(float *v,int c,struct pcmprint_op *op) {
   for (;c-->0;v++) {
-    uint32_t rate=(uint32_t)pcmprint_env_next(&OP->rateenv);
+    uint32_t rate=(uint32_t)(pcmprint_env_next(&OP->rateenv)*4294967295.0f);
     OP->osc.update(v,1,&OP->osc,rate,rate);
   }
 }

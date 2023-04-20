@@ -239,7 +239,7 @@ end
 ```
 
 Sound format is similar to WebAudio but simpler.
-There's no mixing, just one channel per sound.
+Mixing is now available, via a bounce mechanism "new_channel".
 And since we operate in a streaming fashion, post-normalization is not possible.
 
 ```
@@ -251,6 +251,7 @@ env ( ENV )
 mlt SCALAR
 delay PERIOD_SECONDS DRY WET STORE FEEDBACK
 bandpass MID_HZ RANGE_HZ
+new_channel : All subsequent commands belong to a new voice, same length as the first.
 ```
 
 `len` must be first, and must be followed by one of `fm`, `wave`, `noise`, which overwrite the signal.

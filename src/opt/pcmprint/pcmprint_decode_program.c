@@ -7,6 +7,7 @@ extern const struct pcmprint_op_type pcmprint_op_type_env;
 extern const struct pcmprint_op_type pcmprint_op_type_mlt;
 extern const struct pcmprint_op_type pcmprint_op_type_delay;
 extern const struct pcmprint_op_type pcmprint_op_type_bandpass;
+extern const struct pcmprint_op_type pcmprint_op_type_new_channel;
 
 static const struct pcmprint_op_type *pcmprint_op_typev[]={
   &pcmprint_op_type_fm,
@@ -16,6 +17,7 @@ static const struct pcmprint_op_type *pcmprint_op_typev[]={
   &pcmprint_op_type_mlt,
   &pcmprint_op_type_delay,
   &pcmprint_op_type_bandpass,
+  &pcmprint_op_type_new_channel,
 };
 
 /* Decode one command, return consumed length.
@@ -64,11 +66,26 @@ int pcmprint_decode_program(struct pcmprint *pcmprint,const uint8_t *src,int src
   if (pcmprint->duration<1) pcmprint->duration=1;
   int srcp=1;
   
+  // Read commands.
   while (srcp<srcc) {
     int err=pcmprint_decode_1(pcmprint,src+srcp,srcc-srcp);
     if (err<0) return err;
     if (!err) break;
     srcp+=err;
+  }
+  
+  // If there's a bounce command, pre-allocate (bouncev). Its existence tells us to use it.
+  struct pcmprint_op **op=pcmprint->opv;
+  int i=pcmprint->opc;
+  for (;i-->0;op++) {
+    if ((*op)->type==&pcmprint_op_type_new_channel) {
+      pcmprint->bouncea=1024;
+      if (!(pcmprint->bouncev=malloc(sizeof(float)*pcmprint->bouncea))) {
+        pcmprint->bouncea=0;
+        return -1;
+      }
+      break;
+    }
   }
   
   return 0;

@@ -49,6 +49,12 @@ static void assist_minsyn_context_cleanup(struct assist_minsyn_context *ctx) {
 
 static int assist_minsyn_cb(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
   struct assist_minsyn_context *ctx=userdata;
+  
+  // Restrict to one ID if desired.
+  if (0) {
+    if (id!=FMN_SFX_PLANT) return 0;
+  }
+  
   if (ctx->resc>=ctx->resa) {
     int na=ctx->resa+32;
     if (na>INT_MAX/sizeof(struct assist_minsyn_res)) return -1;
@@ -84,6 +90,18 @@ static void assert_minsyn_measure_levels(double *dst,const int16_t *v,int c) {
     dst[1]+=f*f;
   }
   dst[1]=sqrt(dst[1]/c);
+}
+
+static int assist_write_pcm_expanding_stereo(const char *path,const int16_t *mono,int framec) {
+  int16_t *stereo=malloc(framec<<2);
+  if (!stereo) return -1;
+  const int16_t *src=mono;
+  int16_t *dst=stereo;
+  int i=framec;
+  for (;i-->0;src++,dst+=2) dst[0]=dst[1]=src[0];
+  int err=fmn_file_write(path,stereo,framec<<2);
+  free(stereo);
+  return err;
 }
  
 static int assist_measure_minsyn_sound_levels_and_performance(
@@ -188,8 +206,15 @@ static int assist_measure_minsyn_sound_levels_and_performance(
         memcpy(raw+rawc,res->pcm,res->pcmc<<1);
         rawc+=res->pcmc;
       }
-      if (fmn_file_write(ctx.raw_pcm_out_path,raw,rawc<<1)>=0) {
-        fprintf(stderr,"%s: Saved PCM for manual review. Hint:\n  aplay -traw -fS16_LE -r%d %s\n",ctx.raw_pcm_out_path,ctx.rate,ctx.raw_pcm_out_path);
+      // A lil extra cudgel for brain-dead systems like mine that can't play 44100 mono or even 22050 stereo.
+      if (1) {
+        if (assist_write_pcm_expanding_stereo(ctx.raw_pcm_out_path,raw,rawc)>=0) {
+          fprintf(stderr,"%s: Saved PCM for manual review. Hint:\n  aplay -traw -fS16_LE -r%d -c2 %s\n",ctx.raw_pcm_out_path,ctx.rate,ctx.raw_pcm_out_path);
+        }
+      } else {
+        if (fmn_file_write(ctx.raw_pcm_out_path,raw,rawc<<1)>=0) {
+          fprintf(stderr,"%s: Saved PCM for manual review. Hint:\n  aplay -traw -fS16_LE -r%d -c1 %s\n",ctx.raw_pcm_out_path,ctx.rate,ctx.raw_pcm_out_path);
+        }
       }
       free(raw);
     }

@@ -15,6 +15,7 @@ void pcmprint_del(struct pcmprint *pcmprint) {
     while (pcmprint->wavec-->0) free(pcmprint->wavev[pcmprint->wavec]);
     free(pcmprint->wavev);
   }
+  if (pcmprint->bouncev) free(pcmprint->bouncev);
   
   free(pcmprint);
 }
@@ -69,6 +70,23 @@ static void pcmprint_generate(float *v,int c,struct pcmprint *pcmprint) {
 
 int pcmprint_updatef(float *v,int c,struct pcmprint *pcmprint) {
   if (!v||(c<1)||!pcmprint) return -1;
+  
+  // Grow bouncev and zero if needed.
+  if (pcmprint->bouncev) {
+    if (c>pcmprint->bouncea) {
+      int na=c+100;
+      if (na>INT_MAX/sizeof(float)) return -1;
+      void *nv=realloc(pcmprint->bouncev,sizeof(float)*na);
+      if (!nv) return -1;
+      pcmprint->bouncev=nv;
+      pcmprint->bouncea=na;
+    }
+    memset(pcmprint->bouncev,0,sizeof(float)*c);
+  }
+  int c0=c;
+  float *v0=v;
+  
+  // Run ops.
   while (c>0) {
     int updc=pcmprint->duration-pcmprint->finishc;
     if (updc<=0) break;
@@ -79,6 +97,15 @@ int pcmprint_updatef(float *v,int c,struct pcmprint *pcmprint) {
     pcmprint->finishc+=updc;
   }
   if (c>0) memset(v,0,sizeof(float)*c);
+  
+  // If we're bouncing, mix bounce into the scratch.
+  if (pcmprint->bouncev) {
+    float *dst=v0;
+    const float *src=pcmprint->bouncev;
+    int i=c0;
+    for (;i-->0;dst++,src++) (*dst)+=(*src);
+  }
+  
   return (pcmprint->finishc>=pcmprint->duration)?0:1;
 }
 
