@@ -14,23 +14,15 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
-- [x] Lively intro splash.
-- [x] Idle restart.
-- [ ] Correct song and sound effect levels. Automated analysis?
-- [x] Is pcmprint bandpass broken? ...not anymore
-- [x] Make up a new item to take Corn's place, and one for the zero slot. Fill all 16 slots. (mind that item zero comes into play then)
-- - [x] Membership Hat: Certain monsters won't attack while you're wearing it, but it's an item so you can't use anything else.
-- - [x] One more...
-- [x] Replace village music, now that we have a hello splash. I'm thinking All the Colors of Water.
+- [x] Correct song and sound effect levels. Automated analysis?
 - [ ] Pi (analogue video only?) framebuffer shows up a few pixels right of the edge, and the console shows thru just a bit.
 - - fmn_bcm.c:81: Changed 100 to 80. Try again.
 - [ ] Pi: Can't exit without SSH. Ensure local keyboard can quit.
-- [x] Don't idle-restart from the victory menu.
-- [x] Missing sounds:
-- - [x] Push block
-- - [x] Fire nozzle on
-- - [x] Raccoon toss
-- - [x] Seamonster spit
+- [ ] Graphics touch-up.
+- - [ ] Wolf's room
+- - [ ] Village interiors
+- - [ ] Village exterior
+- - [ ] Forest, use those nice big trees
 
 ### May
 
