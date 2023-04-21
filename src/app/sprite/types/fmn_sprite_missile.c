@@ -108,6 +108,8 @@ static void missile_reflect_umbrella(struct fmn_sprite *sprite,int8_t adjx,int8_
   } else {
     return; // simple adjustment only; we're done
   }
+  xrrange*=0.5f; // reduce ranges a bit to narrow the output cone.
+  yrrange*=0.5f;
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   heroy-=0.2f; // cheat her up a little; her center is near her feet

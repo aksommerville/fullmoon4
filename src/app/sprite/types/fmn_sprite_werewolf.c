@@ -49,6 +49,10 @@
 #define WEREWOLF_POUNCE_RANGE_DOWN 1.0f
 #define WEREWOLF_POUNCE_RANGE_HORZ 1.0f
 
+// When picking a move, if you are inside the Cone of Hadouken, and between POUNCE_MAX and MANDATORY_X (4..6), no walking, always attack.
+// This is an effort to create a deterministic path for speed runners.
+#define WEREWOLF_MANDATORY_ATTACK_DISTANCE_X 6.0f
+
 #define WEREWOLF_SHOCK_TIME 6.0f
 
 #define WEREWOLF_HBW_FOURS 0.50f
@@ -212,7 +216,7 @@ static uint8_t werewolf_pounce_if_reasonable(struct fmn_sprite *sprite) {
 }
 
 /* Select a destination and enter WALK stage.
- * Nonzero if we do. Zero if it judge it too short, and retain current stage.
+ * Nonzero if we do. Zero if we judge it too short, and retain current stage.
  */
  
 static uint8_t werewolf_begin_WALK(struct fmn_sprite *sprite) {
@@ -366,6 +370,18 @@ static void werewolf_die(struct fmn_sprite *sprite) {
   fmn_global.terminate_time=5.0f;
 }
 
+/* Ready to attack or walk. Check the mandatory attack distance.
+ */
+ 
+static int werewolf_within_mandatory_attack_distance(struct fmn_sprite *sprite) {
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  float dx=sprite->x-herox;
+  if (dx<0.0f) dx=-dx;
+  if (dx>=WEREWOLF_MANDATORY_ATTACK_DISTANCE_X) return 0;
+  return 1;
+}
+
 /* Update, IDLE.
  */
  
@@ -406,13 +422,18 @@ static void werewolf_update_IDLE(struct fmn_sprite *sprite,float elapsed) {
   // Wait a tasteful interval, then walk, hadouken, or floorfire, at random.
   if (stage_clock<WEREWOLF_IDLE_TIME_MAX) return;
   
-  #define oddssum (WEREWOLF_ODDS_WALK+WEREWOLF_ODDS_ATTACK)
-  int16_t choice=rand()%oddssum;
-  #undef oddssum
-  if (choice<WEREWOLF_ODDS_WALK) {
-    werewolf_begin_WALK_random(sprite);
-    return;
+  // If you're standing close, but not pounceably-close, always attack.
+  // If she chickened out and left a safe distance, we may attack or walk.
+  if (!werewolf_within_mandatory_attack_distance(sprite)) {
+    #define oddssum (WEREWOLF_ODDS_WALK+WEREWOLF_ODDS_ATTACK)
+    int16_t choice=rand()%oddssum;
+    #undef oddssum
+    if (choice<WEREWOLF_ODDS_WALK) {
+      werewolf_begin_WALK_random(sprite);
+      return;
+    }
   }
+  
   // Attack: Alternate between hadouken and floorfire.
   switch (next_attack) {
     case WEREWOLF_STAGE_HADOUKEN_CHARGE: {

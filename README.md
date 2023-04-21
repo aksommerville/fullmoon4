@@ -23,6 +23,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Village interiors
 - - [ ] Village exterior
 - - [ ] Forest, use those nice big trees
+- [ ] Bring web back up to date with bigpc.
+- [x] I think the werewolf is still too hard.
+- - Can we cheat the hadouken bounce to make it more likely to hit him?
+- - Force his first play to be hadouken, not walk? This ruins a lot of speed runs.
 
 ### May
 
