@@ -52,7 +52,7 @@ static int assist_minsyn_cb(uint16_t type,uint16_t qualifier,uint32_t id,const v
   
   // Restrict to one ID if desired.
   if (0) {
-    if (id!=FMN_SFX_PLANT) return 0;
+    if (id!=FMN_SFX_SPIT) return 0;
   }
   
   if (ctx->resc>=ctx->resa) {

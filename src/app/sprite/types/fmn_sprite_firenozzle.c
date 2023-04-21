@@ -135,7 +135,10 @@ static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
     clock+=elapsed;
     while (clock>=period) clock-=period;
     if (clock>=period-on_time) {
-      status=FIRENOZZLE_STATUS_PUFF;
+      if (status!=FIRENOZZLE_STATUS_PUFF) {
+        fmn_sound_effect(FMN_SFX_FIRENOZZLE_ON);
+        status=FIRENOZZLE_STATUS_PUFF;
+      }
       firenozzle_check_hero(sprite);
     } else if (clock>=period-on_time-huff_time) status=FIRENOZZLE_STATUS_HUFF;
     else status=FIRENOZZLE_STATUS_IDLE;

@@ -53,9 +53,9 @@ static int _bandpass_decode(struct pcmprint_op *op,const uint8_t *src,int srcc) 
   float k=(1.0f-2.0f*r*cosfreq+r*r)/(2.0f-2.0f*cosfreq);
   
   OP->coefv[0]=1.0f-k;
-  OP->coefv[1]=2.0f*(k-4)*cosfreq;
+  OP->coefv[1]=2.0f*(k-r)*cosfreq;
   OP->coefv[2]=r*r-k;
-  OP->coefv[3]=2.0f*4*cosfreq;
+  OP->coefv[3]=2.0f*r*cosfreq;
   OP->coefv[4]=-r*r;
   
   op->update=_bandpass_update;

@@ -299,6 +299,7 @@ static void seamonster_begin_SPIT(struct fmn_sprite *sprite) {
   struct fmn_sprite *missile=fmn_sprite_spawn(x,sprite->y,0,cmdv,sizeof(cmdv),argv,sizeof(argv));
   if (missile) {
     missile->xform=sprite->xform;
+    fmn_sound_effect(FMN_SFX_SPIT);
   }
 }
 

@@ -70,6 +70,7 @@ static void pushblock_prepare_motion(struct fmn_sprite *sprite,uint8_t dir) {
  */
  
 static void pushblock_push(struct fmn_sprite *sprite) {
+  fmn_sound_effect(FMN_SFX_PUSH);
   pushblock_prepare_motion(sprite,pressdir);
   pressdir=0;
   presstime=0.0f;

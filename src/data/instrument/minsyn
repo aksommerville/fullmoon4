@@ -621,7 +621,7 @@ sound RAIN
   env ( 0 200 0xffff 200 0x2000 200 0 )
   delay 0.200 0.5 0.5 0.5 0.4
   env ( 0xffff 1500 0xffff * 0 )
-  mlt 0.250
+  mlt 1.2
 end
 
 sound WIND
@@ -629,14 +629,14 @@ sound WIND
   noise
   bandpass 1500 100
   env ( 0 300 0xffff 200 0xffff * 0 )
+  mlt 1.5
   
-  #TODO
-  #noise 1
-  #bandpass 1 1100 200
-  #env 1 ( 0 600 0x5000 * 0 )
-  #mix 0 1
+  new_channel
+  noise
+  bandpass 1100 200
+  env ( 0 600 0x5000 * 0 )
   
-  mlt 0.200
+  mlt 1.200
 end
 
 sound INVISIBILITY_BEGIN
@@ -656,7 +656,7 @@ sound INVISIBILITY_END
   delay 0.028 0.5 0.5 0.5 0.9
   bandpass 600 500
   env ( 0xffff 1600 0xffff 200 0 )
-  mlt 0.300
+  mlt 0.600
 end
 
 sound ENCHANT_ANIMAL # Same as PUSHBLOCK_ENCHANT, maybe eliminate?
@@ -830,4 +830,47 @@ sound EARTHQUAKE
   fm ( 80 * 30 ) 0.5 ( 3000 ) sine
   env ( 0 40 0xffff 40 0x4000 50 0xffff 50 0x4000 50 0xffff 50 0x4000 50 0xffff * 0 )
   mlt 0.400
+end
+
+sound PUSH
+  len 0.400
+  noise
+  bandpass 200 100
+  env ( 0 60 0xffff 170 0x4000 170 0 )
+  mlt 0.250
+  
+  new_channel
+  noise
+  bandpass 400 200
+  env ( 0 120 0 60 0xffff 40 0x4000 * 0 )
+  
+  mlt 0.300
+end
+
+sound FIRENOZZLE_ON
+  len 0.600
+  
+  noise
+  bandpass 400 50
+  env ( 0 100 0xffff * 0 )
+  mlt 1.5
+  
+  new_channel
+  fm ( 100 ) 0.6 ( 4000 ) sine
+  env ( 0 100 0 200 0xffff 50 0x2000 * 0 )
+  mlt 0.100
+end
+
+sound TOSS
+  len 0.500
+  fm ( 600 40 800 * 200 ) 1 ( 1000 40 0 * 2000 ) sine
+  env ( 0 40 0xffff 80 0x3000 * 0 )
+  mlt 0.300
+end
+
+sound SPIT
+  len 0.400
+  fm ( 300 50 600 * 300 ) 3 ( 1000 * 5000 ) sine
+  env ( 0 50 0xffff 70 0x4000 * 0 )
+  mlt 0.200
 end

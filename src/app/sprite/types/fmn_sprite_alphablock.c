@@ -73,6 +73,7 @@ static void fmn_alphablock_move(struct fmn_sprite *sprite,float ddx,float ddy) {
   dy=ddy;
   motion_clock=1.0f/AB_SPEED;
   memset(sprite->bv,0,AB_CONTACT_SIZE);
+  fmn_sound_effect(FMN_SFX_PUSH);
 }
  
 static void fmn_alphablock_check_contact_history(struct fmn_sprite *sprite) {

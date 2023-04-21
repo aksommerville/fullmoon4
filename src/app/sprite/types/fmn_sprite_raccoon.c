@@ -202,6 +202,7 @@ static void raccoon_update_BRANDISH(struct fmn_sprite *sprite,float elapsed) {
         stage=RACCOON_STAGE_CHOOSE_DESTINATION;
         return;
       }
+      fmn_sound_effect(FMN_SFX_TOSS);
       acorn->pv[0]=0; // unset acorn's owner; it figures out the rest.
     }
   } else {
