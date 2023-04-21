@@ -18,7 +18,7 @@ sprite 1 6 seamonster 0 0 0
 sprite 18 4 seamonster 0 0 0
 sprite 9 9 bonfire 0 0 0
 sprite 9 4 scarydoor 0 0 0
-door 9 6 11 3 6
-door 10 6 11 3 6
+door 9 6 11 5 6
+door 10 6 11 5 6
 neighborw 50
 neighborn 52

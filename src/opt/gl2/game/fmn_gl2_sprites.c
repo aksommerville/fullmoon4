@@ -409,6 +409,22 @@ void fmn_gl2_game_render_FLOORFIRE(struct bigpc_render_driver *driver,struct fmn
       if ((x<-1.0f)||(x>xlimit)) continue;
       float y=sprite->y+sinf(t)*radius;
       if ((y<-1.0f)||(y>ylimit)) continue;
+      
+      // Don't render fire on solid tiles or offscreen.
+      // The sky surrounding werewolf's tower is technically solid.
+      int8_t xi=(int8_t)x;
+      int8_t yi=(int8_t)y;
+      if ((xi<0)||(yi<0)||(xi>=FMN_COLC)||(yi>=FMN_ROWC)) {
+        continue;
+      }
+      switch (fmn_global.cellphysics[fmn_global.map[yi*FMN_COLC+xi]]) {
+        case FMN_CELLPHYSICS_SOLID:
+        case FMN_CELLPHYSICS_UNCHALKABLE:
+        case FMN_CELLPHYSICS_SAP:
+        case FMN_CELLPHYSICS_SAP_NOCHALK:
+          continue;
+      }
+      
       fmn_gl2_game_add_mintile_vtx(driver,x,y,tileid,0);
     }
   }

@@ -19,7 +19,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - fmn_bcm.c:81: Changed 100 to 80. Try again.
 - [ ] Pi: Can't exit without SSH. Ensure local keyboard can quit.
 - [ ] Graphics touch-up.
-- - [ ] Wolf's room
+- - [x] Wolf's room
 - - [ ] Village interiors
 - - [ ] Village exterior
 - - [ ] Forest, use those nice big trees
