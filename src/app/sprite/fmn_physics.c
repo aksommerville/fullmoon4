@@ -26,10 +26,83 @@ uint8_t fmn_physics_check_edges(float *cx,float *cy,const struct fmn_sprite *a) 
   return result;
 }
 
+/* Check sprite against grid, for large sprites.
+ * I can't think of a smart way to solve this, so I'll use brute force.
+ * Start just like the small-sprite case, determine which cells are touched.
+ * Then inset that rect one edge at a time by an increasing radius until it's empty or valid.
+ * TODO: This could be made more efficient by caching the first pass. Cellphysics and grid content won't change while we're working.
+ */
+ 
+static uint8_t fmn_grid_rect_vacant(uint8_t cola,uint8_t colz,uint8_t rowa,uint8_t rowz,uint8_t features) {
+  // Note that this definitely returns 1 if either axis is empty.
+  const uint8_t *rowp=fmn_global.map+rowa*FMN_COLC+cola;
+  uint8_t row=rowa;
+  for (;row<=rowz;row++,rowp+=FMN_COLC) {
+    const uint8_t *cell=rowp;
+    uint8_t col=cola;
+    for (;col<=colz;col++,cell++) {
+      switch (fmn_global.cellphysics[*cell]) {
+        case FMN_CELLPHYSICS_SOLID:
+        case FMN_CELLPHYSICS_UNCHALKABLE:
+        case FMN_CELLPHYSICS_SAP:
+        case FMN_CELLPHYSICS_SAP_NOCHALK:
+        case FMN_CELLPHYSICS_REVELABLE: {
+            if (features&FMN_PHYSICS_SOLID) return 0;
+          } break;
+        case FMN_CELLPHYSICS_HOLE:
+        case FMN_CELLPHYSICS_WATER: {
+            if (features&FMN_PHYSICS_HOLE) return 0;
+          } break;
+      }
+    }
+  }
+  return 1;
+}
+ 
+static uint8_t fmn_physics_check_grid_fatso(float *cx,float *cy,const struct fmn_sprite *sprite,uint8_t features) {
+  if (sprite->x+HB(e,sprite)<0.0f) return 0;
+  if (sprite->y+HB(s,sprite)<0.0f) return 0;
+  int8_t cola=sprite->x-HB(w,sprite);
+  int8_t colz=sprite->x+HB(e,sprite);
+  if (cola<0) cola=0;
+  if (colz>=FMN_COLC) colz=FMN_COLC-1;
+  if (cola>colz) return 0;
+  int8_t rowa=sprite->y-HB(n,sprite);
+  int8_t rowz=sprite->y+HB(s,sprite);
+  if (rowa<0) rowa=0;
+  if (rowz>=FMN_ROWC) rowz=FMN_ROWC-1;
+  if (rowa>rowz) return 0;
+  
+  if (fmn_grid_rect_vacant(cola,colz,rowa,rowz,features)) return 0;
+  if (!cx||!cy) return 1;
+  
+  *cx=*cy=0.0f;
+  int8_t radius=1;
+  for (;;radius++) {
+    if (fmn_grid_rect_vacant(cola+radius,colz,rowa,rowz,features)) { *cx=cola+radius-sprite->x+HB(w,sprite); return 1; }
+    if (fmn_grid_rect_vacant(cola,colz-radius,rowa,rowz,features)) { *cx=colz-radius+1.0f-sprite->x-HB(e,sprite); return 1; }
+    if (fmn_grid_rect_vacant(cola,colz,rowa+radius,rowz,features)) { *cy=rowa+radius-sprite->y+HB(n,sprite); return 1; }
+    if (fmn_grid_rect_vacant(cola,colz,rowa,rowz-radius,features)) { *cy=rowz-radius+1.0f-sprite->y-HB(s,sprite); return 1; }
+    if (fmn_grid_rect_vacant(cola+radius,colz,rowa+radius,rowz,features)) { *cx=cola+radius-sprite->x+HB(w,sprite); *cy=rowa+radius-sprite->y+HB(n,sprite); return 1; }
+    if (fmn_grid_rect_vacant(cola,colz-radius,rowa+radius,rowz,features)) { *cx=colz-radius+1.0f-sprite->x-HB(e,sprite); *cy=rowa+radius-sprite->y+HB(n,sprite); return 1; }
+    if (fmn_grid_rect_vacant(cola+radius,colz,rowa,rowz-radius,features)) { *cx=cola+radius-sprite->x+HB(w,sprite); *cy=rowz-radius+1.0f-sprite->y-HB(s,sprite); return 1; }
+    if (fmn_grid_rect_vacant(cola,colz-radius,rowa,rowz-radius,features)) { *cx=colz-radius+1.0f-sprite->x-HB(e,sprite); *cy=rowz-radius+1.0f-sprite->y-HB(s,sprite); return 1; }
+  }
+  
+  return 1;
+}
+
 /* Check grid.
  */
  
 uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,uint8_t features) {
+  
+  /* For the rare sprites larger than 1m on a side, we have to use a different, more expensive strategy.
+   * As I'm writing this, it only applies to the werewolf.
+   */
+  if ((a->radius>0.5f)||((a->radius<=0.0f)&&(
+    ((a->hbw+a->hbe>1.0f)||(a->hbn+a->hbs>1.0f))
+  ))) return fmn_physics_check_grid_fatso(cx,cy,a,features);
 
   // Important that we stop early and special, if the right or bottom edge is below zero.
   if (a->x+HB(e,a)<0.0f) return 0;
@@ -109,6 +182,9 @@ uint8_t fmn_physics_check_grid(float *cx,float *cy,const struct fmn_sprite *a,ui
    * Our "one axis of correction" policy makes that impossible, and we decide instead to launch the sprite clear of all considered cells.
    * So if we end up with a correction longer than one tile, and a vacant tile was discovered during iteration, clamp into it.
    * It is expected that sprites be no larger than one tile. If they go larger than that, this might get weird.
+   *
+   * ...confirmed. The werewolf is larger than a tile, and he gets all screwed up in the corners due to concave correction.
+   * I'm going to fix that on the werewolf's end, because a fix here would be complicated and far-reaching.
    */
   if ((*cx<=-1.0f)||(*cx>=1.0f)||(*cy<=-1.0f)||(*cy>=1.0f)) {
     if (vacantx>=0) {
