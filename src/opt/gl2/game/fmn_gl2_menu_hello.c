@@ -21,13 +21,13 @@ static void hello_stars_reset(struct bigpc_render_driver *driver,struct bigpc_me
   for (;i-->0;vtx++,star++) {
     vtx->x=rand()%DRIVER->mainfb.texture.w;
     vtx->y=rand()%DRIVER->mainfb.texture.h;
-    uint8_t luma=0x40+(rand()&0x7f);
+    uint8_t luma=0x40+(rand()&0x1f);
     vtx->r=luma+(rand()&0x1f)-0x10;
     vtx->g=luma+(rand()&0x1f)-0x10;
     vtx->b=luma+(rand()&0x1f)-0x10;
     vtx->a=0x00;
     star->alpha16=0x0000;
-    star->dalpha16=20+rand()%100;
+    star->dalpha16=20+(rand()&0x7f);
   }
 }
 
@@ -42,7 +42,12 @@ static void hello_stars_draw(struct bigpc_render_driver *driver,struct bigpc_men
     vtx->a=star->alpha16>>8;
   }
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
-  fmn_gl2_draw_raw(GL_POINTS,hello_star_vtxv,HELLO_STARC);
+  #if FMN_USE_bcm /* can't tell why, but GL_POINTS just doesn't work on my pi. what did i do wrong... */
+    for (i=HELLO_STARC>>1,vtx=hello_star_vtxv;i-->0;vtx+=2) { vtx[0].x=vtx[1].x+1; vtx[0].y=vtx[1].y; }
+    fmn_gl2_draw_raw(GL_LINES,hello_star_vtxv,HELLO_STARC);
+  #else
+    fmn_gl2_draw_raw(GL_POINTS,hello_star_vtxv,HELLO_STARC);
+  #endif
 }
 
 /* Animated title color.

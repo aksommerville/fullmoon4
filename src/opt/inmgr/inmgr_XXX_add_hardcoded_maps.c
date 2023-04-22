@@ -136,6 +136,16 @@ static const struct inmgr_map inmgr_map_pro2[]={
   VERT1(0x00030011)
 };
 
+static const struct inmgr_map inmgr_map_logikey[]={ // logitech keyboard i use with the pi. NB linux key codes, not USB-HID!
+  BTNA(0x00010001,quit) // esc
+  BTN(0x0001002c,USE) // z
+  BTN(0x0001002d,MENU) // x
+  BTN(0x00010067,UP) // arrows...
+  BTN(0x00010069,LEFT)
+  BTN(0x0001006a,RIGHT)
+  BTN(0x0001006c,DOWN)
+};
+
 #endif
 
 static int select_map_source(void *dstpp,const struct inmgr_device *device) {
@@ -149,6 +159,7 @@ static int select_map_source(void *dstpp,const struct inmgr_device *device) {
   BYID(0x20d6,0xca6d,black_on_black)
   BYID(0x045e,0x0289,xbox)
   BYID(0x2dc8,0x3010,pro2) // mind you need to hold B+Start while connecting
+  BYID(0x046d,0xc31c,logikey)
 
   #undef BYID
   return 0;

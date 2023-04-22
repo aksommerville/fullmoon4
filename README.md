@@ -17,7 +17,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Correct song and sound effect levels. Automated analysis?
 - [ ] Pi (analogue video only?) framebuffer shows up a few pixels right of the edge, and the console shows thru just a bit.
 - - fmn_bcm.c:81: Changed 100 to 80. Try again.
-- [ ] Pi: Can't exit without SSH. Ensure local keyboard can quit.
+- [x] Pi: Can't exit without SSH. Ensure local keyboard can quit.
 - [ ] Graphics touch-up.
 - - [x] Wolf's room
 - - [ ] Village interiors
