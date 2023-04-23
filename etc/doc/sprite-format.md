@@ -48,7 +48,7 @@ Defined fields:
 0x20 Image ID.
 0x21 Tile ID.
 0x22 Xform.
-0x23 Style. Default 1 (FMN_SPRITE_STYLE_TILE)
+0x23 Style. Default 2 (FMN_SPRITE_STYLE_TILE)
 0x24 Physics. Bitfields, see below.
 0x25 Inverse mass. 0=infinite, 1=heaviest, 255=lightest
 0x26 Layer.

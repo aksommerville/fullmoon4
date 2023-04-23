@@ -228,6 +228,10 @@ Envelope is: `atktlo atkvlo dectlo susvlo rlstlo .. atkthi atkvhi decthi susvhi 
 
 You can omit `..` and everything after. Beyond that, everything is required.
 Times are in milliseconds and levels in 0..255.
+Release time will encode in 8-millisecond units, so the limit is 4088, not 255.
+
+New: "mixwave" and "mixenv", same payloads as "wave" and "env", but defining an alternate wave and continuous mixing between them over time.
+Because the existing "env" has to start and end at zero, "mixenv" does too. Might need to change that.
 
 Example instrument:
 
@@ -263,7 +267,6 @@ SHAPE is one of ("sine", "square", "sawtooth", "triangle"), or a list of integer
 ## Minsyn Binary Format
 
 Instrument.
-I might add an envelope-controlled wave mixer, or maybe other functionality.
 The first byte has one bit, in order, for all the features requested.
 Decoder must stop at the first unknown set bit, but is allowed to proceed with whatever it has then.
 Everything is optional, you'll get a sensible default for anything missing.
@@ -273,7 +276,10 @@ u8 Features present:
      0x01 Harmonics
      0x02 Low envelope
      0x04 High envelope
-     0xf8 reserved
+     0x08 Mix harmonics
+     0x10 Low mix envelope
+     0x20 High mix envelope
+     0xc0 reserved
 If (Harmonics):
   u8 Count
   u8... Coefficients
@@ -285,6 +291,13 @@ If (Low envelope):
   u8 Release time, 8ms
 If (High envelope):
   5 Same as Low envelope
+If (Mix harmonics):
+  u8 Count
+  u8... Coefficients
+If (Low mix envelope):
+  5 Envelope
+If (High mix envelope):
+  5 Envelope
 ```
 
 Sound.
@@ -302,6 +315,7 @@ u1.7 Length
 0x05 MLT (u8.8)
 0x06 DELAY (u0.8 period,u0.8 dry,u0.8 wet,u0.8 store,u0.8 feedback)
 0x07 BANDPASS (u16 mid,u16 range)
+0x08 NEW_CHANNEL ()
 
 env: u16 level,u8 count,count*(u16 ms,u16 level)
 shape: u8 name: (200,201,202,203,204)=(sine,square,sawtooth,triangle,noise)

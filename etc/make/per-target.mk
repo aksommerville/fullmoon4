@@ -58,38 +58,13 @@ MKDATA_SOURCES:=$(filter src/tool/mkdata/% src/tool/common/%,$(SRCFILES))
 $1_DATA_IN:=$(filter-out src/data/chalk/%,$(filter src/data/%,$(SRCFILES)))
 $1_DATA_MID:=$$(patsubst src/data/%,$($1_MIDDIR)/data/%,$$($1_DATA_IN))
 
-$2:$$($1_DATA_MID) $$(MKDATA_SOURCES);$$(call PRECMD,$1) $(NODE) src/tool/mkdata/main.js --archive -o$$@ $$($1_DATA_MID)
+# With these rules, any change to mkdatac (think like, adding a new synth command), will force rebuild of every resource.
+# I think it's ok. Individual runs of mkdatac are so fast you can't even time them.
 
-# This approach is messy and decidedly imperfect.
-# But it does at least seem to achieve my immediate goal, editing the synth tools without having to rebuild all the maps and sprites and such.
-TOOL_COMMON:=$(filter src/tool/common/%,$(SRCFILES)) src/tool/mkdata/main.js src/tool/mkdata/copyVerbatim.js
-
-$($1_MIDDIR)/data/instrument/WebAudio \
-  :src/data/instrument/WebAudio $$(TOOL_COMMON) src/tool/mkdata/readInstruments.js \
-  ;echo "  $1 WebAudio" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
-
-$($1_MIDDIR)/data/instrument/minsyn \
-  :src/data/instrument/minsyn $$(TOOL_COMMON) src/tool/mkdata/minsyn.js \
-  ;echo "  $1 minsyn" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
-
-$($1_MIDDIR)/data/instrument/stdsyn \
-  :src/data/instrument/stdsyn $$(TOOL_COMMON) src/tool/mkdata/stdsyn.js \
-  ;echo "  $1 stdsyn" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
-  
-$($1_MIDDIR)/data/map/% \
-  :src/data/map/% $$(TOOL_COMMON) src/tool/mkdata/processMap.js \
-  ;echo "  $1 map/$$*" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
-  
-$($1_MIDDIR)/data/sprite/% \
-  :src/data/sprite/% $$(TOOL_COMMON) src/tool/mkdata/processSprite.js \
-  ;echo "  $1 sprite/$$*" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
-  
-$($1_MIDDIR)/data/tileprops/% \
-  :src/data/tileprops/% $$(TOOL_COMMON) src/tool/mkdata/processTileprops.js \
-  ;echo "  $1 tileprops/$$*" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
+$2:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $$($1_DATA_MID)
   
 $($1_MIDDIR)/data/% \
-  :src/data/% $$(TOOL_COMMON) \
-  ;echo "  $1 $$*" ; mkdir -p $$(@D) ; $(NODE) src/tool/mkdata/main.js --single -o$$@ $$<
+  :src/data/% $(tools_EXE_mkdatac) \
+  ;echo "  $1 $$*" ; mkdir -p $$(@D) ; $(tools_EXE_mkdatac) --single -o$$@ $$<
 
 endef

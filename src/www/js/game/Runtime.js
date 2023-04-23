@@ -218,8 +218,6 @@ export class Runtime {
   loadMap(mapId, cbSpawn) {
     this.dropWitheredPlants();
     const map = this.dataService.getMap(mapId);
-void fmn_log_set_time(uint32_t abstime_ms);
-void fmn_log_event(const char *key,const char *fmt,...);
     if (!map) return 0;
     cbSpawn = this.wasmLoader.instance.exports.__indirect_function_table.get(cbSpawn);
     this.map = map;

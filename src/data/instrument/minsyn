@@ -727,7 +727,7 @@ sound PAYMENT
   #env 1 ( 0 100 0 20 0xffff 20 0x4000 200 0 )
   #mix 0 1
   
-  bandpass 0 550 100
+  bandpass 550 100
   mlt 0.300
 end
 

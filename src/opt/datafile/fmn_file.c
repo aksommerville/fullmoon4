@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <dirent.h>
+#include <string.h>
 
 #ifndef O_BINARY
   #define O_BINARY 0
@@ -58,5 +60,54 @@ int fmn_file_write(const char *path,const void *src,int srcc) {
     srcp+=err;
   }
   close(fd);
+  return 0;
+}
+
+/* Read directory.
+ */
+ 
+int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,char type,void *userdata),void *userdata) {
+  if (!path||!path[0]||!cb) return -1;
+  char subpath[1024];
+  int pathc=0;
+  while (path[pathc]) pathc++;
+  if (pathc>=sizeof(subpath)) return -1;
+  memcpy(subpath,path,pathc);
+  if (path[pathc-1]!='/') subpath[pathc++]='/';
+  DIR *dir=opendir(path);
+  if (!dir) return -1;
+  struct dirent *de;
+  while (de=readdir(dir)) {
+    const char *base=de->d_name;
+    int basec=0;
+    while (base[basec]) basec++;
+    if (!basec) continue;
+    if ((basec==1)&&(base[0]=='.')) continue;
+    if ((basec==2)&&(base[0]=='.')&&(base[1]=='.')) continue;
+    
+    if (pathc>=sizeof(subpath)-basec) {
+      closedir(dir);
+      return -1;
+    }
+    memcpy(subpath+pathc,base,basec+1);
+    
+    char type=0;
+    switch (de->d_type) {
+      case DT_REG: type='f'; break;
+      case DT_DIR: type='d'; break;
+      case DT_LNK: type='l'; break;
+      case DT_CHR: type='c'; break;
+      case DT_BLK: type='b'; break;
+      case DT_SOCK: type='s'; break;
+      default: type='?'; break;
+    }
+    
+    int err=cb(subpath,base,type,userdata);
+    if (err) {
+      closedir(dir);
+      return err;
+    }
+  }
+  closedir(dir);
   return 0;
 }

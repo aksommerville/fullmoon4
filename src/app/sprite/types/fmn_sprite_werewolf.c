@@ -246,6 +246,7 @@ static uint8_t werewolf_check_missile(struct fmn_sprite *sprite) {
   stage=WEREWOLF_STAGE_SHOCK;
   stageclock=0.0f;
   WEREWOLF_SET_HITBOX(BACK)
+  return 1;
 }
 
 /* Select a destination and enter WALK stage.

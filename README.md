@@ -14,19 +14,26 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
-- [x] Correct song and sound effect levels. Automated analysis?
-- [ ] Pi (analogue video only?) framebuffer shows up a few pixels right of the edge, and the console shows thru just a bit.
-- - fmn_bcm.c:81: Changed 100 to 80. Try again.
-- [x] Pi: Can't exit without SSH. Ensure local keyboard can quit.
 - [ ] Graphics touch-up.
-- - [x] Wolf's room
 - - [ ] Village interiors
 - - [ ] Village exterior
-- - [x] Forest, use those nice big trees
 - [ ] Bring web back up to date with bigpc.
-- [x] I think the werewolf is still too hard.
-- - Can we cheat the hadouken bounce to make it more likely to hit him?
-- - Force his first play to be hadouken, not walk? This ruins a lot of speed runs.
+- - [x] Sound effects quiet and muffled after rewriting the build tools. (in particular, fm range env?)
+- - [ ] Hat incorrectly shows a quantity.
+- - [ ] Hat not rendered.
+- - [ ] Snowglobe action not rendered.
+- - [ ] Sound effects:
+- - - [ ] Earthquake
+- - - [ ] Push block
+- - - [ ] Firenozzle
+- - - [ ] Toss
+- - - [ ] Spit
+- - [ ] Missing instruments (at least: 0, 29, 30). What's that zero? Violin?
+- - [ ] Hello menu.
+- - [ ] Floorfire, we want to render only on vacant tiles now.
+- - [ ] What happened to the trickfloor gravity? Not seeing it in Web.
+- - [ ] Victory: 16 items, not 14.
+- [ ] Can we get some "oooweeeeooo" when the lambda block is floating?
 
 ### May
 

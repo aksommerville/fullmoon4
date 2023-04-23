@@ -246,8 +246,9 @@ export class Sound {
     const rate = this._readRateNormFromHz(src, srcp);
     const modrate = ((src[srcp + 2] << 8) | src[srcp + 3]) / 256; // u8.8
     srcp += 4;
-    const rangePoints = [];
+    let rangePoints = [];
     srcp += this._readEnv(rangePoints, src, srcp, false);
+    rangePoints = rangePoints.map(v => [v[0], v[1]/1000]);
     const name = src[srcp++];
     this._fm(bufferId, [[0, rate]], modrate, rangePoints, name);
     return srcp - srcp0;
@@ -258,8 +259,9 @@ export class Sound {
     const rate = this._readRateNormFromHz(src, srcp);
     const modrate = ((src[srcp + 2] << 8) | src[srcp + 3]) / 256; // u8.8
     srcp += 4;
-    const rangePoints = [];
+    let rangePoints = [];
     srcp += this._readEnv(rangePoints, src, srcp, false);
+    rangePoints = rangePoints.map(v => [v[0], v[1]/1000]);
     const coefc = src[srcp++];
     const voices = []; // [p,d,coef]
     for (let i=1; i<=coefc; i++, srcp+=2) {
@@ -278,8 +280,9 @@ export class Sound {
     for (const point of ratePoints) point[1] = point[1] / this.rate;
     const modrate = ((src[srcp] << 8) | src[srcp + 1]) / 256; // u8.8
     srcp += 2;
-    const rangePoints = [];
+    let rangePoints = [];
     srcp += this._readEnv(rangePoints, src, srcp, false);
+    rangePoints = rangePoints.map(v => [v[0], v[1]/1000]);
     const name = src[srcp++];
     this._fm(bufferId, ratePoints, modrate, rangePoints, name);
     return srcp - srcp0;
@@ -292,8 +295,9 @@ export class Sound {
     for (const point of ratePoints) point[1] = point[1] / this.rate;
     const modrate = ((src[srcp] << 8) | src[srcp + 1]) / 256; // u8.8
     srcp += 2;
-    const rangePoints = [];
+    let rangePoints = [];
     srcp += this._readEnv(rangePoints, src, srcp, false);
+    rangePoints = rangePoints.map(v => [v[0], v[1]/1000]);
     const coefc = src[srcp++];
     const voices = []; // [p,d,coef]
     for (let i=1; i<=coefc; i++, srcp+=2) {

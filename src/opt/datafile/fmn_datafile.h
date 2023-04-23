@@ -63,6 +63,7 @@ int fmn_datafile_get_any(void *dstpp,struct fmn_datafile *file,uint16_t type,uin
 
 int fmn_file_read(void *dstpp,const char *path);
 int fmn_file_write(const char *path,const void *src,int srcc);
+int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,char type,void *userdata),void *userdata);
 
 /* Knowledge of specific resource type formats.
  ************************************************************/
