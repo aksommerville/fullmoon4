@@ -10,7 +10,7 @@ export class InputManager {
     this.window = window;
     
     this.state = 0;
-    this.gamepads = []; // sparse, use provided index. {id, state, axes: [""|"x"|"y"...], buttons: [mask...], axesState: [number...], buttonsState: [boolean...] }
+    this.gamepads = []; // sparse, use provided index. {id, state, axes: [""|"x"|"y"|"hat"...], buttons: [mask...], axesState: [number...], buttonsState: [boolean...] }
     this.touches = []; // {id, usage, x, y, anchorX, anchorY} usage: null, "dpad", "use", "menu"
     this.touchDeadRadius = 0;
     this.dirtyTimeout = null;
@@ -172,6 +172,37 @@ export class InputManager {
   
   /* Gamepad.
    *****************************************************/
+
+  _updateGamepadHat(src, gamepad, axisIndex) {
+    const vraw = src.axes[axisIndex];
+    let x = 0, y = 0, state = -1;
+    if ((vraw < -1) || (vraw > 1)) {
+      // oob means at rest: 0,0
+    } else {
+      // In bounds. Scale to 0..7 integer.
+      state = Math.round(((vraw + 1) * 7) / 2);
+      switch (state) {
+        case 0:         y = -1; break;
+        case 1: x =  1; y = -1; break;
+        case 2: x =  1;         break;
+        case 3: x =  1; y =  1; break;
+        case 4:         y =  1; break;
+        case 5: x = -1; y =  1; break;
+        case 6: x = -1;         break;
+        case 7: x = -1; y = -1; break;
+      }
+    }
+    if (state === gamepad.axesState[axisIndex]) return;
+    gamepad.axesState[axisIndex] = state;
+    const DPAD = InputManager.INPUT_LEFT | InputManager.INPUT_RIGHT | InputManager.INPUT_UP | InputManager.INPUT_DOWN;
+    gamepad.state &= ~DPAD;
+    this.state &= ~DPAD;
+         if (x < 0) { gamepad.state |= InputManager.INPUT_LEFT;  this.state |= InputManager.INPUT_LEFT; }
+    else if (x > 0) { gamepad.state |= InputManager.INPUT_RIGHT; this.state |= InputManager.INPUT_RIGHT; }
+         if (y < 0) { gamepad.state |= InputManager.INPUT_UP;    this.state |= InputManager.INPUT_UP; }
+    else if (y > 0) { gamepad.state |= InputManager.INPUT_DOWN;  this.state |= InputManager.INPUT_DOWN; }
+    if (this.listeners.length) this.broadcast({ type: "axis", device: src, axisIndex, v: state });
+  }
    
   _updateGamepad() {
     const axisThreshold = 0.1; // TODO configurable per device (per axis?)
@@ -181,6 +212,10 @@ export class InputManager {
       if (!gamepad) continue;
       for (let i=gamepad.axes.length; i-->0; ) {
         if (!gamepad.axes[i] && !this.listeners.length) continue;
+        if (gamepad.axes[i] === "hat") {
+          this._updateGamepadHat(src, gamepad, i);
+          continue;
+        }
         const vraw = src.axes[i];
         const v = (vraw >= axisThreshold) ? 1 : (vraw <= -axisThreshold) ? -1 : 0;
         if (v === gamepad.axesState[i]) continue;
@@ -229,7 +264,14 @@ export class InputManager {
       };
       this.gamepads[e.gamepad.index] = gamepad;
     }
-    gamepad.axes = e.gamepad.axes.map(() => "");
+    console.log(`InputManager.onGamepadConnected`, e);
+    gamepad.axes = e.gamepad.axes.map(v => {
+      // MacOS unhelpfully reports dpads as hats regardless of the hardware's representation.
+      // And Chrome makes it even worse by mapping that 0..7 or whatever, to -1..1.
+      // These remapped hats should have a value outside -1..1 when at rest. Hopefully they are at rest at connection.
+      if ((v < -1) || (v > 1)) return "hat";
+      return "";
+    });
     gamepad.buttons = e.gamepad.buttons.map(() => "");
     gamepad.axesState = e.gamepad.axes.map(() => 0);
     gamepad.buttonsState = e.gamepad.buttons.map(() => false);

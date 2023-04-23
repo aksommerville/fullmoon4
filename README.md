@@ -14,7 +14,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### April
 
 - [x] macos: Bring up the violin, second beat, it quits spontaneously. The heck? ...underallocated vertex buffer in fmn_gl2_violin.c
-- [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
+- [x] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Graphics touch-up.
 - - [ ] Village interiors
 - - [ ] Village exterior
@@ -62,6 +62,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] inmgr: Real input mapping.
+- [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
 - [ ] UI for saved game management.
 - [x] Building resources is too slow. Rewrite all those Node tools in C.
 - [ ] Soft render.

@@ -151,6 +151,7 @@ export class InputConfigurationModal {
       this.dom.spawn(select, "OPTION", { value: 0 }, "(none)");
       this.dom.spawn(select, "OPTION", { value: "x" }, "Horz");
       this.dom.spawn(select, "OPTION", { value: "y" }, "Vert");
+      this.dom.spawn(select, "OPTION", { value: "hat" }, "Hat");
       select.value = map.axes[i];
     }
     this.dom.spawn(panel, "H2", "Buttons");
