@@ -6,9 +6,9 @@
 
 // App programmer! You probably need to tweak these defines to get the right endian.h.
 // SHA-1 uses it.
-#if BITS_USE_platform_macos
+#if FMN_USE_macos
   #include <machine/endian.h>
-#elif BIT_USE_platform_mswin
+#elif FMN_USE_mswin
   #define LITTLE_ENDIAN 1234
   #define BIG_ENDIAN 4321
   #define BYTE_ORDER LITTLE_ENDIAN

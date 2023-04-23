@@ -239,7 +239,7 @@ int bigpc_update() {
     return -1;
   }
   bigpc_video_driver_end(bigpc.video);
-  
+
   return bigpc.sigc?0:1;
 }
 

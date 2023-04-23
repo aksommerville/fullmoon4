@@ -13,6 +13,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
+- [x] macos: Bring up the violin, second beat, it quits spontaneously. The heck? ...underallocated vertex buffer in fmn_gl2_violin.c
 - [ ] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Graphics touch-up.
 - - [ ] Village interiors

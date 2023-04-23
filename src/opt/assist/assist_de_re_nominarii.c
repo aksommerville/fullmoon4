@@ -245,9 +245,9 @@ static int assist_gsbit_id_by_name(const char *name,int namec) {
  
 static int assist_namefile_value_eval(int *dst,const char *src,int srcc) {
   if (srcc<1) return -1;
+  *dst=0;
   if ((srcc>=3)&&(src[0]=='0')&&(src[1]=='x')) {
     int srcp=2;
-    *dst=0;
     for (;srcp<srcc;srcp++) {
       int digit;
            if ((src[srcp]>='0')&&(src[srcp]<='9')) digit=src[srcp]-'0';
@@ -383,6 +383,7 @@ static int assist_restype_read(struct assist_restype *restype) {
   int pathc=snprintf(path,sizeof(path),"src/data/%.*s",restype->tnamec,restype->tname);
   if ((pathc<1)||(pathc>=sizeof(path))) return -1;
   fmn_dir_read(path,assist_restype_read_cb,restype);
+  return 0;
 }
 
 /* Get a restype, and create if absent.

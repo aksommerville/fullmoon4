@@ -61,6 +61,7 @@ static int mkd_respath_eval_string(struct mkd_respath *respath) {
   ) {
     respath->resq=(respath->qname[0]<<8)|respath->qname[1];
   }
+  return 0;
 }
 
 /* Determine qualifier for instrument+sound set.

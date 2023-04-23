@@ -74,6 +74,9 @@ static const struct inmgr_map inmgr_map_pro2[]={
   VERTU8(19)
 };
 
+static const struct inmgr_map inmgr_map_logikey[]={
+};
+
 #elif FMN_USE_evdev
 
 static const struct inmgr_map inmgr_map_ps2_knockoff[]={

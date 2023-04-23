@@ -66,6 +66,7 @@ static void fmn_gl2_violin_begin(struct fmn_gl2_violin_context *ctx,struct bigpc
   
   uint8_t songp=fmn_global.violin_songp;
   x=leftx+(songp&3)*note_spacing;
+  ctx->notec=0;
   for (i=FMN_VIOLIN_SONG_LENGTH;i-->0;songp++,x+=note_spacing) {
     if (songp>=FMN_VIOLIN_SONG_LENGTH) songp=0;
     struct fmn_gl2_violin_note *note=ctx->notev+ctx->notec;
@@ -103,7 +104,7 @@ static void fmn_gl2_render_violin_background(struct bigpc_render_driver *driver,
   fmn_gl2_draw_raw_rect(ctx->x,ctx->y+ctx->h-1,ctx->w,1,0x000000ff);
   fmn_gl2_draw_raw_rect(ctx->x,ctx->y+ctx->h,ctx->w,1,0x00000080);
   
-  struct fmn_gl2_vertex_raw lvtxv[20]; // (bar limit + line limit) * 2
+  struct fmn_gl2_vertex_raw lvtxv[22]; // (bar limit + line limit) * 2
   struct fmn_gl2_vertex_raw *lvtx=lvtxv;
   int i;
   const struct fmn_gl2_violin_bar *bar=ctx->barv;
