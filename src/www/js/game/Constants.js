@@ -36,8 +36,8 @@ export class Constants {
     this.DOOR_SIZE = 8;
     this.SPRITE_STORAGE_SIZE = 64;
     
-    this.ITEM_NONE = 0;
-    this.ITEM_CORN = 1;
+    this.ITEM_SNOWGLOBE = 0;
+    this.ITEM_HAT = 1;
     this.ITEM_PITCHER = 2;
     this.ITEM_SEED = 3;
     this.ITEM_COIN = 4;

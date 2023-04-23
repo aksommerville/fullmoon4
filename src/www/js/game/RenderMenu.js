@@ -5,7 +5,7 @@
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
-import { Menu, PauseMenu, ChalkMenu, TreasureMenu, VictoryMenu, GameOverMenu } from "./Menu.js";
+import { Menu, PauseMenu, ChalkMenu, TreasureMenu, VictoryMenu, GameOverMenu, HelloMenu } from "./Menu.js";
 import { RenderBasics } from "./RenderBasics.js";
  
 export class RenderMenu {
@@ -19,7 +19,6 @@ export class RenderMenu {
     this.renderBasics = renderBasics;
     
     this.itemsWithQuantity = [
-      this.constants.ITEM_CORN,
       this.constants.ITEM_SEED,
       this.constants.ITEM_COIN,
       this.constants.ITEM_MATCH,
@@ -61,7 +60,9 @@ export class RenderMenu {
     else if (menu instanceof TreasureMenu) this._renderTreasureMenu(dst, ctx, menu);
     else if (menu instanceof VictoryMenu) this._renderVictoryMenu(dst, ctx, menu);
     else if (menu instanceof GameOverMenu) this._renderGameOverMenu(dst, ctx, menu);
+    else if (menu instanceof HelloMenu) return this._renderHelloMenu(dst, ctx, menu);
     else throw new Error(`Unexpected object provided to RenderMenu._renderMenu`);
+    this._resetHelloMenu();
   }
   
   /* General prompt-and-options menu.
@@ -354,6 +355,122 @@ export class RenderMenu {
         x, y, glyphw, glyphh
       );
     }
+  }
+  
+  /* Hello.
+   ***************************************************************/
+   
+  _resetHelloMenu() {
+    delete this.stars;
+    delete this.helloFrameCount;
+  }
+   
+  _renderHelloMenu(dst, ctx, menu) {
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, dst.width, dst.height);
+    
+    // Stars. I'm going to try something a little fancier than gl2's fixed stars.
+    // Each star has a lifecycle, it winks on then off, then we make a new one somewhere else.
+    // It's OK, desirable in fact, to start the list empty and build up gradually to the full set.
+    const STAR_COUNT = 500;
+    const STAR_LIFE_MIN = 300;
+    const STAR_LIFE_MAX = 900;
+    if (!this.stars) this.stars = [];
+    if (this.stars.length < STAR_COUNT) {
+      const star = {
+        x: ~~(Math.random() * dst.width),
+        y: ~~(Math.random() * dst.height),
+        color: this._randomStarColor(),
+        p: 0,
+        dp: 1.0 / (STAR_LIFE_MIN + Math.random() * (STAR_LIFE_MAX - STAR_LIFE_MIN)),
+      };
+      this.stars.push(star);
+    }
+    for (let i=this.stars.length; i-->0; ) {
+      const star = this.stars[i];
+      star.p += star.dp;
+      if (star.p >= 1) {
+        this.stars.splice(i, 1);
+      } else {
+        if (star.p < 0.25) ctx.globalAlpha = star.p * 4.0;
+        else if (star.p > 0.75) ctx.globalAlpha = (1.0 - star.p) * 4.0;
+        else ctx.globalAlpha = 1.0;
+        ctx.fillStyle = star.color;
+        ctx.fillRect(star.x, star.y, 1, 1);
+      }
+    }
+    ctx.globalAlpha = 1.0;
+    
+    if (!this.helloFrameCount) this.helloFrameCount = 0;
+    this.helloFrameCount++;
+    const animationPeriod = 1200;
+    const animationPhase = (this.helloFrameCount % animationPeriod) / animationPeriod;
+    
+    const miscBits = this.dataService.getImage(14);
+    if (miscBits) {
+      // The rising moon:
+      const moonw = this.constants.TILESIZE * 7;
+      const moonh = this.constants.TILESIZE * 7;
+      const moonx = (dst.width >> 1) - (moonw >> 1);
+      const moonyStart = dst.height + moonh;
+      const moonyEnd = -moonh;
+      const moony = ~~(moonyStart + animationPhase * (moonyEnd - moonyStart));
+      ctx.drawImage(
+        miscBits, 0, this.constants.TILESIZE * 5, moonw, moonh,
+        moonx, moony, moonw, moonh
+      );
+      // Dot flies by diagonally and crosses the Moon when exactly centered on screen.
+      const moonmidy = moony + (moonh >> 1);
+      const flyya = ~~(dst.height * 0.75);
+      const flyyz = ~~(dst.height * 0.25);
+      if ((moonmidy > flyyz) && (moonmidy < flyya)) {
+        const flyphase = (moonmidy - flyya) / (flyyz - flyya);
+        const dotw = this.constants.TILESIZE * 5;
+        const doth = this.constants.TILESIZE * 5;
+        const dotstart = [dst.width, dst.height];
+        const dotend = [-dotw, -doth];
+        const dotx = ~~(dotstart[0] + flyphase * (dotend[0] - dotstart[0]));
+        const doty = ~~(dotstart[1] + flyphase * (dotend[1] - dotstart[1]));
+        ctx.drawImage(
+          miscBits, this.constants.TILESIZE * 8, this.constants.TILESIZE * 5, dotw, doth,
+          dotx, doty, dotw, doth
+        );
+      }
+    }
+    
+    // "Full Moon"
+    const logoBits = this.dataService.getImage(18);
+    if (logoBits) {
+      // gl2 renders highlight bits, image:19, with an animated color.
+      // Not sure we can pull that off with CanvasRenderingContext2D.
+      // But we can do something nice: Fade the logo in and out.
+      const enterStartTime = 0.100;
+      const enterEndTime = 0.200;
+      const exitStartTime = 1 - 0.200;
+      const exitEndTime = 1 - 0.100;
+      if ((animationPhase <= enterStartTime) || (animationPhase >= exitEndTime)) {
+        // transparent. done
+      } else {
+        if (animationPhase < enterEndTime) ctx.globalAlpha = (animationPhase - enterStartTime) / (enterEndTime - enterStartTime);
+        else if (animationPhase > exitStartTime) ctx.globalAlpha = 1 - (animationPhase - exitStartTime) / (exitEndTime - exitStartTime);
+        else ctx.globalAlpha = 1;
+        const dstx = (dst.width >> 1) - (logoBits.naturalWidth >> 1);
+        const dsty = (dst.height >> 1) - (logoBits.naturalHeight >> 1);
+        ctx.drawImage(
+          logoBits, 0, 0, logoBits.naturalWidth, logoBits.naturalHeight,
+          dstx, dsty, logoBits.naturalWidth, logoBits.naturalHeight
+        );
+      }
+    }
+    
+    ctx.globalAlpha = 1;
+  }
+  
+  _randomStarColor() {
+    const r = 0x40 + ~~(Math.random() * 0x20 - 0x10);
+    const g = 0x40 + ~~(Math.random() * 0x20 - 0x10);
+    const b = 0x40 + ~~(Math.random() * 0x20 - 0x10);
+    return `rgb(${r},${g},${b})`;
   }
 }
 

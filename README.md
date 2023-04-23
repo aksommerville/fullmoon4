@@ -17,26 +17,35 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Graphics touch-up.
 - - [ ] Village interiors
 - - [ ] Village exterior
-- [ ] Bring web back up to date with bigpc.
+- [x] Bring web back up to date with bigpc.
 - - [x] Sound effects quiet and muffled after rewriting the build tools. (in particular, fm range env?)
-- - [ ] Hat incorrectly shows a quantity.
-- - [ ] Hat not rendered.
-- - [ ] Snowglobe action not rendered.
-- - [ ] Sound effects:
-- - - [ ] Earthquake
-- - - [ ] Push block
-- - - [ ] Firenozzle
-- - - [ ] Toss
-- - - [ ] Spit
-- - [ ] Missing instruments (at least: 0, 29, 30). What's that zero? Violin?
-- - [ ] Hello menu.
-- - [ ] Floorfire, we want to render only on vacant tiles now.
-- - [ ] What happened to the trickfloor gravity? Not seeing it in Web.
-- - [ ] Victory: 16 items, not 14.
+- - [x] Hat incorrectly shows a quantity.
+- - [x] Hat not rendered.
+- - [x] Earthquake shake screen.
+- - [x] Snowglobe action not rendered.
+- - [x] Sound effects:
+- - - [x] Earthquake
+- - - [x] Push block
+- - - [x] Firenozzle
+- - - [x] Toss
+- - - [x] Spit
+- - [x] Whoa nelly, we're not graceful about sound-not-found...
+- - - It's not sound-not-found. We're picking up sound resources with the wrong qualifier.
+- - [x] Missing instruments (at least: 0, 29, 30). What's that zero? Violin?
+- - - The zero hasn't come up again, and I played thru every song, and fiddled with the fiddle... weird.
+- - [x] Hello menu.
+- - - [x] Reset when torn down.
+- - [x] Floorfire, we want to render only on vacant tiles now.
+- - [x] What happened to the trickfloor gravity? Not seeing it in Web. ...my modff was not returning!
+- - [x] Victory: 16 items, not 14.
+- - [x] End music when werewolf dies.
 - [ ] Can we get some "oooweeeeooo" when the lambda block is floating?
+- [x] Did I break werewolf's Hadouken-charge animation when rewriting his controller? ...yes, it's broken in both native and web
 
 ### May
 
+- [ ] Door turn-around. If you immediately reverse direction after passing thru a door with blocked edges (house doors, not ladders), you should re-enter it.
+- - [ ] Can we effect that based on pressure against the solid cell?
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
@@ -48,11 +57,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### After GDEX
 
+- [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] inmgr: Real input mapping.
 - [ ] UI for saved game management.
-- [ ] Building resources is too slow. Rewrite all those Node tools in C.
+- [x] Building resources is too slow. Rewrite all those Node tools in C.
 - [ ] Soft render.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?
 - [ ] Data editor improvements.

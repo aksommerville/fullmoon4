@@ -80,9 +80,14 @@ export class RenderHero {
       if (this.globals.g_injury_time[0] >= 0.8) ;
       else if (this.globals.g_injury_time[0] >= 0.4) hatDisplacement = Math.floor((0.8 - this.globals.g_injury_time[0]) * 20);
       else hatDisplacement = Math.floor(this.globals.g_injury_time[0] * 20);
+      let hatTileId = tileId;
+      if (this.globals.g_selected_item[0] === this.constants.ITEM_HAT) {
+        if (hatTileId === 0x03) hatTileId = 0x0e;
+        else hatTileId = 0x0f;
+      }
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId + 0x20, 0);
       this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 7, srcImage, tileId + 0x10, 0);
-      this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12 - hatDisplacement, srcImage, tileId, 0);
+      this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12 - hatDisplacement, srcImage, hatTileId, 0);
       if (this.globals.g_curse_time[0] > 0) {
         this._renderCurse(ctx, midx, midy, srcImage);
       }
@@ -145,21 +150,31 @@ export class RenderHero {
     let tileId = 0x1d;
     let hatTileId = 0x00;
     let hatDisplacement = 6;
+    const membershipHat = (this.globals.g_selected_item[0] === this.constants.ITEM_HAT);
     if (this.globals.g_injury_time[0] > 0) {
       if (this.frameCount & 4) {
         tileId = 0x2e;
-        hatTileId = 0x33;
+        hatTileId = membershipHat ? 0x0f : 0x33;
       } else {
         tileId = 0x2d;
-        hatTileId = 0x03;
+        hatTileId = membershipHat ? 0x0e : 0x03;
       }
       if (this.globals.g_injury_time[0] >= 0.8) ;
       else if (this.globals.g_injury_time[0] >= 0.4) hatDisplacement += Math.floor((0.8 - this.globals.g_injury_time[0]) * 20);
       else hatDisplacement += Math.floor(this.globals.g_injury_time[0] * 20);
-    } else if (this.globals.g_walking[0]) {
-      switch (this.frameCount & 0x18) {
-        case 0x08: tileId += 1; break;
-        case 0x18: tileId += 2; break;
+    } else {
+      if (membershipHat) switch (hatTileId) {
+        case 0x00: hatTileId=0x3c; break;
+        case 0x01: hatTileId=0x3d; break;
+        case 0x02: hatTileId=0x3e; break;
+        case 0x1b: hatTileId=0x3c; break;
+        case 0x1c: hatTileId=0x3f; break;
+      }
+      if (this.globals.g_walking[0]) {
+        switch (this.frameCount & 0x18) {
+          case 0x08: tileId += 1; break;
+          case 0x18: tileId += 2; break;
+        }
       }
     }
     this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize, srcImage, tileId, xform);
@@ -199,8 +214,17 @@ export class RenderHero {
   
   _renderHat(ctx, midx, midy, facedir, srcImage, col, xform) {
     const tilesize = this.constants.TILESIZE;
-    //TODO membership hat
-    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, 0x00 + col, xform);
+    let tileid = 0x00 + col;
+    if (this.globals.g_selected_item[0] === this.constants.ITEM_HAT) {
+      switch (tileid) {
+        case 0x00: tileid=0x3c; break;
+        case 0x01: tileid=0x3d; break;
+        case 0x02: tileid=0x3e; break;
+        case 0x1b: tileid=0x3c; break;
+        case 0x1c: tileid=0x3f; break;
+      }
+    }
+    this.renderBasics.tile(ctx, midx * tilesize, midy * tilesize - 12, srcImage, tileid, xform);
   }
   
   _renderSpellRepudiation(ctx, midx, midy, srcImage) {

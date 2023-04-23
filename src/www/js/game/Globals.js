@@ -104,6 +104,7 @@ export class Globals {
     this.g_terminate_time = new Float32Array(this.memU8.buffer, this.p_weather + 13, 1);
     this.g_blowbacknorm = new Float32Array(this.memU8.buffer, this.p_weather + 17, 2);
     this.g_damage_count = new Uint16Array(this.memU8.buffer, this.p_weather + 25, 1);
+    this.g_earthquake_time = new Float32Array(this.memU8.buffer, this.p_weather + 29, 1);
   }
   
   /* Higher-level logical access with structured models.

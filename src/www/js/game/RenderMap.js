@@ -88,6 +88,13 @@ export class RenderMap {
       this.wind = null;
     }
     // nothing special for slowmo, but if we want to, here is the place
+    if (this.globals.g_earthquake_time[0] > 0.100) {
+      const amplitude = 3;
+      const period = 4;
+      const phase = (this.globals.g_earthquake_time * period) % 1;
+      const offset = Math.sin(phase * Math.PI * 2) * (amplitude / 2);
+      ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, offset, 0, canvas.width, canvas.height);
+    }
   }
   
   resetWeather() {

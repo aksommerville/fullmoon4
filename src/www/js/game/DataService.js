@@ -205,6 +205,7 @@ export class DataService {
    */
   shouldRetainResources(type, qualifier) {
     switch (type) {
+      case RESTYPE_SOUND:
       case RESTYPE_INSTRUMENT: switch (qualifier) {
           case 1: return true; // WebAudio
           default: return false;

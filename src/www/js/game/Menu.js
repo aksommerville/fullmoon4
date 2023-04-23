@@ -26,6 +26,7 @@ export class MenuFactory {
       case this.constants.MENU_TREASURE: return new TreasureMenu(cbDismiss, this.globals, this.constants, options);
       case this.constants.MENU_VICTORY: return new VictoryMenu(cbDismiss, this.globals, this.constants, this.clock);
       case this.constants.MENU_GAMEOVER: return new GameOverMenu(cbDismiss, this.globals, this.constants, options);
+      case this.constants.MENU_HELLO: return new HelloMenu(cbDismiss, this.globals, this.constants);
     }
     const resolvedOptions = [];
     for (let i=0; i<options.length; i+=2) {
@@ -336,9 +337,8 @@ export class VictoryMenu {
   
   reprItemCount() {
     let c = 0;
-    // The first two items are dummies.
-    for (let i=2; i<16; i++) if (this.globals.g_itemv[i]) c++;
-    return `${c}/14`;
+    for (let i=0; i<16; i++) if (this.globals.g_itemv[i]) c++;
+    return `${c}/16`;
   }
   
   reprDamage() {
@@ -380,5 +380,29 @@ export class GameOverMenu {
       this.nativeCallback();
     }
     this.previousState = state;
+  }
+}
+
+/* HelloMenu
+ ***********************************************************/
+
+export class HelloMenu {
+  constructor(cbDismiss, globals, constants) {
+    this.cbDismiss = cbDismiss || (() => {});
+    this.globals = globals;
+    this.constants = constants;
+    
+    this.previousInput = 0xff;
+  }
+  
+  update(state) {
+    if (state === this.previousInput) return;
+    const pressed = state & ~this.previousInput;
+    if (pressed & 0x30) this.submit();
+    this.previousInput = state;
+  }
+  
+  submit() {
+    this.cbDismiss(this);
   }
 }

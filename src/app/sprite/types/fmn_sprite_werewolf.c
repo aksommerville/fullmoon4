@@ -22,12 +22,12 @@
 
 #define stage sprite->bv[0]
 #define next_move sprite->bv[1] /* 0,1,2,3 = hadouken,walk,floorfire,walk */
-#define stageclock sprite->fv[0]
-#define herox sprite->fv[1] /* we use it a lot */
-#define heroy sprite->fv[2]
-#define walkdx sprite->fv[3]
-#define walkdy sprite->fv[4]
-#define walktime sprite->fv[5]
+#define stageclock sprite->fv[1]
+#define herox sprite->fv[2] /* we use it a lot */
+#define heroy sprite->fv[3]
+#define walkdx sprite->fv[4]
+#define walkdy sprite->fv[5]
+#define walktime sprite->fv[6]
 
 /* Reset hitbox.
  */

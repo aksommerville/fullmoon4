@@ -234,11 +234,19 @@ export class RenderSprites {
       if (firec < 1) break;
       const dt = (Math.PI * 2) / firec;
       for (let t=0, firei=firec; firei-->0; t+=dt) {
-        const x = ~~((sprite.x + Math.cos(t) * radius) * tilesize);
-        if ((x < -tilesize) || (x > xlimit)) continue;
-        const y = ~~((sprite.y + Math.sin(t) * radius) * tilesize);
-        if ((y < -tilesize) || (y > ylimit)) continue;
-        this.renderBasics.tile(ctx, x, y, srcImage, tileid, 0);
+        const xn = sprite.x + Math.cos(t) * radius;
+        if ((xn < 0) || (xn >= this.constants.COLC)) continue;
+        const yn = sprite.y + Math.sin(t) * radius;
+        if ((yn < 0) || (yn >= this.constants.ROWC)) continue;
+        const cellp = (~~yn) * this.constants.COLC + ~~xn;
+        switch (this.globals.g_cellphysics[this.globals.g_map[cellp]]) {
+          case 0: case 3: // VACANT, UNSHOVELLABLE: ok
+            break;
+          default: continue;
+        }
+        const xp = ~~(xn * tilesize);
+        const yp = ~~(yn * tilesize);
+        this.renderBasics.tile(ctx, xp, yp, srcImage, tileid, 0);
       }
     }
     if (false) {

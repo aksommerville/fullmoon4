@@ -6,7 +6,7 @@ import { WasmLoader } from "../util/WasmLoader.js";
 import { DataService } from "./DataService.js";
 import { InputManager } from "./InputManager.js";
 import { Renderer } from "./Renderer.js";
-import { MenuFactory, ChalkMenu, VictoryMenu, GameOverMenu } from "./Menu.js";
+import { MenuFactory, ChalkMenu, VictoryMenu, GameOverMenu, HelloMenu } from "./Menu.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
@@ -139,6 +139,10 @@ export class Runtime {
     });
   }
   
+  _hackyExtraUpdatesInGame() {
+    if (this.globals.g_werewolf_dead[0] && !this.menus.length) this.synthesizer.playSong(null);
+  }
+  
   update(viaExplicitDebugger) {
     if (!this.running) return;
     if (!this.wasmLoader.instance) return;
@@ -159,6 +163,7 @@ export class Runtime {
       if (this.gameShouldUpdate()) {
         const time = this.clock.update();
         this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
+        this._hackyExtraUpdatesInGame();
       } else {
         this.clock.skip();
         if (this.menus.length > 0) {
@@ -200,6 +205,7 @@ export class Runtime {
     
     if (menu instanceof GameOverMenu) this.synthesizer.playSong(this.dataService.getSong(6));
     else if (menu instanceof VictoryMenu) this.synthesizer.playSong(this.dataService.getSong(7));
+    else if (menu instanceof HelloMenu) this.synthesizer.playSong(this.dataService.getSong(1));
     
     return menu;
   }
@@ -211,6 +217,7 @@ export class Runtime {
     
     if (menu instanceof ChalkMenu) this.renderer.mapDirty();
     else if (menu instanceof VictoryMenu) this.reset();
+    else if (menu instanceof HelloMenu) this.synthesizer.playSong(this.dataService.getSong(3)); //TODO don't assume song 3
     
     this.inputManager.clearState();
   }
