@@ -1,11 +1,25 @@
 #include "app/sprite/fmn_sprite.h"
 
+#define COW_BELL_TIME 0.75f
+#define COW_MOO_TIME 0.5f
+
 #define buttsprite ((struct fmn_sprite*)sprite->pv[0])
 
 #define tileid0 sprite->bv[0] /* for both sprites */
 #define sleeping sprite->bv[1] /* for both sprites */
 #define ishead sprite->bv[2] /* head=1 butt=0 */
+#define bellcount sprite->bv[3] /* head */
 #define animclock sprite->fv[0] /* for both sprites */
+#define belltimer sprite->fv[1] /* head */
+#define mootime sprite->fv[2] /* head */
+
+/* Moo.
+ */
+ 
+static void cow_moo(struct fmn_sprite *sprite,uint8_t bellc) {
+  mootime=COW_MOO_TIME;
+  fmn_sound_effect(FMN_SFX_MOO);
+}
 
 /* Update.
  */
@@ -14,11 +28,26 @@ static void _cow_update(struct fmn_sprite *sprite,float elapsed) {
   if (sleeping) {
     sprite->tileid=tileid0+0x21;
   } else {
-    animclock+=elapsed;
-    if (animclock>=6.0f) animclock-=10.0f; // total period
-         if (animclock< 5.0f) sprite->tileid=tileid0; // staring into space
-    else if (animclock< 5.5f) sprite->tileid=tileid0+0x20; // mouthful o grass
-    else                      sprite->tileid=tileid0+0x10; // chomp
+    if (mootime>=0.0f) {
+      mootime-=elapsed;
+      sprite->tileid=tileid0+0x96; // moo was a late add
+      animclock=0.0f;
+    } else {
+      animclock+=elapsed;
+      if (animclock>=6.0f) animclock-=10.0f; // total period
+           if (animclock< 5.0f) sprite->tileid=tileid0; // staring into space
+      else if (animclock< 5.5f) sprite->tileid=tileid0+0x20; // mouthful o grass
+      else                      sprite->tileid=tileid0+0x10; // chomp
+    }
+    
+    if (belltimer>0.0f) {
+      if ((belltimer-=elapsed)<=0.0f) {
+        belltimer=0.0f;
+        uint8_t c=bellcount;
+        bellcount=0;
+        cow_moo(sprite,c);
+      }
+    }
   }
 }
 
@@ -68,7 +97,16 @@ static int16_t _cow_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qu
         case FMN_SPELLID_REVEILLE: sleeping=0; break;
         case FMN_SPELLID_LULLABYE: if (!sleeping) { sleeping=1; if (ishead) fmn_sprite_generate_zzz(sprite); } break;
       } break;
-    case FMN_ITEM_BELL: sleeping=0; break;
+    case FMN_ITEM_BELL: {
+        if (sleeping) {
+          sleeping=0;
+          bellcount=0;
+          belltimer=0.0f;
+        } else if (ishead) {
+          bellcount++;
+          belltimer=COW_BELL_TIME;
+        }
+      } break;
   }
   return 0;
 }

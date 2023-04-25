@@ -76,7 +76,7 @@ web-run-prod:$(web_HTPROD_FILES);$(NODE) src/tool/server/main.js --htdocs=$(web_
 # Optionally deploy straight to a remote server.
 ifeq (,$(findstring --,-$(web_DEPLOY_USER)-$(web_DEPLOY_HOST)-$(web_DEPLOY_PATH)-))
   web-deploy:$(web_HTPROD_ARCHIVE); \
-     ssh $(web_DEPLOY_USER)@$(web_DEPLOY_HOST) "cd $(web_DEPLOY_PATH) && cat - >fullmoon.tar.gz && tar -xzf fullmoon.tar.gz && rm -rf fullmoon && mv deploy fullmoon" <$(web_HTPROD_ARCHIVE)
+    ssh $(web_DEPLOY_USER)@$(web_DEPLOY_HOST) "cd $(web_DEPLOY_PATH) && cat - >fullmoon.tar.gz && tar -xzf fullmoon.tar.gz && rm -rf fullmoon && mv deploy fullmoon" <$(web_HTPROD_ARCHIVE)
 else
   web-deploy:;echo "Must set: web_DEPLOY_USER web_DEPLOY_HOST web_DEPLOY_PATH" ; exit 1
 endif

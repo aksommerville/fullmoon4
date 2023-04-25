@@ -1,0 +1,7 @@
+controller pamcake
+image sprites
+tile 0xc9
+style tile
+physics edge sprites solid hole
+invmass 0
+radius 0.45

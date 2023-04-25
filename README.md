@@ -13,35 +13,17 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [x] macos: Bring up the violin, second beat, it quits spontaneously. The heck? ...underallocated vertex buffer in fmn_gl2_violin.c
-- [x] web: Handle gamepad hats. eg Black-on-black gamepad on the MacBook.
 - [ ] Graphics touch-up.
 - - [ ] Village interiors
 - - [ ] Village exterior
-- [x] Bring web back up to date with bigpc.
-- - [x] Sound effects quiet and muffled after rewriting the build tools. (in particular, fm range env?)
-- - [x] Hat incorrectly shows a quantity.
-- - [x] Hat not rendered.
-- - [x] Earthquake shake screen.
-- - [x] Snowglobe action not rendered.
-- - [x] Sound effects:
-- - - [x] Earthquake
-- - - [x] Push block
-- - - [x] Firenozzle
-- - - [x] Toss
-- - - [x] Spit
-- - [x] Whoa nelly, we're not graceful about sound-not-found...
-- - - It's not sound-not-found. We're picking up sound resources with the wrong qualifier.
-- - [x] Missing instruments (at least: 0, 29, 30). What's that zero? Violin?
-- - - The zero hasn't come up again, and I played thru every song, and fiddled with the fiddle... weird.
-- - [x] Hello menu.
-- - - [x] Reset when torn down.
-- - [x] Floorfire, we want to render only on vacant tiles now.
-- - [x] What happened to the trickfloor gravity? Not seeing it in Web. ...my modff was not returning!
-- - [x] Victory: 16 items, not 14.
-- - [x] End music when werewolf dies.
 - [ ] Can we get some "oooweeeeooo" when the lambda block is floating?
-- [x] Did I break werewolf's Hadouken-charge animation when rewriting his controller? ...yes, it's broken in both native and web
+- [ ] Werewolf sounds:
+- - [ ] Growl
+- - [ ] Bark
+- - [ ] Hadouken
+- [x] cow: Moo after hero rings the bell.
+- [x] Demonstrate sap. Make a lady tap a tree then pour it on pancakes.
+- [ ] Draw a door.
 
 ### May
 
