@@ -556,6 +556,36 @@ static void fmn_cast_revelations() {
   if (dirty) fmn_map_dirty();
 }
 
+/* The Spell of Opening: If any sketched doors are present, turn them into real doors.
+ */
+ 
+static void fmn_open_magic_doors() {
+  const uint32_t door_bits=0x0d0a04;
+  uint8_t changed=0;
+  struct fmn_sketch *sketch=fmn_global.sketchv;
+  int i=fmn_global.sketchc;
+  for (;i-->0;sketch++) {
+    if (sketch->bits==door_bits) {
+      sketch->bits=0;
+      changed=1;
+      if (fmn_global.doorc<FMN_DOOR_LIMIT) {
+        struct fmn_door *door=fmn_global.doorv+fmn_global.doorc++;
+        door->x=sketch->x;
+        door->y=sketch->y;
+        door->extra=0;
+        door->mapid=66;
+        door->dstx=10;
+        door->dsty=6;
+        struct fmn_sprite *sprite=fmn_sprite_generate_noparam(FMN_SPRCTL_magicdoor,door->x+0.5f,door->y+0.5f);
+        fmn_global.map[door->y*FMN_COLC+door->x]=0;
+      }
+    }
+  }
+  if (changed) {
+    fmn_map_dirty();
+  }
+}
+
 /* Cast spell or song.
  */
  
@@ -580,6 +610,7 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_SLOWMO: fmn_slowmo_begin(); break;
     case FMN_SPELLID_INVISIBLE: fmn_invisibility_begin(); break;
     case FMN_SPELLID_REVELATIONS: fmn_cast_revelations(); break;
+    case FMN_SPELLID_OPEN: fmn_open_magic_doors(); break;
     case FMN_SPELLID_HOME: fmn_teleport(1); break;
     //TODO mapid for TELE(n) should be stored in the archive somehow.
     /*TODO TELE 1..4 disabled for demo

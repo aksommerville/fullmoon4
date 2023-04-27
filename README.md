@@ -17,13 +17,13 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Village interiors
 - - [ ] Village exterior
 - [ ] Can we get some "oooweeeeooo" when the lambda block is floating?
-- [ ] Werewolf sounds:
-- - [ ] Growl
-- - [ ] Bark
-- - [ ] Hadouken
+- [x] Werewolf sounds:
+- - [x] Growl
+- - [x] Bark
+- - [x] Hadouken
 - [x] cow: Moo after hero rings the bell.
 - [x] Demonstrate sap. Make a lady tap a tree then pour it on pancakes.
-- [ ] Draw a door.
+- [x] Draw a door.
 
 ### May
 

@@ -158,6 +158,18 @@ begin 30 # bass
   env 15 0x10 20 0x08 250 .. 10 0x38 15 0x1b 400
 end
 
+#--- Choose A Door ---
+begin 31 # lead
+  wave 0xa0 0x60 0x30 0x10 0x08
+  mixwave 0xc0 0x30 0x20 0x08 0x04
+  env 20 0x20 40 0x08 250 .. 10 0x50 15 0x18 700
+  mixenv 200 0xff 200 0x20 200
+end
+begin 32 # bass
+  wave 0xa0 0 0x50 0 0x28 0 0x14 0 0x0c 0 0x06
+  env 15 0x10 20 0x08 250 .. 10 0x38 15 0x1b 400
+end
+
 #------------------------------------------------ Sound effects ----------------------------------------
 
 sound BELL
@@ -415,15 +427,9 @@ end
 
 sound DIG
   len 0.300
-  fm ( 300 * 400 ) 0.6 ( 4000 * 2000 ) sine
-  env ( 0 30 0x8000 50 0x4000 * 0 )
+  fm ( 90 * 360 ) 0.2 ( 2000 ) sine
+  env ( 0x0000 80 0xffff * 0x0000 )
   mlt 0.300
-  
-  new_channel
-  fm ( 200 * 600 ) 0.25 ( 1000 80 3000 ) sine
-  env ( 0 50 0xffff 80 0x2000 * 0 )
-  mlt 0.300
-  
 end
 
 sound REJECT_DIG # Same as REJECT_ITEM, maybe eliminate?
@@ -878,5 +884,35 @@ sound SPIT
   len 0.400
   fm ( 300 50 600 * 300 ) 3 ( 1000 * 5000 ) sine
   env ( 0 50 0xffff 70 0x4000 * 0 )
+  mlt 0.200
+end
+
+sound GROWL
+  len 0.700
+  fm ( 102 * 102 ) 0.2 ( 2000 200 2000 * 2000 ) sine
+  env ( 0 100 0xffff * 0 )
+  mlt 0.250
+  
+  new_channel
+  fm ( 120 100 140 100 120 100 140 100 100 100 120 100 80 ) 0.5 ( 1000 ) sine
+  env ( 0 50 0 100 0xffff * 0 )
+
+  delay 0.09 0.5 0.5 0.5 0.9
+  env ( 0xffff * 0xffff 200 0 )
+  
+  mlt 0.250
+end
+
+sound BARK
+  len 0.300
+  fm ( 100 40 400 30 350 * 500 ) 0.25 ( 2000 100 2000 * 1000 ) sine
+  env ( 0 30 0xffff 90 0x4000 * 0 )
+  mlt 0.300
+end
+
+sound HADOUKEN
+  len 0.650
+  fm ( 2000 20 1000 * 200 ) 0.5 ( 2000 150 1000 150 4000 ) sine
+  env ( 0x0000 80 0xffff 200 0x4000 * 0x0000 )
   mlt 0.200
 end

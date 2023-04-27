@@ -219,6 +219,7 @@ static uint8_t werewolf_check_pounce(struct fmn_sprite *sprite) {
   if ((dx<0.0f)||(dx>4.0f)) {
     return 0;
   }
+  fmn_sound_effect(FMN_SFX_GROWL);
   stage=WEREWOLF_STAGE_GROWL;
   stageclock=0.0f;
   WEREWOLF_SET_HITBOX(FOURS)
@@ -377,6 +378,7 @@ static void werewolf_update_IDLE(struct fmn_sprite *sprite) {
 static void werewolf_update_GROWL(struct fmn_sprite *sprite) {
   if (werewolf_check_missile(sprite)) return;
   if (stageclock>=0.5f) {
+    fmn_sound_effect(FMN_SFX_BARK);
     stage=WEREWOLF_STAGE_POUNCE;
     stageclock=0.0f;
   }
@@ -385,6 +387,7 @@ static void werewolf_update_GROWL(struct fmn_sprite *sprite) {
 static void werewolf_update_HADOUKEN_CHARGE(struct fmn_sprite *sprite) {
   if (werewolf_check_missile(sprite)) return;
   if (stageclock>=0.5f) {
+    fmn_sound_effect(FMN_SFX_HADOUKEN);
     stage=WEREWOLF_STAGE_HADOUKEN_FOLLOWTHRU;
     stageclock=0.0f;
     werewolf_generate_hadouken(sprite);

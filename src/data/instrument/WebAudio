@@ -253,6 +253,20 @@ begin 30 # bass
   env 15 80 20 30 250 .. 10 f8 15 5b 400
 end
 
+#--- Choose A Door ---
+
+begin 31 # lead
+  wave a0a0 6060 3030 1010 0808
+  env 20 80 40 20 250 .. 10 f0 15 48 700
+end
+
+begin 32 # bass
+  wave a0a0 5050
+  modRate 1
+  modRange 2
+  env 15 80 20 30 250 .. 10 f8 15 5b 400
+end
+
 #-------------------------------------- Final Sound Effects --------------------------------
 
 sound BELL
@@ -507,11 +521,8 @@ end
 
 sound DIG
   len 0.300
-  fm 0 ( 300 * 400 ) 0.4 ( 2000 * 3000 ) sine
-  env 0 ( 0 30 0x8000 50 0x4000 * 0 )
-  fm 1 ( 200 * 600 ) 0.25 ( 1000 80 3000 ) sine
-  env 1 ( 0 50 0xffff 80 0x2000 * 0 )
-  mix 0 1
+  fm 0 ( 90 * 360 ) 0.2 ( 2000 ) sine
+  env 0 ( 0x0000 80 0xffff * 0x0000 )
   norm 0 0.200
 end
 
@@ -938,5 +949,34 @@ sound SPIT
   len 0.400
   fm 0 ( 300 50 600 * 300 ) 3 ( 1000 * 5000 ) sine
   env 0 ( 0 50 0xffff 70 0x4000 * 0 )
+  norm 0 0.200
+end
+
+sound GROWL
+  len 0.700
+  fm 0 ( 102 * 102 ) 0.2 ( 2000 200 2000 * 2000 ) sine
+  env 0 ( 0 100 0xffff * 0 )
+  
+  fm 1 ( 120 100 140 100 120 100 140 100 100 100 120 100 80 ) 0.5 ( 1000 ) sine
+  env 1 ( 0 50 0 100 0xffff * 0 )
+  mix 0 1
+  
+  delay 0 0.09 0.5 0.5 0.5 0.9
+  env 0 ( 0xffff * 0xffff 200 0 )
+  
+  norm 0 0.400
+end
+
+sound BARK
+  len 0.300
+  fm 0 ( 100 40 400 30 350 * 500 ) 0.25 ( 2000 100 2000 * 1000 ) sine
+  env 0 ( 0 30 0xffff 90 0x4000 * 0 )
+  norm 0 0.300
+end
+
+sound HADOUKEN
+  len 0.650
+  fm 0 ( 2000 20 1000 * 200 ) 0.5 ( 2000 150 1000 150 4000 ) sine
+  env 0 ( 0x0000 80 0xffff 200 0x4000 * 0x0000 )
   norm 0 0.200
 end
