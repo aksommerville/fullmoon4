@@ -16,6 +16,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Graphics touch-up.
 - - [ ] Village interiors
 - - [ ] Village exterior
+- - [x] moonsong: I'm still not happy with the contrast.
+- - [ ] Decorative hearts when a block or raccoon is charmed.
 - [ ] Can we get some "oooweeeeooo" when the lambda block is floating?
 - [x] Werewolf sounds:
 - - [x] Growl
@@ -24,6 +26,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] cow: Moo after hero rings the bell.
 - [x] Demonstrate sap. Make a lady tap a tree then pour it on pancakes.
 - [x] Draw a door.
+- [ ] Move the hat a little, it's too hard to reach due to blowback.
 
 ### May
 
@@ -37,6 +40,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Two sets of map resource: Demo and Full. I think other resources don't matter, let tree-shaking handle it.
 - [ ] Tree-shake resources when packing.
 - [ ] Scripts to analyze logs.
+- [ ] Is it too late to move rendering business into the client? I'm terrified of adding new render backends.
 
 ### After GDEX
 
@@ -90,19 +94,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Automation against headless native build.
 - [ ] Other platforms:
 - - [ ] Web wrapper eg Electron
-- - [ ] Tiny. I don't think it will work, but prove it.
 - - [ ] Windows
-- - [ ] iOS
-- - [ ] Android
-- - [ ] Pippin
+- - [ ] Pippin. Doubtful but I have to know.
 - - [ ] PicoSystem
 - - [ ] Thumby
 - - [ ] PocketStar
 - - [ ] Playdate
-- - [ ] 68k Mac
 - - [ ] Wii
 - - [ ] Modern consoles?
-- - [ ] node or deno? Shame to write all this Javascript and use it for just one platform...
 
 ### Disambiguation
 

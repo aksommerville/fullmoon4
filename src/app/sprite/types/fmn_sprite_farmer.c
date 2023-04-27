@@ -133,6 +133,7 @@ static void farmer_update_DIG(struct fmn_sprite *sprite,float elapsed) {
  */
  
 static void farmer_begin_SOW(struct fmn_sprite *sprite,int8_t col,int8_t row) {
+  fmn_sound_effect(FMN_SFX_PLANT);
   clock=0.0f;
   stagetime=0.5f;
   stage=FARMER_STAGE_SOW;
