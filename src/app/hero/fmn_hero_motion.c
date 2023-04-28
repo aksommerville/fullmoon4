@@ -448,3 +448,39 @@ void fmn_hero_kill(struct fmn_sprite *assailant) {
   fmn_sound_effect(FMN_SFX_GRIEVOUS_INJURY);
   fmn_sprite_kill(hero);
 }
+
+/* Static pressure.
+ * Check for reverse doors.
+ * If the cell one away in (dir) direction is vacant, and there's a door on this cell, nix (cellx,celly) to force reconsideration.
+ * This comes up when you walk into a house and immediately decide to turn back.
+ */
+
+void fmn_hero_static_pressure(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir) {
+  int8_t col=(int8_t)sprite->x,row=(int8_t)sprite->y;
+  int8_t nearcol=col,nearrow=row;
+  switch (dir) {
+    case FMN_DIR_N: row--; break;
+    case FMN_DIR_S: row++; break;
+    case FMN_DIR_W: col--; break;
+    case FMN_DIR_E: col++; break;
+    default: return;
+  }
+  if ((col<0)||(row<0)||(col>=FMN_COLC)||(row>=FMN_ROWC)) return;
+  uint8_t farcell=fmn_global.map[row*FMN_COLC+col];
+  switch (fmn_global.cellphysics[farcell]) {
+    case FMN_CELLPHYSICS_VACANT:
+    case FMN_CELLPHYSICS_UNSHOVELLABLE:
+      break;
+    default: return;
+  }
+  const struct fmn_door *door=fmn_global.doorv;
+  int i=fmn_global.doorc;
+  for (;i-->0;door++) {
+    if (door->x!=nearcol) continue;
+    if (door->y!=nearrow) continue;
+    if (!door->mapid) continue;
+    if (door->extra) continue;
+    fmn_hero.cellx=-1;
+    return;
+  }
+}

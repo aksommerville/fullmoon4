@@ -20,9 +20,6 @@
 struct fmn_sprite {
   FMN_SPRITE_HEADER
   
-  //TODO Why are we copying out all the callbacks instead of pointing to a controller?
-  // There must have been a reason for that, but now I forget. -aks 2023-02-27
-  
   // Called each master update, if set.
   void (*update)(struct fmn_sprite *sprite,float elapsed);
   

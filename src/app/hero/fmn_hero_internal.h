@@ -64,4 +64,6 @@ void fmn_hero_reset_facedir();
 
 void fmn_hero_return_to_map_entry();
 
+void fmn_hero_static_pressure(struct fmn_sprite *sprite,struct fmn_sprite *null_dummy,uint8_t dir);
+
 #endif

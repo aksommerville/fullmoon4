@@ -13,16 +13,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### April
 
-- [ ] Graphics touch-up.
-- - [ ] Village interiors
-- - [ ] Village exterior
-- [x] gate: Don't blink when changing state immediately after map transition (eg moonsong's house)
-- - This might mean forcing treadles to set zero state at unload.
-
 ### May
 
-- [ ] Door turn-around. If you immediately reverse direction after passing thru a door with blocked edges (house doors, not ladders), you should re-enter it.
-- - [ ] Can we effect that based on pressure against the solid cell?
+- [x] Door turn-around. If you immediately reverse direction after passing thru a door with blocked edges (house doors, not ladders), you should re-enter it.
+- - [x] Can we effect that based on pressure against the solid cell? ...yes
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Bonus secret 2-player mode: Second player is a ghost that can make wind.
