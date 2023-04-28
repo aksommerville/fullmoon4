@@ -16,17 +16,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Graphics touch-up.
 - - [ ] Village interiors
 - - [ ] Village exterior
-- - [x] moonsong: I'm still not happy with the contrast.
-- - [ ] Decorative hearts when a block or raccoon is charmed.
-- [ ] Can we get some "oooweeeeooo" when the lambda block is floating?
-- [x] Werewolf sounds:
-- - [x] Growl
-- - [x] Bark
-- - [x] Hadouken
-- [x] cow: Moo after hero rings the bell.
-- [x] Demonstrate sap. Make a lady tap a tree then pour it on pancakes.
-- [x] Draw a door.
-- [ ] Move the hat a little, it's too hard to reach due to blowback.
+- [x] gate: Don't blink when changing state immediately after map transition (eg moonsong's house)
+- - This might mean forcing treadles to set zero state at unload.
 
 ### May
 

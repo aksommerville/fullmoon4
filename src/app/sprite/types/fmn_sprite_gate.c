@@ -7,6 +7,7 @@
 #define gsbit sprite->argv[0]
 #define state sprite->bv[0] /* 0=closed */
 #define tileid0 sprite->bv[1]
+#define initclock sprite->sv[0]
 #define blinktime sprite->fv[0]
 
 /* State changed.
@@ -17,12 +18,14 @@ static void _gate_cb_changed(void *userdata,uint16_t p,uint8_t v) {
   if (v) {
     if (state) return;
     state=1;
-    blinktime=GATE_BLINK_TIME;
+    if (initclock) blinktime=GATE_BLINK_TIME;
+    else sprite->tileid=tileid0+1;
     sprite->physics&=~FMN_PHYSICS_SPRITES;
   } else {
     if (!state) return;
     state=0;
-    blinktime=GATE_BLINK_TIME;
+    if (initclock) blinktime=GATE_BLINK_TIME;
+    else sprite->tileid=tileid0;
     sprite->physics|=FMN_PHYSICS_SPRITES;
   }
 }
@@ -32,6 +35,7 @@ static void _gate_cb_changed(void *userdata,uint16_t p,uint8_t v) {
  
 static void _gate_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
+  initclock=0;
   if (gsbit) {
     if (fmn_gs_get_bit(gsbit)) {
       state=1;
@@ -46,6 +50,7 @@ static void _gate_init(struct fmn_sprite *sprite) {
  */
  
 static void _gate_update(struct fmn_sprite *sprite,float elapsed) {
+  if (initclock<0x7fff) initclock++;
   if (blinktime>0.0f) {
     if ((blinktime-=elapsed)<=0.0f) {
       blinktime=0.0f;
