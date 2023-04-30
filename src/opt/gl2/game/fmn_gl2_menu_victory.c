@@ -70,16 +70,17 @@ static int fmn_gl2_require_menu_victory(struct bigpc_render_driver *driver,struc
  */
  
 void fmn_gl2_render_menu_victory(struct bigpc_render_driver *driver,struct bigpc_menu *menu) {
+  #if 0
 
   // Blackout.
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
-  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,0x000000ff);
+  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,0x000000ff);
   
   // "Victory!"
-  if (fmn_gl2_texture_use(driver,14)>=0) {
+  if (fmn_gl2_texture_use_imageid(driver,14)>=0) {
     fmn_gl2_program_use(driver,&DRIVER->program_decal);
     int16_t w=128,h=48;
-    int16_t dstx=(DRIVER->mainfb.texture.w>>1)-(w>>1);
+    int16_t dstx=(DRIVER->mainfb.w>>1)-(w>>1);
     int16_t dsty=16;
     fmn_gl2_draw_decal(dstx,dsty,w,h,0,0,w,h);
   }
@@ -88,10 +89,11 @@ void fmn_gl2_render_menu_victory(struct bigpc_render_driver *driver,struct bigpc
   if (fmn_gl2_require_menu_victory(driver,menu)>=0) {
     fmn_gl2_texture_use_object(driver,victory_stats);
     fmn_gl2_program_use(driver,&DRIVER->program_decal);
-    int16_t dstx=(DRIVER->mainfb.texture.w>>1)-(victory_stats->w>>1);
-    int16_t dsty=64+((DRIVER->mainfb.texture.h-64)>>1)-(victory_stats->h>>1);
+    int16_t dstx=(DRIVER->mainfb.w>>1)-(victory_stats->w>>1);
+    int16_t dsty=64+((DRIVER->mainfb.h-64)>>1)-(victory_stats->h>>1);
     fmn_gl2_draw_decal(dstx,dsty,victory_stats->w,victory_stats->h,0,0,victory_stats->w,victory_stats->h);
   }
   
   if (menu->extra[0]) fmn_gl2_clear_menu_victory(driver,menu);
+  #endif
 }

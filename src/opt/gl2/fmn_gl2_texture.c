@@ -6,14 +6,31 @@
  
 void fmn_gl2_texture_cleanup(struct fmn_gl2_texture *texture) {
   if (texture->texid) glDeleteTextures(1,&texture->texid);
+  if (texture->fbid) glDeleteFramebuffers(1,&texture->fbid);
   memset(texture,0,sizeof(struct fmn_gl2_texture));
+}
+ 
+void fmn_gl2_texture_del(struct fmn_gl2_texture *texture) {
+  if (!texture) return;
+  if (texture->texid) glDeleteTextures(1,&texture->texid);
+  if (texture->fbid) glDeleteFramebuffers(1,&texture->fbid);
+  free(texture);
+}
+
+/* New.
+ */
+ 
+struct fmn_gl2_texture *fmn_gl2_texture_new() {
+  struct fmn_gl2_texture *texture=calloc(1,sizeof(struct fmn_gl2_texture));
+  if (!texture) return 0;
+  return texture;
 }
 
 /* Initialize from RGBA.
  */
  
 int fmn_gl2_texture_init_rgba(struct fmn_gl2_texture *texture,int w,int h,const void *v) {
-  if ((w<1)||(h<1)||!v) return -1;
+  if ((w<1)||(h<1)) return -1;
   
   if (!texture->texid) {
     glGenTextures(1,&texture->texid);
@@ -79,5 +96,26 @@ int fmn_gl2_texture_init(struct fmn_gl2_texture *texture,const void *src,int src
   texture->h=image->h;
   
   png_image_del(image);
+  return 0;
+}
+
+/* Require framebuffer.
+ */
+ 
+int fmn_gl2_texture_require_framebuffer(struct fmn_gl2_texture *texture) {
+  if (texture->fbid) return 0;
+  
+  glGenFramebuffers(1,&texture->fbid);
+  if (!texture->fbid) {
+    glGenFramebuffers(1,&texture->fbid);
+    if (!texture->fbid) {
+      return -1;
+    }
+  }
+  
+  glBindFramebuffer(GL_FRAMEBUFFER,texture->fbid);
+  glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,texture->texid,0);
+  glBindFramebuffer(GL_FRAMEBUFFER,0);
+  
   return 0;
 }

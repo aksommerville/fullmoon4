@@ -20,12 +20,12 @@ void fmn_gl2_render_menu(struct bigpc_render_driver *driver,struct bigpc_menu *m
   // If the menu's controller hasn't seen it yet (ie framec zero, no updates), black out and quietly back away.
   if (!menu->framec) {
     fmn_gl2_program_use(driver,&DRIVER->program_raw);
-    fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,0x000000ff);
+    fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,0x000000ff);
     return;
   }
   
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
-  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,0x000000c0);
+  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,0x000000c0);
   if (menu->prompt>0) {
     fmn_gl2_render_menu_prompt(driver,menu);
   } else switch (menu->prompt) {

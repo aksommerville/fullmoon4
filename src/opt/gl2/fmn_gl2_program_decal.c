@@ -34,34 +34,53 @@ int fmn_gl2_program_decal_init(struct fmn_gl2_program *program,struct bigpc_rend
   return err;
 }
 
+/* Flip vertical input coordinates.
+ */
+ 
+static void fmn_gl2_decal_flip(struct fmn_gl2_vertex_decal *vtx,int h) {
+  int i=4; for (;i-->0;vtx++) {
+    vtx->ty=h-vtx->ty;
+  }
+}
+
 /* Render.
  */
  
 void fmn_gl2_draw_decal(
+  struct bigpc_render_driver *driver,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch
 ) {
+  if (!DRIVER->texture) return;
   struct fmn_gl2_vertex_decal vtxv[]={
     {dstx     ,dsty     ,srcx     ,srcy     },
     {dstx     ,dsty+dsth,srcx     ,srcy+srch},
     {dstx+dstw,dsty     ,srcx+srcw,srcy     },
     {dstx+dstw,dsty+dsth,srcx+srcw,srcy+srch},
   };
+  if (DRIVER->texture->fbid&&DRIVER->framebuffer) {
+    fmn_gl2_decal_flip(vtxv,DRIVER->texture->h);
+  }
   glVertexAttribPointer(0,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_decal),&vtxv[0].x);
   glVertexAttribPointer(1,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_decal),&vtxv[0].tx);
   glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 }
 
 void fmn_gl2_draw_decal_swap(
+  struct bigpc_render_driver *driver,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch
 ) {
+  if (!DRIVER->texture) return;
   struct fmn_gl2_vertex_decal vtxv[]={
     {dstx     ,dsty     ,srcx     ,srcy     },
     {dstx     ,dsty+dsth,srcx+srcw,srcy     },
     {dstx+dstw,dsty     ,srcx     ,srcy+srch},
     {dstx+dstw,dsty+dsth,srcx+srcw,srcy+srch},
   };
+  if (DRIVER->texture->fbid&&DRIVER->framebuffer) {
+    fmn_gl2_decal_flip(vtxv,DRIVER->texture->h);
+  }
   glVertexAttribPointer(0,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_decal),&vtxv[0].x);
   glVertexAttribPointer(1,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_decal),&vtxv[0].tx);
   glDrawArrays(GL_TRIANGLE_STRIP,0,4);

@@ -7,6 +7,7 @@ void fmn_gl2_game_render_world(struct bigpc_render_driver *driver,int include_he
  */
  
 void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver) {
+#if 0 /*XXX*/
   switch (DRIVER->game.transition) {
     case FMN_TRANSITION_PAN_LEFT:
     case FMN_TRANSITION_PAN_RIGHT:
@@ -17,7 +18,7 @@ void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver) {
     default: DRIVER->game.hero_above_transition=0;
   }
   
-  fmn_gl2_framebuffer_use(driver,&DRIVER->game.transitionfrom);
+  fmn_gl2_framebuffer_use_object(driver,&DRIVER->game.transitionfrom);
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   driver->transition_in_progress=1;
   fmn_gl2_game_render_world(driver,DRIVER->game.hero_above_transition?0:1);
@@ -30,6 +31,7 @@ void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver) {
   fmn_hero_get_position(&herox,&heroy);
   DRIVER->game.transitionfromx=herox*DRIVER->game.tilesize;
   DRIVER->game.transitionfromy=heroy*DRIVER->game.tilesize;
+#endif
 }
 
 /* Commit transition.
@@ -37,6 +39,7 @@ void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver) {
  */
  
 void fmn_gl2_game_transition_commit(struct bigpc_render_driver *driver) {
+#if 0 /*XXX*/
   DRIVER->game.transitionc=FMN_GL2_TRANSITION_FRAMEC; // make it official
   driver->transition_in_progress=1;
   if (fmn_global.mapdark) DRIVER->game.transitioncolor=0x22004400; // purple if either "from" or "to" is dark.
@@ -44,8 +47,10 @@ void fmn_gl2_game_transition_commit(struct bigpc_render_driver *driver) {
   fmn_hero_get_position(&herox,&heroy);
   DRIVER->game.transitiontox=herox*DRIVER->game.tilesize;
   DRIVER->game.transitiontoy=heroy*DRIVER->game.tilesize;
+#endif
 }
 
+#if 0 /*XXX moving to client; not updating for gl2 first pass */
 /* Pan.
  * (dx,dy) are the direction of the camera's apparent motion. Framebuffers slide the opposite way.
  */
@@ -79,14 +84,14 @@ static void fmn_gl2_pan(
   dsty+=dy*DRIVER->mainfb.texture.h;
   fmn_gl2_texture_use_object(driver,&to->texture);
   fmn_gl2_draw_decal(
-    dstx,dsty,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,
-    0,to->texture.h,to->texture.w,-to->texture.h
+    dstx,dsty,DRIVER->mainfb.w,DRIVER->mainfb.h,
+    0,to->texture.h,to->w,-to->h
   );
 }
 
 /* Fade to an intermediate color, then to the final.
  */
- 
+
 static void fmn_gl2_fade2(
   struct bigpc_render_driver *driver,
   int p,int c,
@@ -142,7 +147,7 @@ static void fmn_gl2_spotlight(
   }
   if (p>=c) {
     fmn_gl2_program_use(driver,&DRIVER->program_raw);
-    fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,DRIVER->game.transitioncolor|0xff);
+    fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,DRIVER->game.transitioncolor|0xff);
     return;
   }
   
@@ -156,8 +161,8 @@ static void fmn_gl2_spotlight(
   if (p<=0) return;
   
   // Spotlight's radius is the distance from focus to the furthest corner.
-  int16_t fullw=DRIVER->mainfb.texture.w;
-  int16_t fullh=DRIVER->mainfb.texture.h;
+  int16_t fullw=DRIVER->mainfb.w;
+  int16_t fullh=DRIVER->mainfb.h;
   float dx,dy;
   if (fx>fullw>>1) dx=fx; else dx=fullw-fx;
   if (fy>fullh>>1) dy=fy; else dy=fullh-fy;
@@ -174,7 +179,7 @@ static void fmn_gl2_spotlight(
   if (zy<fullh) fmn_gl2_draw_raw_rect(0,zy,fullw,fullh-zy,bgcolor);
   
   // And finally, draw the circle part as a texture.
-  if (fmn_gl2_texture_use(driver,17)>=0) {
+  if (fmn_gl2_texture_use_imageid(driver,17)>=0) {
     fmn_gl2_program_use(driver,&DRIVER->program_recal);
     fmn_gl2_draw_recal(&DRIVER->program_recal,ax,ay,zx-ax,zy-ay,0,0,DRIVER->texture->w,DRIVER->texture->h,DRIVER->game.transitioncolor|0xff);
   }
@@ -184,7 +189,7 @@ static void fmn_gl2_spotlight(
  * This could be done without all the parameters, but I feel it's cleaner this way.
  * Output framebuffer is not specified -- caller must set that up in advance.
  */
- 
+
 void fmn_gl2_game_transition_apply(
   struct bigpc_render_driver *driver,
   int transition,int p,int c,
@@ -210,6 +215,7 @@ void fmn_gl2_game_transition_apply(
   );
   DRIVER->game.hero_above_transition=0;
 }
+#endif
 
 /* Offset for hero.
  */
@@ -217,9 +223,9 @@ void fmn_gl2_game_transition_apply(
 void fmn_gl2_transition_get_hero_offset(int16_t *x,int16_t *y,struct bigpc_render_driver *driver) {
   *x=*y=0;
   switch (DRIVER->game.transition) {
-    case FMN_TRANSITION_PAN_LEFT: *x=(DRIVER->game.transitionp*DRIVER->mainfb.texture.w)/DRIVER->game.transitionc-DRIVER->mainfb.texture.w; break;
-    case FMN_TRANSITION_PAN_RIGHT: *x=DRIVER->mainfb.texture.w-(DRIVER->game.transitionp*DRIVER->mainfb.texture.w)/DRIVER->game.transitionc; break;
-    case FMN_TRANSITION_PAN_UP: *y=(DRIVER->game.transitionp*DRIVER->mainfb.texture.h)/DRIVER->game.transitionc-DRIVER->mainfb.texture.h; break;
-    case FMN_TRANSITION_PAN_DOWN: *y=DRIVER->mainfb.texture.h-(DRIVER->game.transitionp*DRIVER->mainfb.texture.h)/DRIVER->game.transitionc; break;
+    case FMN_TRANSITION_PAN_LEFT: *x=(DRIVER->game.transitionp*DRIVER->mainfb.w)/DRIVER->game.transitionc-DRIVER->mainfb.w; break;
+    case FMN_TRANSITION_PAN_RIGHT: *x=DRIVER->mainfb.w-(DRIVER->game.transitionp*DRIVER->mainfb.w)/DRIVER->game.transitionc; break;
+    case FMN_TRANSITION_PAN_UP: *y=(DRIVER->game.transitionp*DRIVER->mainfb.h)/DRIVER->game.transitionc-DRIVER->mainfb.h; break;
+    case FMN_TRANSITION_PAN_DOWN: *y=DRIVER->mainfb.h-(DRIVER->game.transitionp*DRIVER->mainfb.h)/DRIVER->game.transitionc; break;
   }
 }

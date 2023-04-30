@@ -22,10 +22,10 @@ void fmn_gl2_render_menu(struct bigpc_render_driver *driver,struct bigpc_menu *m
  */
  
 void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver) {
-  fmn_gl2_framebuffer_cleanup(&DRIVER->game.mapbits);
+  //fmn_gl2_texture_cleanup(&DRIVER->game.mapbits);
   if (DRIVER->game.mintile_vtxv) free(DRIVER->game.mintile_vtxv);
-  fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionfrom);
-  fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionto);
+  //fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionfrom);
+  //fmn_gl2_framebuffer_cleanup(&DRIVER->game.transitionto);
   fmn_gl2_texture_cleanup(&DRIVER->game.idle_warning_texture);
 }
 
@@ -36,15 +36,17 @@ int fmn_gl2_game_init(struct bigpc_render_driver *driver) {
   DRIVER->game.map_dirty=1;
   DRIVER->game.tilesize=16;//TODO consult config for image qualifier
   
-  int err=fmn_gl2_framebuffer_init(&DRIVER->game.mapbits,DRIVER->game.tilesize*FMN_COLC,DRIVER->game.tilesize*FMN_ROWC);
-  if (err<0) return err;
+  //int err=fmn_gl2_framebuffer_init(&DRIVER->game.mapbits,DRIVER->game.tilesize*FMN_COLC,DRIVER->game.tilesize*FMN_ROWC);
+  //if (err<0) return err;
   
+  /*XXX
   if ((err=fmn_gl2_framebuffer_init(
     &DRIVER->game.transitionfrom,DRIVER->game.mapbits.texture.w,DRIVER->game.mapbits.texture.h
   ))<0) return err;
   if ((err=fmn_gl2_framebuffer_init(
     &DRIVER->game.transitionto,DRIVER->game.mapbits.texture.w,DRIVER->game.mapbits.texture.h
   ))<0) return err;
+  /**/
   
   return 0;
 }
@@ -88,7 +90,7 @@ static void fmn_gl2_find_and_render_hero_over_transition(struct bigpc_render_dri
       fmn_gl2_game_render_HERO(driver,s);
       fmn_gl2_render_hero_overlay(driver,dx,dy);
       if (DRIVER->game.mintile_vtxc) {
-        if (fmn_gl2_texture_use(driver,s->imageid)<0) return;
+        if (fmn_gl2_texture_use_imageid(driver,s->imageid)<0) return;
         struct fmn_gl2_vertex_mintile *vtx=DRIVER->game.mintile_vtxv;
         int i=DRIVER->game.mintile_vtxc;
         for (;i-->0;vtx++) {
@@ -115,7 +117,7 @@ static void fmn_gl2_game_render_sprites(
   int spritec,
   int include_hero
 ) {
-  if (fmn_gl2_texture_use(driver,(*spritev)->imageid)<0) return;
+  if (fmn_gl2_texture_use_imageid(driver,(*spritev)->imageid)<0) return;
   DRIVER->game.mintile_vtxc=0;
   for (;spritec-->0;spritev++) {
     struct fmn_sprite_header *s=*spritev;
@@ -170,12 +172,14 @@ static inline int fmn_gl2_sprite_style_uses_mintile(int style) {
 void fmn_gl2_game_render_world(struct bigpc_render_driver *driver,int include_hero) {
   
   // Map.
+  #if 0 /*XXX*/
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
-  fmn_gl2_texture_use_object(driver,&DRIVER->game.mapbits.texture);
+  fmn_gl2_texture_use_object(driver,&DRIVER->game.mapbits);
   fmn_gl2_draw_decal(
-    0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,
-    0,DRIVER->game.mapbits.texture.h,DRIVER->game.mapbits.texture.w,-DRIVER->game.mapbits.texture.h
+    0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,
+    0,DRIVER->game.mapbits.h,DRIVER->game.mapbits.w,-DRIVER->game.mapbits.h
   );
+  #endif
   
   // Hero underlay: Shovel focus and broom shadow.
   if (!driver->transition_in_progress&&include_hero) {
@@ -224,7 +228,7 @@ void fmn_gl2_game_render_world(struct bigpc_render_driver *driver,int include_he
       else alpha=0xff-alpha;
       uint32_t rgba=alpha;
       fmn_gl2_program_use(driver,&DRIVER->program_raw);
-      fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,rgba);
+      fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,rgba);
     }
   }
 }
@@ -235,15 +239,15 @@ void fmn_gl2_game_render_world(struct bigpc_render_driver *driver,int include_he
 static void fmn_gl2_render_idle_warning(struct bigpc_render_driver *driver,int s) {
 
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
-  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,0xff000080);
+  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,0xff000080);
 
-  if (fmn_gl2_texture_use(driver,14)>=0) {
+  if (fmn_gl2_texture_use_imageid(driver,14)>=0) {
     fmn_gl2_program_use(driver,&DRIVER->program_decal);
     int16_t srcx=0,srcy=DRIVER->game.tilesize*12;
     int16_t w=DRIVER->game.tilesize*7,h=DRIVER->game.tilesize*4;
-    int16_t dstx=(DRIVER->mainfb.texture.w>>1)-(w>>1);
-    int16_t dsty=(DRIVER->mainfb.texture.h>>1)-(h>>1);
-    fmn_gl2_draw_decal(dstx,dsty,w,h,srcx,srcy,w,h);
+    int16_t dstx=(DRIVER->mainfb.w>>1)-(w>>1);
+    int16_t dsty=(DRIVER->mainfb.h>>1)-(h>>1);
+    fmn_gl2_draw_decal(driver,dstx,dsty,w,h,srcx,srcy,w,h);
     
     if (DRIVER->game.idle_warning_time!=s) {
       DRIVER->game.idle_warning_time=s;
@@ -272,7 +276,7 @@ static void fmn_gl2_render_idle_warning(struct bigpc_render_driver *driver,int s
     int16_t tdstx=dstx+(w*2)/3-(tw>>1);
     int16_t tdsty=dsty+((h*3)>>2)-(th>>1);
     fmn_gl2_program_use(driver,&DRIVER->program_recal);
-    fmn_gl2_draw_recal(&DRIVER->program_recal,tdstx,tdsty,tw,th,0,0,tw,th,(DRIVER->game.framec&8)?0xff0000ff:0x200000ff);
+    fmn_gl2_draw_recal(driver,&DRIVER->program_recal,tdstx,tdsty,tw,th,0,0,tw,th,(DRIVER->game.framec&8)?0xff0000ff:0x200000ff);
   }
 }
 
@@ -300,6 +304,7 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
   
   // Transition in progress? Draw world to (transitionto), then combine (transitionfrom,transitionto) into the main.
   // No transition? Draw direct into main.
+  #if 0 /*XXX*/
   if (DRIVER->game.transition) {
     fmn_gl2_framebuffer_use(driver,&DRIVER->game.transitionto);
     fmn_gl2_game_render_world(driver,DRIVER->game.hero_above_transition?0:1);
@@ -313,9 +318,10 @@ void fmn_gl2_game_render(struct bigpc_render_driver *driver) {
       fmn_gl2_find_and_render_hero_over_transition(driver);
     }
   } else {
-    fmn_gl2_framebuffer_use(driver,&DRIVER->mainfb);
+  #endif
+    fmn_gl2_framebuffer_use_object(driver,&DRIVER->mainfb);
     fmn_gl2_game_render_world(driver,1);
-  }
+  //}
   
   // The violin chart is its own thing, above transitions but below menus.
   if (fmn_global.active_item==FMN_ITEM_VIOLIN) {

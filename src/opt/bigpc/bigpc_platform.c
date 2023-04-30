@@ -65,6 +65,7 @@ void _fmn_begin_menu(int prompt,...) {
   }
 }
 
+#if 0 /*XXX moved to client side */
 /* Transitions.
  */
  
@@ -79,6 +80,7 @@ void fmn_commit_transition() {
 void fmn_cancel_transition() {
   bigpc_render_transition(bigpc.render,FMN_TRANSITION_CANCEL);
 }
+#endif
 
 /* Map load helpers.
  */
@@ -281,6 +283,7 @@ int8_t fmn_load_map(
   bigpc_load_cellphysics();
   bigpc_autobloom_plants();
   bigpc_render_map_dirty(bigpc.render);
+  fmn_map_dirty();
   return 1;
 }
 
@@ -298,6 +301,7 @@ static void bigpc_set_flower_times() {
   }
 }
 
+#if 0 // XXX moved to client side
 /* Map dirty.
  */
  
@@ -307,6 +311,7 @@ void fmn_map_dirty() {
   fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
   fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
 }
+#endif
 
 /* Add a plant.
  */
@@ -473,4 +478,5 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
 /* fmn_find_map_command, fmn_find_direction_to_item, fmn_find_direction_to_map
  * are part of the platform API, but have their own home in bigpc_map_analysis.c.
  * fmn_log and fmn_log_event live in bigpc_log.c.
+ * fmn_video_* and fmn_draw_* in bigpc_video_api.c.
  */

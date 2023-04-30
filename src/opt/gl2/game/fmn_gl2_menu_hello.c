@@ -19,8 +19,8 @@ static void hello_stars_reset(struct bigpc_render_driver *driver,struct bigpc_me
   struct hello_star *star=hello_starv;
   int i=HELLO_STARC;
   for (;i-->0;vtx++,star++) {
-    vtx->x=rand()%DRIVER->mainfb.texture.w;
-    vtx->y=rand()%DRIVER->mainfb.texture.h;
+    vtx->x=rand()%DRIVER->mainfb.w;
+    vtx->y=rand()%DRIVER->mainfb.h;
     uint8_t luma=0x40+(rand()&0x1f);
     vtx->r=luma+(rand()&0x1f)-0x10;
     vtx->g=luma+(rand()&0x1f)-0x10;
@@ -105,19 +105,20 @@ static uint32_t hello_title_color_update() {
  */
  
 void fmn_gl2_render_menu_hello(struct bigpc_render_driver *driver,struct bigpc_menu *menu) {
+  #if 0
   if (menu->framec==1) {
     hello_title_color_reset();
     hello_stars_reset(driver,menu);
   }
   
-  int16_t fullw=DRIVER->mainfb.texture.w,fullh=DRIVER->mainfb.texture.h;
+  int16_t fullw=DRIVER->mainfb.w,fullh=DRIVER->mainfb.h;
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
   fmn_gl2_draw_raw_rect(0,0,fullw,fullh,0x000000ff);
   int seqp=menu->framec%HELLO_PERIOD;
   
   hello_stars_draw(driver,menu);
   
-  if (fmn_gl2_texture_use(driver,14)>=0) {
+  if (fmn_gl2_texture_use_imageid(driver,14)>=0) {
     fmn_gl2_program_use(driver,&DRIVER->program_decal);
     
     // The Moon.
@@ -153,15 +154,16 @@ void fmn_gl2_render_menu_hello(struct bigpc_render_driver *driver,struct bigpc_m
   }
   
   // "Full Moon"
-  if (fmn_gl2_texture_use(driver,18)>=0) {
+  if (fmn_gl2_texture_use_imageid(driver,18)>=0) {
     fmn_gl2_program_use(driver,&DRIVER->program_decal);
     int16_t w=DRIVER->texture->w,h=DRIVER->texture->h;
     int16_t dstx=(fullw>>1)-(w>>1);
     int16_t dsty=(fullh>>1)-(h>>1);
     fmn_gl2_draw_decal(dstx,dsty,w,h,0,0,w,h);
-    if (fmn_gl2_texture_use(driver,19)>=0) {
+    if (fmn_gl2_texture_use_imageid(driver,19)>=0) {
       fmn_gl2_program_use(driver,&DRIVER->program_recal);
       fmn_gl2_draw_recal(&DRIVER->program_recal,dstx,dsty,w,h,0,0,w,h,hello_title_color_update());
     }
   }
+  #endif
 }

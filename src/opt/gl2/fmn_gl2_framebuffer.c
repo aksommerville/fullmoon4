@@ -1,3 +1,5 @@
+static int dummy=0;
+#if 0 /*XXX part of fmn_texture now */
 #include "fmn_gl2_internal.h"
 
 /* Cleanup.
@@ -54,3 +56,4 @@ int fmn_gl2_framebuffer_init(struct fmn_gl2_framebuffer *framebuffer,int w,int h
   
   return 0;
 }
+#endif

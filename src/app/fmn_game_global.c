@@ -13,7 +13,7 @@ int fmn_game_init() {
   
   if (fmn_game_load_map(1)<1) return -1;
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
-  fmn_begin_menu(FMN_MENU_HELLO);
+  //fmn_begin_menu(FMN_MENU_HELLO); // XXX disabled while rekajiggering renderer
   
   return 0;
 }

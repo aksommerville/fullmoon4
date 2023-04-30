@@ -23,7 +23,7 @@ static void fmn_gl2_map_draw_plants(struct bigpc_render_driver *driver) {
       vtx[1].xform=0;
     }
   }
-  if (vtxc&&(fmn_gl2_texture_use(driver,2)>=0)) {
+  if (vtxc&&(fmn_gl2_texture_use_imageid(driver,2)>=0)) {
     fmn_gl2_program_use(driver,&DRIVER->program_mintile);
     fmn_gl2_draw_mintile(vtxv,vtxc);
   }
@@ -153,8 +153,8 @@ void fmn_gl2_game_freshen_map(struct bigpc_render_driver *driver) {
       }
     }
   }
-  fmn_gl2_framebuffer_use(driver,&DRIVER->game.mapbits);
-  fmn_gl2_texture_use(driver,fmn_global.maptsid);
+  //fmn_gl2_framebuffer_use_object(driver,&DRIVER->game.mapbits);
+  fmn_gl2_texture_use_imageid(driver,fmn_global.maptsid);
   fmn_gl2_program_use(driver,&DRIVER->program_mintile);
   fmn_gl2_draw_mintile(vtxv,vtxc);
   fmn_gl2_map_draw_plants(driver);

@@ -27,12 +27,12 @@ static void fmn_gl2_violin_begin(struct fmn_gl2_violin_context *ctx,struct bigpc
 
   int16_t ymargin=DRIVER->game.tilesize;
   ctx->x=0;
-  ctx->w=DRIVER->mainfb.texture.w;
-  ctx->h=DRIVER->mainfb.texture.h/3;
+  ctx->w=DRIVER->mainfb.w;
+  ctx->h=DRIVER->mainfb.h/3;
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   if (heroy<FMN_ROWC*0.5f) {
-    ctx->y=DRIVER->mainfb.texture.h-ymargin-ctx->h;
+    ctx->y=DRIVER->mainfb.h-ymargin-ctx->h;
   } else {
     ctx->y=ymargin;
   }
@@ -133,7 +133,7 @@ static void fmn_gl2_render_violin_background(struct bigpc_render_driver *driver,
   }
   fmn_gl2_draw_raw(GL_LINES,lvtxv,lvtx-lvtxv);
   
-  if (ctx->notec&&(fmn_gl2_texture_use(driver,2)>=0)) {
+  if (ctx->notec&&(fmn_gl2_texture_use_imageid(driver,2)>=0)) {
     struct fmn_gl2_vertex_mintile tvtxv[FMN_VIOLIN_SONG_LENGTH];
     struct fmn_gl2_vertex_mintile *tvtx=tvtxv;
     const struct fmn_gl2_violin_note *note=ctx->notev;

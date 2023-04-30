@@ -41,15 +41,26 @@ int fmn_gl2_program_recal_init(struct fmn_gl2_program *program,struct bigpc_rend
   return 0;
 }
 
+/* Flip vertical input coordinates.
+ */
+ 
+static void fmn_gl2_recal_flip(struct fmn_gl2_vertex_recal *vtx,int h) {
+  int i=4; for (;i-->0;vtx++) {
+    vtx->ty=h-vtx->ty;
+  }
+}
+
 /* Render.
  */
  
 void fmn_gl2_draw_recal(
+  struct bigpc_render_driver *driver,
   struct fmn_gl2_program *program,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch,
   uint32_t rgba
 ) {
+  if (!DRIVER->texture) return;
   glUniform4f(program->locv[0],(rgba>>24)/255.0f,((rgba>>16)&0xff)/255.0f,((rgba>>8)&0xff)/255.0f,(rgba&0xff)/255.0f);
   struct fmn_gl2_vertex_recal vtxv[]={
     {dstx     ,dsty     ,srcx     ,srcy     },
@@ -57,17 +68,22 @@ void fmn_gl2_draw_recal(
     {dstx+dstw,dsty     ,srcx+srcw,srcy     },
     {dstx+dstw,dsty+dsth,srcx+srcw,srcy+srch},
   };
+  if (DRIVER->texture->fbid&&DRIVER->framebuffer) {
+    fmn_gl2_recal_flip(vtxv,DRIVER->texture->h);
+  }
   glVertexAttribPointer(0,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_recal),&vtxv[0].x);
   glVertexAttribPointer(1,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_recal),&vtxv[0].tx);
   glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 }
 
 void fmn_gl2_draw_recal_swap(
+  struct bigpc_render_driver *driver,
   struct fmn_gl2_program *program,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch,
   uint32_t rgba
 ) {
+  if (!DRIVER->texture) return;
   glUniform4f(program->locv[0],(rgba>>24)/255.0f,((rgba>>16)&0xff)/255.0f,((rgba>>8)&0xff)/255.0f,(rgba&0xff)/255.0f);
   struct fmn_gl2_vertex_recal vtxv[]={
     {dstx     ,dsty     ,srcx     ,srcy     },
@@ -75,6 +91,9 @@ void fmn_gl2_draw_recal_swap(
     {dstx+dstw,dsty     ,srcx     ,srcy+srch},
     {dstx+dstw,dsty+dsth,srcx+srcw,srcy+srch},
   };
+  if (DRIVER->texture->fbid&&DRIVER->framebuffer) {
+    fmn_gl2_recal_flip(vtxv,DRIVER->texture->h);
+  }
   glVertexAttribPointer(0,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_recal),&vtxv[0].x);
   glVertexAttribPointer(1,2,GL_SHORT,0,sizeof(struct fmn_gl2_vertex_recal),&vtxv[0].tx);
   glDrawArrays(GL_TRIANGLE_STRIP,0,4);

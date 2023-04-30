@@ -96,6 +96,7 @@ extern struct bigpc {
   uint8_t pvinput;
   uint8_t idle_warning_time; // number to show, seconds. zero for none
   
+  //XXX menu management should move with rendering into the client
   // Last in the list is on top.
   struct bigpc_menu **menuv;
   int menuc,menua;

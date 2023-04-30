@@ -79,8 +79,8 @@ void fmn_gl2_game_render_FIREWALL(struct bigpc_render_driver *driver,struct fmn_
   switch (sprite->bv[0]) {
     case FMN_DIR_W: fmn_gl2_game_render_FIREWALL_1(driver,sprite,0,sp,extent,sc,sprite->bv[0]); break;
     case FMN_DIR_N: fmn_gl2_game_render_FIREWALL_1(driver,sprite,sp,0,sc,extent,sprite->bv[0]); break;
-    case FMN_DIR_E: fmn_gl2_game_render_FIREWALL_1(driver,sprite,DRIVER->mainfb.texture.w-extent,sp,extent,sc,sprite->bv[0]); break;
-    case FMN_DIR_S: fmn_gl2_game_render_FIREWALL_1(driver,sprite,sp,DRIVER->mainfb.texture.h-extent,sc,extent,sprite->bv[0]); break;
+    case FMN_DIR_E: fmn_gl2_game_render_FIREWALL_1(driver,sprite,DRIVER->mainfb.w-extent,sp,extent,sc,sprite->bv[0]); break;
+    case FMN_DIR_S: fmn_gl2_game_render_FIREWALL_1(driver,sprite,sp,DRIVER->mainfb.h-extent,sc,extent,sprite->bv[0]); break;
   }
 }
 
@@ -128,10 +128,12 @@ void fmn_gl2_game_render_SCARYDOOR(struct bigpc_render_driver *driver,struct fmn
   int16_t srcy=(sprite->tileid>>4)*DRIVER->game.tilesize;
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   fmn_gl2_draw_decal(
+    driver,
     dstx,dsty,ts2,halfh,
     srcx,srcy+ts2-halfh,ts2,halfh
   );
   fmn_gl2_draw_decal(
+    driver,
     dstx,dsty+DRIVER->game.tilesize+ts2-halfh,ts2,halfh,
     srcx,srcy+ts2,ts2,halfh
   );

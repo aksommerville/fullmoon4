@@ -9,8 +9,8 @@ void fmn_gl2_render_menu_chalk(struct bigpc_render_driver *driver,struct bigpc_m
   int spacing=DRIVER->game.tilesize*3;
   int bw=spacing*2+margin*2;
   int bh=bw;
-  int bx=(DRIVER->mainfb.texture.w>>1)-(bw>>1);
-  int by=(DRIVER->mainfb.texture.h>>1)-(bh>>1);
+  int bx=(DRIVER->mainfb.w>>1)-(bw>>1);
+  int by=(DRIVER->mainfb.h>>1)-(bh>>1);
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
   fmn_gl2_draw_raw_rect(bx,by,bw,bh,0x000000ff);
   
@@ -50,7 +50,7 @@ void fmn_gl2_render_menu_chalk(struct bigpc_render_driver *driver,struct bigpc_m
   if (vtxc) fmn_gl2_draw_raw(GL_LINES,vtxv,vtxc);
   
   // Anchor points and hand.
-  if (fmn_gl2_texture_use(driver,2)>=0) {
+  if (fmn_gl2_texture_use_imageid(driver,2)>=0) {
     struct fmn_gl2_vertex_mintile mvtxv[10];
     struct fmn_gl2_vertex_mintile *mvtx=mvtxv;
     int col=0; for (;col<3;col++) {

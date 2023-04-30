@@ -6,6 +6,7 @@
  */
  
 static void fmn_gl2_pause_draw_count(struct bigpc_render_driver *driver,int16_t x,int16_t y,uint8_t c) {
+#if 0
   const int16_t glyphw=3;
   const int16_t glyphh=5;
   const int16_t marginx=2;
@@ -37,12 +38,15 @@ static void fmn_gl2_pause_draw_count(struct bigpc_render_driver *driver,int16_t 
   if (c>=100) { fmn_gl2_draw_decal(xi,yi,glyphw,glyphh,(c/100)*glyphw,bgsrcy,glyphw,glyphh); xi+=glyphw+1; }
   if (c>=10) { fmn_gl2_draw_decal(xi,yi,glyphw,glyphh,((c%100)/10)*glyphw,bgsrcy,glyphw,glyphh); xi+=glyphw+1; }
   fmn_gl2_draw_decal(xi,yi,glyphw,glyphh,(c%10)*glyphw,bgsrcy,glyphw,glyphh);
+#endif
 }
 
 /* Render pause menu.
  */
  
 void fmn_gl2_render_menu_pause(struct bigpc_render_driver *driver,struct bigpc_menu *menu) {
+  #if 0
+  
   const int16_t marginx=4;
   const int16_t marginy=4;
   const int16_t spacingx=4;
@@ -53,8 +57,8 @@ void fmn_gl2_render_menu_pause(struct bigpc_render_driver *driver,struct bigpc_m
   int16_t halfts=DRIVER->game.tilesize>>1;
   int16_t w=(marginx<<1)+colc*ts+spacingx*(colc-1);
   int16_t h=(marginy<<1)+rowc*ts+spacingy*(rowc-1);
-  int16_t x=(DRIVER->mainfb.texture.w>>1)-(w>>1);
-  int16_t y=(DRIVER->mainfb.texture.h>>1)-(h>>1);
+  int16_t x=(DRIVER->mainfb.w>>1)-(w>>1);
+  int16_t y=(DRIVER->mainfb.h>>1)-(h>>1);
   
   // Solid black background.
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
@@ -107,7 +111,7 @@ void fmn_gl2_render_menu_pause(struct bigpc_render_driver *driver,struct bigpc_m
     vtx->xform=0;
   }
   
-  fmn_gl2_texture_use(driver,2);
+  fmn_gl2_texture_use_imageid(driver,2);
   fmn_gl2_program_use(driver,&DRIVER->program_mintile);
   fmn_gl2_draw_mintile(vtxv,vtxc);
   
@@ -124,4 +128,6 @@ void fmn_gl2_render_menu_pause(struct bigpc_render_driver *driver,struct bigpc_m
   QUALIFIER(MATCH)
   QUALIFIER(CHEESE)
   #undef QUALIFIER
+  
+  #endif
 }

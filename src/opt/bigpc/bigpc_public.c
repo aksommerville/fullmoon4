@@ -234,10 +234,16 @@ int bigpc_update() {
   } else {
     if (bigpc_video_driver_begin_gx(bigpc.video)<0) return -1;
   }
+  #if 0 /* XXX old render api */
   if (bigpc_render_update(fb,bigpc.render)<0) {
     bigpc_video_driver_cancel(bigpc.video);
     return -1;
   }
+  #else /* new render api */
+  bigpc.render->type->begin(bigpc.render);
+  uint8_t render_result=fmn_render();
+  bigpc.render->type->end(bigpc.render,render_result);
+  #endif
   bigpc_video_driver_end(bigpc.video);
 
   return bigpc.sigc?0:1;

@@ -38,13 +38,16 @@
 struct fmn_gl2_texture {
   int imageid;
   GLuint texid;
+  GLuint fbid; // nonzero if writeable
   int w,h;
 };
 
+/*XXX new api: framebuffer will now be an optional feature of texture
 struct fmn_gl2_framebuffer {
   GLuint fbid;
   struct fmn_gl2_texture texture;
 };
+/**/
 
 struct fmn_gl2_program {
   GLuint programid;
@@ -57,14 +60,19 @@ struct fmn_gl2_program {
 
 /* Initialize texture with a PNG file.
  * The context provides a convenience using image ids.
- * Alternately, provide packed 32-bit RGBA, LRTB as usual.
+ * Alternately, provide packed 32-bit RGBA, LRTB as usual. (v) may be null to initialize blank.
  */
 void fmn_gl2_texture_cleanup(struct fmn_gl2_texture *texture);
+void fmn_gl2_texture_del(struct fmn_gl2_texture *texture);
+struct fmn_gl2_texture *fmn_gl2_texture_new();
 int fmn_gl2_texture_init(struct fmn_gl2_texture *texture,const void *src,int srcc);
 int fmn_gl2_texture_init_rgba(struct fmn_gl2_texture *texture,int w,int h,const void *v);
+int fmn_gl2_texture_require_framebuffer(struct fmn_gl2_texture *texture);
 
+/*XXX
 void fmn_gl2_framebuffer_cleanup(struct fmn_gl2_framebuffer *framebuffer);
 int fmn_gl2_framebuffer_init(struct fmn_gl2_framebuffer *framebuffer,int w,int h);
+/**/
 
 void fmn_gl2_program_cleanup(struct fmn_gl2_program *program);
 
@@ -100,40 +108,32 @@ struct fmn_gl2_vertex_raw {
 void fmn_gl2_draw_raw(int mode,const struct fmn_gl2_vertex_raw *vtxv,int vtxc);
 void fmn_gl2_draw_raw_rect(int x,int y,int w,int h,uint32_t rgba);
 
-struct fmn_gl2_vertex_mintile {
-  GLshort x,y; // center
-  GLubyte tileid;
-  GLubyte xform;
-};
+// mintile and maxtile, I was careful to keep the public vertex definition amenable to OpenGL, use it directly.
+#define fmn_gl2_vertex_mintile fmn_draw_mintile
 void fmn_gl2_draw_mintile(const struct fmn_gl2_vertex_mintile *vtxv,int vtxc);
 
-struct fmn_gl2_vertex_maxtile {
-  GLshort x,y;
-  GLubyte tileid;
-  GLbyte rotate; // 1/256 turns clockwise
-  GLubyte size;
-  GLubyte xform;
-  GLubyte tr,tg,tb,ta; // tint
-  GLubyte pr,pg,pb; // primary
-  GLubyte alpha;
-};
+#define fmn_gl2_vertex_maxtile fmn_draw_maxtile
 void fmn_gl2_draw_maxtile(const struct fmn_gl2_vertex_maxtile *vtxv,int vtxc);
 
 void fmn_gl2_draw_decal(
+  struct bigpc_render_driver *driver,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch
 );
 void fmn_gl2_draw_decal_swap(
+  struct bigpc_render_driver *driver,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch
 );
 void fmn_gl2_draw_recal(
+  struct bigpc_render_driver *driver,
   struct fmn_gl2_program *program,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch,
   uint32_t rgba
 );
 void fmn_gl2_draw_recal_swap(
+  struct bigpc_render_driver *driver,
   struct fmn_gl2_program *program,
   int dstx,int dsty,int dstw,int dsth,
   int srcx,int srcy,int srcw,int srch,
@@ -145,6 +145,8 @@ void fmn_gl2_draw_recal_swap(
  * So we split it again here: Everything Full Moony goes into gl2's "game" object.
  * The rest of this gl2 unit is pretty much generic.
  *******************************************************************/
+ 
+// Update 2023-04-29: render-redesign: All this "game" stuff should be moving into the client now.
  
 #define FMN_GL2_COMPASS_RATE_MIN 0.010f
 #define FMN_GL2_COMPASS_RATE_MAX 0.200f
@@ -162,7 +164,7 @@ void fmn_gl2_draw_recal_swap(
  
 struct fmn_gl2_game {
   int map_dirty;
-  struct fmn_gl2_framebuffer mapbits;
+  //XXX struct fmn_gl2_framebuffer mapbits;
   int tilesize;
   struct fmn_gl2_vertex_mintile *mintile_vtxv;
   int mintile_vtxc,mintile_vtxa;
@@ -171,7 +173,7 @@ struct fmn_gl2_game {
   int ffchargeframe; // specific to werewolf
   float compassangle;
   int transition,transitionp,transitionc; // (p) counts up to (c)
-  struct fmn_gl2_framebuffer transitionfrom,transitionto;
+  //XXX struct fmn_gl2_framebuffer transitionfrom,transitionto;
   uint32_t transitioncolor; // for fade. rgbx
   int16_t transitionfromx,transitionfromy,transitiontox,transitiontoy; // for spotlight
   int hero_above_transition;
@@ -196,11 +198,13 @@ int fmn_gl2_game_add_mintile_vtx_pixcoord(
   
 void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver);
 void fmn_gl2_game_transition_commit(struct bigpc_render_driver *driver);
+/*XXX
 void fmn_gl2_game_transition_apply(
   struct bigpc_render_driver *driver,
   int transition,int p,int c,
   struct fmn_gl2_framebuffer *from,struct fmn_gl2_framebuffer *to
 );
+/**/
 
 void fmn_gl2_transition_get_hero_offset(int16_t *x,int16_t *y,struct bigpc_render_driver *driver);
 
@@ -220,13 +224,14 @@ uint32_t fmn_gl2_chalk_bit_from_points(uint32_t points);
 
 struct bigpc_render_driver_gl2 {
   struct bigpc_render_driver hdr;
+  uint8_t pixfmt; // Always FMN_VIDEO_PIXFMT_RGBA.
   
-  struct fmn_gl2_texture *texturev;
+  struct fmn_gl2_texture **texturev;
   int texturec,texturea;
   struct fmn_gl2_texture *texture; // WEAK. Currently bound, or null.
   
-  struct fmn_gl2_framebuffer mainfb;
-  struct fmn_gl2_framebuffer *framebuffer; // WEAK
+  struct fmn_gl2_texture mainfb;
+  struct fmn_gl2_texture *framebuffer; // WEAK
   
   #define _(tag) struct fmn_gl2_program program_##tag;
   FMN_GL2_FOR_EACH_PROGRAM
@@ -239,13 +244,23 @@ struct bigpc_render_driver_gl2 {
   int pvw,pvh; // total output size, so we can detect changes.
   int dstx,dsty,dstw,dsth;
   int fbquakex,fbquakey; // earthquake shaking is managed by the final output.
+  
+  struct fmn_gl2_vertex_raw *rawvtxv;
+  int rawvtxa;
 };
 
 #define DRIVER ((struct bigpc_render_driver_gl2*)driver)
 
 void fmn_gl2_program_use(struct bigpc_render_driver *driver,struct fmn_gl2_program *program);
-int fmn_gl2_texture_use(struct bigpc_render_driver *driver,int imageid);
-void fmn_gl2_texture_use_object(struct bigpc_render_driver *driver,struct fmn_gl2_texture *texture);
-void fmn_gl2_framebuffer_use(struct bigpc_render_driver *driver,struct fmn_gl2_framebuffer *framebuffer);
+int fmn_gl2_texture_use_imageid(struct bigpc_render_driver *driver,int imageid);
+int fmn_gl2_texture_use_object(struct bigpc_render_driver *driver,struct fmn_gl2_texture *texture);
+
+/* For framebuffers, imageid zero is (DRIVER->mainfb), and object zero is the real main output.
+ * Clients are not allowed to draw to the real main, we only do that internally.
+ */
+int fmn_gl2_framebuffer_use_imageid(struct bigpc_render_driver *driver,int imageid);
+int fmn_gl2_framebuffer_use_object(struct bigpc_render_driver *driver,struct fmn_gl2_texture *texture);
+
+int fmn_gl2_rawvtxv_require(struct bigpc_render_driver *driver,int c);
 
 #endif

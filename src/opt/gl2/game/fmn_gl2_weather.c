@@ -14,8 +14,8 @@
 static void fmn_gl2_require_particles(struct bigpc_render_driver *driver) {
   while (DRIVER->game.particlec<FMN_GL2_PARTICLE_LIMIT) {
     struct fmn_gl2_vertex_raw *particle=DRIVER->game.particlev+DRIVER->game.particlec++;
-    particle->x=rand()%DRIVER->mainfb.texture.w;
-    particle->y=rand()%DRIVER->mainfb.texture.h;
+    particle->x=rand()%DRIVER->mainfb.w;
+    particle->y=rand()%DRIVER->mainfb.h;
   }
 }
 
@@ -26,14 +26,14 @@ static void fmn_gl2_render_rain(struct bigpc_render_driver *driver) {
   fmn_gl2_require_particles(driver);
   const int16_t speed=4;
   const int16_t length=12;
-  int16_t bottom=DRIVER->mainfb.texture.h+speed;
+  int16_t bottom=DRIVER->mainfb.h+speed;
   struct fmn_gl2_vertex_raw *particle=DRIVER->game.particlev;
   int i=DRIVER->game.particlec>>1;
   for (;i-->0;particle+=2) {
     particle[0].y+=speed;
     if (particle[0].y>bottom) {
       particle[0].y=0;
-      particle[0].x=rand()%DRIVER->mainfb.texture.w;
+      particle[0].x=rand()%DRIVER->mainfb.w;
     }
     particle[1].x=particle[0].x;
     particle[1].y=particle[0].y-length;
@@ -65,16 +65,16 @@ static void fmn_gl2_render_wind(struct bigpc_render_driver *driver,float nx,floa
     particle[0].x+=movedx;
     particle[0].y+=movedy;
     if (particle[0].x<0) {
-      particle[0].x=DRIVER->mainfb.texture.w;
-      particle[0].y=rand()%DRIVER->mainfb.texture.h;
+      particle[0].x=DRIVER->mainfb.w;
+      particle[0].y=rand()%DRIVER->mainfb.h;
     } else if (particle[0].y<0) {
-      particle[0].x=rand()%DRIVER->mainfb.texture.w;
-      particle[0].y=DRIVER->mainfb.texture.h;
-    } else if (particle[0].x>DRIVER->mainfb.texture.w) {
+      particle[0].x=rand()%DRIVER->mainfb.w;
+      particle[0].y=DRIVER->mainfb.h;
+    } else if (particle[0].x>DRIVER->mainfb.w) {
       particle[0].x=0;
-      particle[0].y=rand()%DRIVER->mainfb.texture.h;
-    } else if (particle[0].y>DRIVER->mainfb.texture.h) {
-      particle[0].x=rand()%DRIVER->mainfb.texture.w;
+      particle[0].y=rand()%DRIVER->mainfb.h;
+    } else if (particle[0].y>DRIVER->mainfb.h) {
+      particle[0].x=rand()%DRIVER->mainfb.w;
       particle[0].y=0;
     }
     particle[1].x=particle[0].x+taildx;
@@ -119,7 +119,7 @@ void fmn_gl2_render_mapdark(struct bigpc_render_driver *driver) {
     }
   }
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
-  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.texture.w,DRIVER->mainfb.texture.h,rgba);
+  fmn_gl2_draw_raw_rect(0,0,DRIVER->mainfb.w,DRIVER->mainfb.h,rgba);
 }
 
 /* Weather, main entry point.

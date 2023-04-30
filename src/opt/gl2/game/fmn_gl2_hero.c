@@ -407,7 +407,7 @@ static void fmn_gl2_hero_underlay_broom(struct bigpc_render_driver *driver,int16
   struct fmn_sprite *sprite=0;
   fmn_sprites_for_each(fmn_gl2_find_hero,&sprite);
   if (!sprite) return;
-  if (fmn_gl2_texture_use(driver,sprite->imageid)<0) return;
+  if (fmn_gl2_texture_use_imageid(driver,sprite->imageid)<0) return;
   fmn_gl2_program_use(driver,&DRIVER->program_mintile);
   struct fmn_gl2_vertex_mintile vtx={
     .x=sprite->x*DRIVER->game.tilesize+addx,
@@ -423,7 +423,7 @@ static void fmn_gl2_hero_underlay_shovel(struct bigpc_render_driver *driver,int1
   if (addx||addy) return; // don't draw this while transitioning
   if ((fmn_global.shovelx<0)||(fmn_global.shovelx>=FMN_COLC)) return;
   if ((fmn_global.shovely<0)||(fmn_global.shovely>=FMN_ROWC)) return;
-  if (fmn_gl2_texture_use(driver,2)<0) return;
+  if (fmn_gl2_texture_use_imageid(driver,2)<0) return;
   fmn_gl2_program_use(driver,&DRIVER->program_mintile);
   struct fmn_gl2_vertex_mintile vtx={
     .x=fmn_global.shovelx*DRIVER->game.tilesize+(DRIVER->game.tilesize>>1),
@@ -454,7 +454,7 @@ static void fmn_gl2_hero_overlay_compass(struct bigpc_render_driver *driver) {
   struct fmn_sprite *sprite=0;
   fmn_sprites_for_each(fmn_gl2_find_hero,&sprite);
   if (!sprite) return;
-  if (fmn_gl2_texture_use(driver,sprite->imageid)<0) return;
+  if (fmn_gl2_texture_use_imageid(driver,sprite->imageid)<0) return;
   fmn_gl2_program_use(driver,&DRIVER->program_maxtile);
   
   if (fmn_global.curse_time>0.0f) {
@@ -509,7 +509,7 @@ static void fmn_gl2_hero_overlay_showoff(struct bigpc_render_driver *driver) {
   struct fmn_sprite *sprite=0;
   fmn_sprites_for_each(fmn_gl2_find_hero,&sprite);
   if (!sprite) return;
-  if (fmn_gl2_texture_use(driver,sprite->imageid)<0) return;
+  if (fmn_gl2_texture_use_imageid(driver,sprite->imageid)<0) return;
   fmn_gl2_program_use(driver,&DRIVER->program_mintile);
   struct fmn_gl2_vertex_mintile vtx={
     .x=sprite->x*DRIVER->game.tilesize,

@@ -409,6 +409,15 @@ void fmn_update(uint32_t timems,uint8_t input);
  */
 void fmn_gs_notify(uint16_t p,uint16_t c);
 
+/* Called when we're ready for the next scene.
+ * fmn_draw_* calls are valid only during this.
+ * Normally one render per update, but that's not guaranteed.
+ * Return nonzero if you rendered a complete frame that should be delivered to output.
+ * Return zero if you did nothing, and we should keep the prior frame.
+ * Do not give up partway thru; backend's behavior is undefined in that case.
+ */
+uint8_t fmn_render();
+
 /* Platform implements the rest.
  *************************************************/
 
@@ -431,12 +440,15 @@ void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*
 #define FMN_MENU_VICTORY -4
 #define FMN_MENU_GAMEOVER -5
 #define FMN_MENU_HELLO -6
+//XXX render-redesign: Menus will be a purely client-side construct, we can remove from this API.
 
 /* Prepare a transition while in the "from" state, and declare what style you will want.
  * Then make your changes, and either commit or cancel it.
  * Platform decides whether to update during a transition, I'm thinking no.
  * If you prepare and then finish the frame without commit or cancel, it implicitly cancels.
  * Two prepares in one frame, the second cancels the first.
+ *
+ * XXX render-redesign: These now live on the client side. Find a new header for them.
  */
 void fmn_prepare_transition(int transition);
 void fmn_commit_transition();
@@ -456,8 +468,11 @@ int8_t fmn_load_map(
   )
 );
 
-// Call if you change map tiles. You don't need to track which ones.
-// Plants too.
+/* Call if you change map tiles. You don't need to track which ones.
+ * Plants too.
+ *
+ * XXX render-redesign: These now live on the client side. Find a new header for them.
+ */
 void fmn_map_dirty();
 
 /* Plant a seed or begin editing a sketch.
@@ -504,5 +519,140 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
  * Capture business events to a machine-readable log I can examine later.
  */
 void fmn_log_event(const char *key,const char *fmt,...);
+
+/* Rendering API.
+ * Everything named "fmn_draw_*" is only valid during fmn_render.
+ * I'll use "fmn_video_*" for functions safe to call any time.
+ * Render ops all take an array of primitives.
+ * Depending on implementation, it can be much more efficient to do large batches than individual ops.
+ * "fmn_pixfmt_*" functions are implemented in the client to be more shareable.
+ ***********************************************************************/
+ 
+#define FMN_VIDEO_PIXFMT_ANY        0x00
+#define FMN_VIDEO_PIXFMT_ANY_1      0x10
+#define FMN_VIDEO_PIXFMT_Y1BE       0x11
+#define FMN_VIDEO_PIXFMT_W1BE       0x12
+#define FMN_VIDEO_PIXFMT_ANY_2      0x20
+#define FMN_VIDEO_PIXFMT_ANY_4      0x30
+#define FMN_VIDEO_PIXFMT_ANY_8      0x40
+#define FMN_VIDEO_PIXFMT_I8         0x41
+#define FMN_VIDEO_PIXFMT_Y8         0x42
+#define FMN_VIDEO_PIXFMT_ANY_16     0x50
+#define FMN_VIDEO_PIXFMT_RGB565LE   0x51
+#define FMN_VIDEO_PIXFMT_RGBA4444BE 0x52
+#define FMN_VIDEO_PIXFMT_ANY_24     0x60
+#define FMN_VIDEO_PIXFMT_ANY_32     0x70
+#define FMN_VIDEO_PIXFMT_RGBA       0x71
+#define FMN_VIDEO_PIXFMT_BGRA       0x72
+#define FMN_VIDEO_PIXFMT_ARGB       0x73
+#define FMN_VIDEO_PIXFMT_ABGR       0x74
+
+/* Make the most sensible assumption for wildcard types, and assert known formats.
+ * We return zero (FMN_VIDEO_PIXFMT_ANY) if unknown, otherwise a concrete pixfmt.
+ */
+uint8_t fmn_pixfmt_concrete(uint8_t pixfmt);
+uint8_t fmn_pixfmt_get_pixel_size(uint8_t pixfmt); // => pixel size in bits, 0 if unknown
+uint8_t fmn_pixfmt_has_alpha(uint8_t pixfmt);
+
+/* Client must call during init.
+ * If it returns <0, you may try again with different parameters.
+ * If it succeeds and you provided a zero-length range, you got that size exactly.
+ * Nonzero range, you'll need to ask fmn_video_get_framebuffer_size().
+ */
+int8_t fmn_video_init(
+  int16_t wmin,int16_t wmax,
+  int16_t hmin,int16_t hmax,
+  uint8_t pixfmt
+);
+
+/* Guaranteed not to change once established.
+ */
+void fmn_video_get_framebuffer_size(int16_t *w,int16_t *h);
+uint8_t fmn_video_get_pixfmt();
+
+/* All drawing commands expect pixels in the main framebuffer's format.
+ * Clients are not expected to understand those pixels; use these converters.
+ */
+uint32_t fmn_video_rgba_from_pixel(uint32_t pixel);
+uint32_t fmn_video_pixel_from_rgba(uint32_t rgba);
+
+/* Bounds (0,0,0,0) to replace an entire image, possibly changing its bounds.
+ * Input may be any specific pixfmt. Backend may convert during the upload, you shouldn't need to care about that.
+ * Image resources from the data archive are automatically available without uploading.
+ */
+void fmn_video_upload_image(
+  uint16_t imageid,
+  int16_t x,int16_t y,int16_t w,int16_t h,
+  const void *src,int srcstride,uint8_t srcpixfmt
+);
+
+/* Select an image to render to.
+ * imageid zero is the main framebuffer, and is always selected initially.
+ */
+int8_t fmn_draw_set_output(uint16_t imageid);
+
+/* Skinny straight lines.
+ */
+struct fmn_draw_line {
+  int16_t ax,ay,bx,by;
+  uint32_t pixel;
+};
+void fmn_draw_line(const struct fmn_draw_line *v,int c);
+
+/* Solid rectangles.
+ */
+struct fmn_draw_rect {
+  int16_t x,y,w,h;
+  uint32_t pixel;
+};
+void fmn_draw_rect(const struct fmn_draw_rect *v,int c);
+
+/* Tiles from a 16x16-tile image.
+ * Outputs at the natural size.
+ */
+struct fmn_draw_mintile {
+  int16_t x,y; // center
+  uint8_t tileid;
+  uint8_t xform;
+};
+void fmn_draw_mintile(const struct fmn_draw_mintile *v,int c,uint16_t srcimageid);
+
+/* Tiles from a 16x16-tile image, with all the bells and whistles.
+ * (primary) replaces pure gray pixels such that 0x00000 and 0xffffff are unchanged, and 0x808080 turns into (pr,pg,pb).
+ */
+struct fmn_draw_maxtile {
+  int16_t x,y; // center
+  uint8_t tileid;
+  uint8_t rotate; // 1/256 turns clockwise
+  uint8_t size; // pixels
+  uint8_t xform;
+  uint8_t tr,tg,tb,ta; // tint
+  uint8_t pr,pg,pb; // primary
+  uint8_t alpha;
+};
+void fmn_draw_maxtile(const struct fmn_draw_maxtile *v,int c,uint16_t srcimageid);
+
+/* Copy any rectangular region of one image to the output.
+ * "swap" reverses the axes. It still respects the provided dimensions exactly.
+ * You'll probably want to swap (dstw,dsth) on your own.
+ * Use negative dimensions to flip on one axis.
+ */
+struct fmn_draw_decal {
+  int16_t dstx,dsty,dstw,dsth;
+  int16_t srcx,srcy,srcw,srch;
+};
+void fmn_draw_decal(const struct fmn_draw_decal *v,int c,uint16_t srcimageid);
+void fmn_draw_decal_swap(const struct fmn_draw_decal *v,int c,uint16_t srcimageid);
+
+/* Same as "decal", but replace all colors with the provided pixel.
+ */
+struct fmn_draw_recal {
+  int16_t dstx,dsty,dstw,dsth;
+  int16_t srcx,srcy,srcw,srch;
+  uint32_t pixel;
+};
+void fmn_draw_recal(const struct fmn_draw_recal *v,int c,uint16_t srcimageid);
+void fmn_draw_recal_swap(const struct fmn_draw_recal *v,int c,uint16_t srcimageid);
+  
 
 #endif

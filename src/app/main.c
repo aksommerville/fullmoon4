@@ -39,3 +39,6 @@ void fmn_update(uint32_t timems,uint8_t input) {
   
   fmn_game_update(elapsed);
 }
+
+/* The other public entry point, fmn_render(), is in src/app/render/fmn_render_main.c
+ */
