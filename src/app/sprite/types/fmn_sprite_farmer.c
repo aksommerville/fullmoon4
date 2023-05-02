@@ -143,6 +143,7 @@ static void farmer_begin_SOW(struct fmn_sprite *sprite,int8_t col,int8_t row) {
   if (fmn_add_plant(col,row)<0) {
     farmer_begin_GO_HOME(sprite);
   }
+  fmn_map_dirty();
 }
 
 static void farmer_update_SOW(struct fmn_sprite *sprite,float elapsed) {

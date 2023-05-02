@@ -1,3 +1,4 @@
+#if 0 /*XXX move to client*/
 /* bigpc_menu_prompt.c
  * Generic prompt-and-options menu.
  * We're not actually using this, at the time of writing.
@@ -48,3 +49,4 @@ struct bigpc_menu *bigpc_menu_new_prompt(int stringid) {
   menu->update=_prompt_update;
   return menu;
 }
+#endif

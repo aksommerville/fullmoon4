@@ -90,6 +90,7 @@ static void fmn_hero_seed_begin() {
     int8_t result=fmn_add_plant(fmn_global.shovelx,fmn_global.shovely);
     if (result>=0) { // planted!
       fmn_sound_effect(FMN_SFX_PLANT);
+      fmn_map_dirty();
       return;
     }
     // If creating the plant rejected, we might still be ok to create the sprite.
@@ -629,6 +630,28 @@ static void fmn_hero_violin_motion(uint8_t bit,uint8_t value) {
 /* Chalk.
  */
  
+static int8_t fmn_hero_sketchx,fmn_hero_sketchy;
+ 
+static void fmn_hero_chalk_cb(struct fmn_menu *menu,uint8_t message) {
+  switch (message) {
+    case FMN_MENU_MESSAGE_CANCEL:
+    case FMN_MENU_MESSAGE_SUBMIT: {
+        fmn_dismiss_menu(menu);
+      } break;
+    case FMN_MENU_MESSAGE_CHANGED: {
+        struct fmn_sketch *sketch=fmn_global.sketchv;
+        int i=fmn_global.sketchc;
+        for (;i-->0;sketch++) {
+          if (sketch->x!=fmn_hero_sketchx) continue;
+          if (sketch->y!=fmn_hero_sketchy) continue;
+          sketch->bits=menu->argv[0];
+          fmn_map_dirty();
+          break;
+        }
+      } break;
+  }
+}
+ 
 static void fmn_hero_chalk_begin() {
   int8_t x=fmn_hero.sprite->x;
   int8_t y=fmn_hero.sprite->y-1.0f;
@@ -643,11 +666,17 @@ static void fmn_hero_chalk_begin() {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
-  if (fmn_begin_sketch(x, y)<0) {
+  uint32_t bits=fmn_begin_sketch(x,y);
+  if (bits==0xffffffff) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
-  fmn_hero.chalking=2; // there will be one update between here and the modal; ignore it
+  fmn_hero.chalking=2; // there will be one update between here and the modal; ignore it // TODO render-redesign: is this still true?
+  struct fmn_menu *menu=fmn_begin_menu(FMN_MENU_CHALK,bits);
+  if (!menu) return;
+  menu->cb=fmn_hero_chalk_cb;
+  fmn_hero_sketchx=x;
+  fmn_hero_sketchy=y;
 }
 
 /* Feather.

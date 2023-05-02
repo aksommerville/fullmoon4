@@ -12,7 +12,7 @@ void fmn_abort() {
 
 /* Begin modal menu.
  */
- 
+#if 0 /*XXX move to client */
 void _fmn_begin_menu(int prompt,...) {
 
   fmn_log_event("menu","%d",prompt);
@@ -64,7 +64,7 @@ void _fmn_begin_menu(int prompt,...) {
     case FMN_MENU_HELLO: bigpc_play_song(1); break;
   }
 }
-
+#endif
 #if 0 /*XXX moved to client side */
 /* Transitions.
  */
@@ -371,6 +371,7 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
  
 static void fmn_cb_sketch() {
   if (!bigpc.sketch_in_progress) return;
+  /*TODO figure out how sketches will work, after render-redesign
   if (bigpc.menuc<1) return;
   struct bigpc_menu *menu=bigpc.menuv[bigpc.menuc-1];
   if (menu->prompt!=FMN_MENU_CHALK) return;
@@ -378,9 +379,10 @@ static void fmn_cb_sketch() {
   bigpc.sketch_in_progress=0;
   bigpc_render_map_dirty(bigpc.render);
   fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
+  /**/
 }
  
-int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
+uint32_t fmn_begin_sketch(uint16_t x,uint16_t y) {
 
   // If there's one at this cell already, cool, we'll use it.
   struct fmn_sketch *sketch=0;
@@ -409,7 +411,7 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
         }
       }
     }
-    if (!sketch) return -1;
+    if (!sketch) return 0xffffffff;
     fmn_log_event("sketch","%d,%d 0x%x",x,y,sketch->bits);
     sketch->x=x;
     sketch->y=y;
@@ -420,10 +422,9 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
   sketch->time=bigpc.clock.last_game_time_ms;
   
   bigpc.sketch_in_progress=sketch;
-  fmn_begin_menu(FMN_MENU_CHALK,sketch->bits|0x80000000,fmn_cb_sketch);
   fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
   
-  return 0;
+  return sketch->bits;
 }
 
 /* Audio events.

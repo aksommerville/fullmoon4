@@ -1,3 +1,5 @@
+int fmn_gl2_menu_victory_dummy=0;
+#if 0 /*XXX move to client*/
 #include "../fmn_gl2_internal.h"
 #include "opt/bigpc/bigpc_menu.h"
 #include "opt/fontosaur/fontosaur.h"
@@ -97,3 +99,4 @@ void fmn_gl2_render_menu_victory(struct bigpc_render_driver *driver,struct bigpc
   if (menu->extra[0]) fmn_gl2_clear_menu_victory(driver,menu);
   #endif
 }
+#endif

@@ -1,3 +1,5 @@
+int fmn_gl2_menu_dummy=0;
+#if 0 /*XXX move to client*/
 /* fmn_gl2_menu.c
  */
  
@@ -16,7 +18,6 @@ void fmn_gl2_render_menu_hello(struct bigpc_render_driver *driver,struct bigpc_m
  */
  
 void fmn_gl2_render_menu(struct bigpc_render_driver *driver,struct bigpc_menu *menu) {
-
   // If the menu's controller hasn't seen it yet (ie framec zero, no updates), black out and quietly back away.
   if (!menu->framec) {
     fmn_gl2_program_use(driver,&DRIVER->program_raw);
@@ -37,3 +38,4 @@ void fmn_gl2_render_menu(struct bigpc_render_driver *driver,struct bigpc_menu *m
     case FMN_MENU_HELLO: fmn_gl2_render_menu_hello(driver,menu); break;
   }
 }
+#endif

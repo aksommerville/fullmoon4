@@ -1,3 +1,4 @@
+#if 0 /*XXX move to client*/
 /* bigpc_menu_gameover.c
  * Tells the user she is dead.
  */
@@ -50,3 +51,4 @@ struct bigpc_menu *bigpc_menu_new_GAMEOVER() {
   menu->update=_gameover_update;
   return menu;
 }
+#endif

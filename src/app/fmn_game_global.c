@@ -3,17 +3,37 @@
 #include "sprite/fmn_physics.h"
 #include "hero/fmn_hero.h"
 
+/* Game-time clock.
+ */
+ 
+static uint32_t fmn_game_time_ms=0;
+ 
+uint32_t fmn_game_get_play_time_ms() {
+  return fmn_game_time_ms;
+}
+
+void fmn_game_advance_play_time_ms(uint32_t addms) {
+  if (fmn_game_time_ms>UINT32_MAX-addms) fmn_game_time_ms=UINT32_MAX;
+  else fmn_game_time_ms+=addms;
+}
+
+void fmn_game_reset_play_time() {
+  fmn_game_time_ms=0;
+}
+
 /* Init.
  */
  
 int fmn_game_init() {
+  fmn_game_reset_play_time();
   fmn_clear_free_birds();
   fmn_hero_kill_velocity();
+  memset(&fmn_global,0,sizeof(fmn_global));
   fmn_global.active_item=0xff;
   
   if (fmn_game_load_map(1)<1) return -1;
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
-  //fmn_begin_menu(FMN_MENU_HELLO); // XXX disabled while rekajiggering renderer
+  fmn_begin_menu(FMN_MENU_HELLO,0);
   
   return 0;
 }
@@ -178,9 +198,6 @@ const uint8_t fmn_item_default_quantities[FMN_ITEM_COUNT]={
   [FMN_ITEM_CHEESE]=5,
 };
 
-static void cb_modal_dummy() {
-}
- 
 uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
 
   // Get out if invalid, or we can't pick up more of it. Establish quantity.
@@ -203,7 +220,7 @@ uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
     fmn_global.itemv[itemid]=1;
     fmn_global.selected_item=itemid;
     fmn_sound_effect(FMN_SFX_ITEM_MAJOR);
-    fmn_begin_menu(FMN_MENU_TREASURE,itemid|0x40000000,cb_modal_dummy);
+    fmn_begin_menu(FMN_MENU_TREASURE,itemid);
     fmn_hero_kill_velocity();
     
   // Subsequent pick-ups, do a more passive celebration.
@@ -386,6 +403,7 @@ void fmn_game_begin_earthquake(uint8_t dir) {
 /* Callback from Game Over menu.
  */
  
+#if 0 /* TODO menu callbacks */
 static void cb_game_over_ok() {
   fmn_log_event("restart","");
   fmn_global.hero_dead=0;
@@ -394,11 +412,14 @@ static void cb_game_over_ok() {
   fmn_game_load_map(1);
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
 }
+#endif
 
 /* Update.
  */
  
 void fmn_game_update(float elapsed) {
+
+  fmn_game_advance_play_time_ms(elapsed*1000.0f);
 
   if ((fmn_global.illumination_time-=elapsed)<=0.0f) {
     fmn_global.illumination_time=0.0f;
@@ -410,8 +431,8 @@ void fmn_game_update(float elapsed) {
   if (fmn_global.werewolf_dead||fmn_global.hero_dead) {
     if ((fmn_global.terminate_time-=elapsed)<=0.0f) {
       fmn_global.terminate_time=0.0f;
-      if (fmn_global.hero_dead) fmn_begin_menu(FMN_MENU_GAMEOVER,1,cb_game_over_ok);
-      else fmn_begin_menu(FMN_MENU_VICTORY);
+      if (fmn_global.hero_dead) fmn_begin_menu(FMN_MENU_GAMEOVER,0);
+      else fmn_begin_menu(FMN_MENU_VICTORY,0);
       return;
     }
   }

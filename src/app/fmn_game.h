@@ -123,4 +123,59 @@ void fmn_game_map_callback(uint16_t cbid,uint8_t param,void *userdata);
 FMN_FOR_EACH_MAP_CALLBACK
 #undef _
 
+uint8_t fmn_render_transition_in_progress();
+
+uint32_t fmn_game_get_play_time_ms();
+void fmn_game_advance_play_time_ms(uint32_t addms);
+void fmn_game_reset_play_time();
+
+/* Menus.
+ *************************************************************/
+ 
+#define FMN_MENU_ARGV_SIZE 8
+#define FMN_MENU_FV_SIZE 4
+ 
+struct fmn_menu {
+  int menuid;
+  int argv[FMN_MENU_ARGV_SIZE];
+  float fv[FMN_MENU_FV_SIZE];
+  uint8_t pvinput;
+  uint8_t opaque; // Hint to renderer that it doesn't need to draw any layers behind this.
+  int16_t fbw,fbh; // ctor captures this before init, on the assumption that it will be needed often.
+  void (*update)(struct fmn_menu *menu,float elapsed,uint8_t input);
+  void (*render)(struct fmn_menu *menu);
+  
+  /* Whoever begins the menu may set a callback.
+   * Menu types can make up (message) values 0x80 and above. Low values are defined here.
+   * If a callback is set, menus should not dismiss themselves, the callback client should.
+   */
+  void *userdata;
+  void (*cb)(struct fmn_menu *menu,uint8_t message);
+};
+
+/* Begin a modal menu interaction.
+ * Returns a WEAK reference on success; you can ignore it.
+ */
+struct fmn_menu *fmn_begin_menu(int menuid,int arg0);
+#define FMN_MENU_PAUSE 1
+#define FMN_MENU_CHALK 2 /* arg0=bits */
+#define FMN_MENU_TREASURE 3 /* arg0=itemid */
+#define FMN_MENU_VICTORY 4
+#define FMN_MENU_GAMEOVER 5
+#define FMN_MENU_HELLO 6
+
+#define FMN_MENU_MESSAGE_CANCEL 1
+#define FMN_MENU_MESSAGE_SUBMIT 2
+#define FMN_MENU_MESSAGE_CHANGED 0x80
+
+struct fmn_menu *fmn_get_top_menu();
+
+/* Menus dismissed this way do not trigger any callbacks.
+ */
+void fmn_dismiss_top_menu();
+void fmn_dismiss_menu(struct fmn_menu *menu);
+
+uint32_t fmn_chalk_points_from_bit(uint32_t bit);
+uint32_t fmn_chalk_bit_from_points(uint32_t points);
+
 #endif

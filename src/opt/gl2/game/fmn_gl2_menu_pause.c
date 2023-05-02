@@ -1,3 +1,5 @@
+int fmn_gl2_menu_pause_dummy=0;
+#if 0 /*XXX move to client*/
 #include "../fmn_gl2_internal.h"
 #include "opt/bigpc/bigpc_menu.h"
 
@@ -131,3 +133,4 @@ void fmn_gl2_render_menu_pause(struct bigpc_render_driver *driver,struct bigpc_m
   
   #endif
 }
+#endif

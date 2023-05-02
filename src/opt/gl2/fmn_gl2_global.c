@@ -108,6 +108,18 @@ static void fmn_gl2_texture_remove(struct bigpc_render_driver *driver,int p) {
   if (DRIVER->framebuffer==texture) DRIVER->framebuffer=0;
 }
 
+/* Get texture from store, optionally adding.
+ */
+ 
+struct fmn_gl2_texture *fmn_gl2_get_texture(struct bigpc_render_driver *driver,int imageid,int create) {
+  if (imageid<1) return 0;
+  int p=fmn_gl2_texture_search(driver,imageid);
+  if (p>=0) return DRIVER->texturev[p];
+  if (!create) return 0;
+  p=-p-1;
+  return fmn_gl2_add_texture(driver,p,imageid);
+}
+
 /* Use texture, from imageid.
  */
  

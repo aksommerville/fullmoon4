@@ -38,6 +38,14 @@ void fmn_video_upload_image(
   bigpc.render->type->video_upload_image(bigpc.render,imageid,x,y,w,h,src,srcstride,srcpixfmt);
 }
 
+void fmn_video_init_image(uint16_t imageid,int16_t w,int16_t h) {
+  bigpc.render->type->video_init_image(bigpc.render,imageid,w,h);
+}
+
+void fmn_video_get_image_size(int16_t *w,int16_t *h,uint16_t imageid) {
+  bigpc.render->type->video_get_image_size(w,h,bigpc.render,imageid);
+}
+
 int8_t fmn_draw_set_output(uint16_t imageid) {
   return bigpc.render->type->draw_set_output(bigpc.render,imageid);
 }

@@ -5,7 +5,7 @@
  
 #ifndef BIGPC_MENU_H
 #define BIGPC_MENU_H
-
+#if 0 /*XXX these need to move into the client */
 struct bigpc_menu {
   int prompt; // FMN_MENU_* from fmn_platform.h, or a positive string id.
   struct bigpc_menu_option {
@@ -50,4 +50,5 @@ int bigpc_menu_update(struct bigpc_menu *menu);
  */
 void bigpc_menu_callback_any(struct bigpc_menu *menu);
 
+#endif
 #endif

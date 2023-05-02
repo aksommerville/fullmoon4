@@ -254,6 +254,7 @@ struct bigpc_render_driver_gl2 {
 void fmn_gl2_program_use(struct bigpc_render_driver *driver,struct fmn_gl2_program *program);
 int fmn_gl2_texture_use_imageid(struct bigpc_render_driver *driver,int imageid);
 int fmn_gl2_texture_use_object(struct bigpc_render_driver *driver,struct fmn_gl2_texture *texture);
+struct fmn_gl2_texture *fmn_gl2_get_texture(struct bigpc_render_driver *driver,int imageid,int create);
 
 /* For framebuffers, imageid zero is (DRIVER->mainfb), and object zero is the real main output.
  * Clients are not allowed to draw to the real main, we only do that internally.

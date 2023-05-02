@@ -1,4 +1,5 @@
 #include "fmn_hero_internal.h"
+#include "app/fmn_game.h"
 
 /* Extra globals.
  */
@@ -75,7 +76,7 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
     fmn_hero_item_event(value);
   } else if (bit==FMN_INPUT_MENU) {
     if (value) {
-      fmn_begin_menu(FMN_MENU_PAUSE);
+      fmn_begin_menu(FMN_MENU_PAUSE,0);
       fmn_hero_kill_velocity();
     }
   }

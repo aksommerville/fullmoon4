@@ -1,4 +1,5 @@
 #include "fmn_render_internal.h"
+#include "app/fmn_game.h"
 
 struct fmn_render_global fmn_render_global={0};
 
@@ -69,49 +70,62 @@ uint8_t fmn_render() {
     fmn_render_global.tilesize=fmn_render_global.fbw/FMN_COLC;
   }
   
-  // Redraw map if needed.
-  if (fmn_render_global.map_dirty) {
-    fmn_render_global.map_dirty=0;
-    fmn_render_freshen_map();
-  }
+  // Get the top menu, and if it is opaque, we can skip everything else.
+  struct fmn_menu *menu=fmn_get_top_menu();
+  if (!menu||!menu->opaque) {
   
-  // Advance transition clock.
-  if (fmn_render_global.transition) {
-    fmn_render_global.transitionp++;
-    if (fmn_render_global.transitionp>=fmn_render_global.transitionc) {
-      fmn_render_global.transition=0;
-      fmn_render_global.transitionc=0;
+    // Redraw map if needed.
+    if (fmn_render_global.map_dirty) {
+      fmn_render_global.map_dirty=0;
+      fmn_render_freshen_map();
+    }
+  
+    // Advance transition clock.
+    if (fmn_render_global.transition) {
+      fmn_render_global.transitionp++;
+      if (fmn_render_global.transitionp>=fmn_render_global.transitionc) {
+        fmn_render_global.transition=0;
+        fmn_render_global.transitionc=0;
+      }
+    }
+  
+    // Transition in progress? Draw world to (transition_to), then combine (transition_from,transition_to) into the main.
+    // No transition? Draw direct into main.
+    if (fmn_render_global.transition) {
+      fmn_draw_set_output(FMN_IMAGEID_TRANSITION_TO);
+      fmn_render_world(fmn_render_global.hero_above_transition?0:1);
+      fmn_draw_set_output(0);
+      fmn_transition_apply(
+        fmn_render_global.transition,
+        fmn_render_global.transitionp,fmn_render_global.transitionc,
+        FMN_IMAGEID_TRANSITION_FROM,
+        FMN_IMAGEID_TRANSITION_TO
+      );
+      if (fmn_render_global.hero_above_transition) {
+        fmn_find_and_render_hero_over_transition();
+      }
+    } else {
+      fmn_draw_set_output(0);
+      fmn_render_world(1);
+    }
+  
+    // The violin chart is its own thing, above transitions but below menus.
+    // (FWIW It's unlikely for transitions, violin, or menus to ever exist at the same time).
+    if (fmn_global.active_item==FMN_ITEM_VIOLIN) {
+      fmn_render_violin();
+    }
+    
+    // Menu blotter.
+    if (menu) {
+      struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,0x000000c0};
+      fmn_draw_rect(&vtx,1);
     }
   }
   
-  // Transition in progress? Draw world to (transition_to), then combine (transition_from,transition_to) into the main.
-  // No transition? Draw direct into main.
-  if (fmn_render_global.transition) {
-    fmn_draw_set_output(FMN_IMAGEID_TRANSITION_TO);
-    fmn_render_world(fmn_render_global.hero_above_transition?0:1);
-    fmn_draw_set_output(0);
-    fmn_transition_apply(
-      fmn_render_global.transition,
-      fmn_render_global.transitionp,fmn_render_global.transitionc,
-      FMN_IMAGEID_TRANSITION_FROM,
-      FMN_IMAGEID_TRANSITION_TO
-    );
-    if (fmn_render_global.hero_above_transition) {
-      fmn_find_and_render_hero_over_transition();
-    }
-  } else {
-    fmn_draw_set_output(0);
-    fmn_render_world(1);
+  // Menu content.
+  if (menu) {
+    if (menu->render) menu->render(menu);
   }
-  
-  // The violin chart is its own thing, above transitions but below menus.
-  // (FWIW It's unlikely for transitions, violin, or menus to ever exist at the same time).
-  if (fmn_global.active_item==FMN_ITEM_VIOLIN) {
-    fmn_render_violin();
-  }
-  
-  // If there's a menu it goes on top.
-  fmn_render_menus();
   
   // On even topper, the idle warning if applicable. TODO
   //int idle_time=bigpc_get_idle_warning_time_s();
@@ -122,9 +136,13 @@ uint8_t fmn_render() {
   return 1;
 }
 
-/* Map dirty.
+/* Trivial accessors.
  */
  
 void fmn_map_dirty() {
   fmn_render_global.map_dirty=1;
+}
+
+uint8_t fmn_render_transition_in_progress() {
+  return fmn_render_global.transition;
 }

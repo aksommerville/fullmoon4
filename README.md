@@ -14,7 +14,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### 2023-04-29 render-redesign
 
 - [x] Glue thru bigpc.
-- [ ] Client-side render logic. Mostly copy gl2, it's phrased similarly.
+- [x] Client-side render logic. Mostly copy gl2, it's phrased similarly.
+- [x] Weather.
+- [x] Menus.
+- [x] Violin.
+- [x] Plants and sketches.
+- [x] Chalk menu.
 - [ ] gl2: upload image, deferring until I'm sure what it's for.
 - [ ] Web glue.
 - [ ] Web Renderer abstraction. Be ready for selectable CanvasRenderingContext2D/WebGL.
@@ -33,9 +38,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Verify sprites that weren't reachable in the first pass, see fmn_render_sprites.c
 - [ ] Suspend updates during transition and menu.
 - [ ] If we proceed as is, the game clock will start including transition and menu times. Is this OK? Try it and decide.
+- [ ] Add a platform hook for changing song. Menus should use that.
+- [ ] Deprecate fontosaur and implement text via mintile.
 
 ### May
 
+- [ ] Werewolf turns left to face the hero, after she's dead.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".

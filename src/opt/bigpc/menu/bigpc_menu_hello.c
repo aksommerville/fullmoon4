@@ -1,3 +1,4 @@
+#if 0 /*XXX move to client*/
 /* bigpc_menu_hello.c
  * First thing the user sees.
  */
@@ -50,3 +51,4 @@ struct bigpc_menu *bigpc_menu_new_HELLO() {
   menu->update=_hello_update;
   return menu;
 }
+#endif

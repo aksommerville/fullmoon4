@@ -1,3 +1,4 @@
+#if 0 /*XXX move to client*/
 /* bigpc_menu_treasure.c
  * Shows off a new treasure.
  */
@@ -51,3 +52,4 @@ struct bigpc_menu *bigpc_menu_new_TREASURE() {
   menu->update=_treasure_update;
   return menu;
 }
+#endif

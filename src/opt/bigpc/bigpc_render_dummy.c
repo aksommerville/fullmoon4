@@ -59,6 +59,7 @@ static void _dummy_video_upload_image(
   int16_t x,int16_t y,int16_t w,int16_t h,
   const void *src,int srcstride,uint8_t srcpixfmt
 ) {}
+static void _dummy_video_init_image(struct bigpc_render_driver *driver,uint16_t imageid,int16_t w,int16_t h) {}
 static int8_t _dummy_draw_set_output(struct bigpc_render_driver *driver,uint16_t imageid) { return 0; }
 static void _dummy_draw_line(struct bigpc_render_driver *driver,const struct fmn_draw_line *v,int c) {}
 static void _dummy_draw_rect(struct bigpc_render_driver *driver,const struct fmn_draw_rect *v,int c) {}
@@ -88,6 +89,7 @@ const struct bigpc_render_type bigpc_render_type_dummy={
   .video_rgba_from_pixel=_dummy_video_rgba_from_pixel,
   .video_pixel_from_rgba=_dummy_video_pixel_from_rgba,
   .video_upload_image=_dummy_video_upload_image,
+  .video_init_image=_dummy_video_init_image,
   .draw_set_output=_dummy_draw_set_output,
   .draw_line=_dummy_draw_line,
   .draw_rect=_dummy_draw_rect,

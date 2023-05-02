@@ -1,3 +1,4 @@
+#if 0 /*XXX move to client*/
 /* bigpc_menu_victory.c
  * Final stats after killing the werewolf.
  * Eventually this will be the venue for the extended ending sequence.
@@ -56,3 +57,4 @@ struct bigpc_menu *bigpc_menu_new_VICTORY() {
   menu->update=_victory_update;
   return menu;
 }
+#endif

@@ -8,7 +8,7 @@
 #include "bigpc_input.h"
 #include "bigpc_synth.h"
 #include "bigpc_render.h"
-#include "bigpc_menu.h"
+//XXX #include "bigpc_menu.h"
 #include "bigpc_clock.h"
 #include "opt/datafile/fmn_datafile.h"
 #include "opt/fmstore/fmstore.h"
@@ -96,10 +96,11 @@ extern struct bigpc {
   uint8_t pvinput;
   uint8_t idle_warning_time; // number to show, seconds. zero for none
   
-  //XXX menu management should move with rendering into the client
+  /*XXX menu management should move with rendering into the client
   // Last in the list is on top.
   struct bigpc_menu **menuv;
   int menuc,menua;
+  /**/
   
   uint16_t mapid;
   struct fmn_sketch *sketch_in_progress;

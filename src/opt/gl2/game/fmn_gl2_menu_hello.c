@@ -1,3 +1,5 @@
+int fmn_gl2_menu_hello_dummy=0;
+#if 0 /*XXX move to client*/
 #include "../fmn_gl2_internal.h"
 #include "opt/bigpc/bigpc_menu.h"
 
@@ -105,7 +107,6 @@ static uint32_t hello_title_color_update() {
  */
  
 void fmn_gl2_render_menu_hello(struct bigpc_render_driver *driver,struct bigpc_menu *menu) {
-  #if 0
   if (menu->framec==1) {
     hello_title_color_reset();
     hello_stars_reset(driver,menu);
@@ -165,5 +166,5 @@ void fmn_gl2_render_menu_hello(struct bigpc_render_driver *driver,struct bigpc_m
       fmn_gl2_draw_recal(&DRIVER->program_recal,dstx,dsty,w,h,0,0,w,h,hello_title_color_update());
     }
   }
-  #endif
 }
+#endif

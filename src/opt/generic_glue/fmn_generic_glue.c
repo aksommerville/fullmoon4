@@ -32,6 +32,9 @@ int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
   return 0;
 }
 
+void fmn_update_sketch(uint16_t x,uint16_t y,uint32_t bits) {
+}
+
 void fmn_sound_effect(uint16_t sfxid) {
 }
 
@@ -111,11 +114,13 @@ uint8_t fmn_video_get_pixfmt() { return fmn_generic_video.pixfmt; }
 
 uint32_t fmn_video_rgba_from_pixel(uint32_t pixel) { return pixel; }
 uint32_t fmn_video_pixel_from_rgba(uint32_t rgba) { return rgba; }
+void fmn_video_get_image_size(int16_t *w,int16_t *h,uint16_t imageid) { *w=*h=0; }
 void fmn_video_upload_image(
   uint16_t imageid,
   int16_t x,int16_t y,int16_t w,int16_t h,
   const void *src,int srcstride,uint8_t srcpixfmt
 ) {}
+void fmn_video_init_image(uint16_t imageid,int16_t w,int16_t h) {}
 int8_t fmn_draw_set_output(uint16_t imageid) { return 0; }
 
 void fmn_draw_line(const struct fmn_draw_line *v,int c) {}

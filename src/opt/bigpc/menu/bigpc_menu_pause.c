@@ -1,3 +1,4 @@
+#if 0 /*XXX move to client*/
 /* bigpc_menu_pause.c
  * The item-select menu.
  */
@@ -59,3 +60,4 @@ struct bigpc_menu *bigpc_menu_new_PAUSE() {
   menu->update=_pause_update;
   return menu;
 }
+#endif

@@ -1,3 +1,5 @@
+int fmn2_gl2_menu_treasure_dummy=0;
+#if 0 /*XXX move to client*/
 #include "../fmn_gl2_internal.h"
 #include "opt/bigpc/bigpc_menu.h"
 
@@ -115,3 +117,4 @@ void fmn_gl2_render_menu_treasure(struct bigpc_render_driver *driver,struct bigp
   }
   #endif
 }
+#endif

@@ -1,3 +1,5 @@
+int bigpc_menu_dummy=0;
+#if 0 /*XXX move to client*/
 #include "bigpc_internal.h"
 
 /* Delete.
@@ -69,3 +71,4 @@ void bigpc_menu_callback_any(struct bigpc_menu *menu) {
     return;
   }
 }
+#endif

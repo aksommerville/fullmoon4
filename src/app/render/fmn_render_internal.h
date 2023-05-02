@@ -16,7 +16,7 @@
 #define FMN_RENDER_ILLUMINATION_PEAK 0.750f /* RANGE..1 */
 
 // Wind and rain share a particle buffer.
-#define FMN_RENDER_PARTICLE_LIMIT 500
+#define FMN_RENDER_PARTICLE_LIMIT 250
 
 // Image resources and intermediate framebuffers share a namespace.
 // Anything we use that's not associated with an image resource, give it an ID above this.
@@ -24,6 +24,8 @@
 #define FMN_IMAGEID_MAPBITS (FMN_IMAGEID_PRIVATE_BASE+1)
 #define FMN_IMAGEID_TRANSITION_TO (FMN_IMAGEID_PRIVATE_BASE+2)
 #define FMN_IMAGEID_TRANSITION_FROM (FMN_IMAGEID_PRIVATE_BASE+3)
+#define FMN_IMAGEID_VICTORY_BITS (FMN_IMAGEID_PRIVATE_BASE+4)
+#define FMN_IMAGEID_SCRATCH (FMN_IMAGEID_PRIVATE_BASE+5)
 
 extern struct fmn_render_global {
   int16_t fbw,fbh;
@@ -41,17 +43,10 @@ extern struct fmn_render_global {
   
   float compassangle;
   
-  #if 0 // from gl2.game
-  struct fmn_gl2_framebuffer mapbits;
-  int itemtime; // how many frames item has been active
-  int ffchargeframe; // specific to werewolf
-  float compassangle;
-  struct fmn_gl2_vertex_raw particlev[FMN_GL2_PARTICLE_LIMIT];
+  // Weather.
+  struct fmn_draw_line particlev[FMN_RENDER_PARTICLE_LIMIT];
   int particlec;
   float illuminationp;
-  struct fmn_gl2_texture idle_warning_texture;
-  int idle_warning_time;
-  #endif
   
 } fmn_render_global;
 

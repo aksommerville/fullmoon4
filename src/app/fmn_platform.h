@@ -431,6 +431,7 @@ void fmn_abort();
  * Game will not update while a menu is in play.
  * Variadic arguments are any number of (int prompt_stringid,void (*cb)()), followed by a null.
  */
+#if 0
 void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*cbN)()*/);
 #define fmn_begin_menu(...) _fmn_begin_menu(__VA_ARGS__,0)
 // Negative prompt IDs are special:
@@ -440,6 +441,7 @@ void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*
 #define FMN_MENU_VICTORY -4
 #define FMN_MENU_GAMEOVER -5
 #define FMN_MENU_HELLO -6
+#endif
 //XXX render-redesign: Menus will be a purely client-side construct, we can remove from this API.
 
 /* Prepare a transition while in the "from" state, and declare what style you will want.
@@ -477,10 +479,11 @@ void fmn_map_dirty();
 
 /* Plant a seed or begin editing a sketch.
  * Both return <0 to reject, eg no space available.
- * Sketch editing is modal; you will stop receiving updates while it runs.
+ * fmn_begin_sketch() returns the existing bits (zero is normal), or 0xffffffff if we couldn't create one.
+ * Caller should invoke the sketch menu after on success.
  */
 int8_t fmn_add_plant(uint16_t x,uint16_t y);
-int8_t fmn_begin_sketch(uint16_t x,uint16_t y);
+uint32_t fmn_begin_sketch(uint16_t x,uint16_t y);
 
 void fmn_sound_effect(uint16_t sfxid);
 void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
@@ -576,6 +579,11 @@ uint8_t fmn_video_get_pixfmt();
 uint32_t fmn_video_rgba_from_pixel(uint32_t pixel);
 uint32_t fmn_video_pixel_from_rgba(uint32_t rgba);
 
+/* (0,0) if the image doesn't exist.
+ * Calling this may cause it to decode.
+ */
+void fmn_video_get_image_size(int16_t *w,int16_t *h,uint16_t imageid);
+
 /* Bounds (0,0,0,0) to replace an entire image, possibly changing its bounds.
  * Input may be any specific pixfmt. Backend may convert during the upload, you shouldn't need to care about that.
  * Image resources from the data archive are automatically available without uploading.
@@ -585,6 +593,8 @@ void fmn_video_upload_image(
   int16_t x,int16_t y,int16_t w,int16_t h,
   const void *src,int srcstride,uint8_t srcpixfmt
 );
+
+void fmn_video_init_image(uint16_t imageid,int16_t w,int16_t h);
 
 /* Select an image to render to.
  * imageid zero is the main framebuffer, and is always selected initially.

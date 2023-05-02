@@ -86,6 +86,8 @@ struct bigpc_render_type {
     int16_t x,int16_t y,int16_t w,int16_t h,
     const void *src,int srcstride,uint8_t srcpixfmt
   );
+  void (*video_init_image)(struct bigpc_render_driver *driver,uint16_t imageid,int16_t w,int16_t h);
+  void (*video_get_image_size)(int16_t *w,int16_t *h,struct bigpc_render_driver *driver,uint16_t imageid);
   int8_t (*draw_set_output)(struct bigpc_render_driver *driver,uint16_t imageid);
   void (*draw_line)(struct bigpc_render_driver *driver,const struct fmn_draw_line *v,int c);
   void (*draw_rect)(struct bigpc_render_driver *driver,const struct fmn_draw_rect *v,int c);

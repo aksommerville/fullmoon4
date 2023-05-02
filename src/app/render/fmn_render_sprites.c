@@ -44,22 +44,9 @@ static void fmn_render_sprite_SCARYDOOR(struct fmn_sprite *sprite) {
   int16_t srcy=(sprite->tileid>>4)*tilesize;
   struct fmn_draw_decal vtxv[2]={
     {dstx,dsty,ts2,halfh,srcx,srcy+ts2-halfh,ts2,halfh},
-    {dstx,dsty-tilesize+ts2-halfh,ts2,halfh,srcx,srcy+ts2,ts2,halfh},
+    {dstx,dsty+tilesize+ts2-halfh,ts2,halfh,srcx,srcy+ts2,ts2,halfh},
   };
   fmn_draw_decal(vtxv,2,sprite->imageid);
-  /*TODO verify
-  fmn_gl2_program_use(driver,&DRIVER->program_decal);
-  fmn_gl2_draw_decal(
-    driver,
-    dstx,dsty,ts2,halfh,
-    srcx,srcy+ts2-halfh,ts2,halfh
-  );
-  fmn_gl2_draw_decal(
-    driver,
-    dstx,dsty+DRIVER->game.tilesize+ts2-halfh,ts2,halfh,
-    srcx,srcy+ts2,ts2,halfh
-  );
-  */
 }
 
 /* Multiple-mintile: FIRENOZZLE

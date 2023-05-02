@@ -253,6 +253,24 @@ static void _gl2_video_upload_image(
   // Wait until we find a realistic use case for testing.
 }
 
+/* Init image.
+ */
+ 
+static void _gl2_video_init_image(struct bigpc_render_driver *driver,uint16_t imageid,int16_t w,int16_t h) {
+  struct fmn_gl2_texture *texture=fmn_gl2_get_texture(driver,imageid,1);
+  if (!texture) return;
+  fmn_gl2_texture_init_rgba(texture,w,h,0);
+}
+
+/* Get image size.
+ */
+ 
+static void _gl2_video_get_image_size(int16_t *w,int16_t *h,struct bigpc_render_driver *driver,uint16_t imageid) {
+  if ((fmn_gl2_texture_use_imageid(driver,imageid)<0)||!DRIVER->texture) { *w=*h=0; return; }
+  *w=DRIVER->texture->w;
+  *h=DRIVER->texture->h;
+}
+
 /* Set output image.
  */
  
@@ -304,7 +322,11 @@ static void _gl2_draw_maxtile(struct bigpc_render_driver *driver,const struct fm
 // As it stands, our shader is built to run one at a time.
 
 static void _gl2_draw_decal(struct bigpc_render_driver *driver,const struct fmn_draw_decal *v,int c,uint16_t srcimageid) {
-  if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  if (srcimageid) {
+    if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  } else {
+    if (fmn_gl2_texture_use_object(driver,&DRIVER->mainfb)<0) return;
+  }
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   for (;c-->0;v++) {
     fmn_gl2_draw_decal(driver,
@@ -315,7 +337,11 @@ static void _gl2_draw_decal(struct bigpc_render_driver *driver,const struct fmn_
 }
 
 static void _gl2_draw_decal_swap(struct bigpc_render_driver *driver,const struct fmn_draw_decal *v,int c,uint16_t srcimageid) {
-  if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  if (srcimageid) {
+    if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  } else {
+    if (fmn_gl2_texture_use_object(driver,&DRIVER->mainfb)<0) return;
+  }
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   for (;c-->0;v++) {
     fmn_gl2_draw_decal_swap(driver,
@@ -326,7 +352,11 @@ static void _gl2_draw_decal_swap(struct bigpc_render_driver *driver,const struct
 }
 
 static void _gl2_draw_recal(struct bigpc_render_driver *driver,const struct fmn_draw_recal *v,int c,uint16_t srcimageid) {
-  if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  if (srcimageid) {
+    if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  } else {
+    if (fmn_gl2_texture_use_object(driver,&DRIVER->mainfb)<0) return;
+  }
   fmn_gl2_program_use(driver,&DRIVER->program_recal);
   for (;c-->0;v++) {
     fmn_gl2_draw_recal(
@@ -340,7 +370,11 @@ static void _gl2_draw_recal(struct bigpc_render_driver *driver,const struct fmn_
 }
 
 static void _gl2_draw_recal_swap(struct bigpc_render_driver *driver,const struct fmn_draw_recal *v,int c,uint16_t srcimageid) {
-  if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  if (srcimageid) {
+    if (fmn_gl2_texture_use_imageid(driver,srcimageid)<0) return;
+  } else {
+    if (fmn_gl2_texture_use_object(driver,&DRIVER->mainfb)<0) return;
+  }
   fmn_gl2_program_use(driver,&DRIVER->program_recal);
   for (;c-->0;v++) {
     fmn_gl2_draw_recal_swap(
@@ -379,6 +413,8 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .video_rgba_from_pixel=_gl2_video_rgba_from_pixel,
   .video_pixel_from_rgba=_gl2_video_pixel_from_rgba,
   .video_upload_image=_gl2_video_upload_image,
+  .video_init_image=_gl2_video_init_image,
+  .video_get_image_size=_gl2_video_get_image_size,
   .draw_set_output=_gl2_draw_set_output,
   .draw_line=_gl2_draw_line,
   .draw_rect=_gl2_draw_rect,

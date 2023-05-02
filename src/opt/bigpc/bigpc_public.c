@@ -108,7 +108,7 @@ static void bigpc_reset() {
 }
 
 /* Pop the top menu off the stack.
- */
+ *
  
 static void bigpc_pop_menu() {
   if (bigpc.menuc<1) return;
@@ -122,6 +122,7 @@ static void bigpc_pop_menu() {
     case FMN_MENU_HELLO: bigpc_play_song(3); break;//TODO don't assume song 3
   }
 }
+/**/
 
 /* Pause/resume song in response to violin.
  */
@@ -144,7 +145,7 @@ static void bigpc_check_violin() {
   }
 }
 
-/* When the werewolf gets killed, stop background music.
+/* When the werewolf gets killed, stop background music. XXX We will add a hook for clients to change song soon; remove this then
  */
  
 static void bigpc_check_dead_werewolf() {
@@ -164,12 +165,15 @@ static void bigpc_check_dead_werewolf() {
  
 static int bigpc_is_idle() {
   if (bigpc.pvinput!=bigpc.input_state) return 0;
+  /*XXX
   if (bigpc.menuc>=1) {
     int prompt=bigpc.menuv[bigpc.menuc-1]->prompt;
     if (prompt==FMN_MENU_HELLO) return 0;
     if (prompt==FMN_MENU_VICTORY) return 0;
   }
   return 1;
+  /**/
+  return 0;
 }
  
 static void bigpc_check_idle() {
@@ -214,6 +218,7 @@ int bigpc_update() {
   bigpc_check_idle();
   
   // Update game or top menu.
+  /*XXX menu and transition are now managed by the client
   if (bigpc.menuc) {
     bigpc_clock_skip(&bigpc.clock);
     int err=bigpc_menu_update(bigpc.menuv[bigpc.menuc-1]);
@@ -222,8 +227,9 @@ int bigpc_update() {
   } else if (bigpc.render->transition_in_progress) {
     bigpc_clock_skip(&bigpc.clock);
   } else {
+  /**/
     fmn_update(bigpc_clock_update(&bigpc.clock),bigpc.input_state);
-  }
+  //}
   
   // Render one frame.
   bigpc.render->w=bigpc.video->w;
@@ -251,11 +257,12 @@ int bigpc_update() {
 
 /* Trivial accessors.
  */
- 
+/*XXX 
 struct bigpc_menu *bigpc_get_menu() {
   if (bigpc.menuc<1) return 0;
   return bigpc.menuv[bigpc.menuc-1];
 }
+/**/
 
 uint32_t bigpc_get_game_time_ms() {
   return bigpc.clock.last_game_time_ms;

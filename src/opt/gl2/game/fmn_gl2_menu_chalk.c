@@ -1,3 +1,5 @@
+int fmn_gl2_menu_chlk_dummy=0;
+#if 0 /*XXX move to client*/
 #include "../fmn_gl2_internal.h"
 #include "opt/bigpc/bigpc_menu.h"
 
@@ -70,3 +72,4 @@ void fmn_gl2_render_menu_chalk(struct bigpc_render_driver *driver,struct bigpc_m
     fmn_gl2_draw_mintile(mvtxv,10);
   }
 }
+#endif
