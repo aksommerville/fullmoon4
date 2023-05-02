@@ -63,6 +63,7 @@ void fmn_render_sprites(uint8_t include_hero);
 void fmn_render_fade_out();
 void fmn_render_darkness();
 void fmn_render_weather();
+void fmn_render_idle_warning(int s);
 
 // Transitions:
 void fmn_transition_apply(

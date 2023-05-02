@@ -186,3 +186,32 @@ void fmn_render_weather() {
     fmn_render_global.particlec=0;
   }
 }
+
+/* Idle warning. Um. Not "weather" by any stretch, but shut up.
+ */
+ 
+void fmn_render_idle_warning(int s) {
+  const int16_t ts=fmn_render_global.tilesize;
+  const int16_t fullw=fmn_render_global.fbw;
+  const int16_t fullh=fmn_render_global.fbh;
+  
+  struct fmn_draw_rect rect={0,0,fullw,fullh,0xff000080};
+  fmn_draw_rect(&rect,1);
+
+  int16_t srcx=0,srcy=ts*12;
+  int16_t w=ts*7,h=ts*4;
+  int16_t dstx=(fullw>>1)-(w>>1);
+  int16_t dsty=(fullh>>1)-(h>>1);
+  struct fmn_draw_decal vtxv[3];
+  vtxv[0]=(struct fmn_draw_decal){dstx,dsty,w,h,srcx,srcy,w,h};
+  
+  int hidigit=s/10; if (hidigit>=10) hidigit=9;
+  int lodigit=s%10;
+  int digitsx=dstx+(w*2)/3-8;
+  int digitsy=dsty+(h*3)/4-6;
+  vtxv[1]=(struct fmn_draw_decal){digitsx+0,digitsy,8,12,srcx+w+hidigit*8,ts*16-12,8,12};
+  vtxv[2]=(struct fmn_draw_decal){digitsx+8,digitsy,8,12,srcx+w+lodigit*8,ts*16-12,8,12};
+  if (!hidigit) vtxv[1].srcw=vtxv[1].dstw=0;
+  
+  fmn_draw_decal(vtxv,3,14);
+}

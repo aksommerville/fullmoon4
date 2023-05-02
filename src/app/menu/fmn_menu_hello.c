@@ -12,6 +12,7 @@ static void hello_dismiss(struct fmn_menu *menu) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
     fmn_dismiss_menu(menu);
+    fmn_game_load_map(1);
   }
 }
 
@@ -189,8 +190,8 @@ static void _hello_render(struct fmn_menu *menu) {
  */
  
 void fmn_menu_init_HELLO(struct fmn_menu *menu) {
-  //TODO set song 1
   menu->update=_hello_update;
   menu->render=_hello_render;
   menu->opaque=1;
+  fmn_play_song(1);
 }

@@ -28,7 +28,7 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
   return 0;
 }
 
-int8_t fmn_begin_sketch(uint16_t x,uint16_t y) {
+uint32_t fmn_begin_sketch(uint16_t x,uint16_t y) {
   return 0;
 }
 
@@ -39,6 +39,9 @@ void fmn_sound_effect(uint16_t sfxid) {
 }
 
 void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
+}
+
+void fmn_play_song(uint8_t songid) {
 }
 
 uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id) {

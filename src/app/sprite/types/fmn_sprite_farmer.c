@@ -1,5 +1,6 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/sprite/fmn_physics.h"
+#include "app/fmn_game.h"
 
 #define FARMER_STAGE_INDOORS 1
 #define FARMER_STAGE_GO_OUT 2
@@ -157,6 +158,7 @@ static void farmer_begin_WATER(struct fmn_sprite *sprite,struct fmn_plant *plant
   fmn_sound_effect(FMN_SFX_SPROUT);
   plant->state=FMN_PLANT_STATE_GROW;
   plant->fruit=FMN_PLANT_FRUIT_SEED;
+  plant->flower_time=fmn_game_get_platform_time_ms()+FMN_FLOWER_TIME_MS;
   fmn_map_dirty();
   clock=0.0f;
   stagetime=1.0f;

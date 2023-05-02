@@ -67,6 +67,7 @@ void fmn_gl2_texture_del(struct fmn_gl2_texture *texture);
 struct fmn_gl2_texture *fmn_gl2_texture_new();
 int fmn_gl2_texture_init(struct fmn_gl2_texture *texture,const void *src,int srcc);
 int fmn_gl2_texture_init_rgba(struct fmn_gl2_texture *texture,int w,int h,const void *v);
+int fmn_gl2_texture_init_rgb(struct fmn_gl2_texture *texture,int w,int h,const void *v);
 int fmn_gl2_texture_require_framebuffer(struct fmn_gl2_texture *texture);
 
 /*XXX

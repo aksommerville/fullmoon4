@@ -31,7 +31,6 @@ int fmn_game_init() {
   memset(&fmn_global,0,sizeof(fmn_global));
   fmn_global.active_item=0xff;
   
-  if (fmn_game_load_map(1)<1) return -1;
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
   fmn_begin_menu(FMN_MENU_HELLO,0);
   
@@ -525,6 +524,7 @@ static void fmn_rain_begin() {
     fmn_sound_effect(FMN_SFX_SPROUT);
     plant->fruit=FMN_PITCHER_CONTENT_WATER;
     plant->state=FMN_PLANT_STATE_GROW;
+    plant->flower_time=fmn_game_get_platform_time_ms()+FMN_FLOWER_TIME_MS;
     dirty=1;
   }
   if (dirty) fmn_map_dirty();

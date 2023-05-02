@@ -48,6 +48,7 @@
 
 // Idle restart. Set both to zero to disable this behavior. Both in microseconds.
 // We definitely don't want this in production, and definitely do want it for demo kiosks.
+//XXX move to client
 #define BIGPC_IDLE_RESTART_WARN_TIME (30*1000000ll)
 #define BIGPC_IDLE_RESTART_TIME      (45*1000000ll)
 

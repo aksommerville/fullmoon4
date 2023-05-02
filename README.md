@@ -26,20 +26,22 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] bigpc cleanup -- remove the three "old API" renderer hooks.
 - [ ] gl2 cleanup
 - [ ] fmn_map_dirty() -- not the platform's problem anymore, remove it. Transition stuff too.
-- - [ ] This was previously handling flower times and syncing plants and sketches. That needs to happen some other way now.
+- - [x] This was previously handling flower times and syncing plants and sketches. That needs to happen some other way now.
+- - confirmed, auto-bloom doesn't work. Everything else seems to.
 - [ ] !!! I'm rendering the "from" state of transitions during update, not render. Find a way to make that OK.
 - [x] gl2 did a lot of decals upside-down due to y axis direction confusing. Don't force client to do that, account for it inside gl2.
 - [x] ^ decal and recal are updated, review mintile and maxtile ...we never draw tiles from a framebuffer, that would be weird. no worries.
-- [ ] Re-figure-out the idle warning, how to communicate it to client.
-- [ ] fmn_render_map.c: plants and sketches
+- [x] Re-figure-out the idle warning, how to communicate it to client.
+- [x] fmn_render_map.c: plants and sketches
 - [ ] Redesign sprites to interact more closely with render? Maybe not worth the effort, it's a lot of effort.
 - [x] mintile are consistently showing up 1 pixel low of expected (see treasure chest on initial map, should butt against foot of trees. vertices leave render correctly, y==24)
 - - ...it was the decal-flip thing, actually the *background* was in the wrong place.
-- [ ] Verify sprites that weren't reachable in the first pass, see fmn_render_sprites.c
-- [ ] Suspend updates during transition and menu.
-- [ ] If we proceed as is, the game clock will start including transition and menu times. Is this OK? Try it and decide.
-- [ ] Add a platform hook for changing song. Menus should use that.
+- [x] Verify sprites that weren't reachable in the first pass, see fmn_render_sprites.c
+- [x] Suspend updates during transition and menu.
+- [x] If we proceed as is, the game clock will start including transition and menu times. Is this OK? Try it and decide. ...it won't; the client now tracks play time.
+- [x] Add a platform hook for changing song. Menus should use that.
 - [ ] Deprecate fontosaur and implement text via mintile.
+- [ ] All thru the render unit, I've been treating pixels as RGBA. That's not the real design, figure it out right.
 
 ### May
 

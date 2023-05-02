@@ -120,6 +120,8 @@ uint8_t fmn_render() {
       struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,0x000000c0};
       fmn_draw_rect(&vtx,1);
     }
+  } else {
+    fmn_draw_set_output(0);
   }
   
   // Menu content.
@@ -127,11 +129,11 @@ uint8_t fmn_render() {
     if (menu->render) menu->render(menu);
   }
   
-  // On even topper, the idle warning if applicable. TODO
-  //int idle_time=bigpc_get_idle_warning_time_s();
-  //if (idle_time) {
-  //  fmn_gl2_render_idle_warning(driver,idle_time);
-  //}
+  // On even topper, the idle warning if applicable.
+  int idle_time=fmn_get_idle_warning_time_s();
+  if (idle_time>=0) {
+    fmn_render_idle_warning(idle_time);
+  }
   
   return 1;
 }

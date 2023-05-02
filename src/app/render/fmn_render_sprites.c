@@ -148,10 +148,10 @@ static int fmn_render_sprite_DOUBLEWIDE(struct fmn_draw_mintile *vtxv,int vtxa,s
   int16_t halftile=fmn_render_global.tilesize>>1;
   if (sprite->xform&FMN_XFORM_XREV) {
     fmn_mintile_screen(vtxv+0,x-halftile,y,sprite->tileid+1,sprite->xform);
-    fmn_mintile_screen(vtxv+0,x+halftile,y,sprite->tileid+0,sprite->xform);
+    fmn_mintile_screen(vtxv+1,x+halftile,y,sprite->tileid+0,sprite->xform);
   } else {
     fmn_mintile_screen(vtxv+0,x-halftile,y,sprite->tileid+0,sprite->xform);
-    fmn_mintile_screen(vtxv+0,x+halftile,y,sprite->tileid+1,sprite->xform);
+    fmn_mintile_screen(vtxv+1,x+halftile,y,sprite->tileid+1,sprite->xform);
   }
   //TODO verify. rat uses this (cow does not!)
   return 2;
@@ -223,7 +223,6 @@ static int fmn_render_sprite_FLOORFIRE(struct fmn_draw_mintile *vtxv,int vtxa,st
       vtxc++;
     }
   }
-  //TODO verify
   return vtxc;
 }
 
@@ -241,7 +240,6 @@ static int fmn_render_sprite_DEADWITCH(struct fmn_draw_mintile *vtxv,int vtxa,st
   fmn_mintile_screen(vtxv+1,pxx+8,pxy+2,sprite->tileid+0x01+frame,0);
   fmn_mintile_screen(vtxv+2,pxx-2,pxy+4,sprite->tileid+0x01+frame,0);
   fmn_mintile_screen(vtxv+3,pxx,pxy,sprite->tileid,sprite->xform);
-  //TODO verify
   return 4;
 }
 

@@ -449,6 +449,10 @@ void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
   }
 }
 
+void fmn_play_song(uint8_t songid) {
+  bigpc_play_song(songid);
+}
+
 /* Get a string resource.
  */
  

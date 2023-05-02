@@ -34,7 +34,7 @@ static int _gl2_init(struct bigpc_render_driver *driver,struct bigpc_video_drive
   glEnable(GL_POINT_SPRITE);
   
   if (
-    (fmn_gl2_texture_init_rgba(&DRIVER->mainfb,video->fbw,video->fbh,0)<0)||
+    (fmn_gl2_texture_init_rgb(&DRIVER->mainfb,video->fbw,video->fbh,0)<0)||
     (fmn_gl2_texture_require_framebuffer(&DRIVER->mainfb)<0)
   ) return -1;
   

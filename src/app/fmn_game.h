@@ -125,9 +125,17 @@ FMN_FOR_EACH_MAP_CALLBACK
 
 uint8_t fmn_render_transition_in_progress();
 
+/* "play time" is our own concept of how much time have we spent interactive.
+ * "platform time" is exactly what the platform has reported to us.
+ * Normally (platform+menuTime+transitionTime==playTime).
+ * Always use platform time for plants, since the platform blooms them.
+ * Reporting to the user, I recommend play time.
+ */
 uint32_t fmn_game_get_play_time_ms();
 void fmn_game_advance_play_time_ms(uint32_t addms);
 void fmn_game_reset_play_time();
+uint32_t fmn_game_get_platform_time_ms();
+int fmn_get_idle_warning_time_s();
 
 /* Menus.
  *************************************************************/

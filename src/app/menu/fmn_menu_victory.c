@@ -138,5 +138,5 @@ void fmn_menu_init_VICTORY(struct fmn_menu *menu) {
   menu->update=_victory_update;
   menu->render=_victory_render;
   menu->opaque=1;
-  //TODO change music
+  fmn_play_song(7);
 }

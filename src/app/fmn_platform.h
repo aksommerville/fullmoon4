@@ -72,6 +72,8 @@
 #define FMN_PLANT_STATE_FLOWER   3 /* Bearing fruit. */
 #define FMN_PLANT_STATE_DEAD     4 /* Withered, candidate for replacement. */
 
+#define FMN_FLOWER_TIME_MS 20000
+
 // PLANT_FRUIT corresponds to PITCHER_CONTENT, what you get by watering a plant with the given liquid.
 #define FMN_PLANT_FRUIT_NONE    0
 #define FMN_PLANT_FRUIT_SEED    1
@@ -487,6 +489,7 @@ uint32_t fmn_begin_sketch(uint16_t x,uint16_t y);
 
 void fmn_sound_effect(uint16_t sfxid);
 void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
+void fmn_play_song(uint8_t songid);
 
 // Platform is not required to terminate strings, and probably won't.
 uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id);

@@ -53,5 +53,5 @@ void fmn_menu_init_GAMEOVER(struct fmn_menu *menu) {
   menu->update=_gameover_update;
   menu->render=_gameover_render;
   menu->opaque=1;
-  //TODO change music
+  fmn_play_song(6);
 }

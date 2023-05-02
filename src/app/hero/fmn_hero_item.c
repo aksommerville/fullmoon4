@@ -253,6 +253,7 @@ static void fmn_hero_water_plants(uint8_t liquid) {
     if (plant->state!=FMN_PLANT_STATE_SEED) continue;
     plant->fruit=liquid;
     plant->state=FMN_PLANT_STATE_GROW;
+    plant->flower_time=fmn_game_get_platform_time_ms()+FMN_FLOWER_TIME_MS;
     fmn_sound_effect(FMN_SFX_SPROUT);
     fmn_map_dirty();
     return;
