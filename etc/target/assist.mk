@@ -6,9 +6,10 @@
 assist_MIDDIR:=mid/assist
 assist_OUTDIR:=out/assist
 
-assist_OPT_ENABLE:=alsa soft stdsyn minsyn datafile png midi fontosaur pcmprint assist
+assist_OPT_ENABLE:=alsa soft stdsyn minsyn datafile png midi pcmprint assist
 
 assist_SRCFILES_FILTER_OUT:=src/app/%
+assist_SRCFILES_EXTRA:=src/app/fmn_pixfmt.c
 
 assist_EXE:=$(assist_OUTDIR)/assist
 assist_DATA:=$(assist_OUTDIR)/data

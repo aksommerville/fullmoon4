@@ -8,6 +8,8 @@
 
 struct bigpc_render_driver_soft {
   struct bigpc_render_driver hdr;
+  int16_t fbw,fbh;
+  uint8_t pixfmt;
 };
 
 #define DRIVER ((struct bigpc_render_driver_soft*)driver)

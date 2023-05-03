@@ -420,6 +420,22 @@ void fmn_gs_notify(uint16_t p,uint16_t c);
  */
 uint8_t fmn_render();
 
+/* Call if you change map tiles. You don't need to track which ones.
+ * Plants too.
+ * This was formerly in the platform's API but moved to client -- this kind of thing wouldn't normally live in this header.
+ */
+void fmn_map_dirty();
+
+/* Prepare a transition while in the "from" state, and declare what style you will want.
+ * Then make your changes, and either commit or cancel it.
+ * Platform decides whether to update during a transition, I'm thinking no.
+ * If you prepare and then finish the frame without commit or cancel, it implicitly cancels.
+ * Two prepares in one frame, the second cancels the first.
+ */
+void fmn_prepare_transition(int transition);
+void fmn_commit_transition();
+void fmn_cancel_transition();
+
 /* Platform implements the rest.
  *************************************************/
 
@@ -429,34 +445,10 @@ void fmn_log(const char *fmt,...);
 // Hard stop. No further app calls will be made, and user will see an unfriendly error.
 void fmn_abort();
 
-/* Push a modal menu on the stack.
- * Game will not update while a menu is in play.
- * Variadic arguments are any number of (int prompt_stringid,void (*cb)()), followed by a null.
+/* Notify backend that the game is fully restarting.
+ * This will trigger fmn_init() again.
  */
-#if 0
-void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*cbN)()*/);
-#define fmn_begin_menu(...) _fmn_begin_menu(__VA_ARGS__,0)
-// Negative prompt IDs are special:
-#define FMN_MENU_PAUSE -1
-#define FMN_MENU_CHALK -2 /* XXX use fmn_begin_sketch() */
-#define FMN_MENU_TREASURE -3 /* opt1=itemid, cb1=required */
-#define FMN_MENU_VICTORY -4
-#define FMN_MENU_GAMEOVER -5
-#define FMN_MENU_HELLO -6
-#endif
-//XXX render-redesign: Menus will be a purely client-side construct, we can remove from this API.
-
-/* Prepare a transition while in the "from" state, and declare what style you will want.
- * Then make your changes, and either commit or cancel it.
- * Platform decides whether to update during a transition, I'm thinking no.
- * If you prepare and then finish the frame without commit or cancel, it implicitly cancels.
- * Two prepares in one frame, the second cancels the first.
- *
- * XXX render-redesign: These now live on the client side. Find a new header for them.
- */
-void fmn_prepare_transition(int transition);
-void fmn_commit_transition();
-void fmn_cancel_transition();
+void fmn_reset();
 
 /* Replace the global map section from the platform-owned data archive.
  * Also updates (plantv,sketchv) with plants and sketches in the current view.
@@ -471,13 +463,6 @@ int8_t fmn_load_map(
     const uint8_t *cmdv,uint16_t cmdc
   )
 );
-
-/* Call if you change map tiles. You don't need to track which ones.
- * Plants too.
- *
- * XXX render-redesign: These now live on the client side. Find a new header for them.
- */
-void fmn_map_dirty();
 
 /* Plant a seed or begin editing a sketch.
  * Both return <0 to reject, eg no space available.
@@ -586,16 +571,6 @@ uint32_t fmn_video_pixel_from_rgba(uint32_t rgba);
  * Calling this may cause it to decode.
  */
 void fmn_video_get_image_size(int16_t *w,int16_t *h,uint16_t imageid);
-
-/* Bounds (0,0,0,0) to replace an entire image, possibly changing its bounds.
- * Input may be any specific pixfmt. Backend may convert during the upload, you shouldn't need to care about that.
- * Image resources from the data archive are automatically available without uploading.
- */
-void fmn_video_upload_image(
-  uint16_t imageid,
-  int16_t x,int16_t y,int16_t w,int16_t h,
-  const void *src,int srcstride,uint8_t srcpixfmt
-);
 
 void fmn_video_init_image(uint16_t imageid,int16_t w,int16_t h);
 

@@ -15,7 +15,7 @@ static void victory_dismiss(struct fmn_menu *menu) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
     fmn_dismiss_menu(menu);
-    fmn_init();
+    fmn_reset();
   }
 }
 

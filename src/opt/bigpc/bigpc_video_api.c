@@ -30,14 +30,6 @@ uint32_t fmn_video_pixel_from_rgba(uint32_t rgba) {
   return bigpc.render->type->video_pixel_from_rgba(bigpc.render,rgba);
 }
 
-void fmn_video_upload_image(
-  uint16_t imageid,
-  int16_t x,int16_t y,int16_t w,int16_t h,
-  const void *src,int srcstride,uint8_t srcpixfmt
-) {
-  bigpc.render->type->video_upload_image(bigpc.render,imageid,x,y,w,h,src,srcstride,srcpixfmt);
-}
-
 void fmn_video_init_image(uint16_t imageid,int16_t w,int16_t h) {
   bigpc.render->type->video_init_image(bigpc.render,imageid,w,h);
 }

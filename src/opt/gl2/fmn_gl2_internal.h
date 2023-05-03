@@ -42,13 +42,6 @@ struct fmn_gl2_texture {
   int w,h;
 };
 
-/*XXX new api: framebuffer will now be an optional feature of texture
-struct fmn_gl2_framebuffer {
-  GLuint fbid;
-  struct fmn_gl2_texture texture;
-};
-/**/
-
 struct fmn_gl2_program {
   GLuint programid;
   int attrc;
@@ -69,11 +62,6 @@ int fmn_gl2_texture_init(struct fmn_gl2_texture *texture,const void *src,int src
 int fmn_gl2_texture_init_rgba(struct fmn_gl2_texture *texture,int w,int h,const void *v);
 int fmn_gl2_texture_init_rgb(struct fmn_gl2_texture *texture,int w,int h,const void *v);
 int fmn_gl2_texture_require_framebuffer(struct fmn_gl2_texture *texture);
-
-/*XXX
-void fmn_gl2_framebuffer_cleanup(struct fmn_gl2_framebuffer *framebuffer);
-int fmn_gl2_framebuffer_init(struct fmn_gl2_framebuffer *framebuffer,int w,int h);
-/**/
 
 void fmn_gl2_program_cleanup(struct fmn_gl2_program *program);
 
@@ -141,85 +129,6 @@ void fmn_gl2_draw_recal_swap(
   uint32_t rgba
 );
 
-/* I did a bad job splitting platform from game, and the result is that platforms are expected to know a lot about the game.
- * I mean, a lot!
- * So we split it again here: Everything Full Moony goes into gl2's "game" object.
- * The rest of this gl2 unit is pretty much generic.
- *******************************************************************/
- 
-// Update 2023-04-29: render-redesign: All this "game" stuff should be moving into the client now.
- 
-#define FMN_GL2_COMPASS_RATE_MIN 0.010f
-#define FMN_GL2_COMPASS_RATE_MAX 0.200f
-#define FMN_GL2_COMPASS_DISTANCE_MAX 40.0f
-
-#define FMN_GL2_ILLUMINATION_PERIOD 70 /* frames per cycle */
-#define FMN_GL2_ILLUMINATION_RANGE 0.250f /* full range width in alpha units */
-#define FMN_GL2_ILLUMINATION_FADE_TIME 1.0f /* seconds */
-#define FMN_GL2_ILLUMINATION_PEAK 0.750f /* RANGE..1 */
-
-#define FMN_GL2_TRANSITION_FRAMEC 36 /* web: 600 ms */
-
-// Wind and rain share a particle buffer.
-#define FMN_GL2_PARTICLE_LIMIT 500
- 
-struct fmn_gl2_game {
-  int map_dirty;
-  //XXX struct fmn_gl2_framebuffer mapbits;
-  int tilesize;
-  struct fmn_gl2_vertex_mintile *mintile_vtxv;
-  int mintile_vtxc,mintile_vtxa;
-  int framec;
-  int itemtime; // how many frames item has been active
-  int ffchargeframe; // specific to werewolf
-  float compassangle;
-  int transition,transitionp,transitionc; // (p) counts up to (c)
-  //XXX struct fmn_gl2_framebuffer transitionfrom,transitionto;
-  uint32_t transitioncolor; // for fade. rgbx
-  int16_t transitionfromx,transitionfromy,transitiontox,transitiontoy; // for spotlight
-  int hero_above_transition;
-  struct fmn_gl2_vertex_raw particlev[FMN_GL2_PARTICLE_LIMIT];
-  int particlec;
-  float illuminationp;
-  struct fmn_gl2_texture idle_warning_texture;
-  int idle_warning_time;
-};
-
-void fmn_gl2_game_cleanup(struct bigpc_render_driver *driver);
-int fmn_gl2_game_init(struct bigpc_render_driver *driver);
-void fmn_gl2_game_render(struct bigpc_render_driver *driver);
-
-int fmn_gl2_game_add_mintile_vtx_pixcoord(
-  struct bigpc_render_driver *driver,
-  int16_t x,int16_t y,uint8_t tileid,uint8_t xform
-);
- 
-#define fmn_gl2_game_add_mintile_vtx(driver,sx,sy,tileid,xform) \
-  fmn_gl2_game_add_mintile_vtx_pixcoord(driver,(sx)*DRIVER->game.tilesize,(sy)*DRIVER->game.tilesize,tileid,xform)
-  
-void fmn_gl2_game_transition_begin(struct bigpc_render_driver *driver);
-void fmn_gl2_game_transition_commit(struct bigpc_render_driver *driver);
-/*XXX
-void fmn_gl2_game_transition_apply(
-  struct bigpc_render_driver *driver,
-  int transition,int p,int c,
-  struct fmn_gl2_framebuffer *from,struct fmn_gl2_framebuffer *to
-);
-/**/
-
-void fmn_gl2_transition_get_hero_offset(int16_t *x,int16_t *y,struct bigpc_render_driver *driver);
-
-/* Chalk bits are 0x000fffff, and points are (0,0) thru (2,2).
- * Pack the points in the four low nybbles:
- *   0x0000f000 ax
- *   0x00000f00 ay
- *   0x000000f0 bx
- *   0x0000000f by
- * In a canonical point, a<b. But we accept it in either order.
- */
-uint32_t fmn_gl2_chalk_points_from_bit(uint32_t bit);
-uint32_t fmn_gl2_chalk_bit_from_points(uint32_t points);
-
 /* Driver.
  ****************************************************************/
 
@@ -239,12 +148,9 @@ struct bigpc_render_driver_gl2 {
   #undef _
   struct fmn_gl2_program *program; // WEAK, points to one of the named programs or null
   
-  struct fmn_gl2_game game;
-  
   // Output bounds.
   int pvw,pvh; // total output size, so we can detect changes.
   int dstx,dsty,dstw,dsth;
-  int fbquakex,fbquakey; // earthquake shaking is managed by the final output.
   
   struct fmn_gl2_vertex_raw *rawvtxv;
   int rawvtxa;

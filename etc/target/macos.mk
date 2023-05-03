@@ -5,7 +5,7 @@
 macos_MIDDIR:=mid/macos
 macos_OUTDIR:=out/macos
 
-macos_OPT_ENABLE:=gl2 soft minsyn bigpc macos datafile png fmstore inmgr midi fontosaur pcmprint macaudio machid macioc macwm
+macos_OPT_ENABLE:=gl2 soft minsyn bigpc macos datafile png fmstore inmgr midi pcmprint macaudio machid macioc macwm
 
 macos_ICONS_DIR:=src/opt/macos/appicon.iconset
 macos_XIB:=src/opt/macos/Main.xib

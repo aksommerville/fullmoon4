@@ -35,23 +35,6 @@ struct bigpc_render_driver *bigpc_render_new(
   struct bigpc_video_driver *video
 );
 
-/* Draw the scene.
- * Driver is expected to read globals (see fmn_platform.h) and render accordingly.
- * See the original implementation, src/www/js/game/Renderer.js.
- * If the video driver is configured for software rendering, (fb) is provided.
- * Otherwise (fb) is null, and we are in the GX context.
- */
-int bigpc_render_update(struct bigpc_image *fb,struct bigpc_render_driver *driver);
-
-/* Full Moon specific stuff.
- */
-void bigpc_render_map_dirty(struct bigpc_render_driver *driver);
-
-// We use just one hook for transition 'prepare', 'commit', and 'cancel'.
-#define FMN_TRANSITION_COMMIT -1
-#define FMN_TRANSITION_CANCEL -2
-void bigpc_render_transition(struct bigpc_render_driver *driver,int request);
-
 /* Type.
  ********************************************************/
  
@@ -62,11 +45,6 @@ struct bigpc_render_type {
   int appointment_only;
   void (*del)(struct bigpc_render_driver *driver);
   int (*init)(struct bigpc_render_driver *driver,struct bigpc_video_driver *video);
-  
-  //XXX from the old heavy-platform video API, probably not relevant anymore:
-  int (*update)(struct bigpc_image *fb,struct bigpc_render_driver *driver);
-  void (*map_dirty)(struct bigpc_render_driver *driver);
-  void (*transition)(struct bigpc_render_driver *driver,int request);
   
   // New heavy-client video API.
   // To reduce overhead, all types must implement all of these, and there are no wrapper functions.
@@ -80,12 +58,6 @@ struct bigpc_render_type {
   uint8_t (*video_get_pixfmt)(struct bigpc_render_driver *driver);
   uint32_t (*video_rgba_from_pixel)(struct bigpc_render_driver *driver,uint32_t pixel);
   uint32_t (*video_pixel_from_rgba)(struct bigpc_render_driver *driver,uint32_t rgba);
-  void (*video_upload_image)(
-    struct bigpc_render_driver *driver,
-    uint16_t imageid,
-    int16_t x,int16_t y,int16_t w,int16_t h,
-    const void *src,int srcstride,uint8_t srcpixfmt
-  );
   void (*video_init_image)(struct bigpc_render_driver *driver,uint16_t imageid,int16_t w,int16_t h);
   void (*video_get_image_size)(int16_t *w,int16_t *h,struct bigpc_render_driver *driver,uint16_t imageid);
   int8_t (*draw_set_output)(struct bigpc_render_driver *driver,uint16_t imageid);

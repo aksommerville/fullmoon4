@@ -4,7 +4,6 @@
  */
  
 static void _gl2_del(struct bigpc_render_driver *driver) {
-  fmn_gl2_game_cleanup(driver);
   if (DRIVER->texturev) {
     while (DRIVER->texturec-->0) fmn_gl2_texture_del(DRIVER->texturev[DRIVER->texturec]);
     free(DRIVER->texturev);
@@ -37,8 +36,6 @@ static int _gl2_init(struct bigpc_render_driver *driver,struct bigpc_video_drive
     (fmn_gl2_texture_init_rgb(&DRIVER->mainfb,video->fbw,video->fbh,0)<0)||
     (fmn_gl2_texture_require_framebuffer(&DRIVER->mainfb)<0)
   ) return -1;
-  
-  if (fmn_gl2_game_init(driver)<0) return -1;
   
   return 0;
 }
@@ -97,13 +94,9 @@ static void _gl2_end(struct bigpc_render_driver *driver,uint8_t client_result) {
   fmn_gl2_program_use(driver,&DRIVER->program_decal);
   fmn_gl2_texture_use_object(driver,&DRIVER->mainfb);
   
-  // Shift the output bounds per earthquake. XXX Move to client
-  int adjx=(DRIVER->fbquakex*DRIVER->dstw)/DRIVER->mainfb.w;
-  int adjy=(DRIVER->fbquakey*DRIVER->dsth)/DRIVER->mainfb.h;
-  
   fmn_gl2_draw_decal(
     driver,
-    DRIVER->dstx+adjx,DRIVER->dsty+adjy,DRIVER->dstw,DRIVER->dsth,
+    DRIVER->dstx,DRIVER->dsty,DRIVER->dstw,DRIVER->dsth,
     0,DRIVER->mainfb.h,DRIVER->mainfb.w,-DRIVER->mainfb.h
   );
   
@@ -118,71 +111,6 @@ static void _gl2_end(struct bigpc_render_driver *driver,uint8_t client_result) {
     fmn_gl2_program_use(driver,&DRIVER->program_raw);
     fmn_gl2_draw_raw_rect(0,0,driver->w,DRIVER->dsty,0x000000ff);
     fmn_gl2_draw_raw_rect(0,DRIVER->dsty+DRIVER->dsth,driver->w,driver->h-DRIVER->dsth-DRIVER->dsty,0x000000ff);
-  }
-}
-
-/* Update.XXX
- * The render code here is only for shovelling the framebuffer up to the main screen.
- * Everything else, the fun parts, is in fmn_gl2_game_render().
- */
- 
-static int _gl2_update(struct bigpc_image *fb,struct bigpc_render_driver *driver) {
-
-  fmn_gl2_game_render(driver);
-  
-  fmn_gl2_framebuffer_use_object(driver,0);
-  fmn_gl2_require_output_bounds(driver);
-  
-  fmn_gl2_program_use(driver,&DRIVER->program_decal);
-  fmn_gl2_texture_use_object(driver,&DRIVER->mainfb);
-  
-  // Shift the output bounds per earthquake.
-  int adjx=(DRIVER->fbquakex*DRIVER->dstw)/DRIVER->mainfb.w;
-  int adjy=(DRIVER->fbquakey*DRIVER->dsth)/DRIVER->mainfb.h;
-  
-  fmn_gl2_draw_decal(driver,
-    DRIVER->dstx+adjx,DRIVER->dsty+adjy,DRIVER->dstw,DRIVER->dsth,
-    0,DRIVER->mainfb.h,DRIVER->mainfb.w,-DRIVER->mainfb.h
-  );
-  
-  // When the projected framebuffer is smaller than the screen, we letterbox or pillarbox.
-  // It's more efficient to draw the bars on top, rather than the perhaps more obvious clear output first.
-  if (DRIVER->dstw<driver->w) {
-    fmn_gl2_program_use(driver,&DRIVER->program_raw);
-    fmn_gl2_draw_raw_rect(0,0,DRIVER->dstx,driver->h,0x000000ff);
-    fmn_gl2_draw_raw_rect(DRIVER->dstx+DRIVER->dstw,0,driver->w-DRIVER->dstw-DRIVER->dstx,driver->h,0x000000ff);
-  }
-  if (DRIVER->dsth<driver->h) {
-    fmn_gl2_program_use(driver,&DRIVER->program_raw);
-    fmn_gl2_draw_raw_rect(0,0,driver->w,DRIVER->dsty,0x000000ff);
-    fmn_gl2_draw_raw_rect(0,DRIVER->dsty+DRIVER->dsth,driver->w,driver->h-DRIVER->dsth-DRIVER->dsty,0x000000ff);
-  }
-  
-  return 0;
-}
-
-/* Map dirty.XXX
- */
- 
-static void _gl2_map_dirty(struct bigpc_render_driver *driver) {
-  DRIVER->game.map_dirty=1;
-}
-
-/* Transition.XXX
- */
- 
-static void _gl2_transition(struct bigpc_render_driver *driver,int request) {
-  driver->transition_in_progress=0;
-  if (request>=0) {
-    DRIVER->game.transition=request;
-    DRIVER->game.transitionp=0;
-    DRIVER->game.transitionc=0; // 0 until committed
-    fmn_gl2_game_transition_begin(driver);
-  } else if (request==FMN_TRANSITION_COMMIT) {
-    fmn_gl2_game_transition_commit(driver);
-  } else if (request==FMN_TRANSITION_CANCEL) {
-    DRIVER->game.transition=0;
-    DRIVER->game.transitionc=0;
   }
 }
 
@@ -195,7 +123,6 @@ static int8_t _gl2_video_init(
   int16_t hmin,int16_t hmax,
   uint8_t pixfmt
 ) {
-  fprintf(stderr,"%s (%d..%d),(%d..%d) 0x%02x\n",__func__,wmin,wmax,hmin,hmax,pixfmt);
 
   // Prefer (320,192) if in range, next take the nearest in range.
   int fbw,fbh;
@@ -205,7 +132,7 @@ static int8_t _gl2_video_init(
   if (hmin>192) fbh=hmin;
   else if (hmax<192) fbh=hmax;
   else fbh=192;
-  int err=fmn_gl2_texture_init_rgba(&DRIVER->mainfb,fbw,fbh,0);
+  int err=fmn_gl2_texture_init_rgb(&DRIVER->mainfb,fbw,fbh,0);
   if (err<0) return err;
   
   // Force reconsideration of output bounds.
@@ -238,20 +165,6 @@ static uint8_t _gl2_video_get_pixfmt(struct bigpc_render_driver *driver) {
 
 static uint32_t _gl2_video_rgba_from_pixel(struct bigpc_render_driver *driver,uint32_t pixel) { return pixel; }
 static uint32_t _gl2_video_pixel_from_rgba(struct bigpc_render_driver *driver,uint32_t rgba) { return rgba; }
-
-/* Upload image.
- */
- 
-static void _gl2_video_upload_image(
-  struct bigpc_render_driver *driver,
-  uint16_t imageid,
-  int16_t x,int16_t y,int16_t w,int16_t h,
-  const void *src,int srcstride,uint8_t srcpixfmt
-) {
-  fprintf(stderr,"%s #%d (%d,%d,%d,%d)\n",__func__,imageid,x,y,w,h);//TODO
-  // This is going to be complicated, will require more support at fmn_gl2_global.c.
-  // Wait until we find a realistic use case for testing.
-}
 
 /* Init image.
  */
@@ -401,18 +314,11 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .del=_gl2_del,
   .init=_gl2_init,
   
-  //XXX old api
-  .update=_gl2_update,
-  .map_dirty=_gl2_map_dirty,
-  .transition=_gl2_transition,
-  
-  // new api
   .video_init=_gl2_video_init,
   .video_get_framebuffer_size=_gl2_video_get_framebuffer_size,
   .video_get_pixfmt=_gl2_video_get_pixfmt,
   .video_rgba_from_pixel=_gl2_video_rgba_from_pixel,
   .video_pixel_from_rgba=_gl2_video_pixel_from_rgba,
-  .video_upload_image=_gl2_video_upload_image,
   .video_init_image=_gl2_video_init_image,
   .video_get_image_size=_gl2_video_get_image_size,
   .draw_set_output=_gl2_draw_set_output,

@@ -164,6 +164,7 @@ static void werewolf_die(struct fmn_sprite *sprite) {
   fmn_log_event("kill-werewolf","");
   fmn_sprite_generate_soulballs(sprite->x,sprite->y,6);
   fmn_sound_effect(FMN_SFX_KILL_WEREWOLF);
+  fmn_play_song(0xff);
   WEREWOLF_SET_HITBOX(BACK)
   stage=WEREWOLF_STAGE_DEAD;
   stageclock=0.0f;

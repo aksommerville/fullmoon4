@@ -19,7 +19,8 @@ all:$1-all
 # Discover input files, compile code, link the executable...
 
 $1_SRCPAT:=src/app/% $$($1_MIDDIR)/generated/% $(foreach U,$($1_OPT_ENABLE),src/opt/$U/%)
-$1_SRCFILES:=$$(filter-out $$($1_SRCFILES_FILTER_OUT),$$(filter $$($1_SRCPAT),$(SRCFILES) $$(addprefix $$($1_MIDDIR)/generated/,$(GENERATED_FILES))))
+$1_SRCFILES:=$$(filter-out $$($1_SRCFILES_FILTER_OUT),$$(filter $$($1_SRCPAT),$(SRCFILES) $$(addprefix $$($1_MIDDIR)/generated/,$(GENERATED_FILES)))) \
+  $$($1_SRCFILES_EXTRA)
 
 $1_CFILES:=$$(filter %.c %.m %.cpp %.S,$$($1_SRCFILES))
 $1_OFILES:=$$(addsuffix .o,$$(patsubst src/%,$$($1_MIDDIR)/%,$$(basename $$($1_CFILES))))

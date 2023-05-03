@@ -39,7 +39,7 @@ static int fmn_glx_evt_key(struct fmn_glx *fmn_glx,XKeyEvent *evt,int value) {
  */
  
 static int fmn_glx_evt_mbtn(struct fmn_glx *fmn_glx,XButtonEvent *evt,int value) {
-  fprintf(stderr,"%s state=0x%08x\n",__func__,evt->state);
+  //fprintf(stderr,"%s state=0x%08x\n",__func__,evt->state);
   
   // I swear X11 used to automatically report the wheel as (6,7) while shift held, and (4,5) otherwise.
   // After switching to GNOME 3, seems it is only ever (4,5).

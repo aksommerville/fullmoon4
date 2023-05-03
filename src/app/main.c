@@ -27,6 +27,8 @@ int fmn_init() {
   }
   idle_time=0.0f;
   last_update_time=0;
+  const int16_t tilesize=16;
+  if (fmn_video_init(FMN_COLC*tilesize,FMN_COLC*tilesize,FMN_ROWC*tilesize,FMN_ROWC*tilesize,FMN_VIDEO_PIXFMT_RGBA)<0) return -1;
   if (fmn_game_init()<0) return -1;
   return 0;
 }
@@ -68,7 +70,7 @@ void fmn_update(uint32_t timems,uint8_t input) {
       idle_time+=elapsed;
       if (idle_time>=FMN_IDLE_RESTART_TIME) {
         fmn_log_event("idle-restart","");
-        fmn_init();
+        fmn_reset();
       } else if (idle_time>=FMN_IDLE_WARNING_TIME) {
       } else {
       }

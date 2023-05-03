@@ -10,6 +10,10 @@ void fmn_log(const char *fmt,...) {
 void fmn_abort() {
 }
 
+void fmn_reset() {
+  fmn_init();
+}
+
 void _fmn_begin_menu(int prompt,.../*int opt1,void (*cb1)(),...,int optN,void (*cbN)()*/) {
 }
 

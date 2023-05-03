@@ -10,77 +10,22 @@ void fmn_abort() {
   bigpc.sigc++;
 }
 
-/* Begin modal menu.
- */
-#if 0 /*XXX move to client */
-void _fmn_begin_menu(int prompt,...) {
-
-  fmn_log_event("menu","%d",prompt);
-  
-  if (bigpc.menuc>=bigpc.menua) {
-    int na=bigpc.menua+8;
-    if (na>INT_MAX/sizeof(void*)) return;
-    void *nv=realloc(bigpc.menuv,sizeof(void*)*na);
-    if (!nv) return;
-    bigpc.menuv=nv;
-    bigpc.menua=na;
-  }
-  
-  struct bigpc_menu *menu=0;
-  if (prompt>0) {
-    menu=bigpc_menu_new_prompt(prompt);
-  } else switch (prompt) {
-    case FMN_MENU_PAUSE: menu=bigpc_menu_new_PAUSE(); break;
-    case FMN_MENU_CHALK: menu=bigpc_menu_new_CHALK(); break;
-    case FMN_MENU_TREASURE: menu=bigpc_menu_new_TREASURE(); break;
-    case FMN_MENU_VICTORY: menu=bigpc_menu_new_VICTORY(); break;
-    case FMN_MENU_GAMEOVER: menu=bigpc_menu_new_GAMEOVER(); break;
-    case FMN_MENU_HELLO: menu=bigpc_menu_new_HELLO(); break;
-  }
-  if (!menu) return;
-  
-  va_list vargs;
-  va_start(vargs,prompt);
-  while (1) {
-    int stringid=va_arg(vargs,int);
-    if (!stringid) break;
-    void (*cb)()=va_arg(vargs,void*);
-    if (bigpc_menu_add_option(menu,stringid,cb)<0) {
-      bigpc_menu_del(menu);
-      return;
-    }
-  }
-  if (bigpc_menu_ready(menu)<0) {
-    bigpc_menu_del(menu);
-    return;
-  }
-  
-  bigpc.menuv[bigpc.menuc++]=menu;
-  
-  // VICTORY and GAMEOVER menus also entail a song change, which the client can't do.
-  switch (prompt) {
-    case FMN_MENU_VICTORY: bigpc_play_song(7); break;
-    case FMN_MENU_GAMEOVER: bigpc_play_song(6); break;
-    case FMN_MENU_HELLO: bigpc_play_song(1); break;
-  }
-}
-#endif
-#if 0 /*XXX moved to client side */
-/* Transitions.
+/* Reset, eg after the victory menu.
  */
  
-void fmn_prepare_transition(int transition) {
-  bigpc_render_transition(bigpc.render,transition);
-}
+void fmn_reset() {
 
-void fmn_commit_transition() {
-  bigpc_render_transition(bigpc.render,FMN_TRANSITION_COMMIT);
+  memset(&fmn_global,0,sizeof(fmn_global));
+  fmstore_del(bigpc.fmstore);
+  bigpc.fmstore=fmstore_new();
+  
+  if (fmn_init()<0) {
+    fprintf(stderr,"Error reinitializing game.\n");
+    bigpc.sigc++;
+    return;
+  }
+  bigpc_clock_reset(&bigpc.clock);
 }
-
-void fmn_cancel_transition() {
-  bigpc_render_transition(bigpc.render,FMN_TRANSITION_CANCEL);
-}
-#endif
 
 /* Map load helpers.
  */
@@ -282,36 +227,9 @@ int8_t fmn_load_map(
   
   bigpc_load_cellphysics();
   bigpc_autobloom_plants();
-  bigpc_render_map_dirty(bigpc.render);
   fmn_map_dirty();
   return 1;
 }
-
-/* When the client indicates map dirty, we check plants for required but unset flower_time.
- * I guess this ought to be done by the client on his own, but this is how I did it for web, so hey don't make waves.
- */
- 
-static void bigpc_set_flower_times() {
-  struct fmn_plant *plant=fmn_global.plantv;
-  int i=fmn_global.plantc;
-  for (;i-->0;plant++) {
-    if (plant->state!=FMN_PLANT_STATE_GROW) continue;
-    if (plant->flower_time) continue;
-    plant->flower_time=bigpc.clock.last_game_time_ms+BIGPC_PLANT_FLOWER_TIME;
-  }
-}
-
-#if 0 // XXX moved to client side
-/* Map dirty.
- */
- 
-void fmn_map_dirty() {
-  bigpc_set_flower_times();
-  bigpc_render_map_dirty(bigpc.render);
-  fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
-  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
-}
-#endif
 
 /* Add a plant.
  */
@@ -361,26 +279,12 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
   plant->fruit=0;
   plant->flower_time=0;
   
-  bigpc_render_map_dirty(bigpc.render);
   fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
   return 0;
 }
 
 /* Begin a sketch.
  */
- 
-static void fmn_cb_sketch() {
-  if (!bigpc.sketch_in_progress) return;
-  /*TODO figure out how sketches will work, after render-redesign
-  if (bigpc.menuc<1) return;
-  struct bigpc_menu *menu=bigpc.menuv[bigpc.menuc-1];
-  if (menu->prompt!=FMN_MENU_CHALK) return;
-  bigpc.sketch_in_progress->bits=menu->extra[0];
-  bigpc.sketch_in_progress=0;
-  bigpc_render_map_dirty(bigpc.render);
-  fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
-  /**/
-}
  
 uint32_t fmn_begin_sketch(uint16_t x,uint16_t y) {
 
@@ -421,7 +325,6 @@ uint32_t fmn_begin_sketch(uint16_t x,uint16_t y) {
   
   sketch->time=bigpc.clock.last_game_time_ms;
   
-  bigpc.sketch_in_progress=sketch;
   fmstore_read_sketches_from_globals(bigpc.fmstore,bigpc.mapid);
   
   return sketch->bits;

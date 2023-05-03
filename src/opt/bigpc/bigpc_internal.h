@@ -8,7 +8,6 @@
 #include "bigpc_input.h"
 #include "bigpc_synth.h"
 #include "bigpc_render.h"
-//XXX #include "bigpc_menu.h"
 #include "bigpc_clock.h"
 #include "opt/datafile/fmn_datafile.h"
 #include "opt/fmstore/fmstore.h"
@@ -43,15 +42,6 @@
   _(USE) \
   _(MENU)
   
-// Unclear why this isn't part of the client.
-#define BIGPC_PLANT_FLOWER_TIME 20000
-
-// Idle restart. Set both to zero to disable this behavior. Both in microseconds.
-// We definitely don't want this in production, and definitely do want it for demo kiosks.
-//XXX move to client
-#define BIGPC_IDLE_RESTART_WARN_TIME (30*1000000ll)
-#define BIGPC_IDLE_RESTART_TIME      (45*1000000ll)
-
 struct bigpc_config {
   char *video_drivers;
   int video_fullscreen;
@@ -93,18 +83,8 @@ extern struct bigpc {
   
   uint8_t input_state;
   int devid_keyboard;
-  int64_t last_input_time; // real us
-  uint8_t pvinput;
-  uint8_t idle_warning_time; // number to show, seconds. zero for none
-  
-  /*XXX menu management should move with rendering into the client
-  // Last in the list is on top.
-  struct bigpc_menu **menuv;
-  int menuc,menua;
-  /**/
   
   uint16_t mapid;
-  struct fmn_sketch *sketch_in_progress;
   struct bigpc_map_callback {
     uint8_t evid,param;
     uint16_t cbid;
@@ -112,7 +92,6 @@ extern struct bigpc {
   int map_callbackc,map_callbacka;
   
   int pause_for_violin;
-  int werewolf_dead;
   
   struct bigpc_sound_blackout {
     uint16_t sfxid;

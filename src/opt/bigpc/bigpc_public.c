@@ -61,10 +61,6 @@ int bigpc_init(int argc,char **argv) {
   if (!(bigpc.fmstore=fmstore_new())) return -1;
   if ((err=bigpc_log_init())<0) return err;
   
-  if (BIGPC_IDLE_RESTART_TIME) {
-    fprintf(stderr,"%s: Idle restart time %d. Don't release into prod with this set!\n",bigpc.exename,(int)(BIGPC_IDLE_RESTART_TIME/1000000ll));
-  }
-  
   bigpc_signal_init();
   if ((err=bigpc_video_init())<0) return err;
   if ((err=bigpc_audio_init())<0) return err;
@@ -83,46 +79,8 @@ int bigpc_init(int argc,char **argv) {
   
   bigpc_audio_play(bigpc.audio,1);
   bigpc_clock_reset(&bigpc.clock);
-  bigpc.last_input_time=bigpc.clock.last_real_time_us;
-  bigpc.idle_warning_time=0;
   return 0;
 }
-
-/* Reset, eg after the victory menu.
- */
- 
-static void bigpc_reset() {
-
-  memset(&fmn_global,0,sizeof(fmn_global));
-  fmstore_del(bigpc.fmstore);
-  bigpc.fmstore=fmstore_new();
-  
-  if (fmn_init()<0) {
-    fprintf(stderr,"Error reinitializing game.\n");
-    bigpc.sigc++;
-    return;
-  }
-  bigpc_clock_reset(&bigpc.clock);
-  bigpc.last_input_time=bigpc.clock.last_real_time_us;
-  bigpc.idle_warning_time=0;
-}
-
-/* Pop the top menu off the stack.
- *
- 
-static void bigpc_pop_menu() {
-  if (bigpc.menuc<1) return;
-  struct bigpc_menu *menu=bigpc.menuv[--(bigpc.menuc)];
-  int prompt=menu->prompt;
-  bigpc_menu_del(menu);
-  bigpc_ignore_next_button();
-  
-  switch (prompt) {
-    case FMN_MENU_VICTORY: bigpc_reset(); break;
-    case FMN_MENU_HELLO: bigpc_play_song(3); break;//TODO don't assume song 3
-  }
-}
-/**/
 
 /* Pause/resume song in response to violin.
  */
@@ -145,59 +103,6 @@ static void bigpc_check_violin() {
   }
 }
 
-/* When the werewolf gets killed, stop background music. XXX We will add a hook for clients to change song soon; remove this then
- */
- 
-static void bigpc_check_dead_werewolf() {
-  if (fmn_global.werewolf_dead) {
-    if (!bigpc.werewolf_dead) {
-      bigpc.werewolf_dead=1;
-      bigpc_play_song(0xff);
-    }
-  } else {
-    bigpc.werewolf_dead=0;
-  }
-}
-
-/* Watch for input changes. If input goes dead for a certain interval, show a warning, then revert to hello.
- * This is for my GDEX kiosk. Probably not appropriate for production.
- */
- 
-static int bigpc_is_idle() {
-  if (bigpc.pvinput!=bigpc.input_state) return 0;
-  /*XXX
-  if (bigpc.menuc>=1) {
-    int prompt=bigpc.menuv[bigpc.menuc-1]->prompt;
-    if (prompt==FMN_MENU_HELLO) return 0;
-    if (prompt==FMN_MENU_VICTORY) return 0;
-  }
-  return 1;
-  /**/
-  return 0;
-}
- 
-static void bigpc_check_idle() {
-  if (!bigpc_is_idle()) {
-    bigpc.pvinput=bigpc.input_state;
-    bigpc.last_input_time=bigpc.clock.last_real_time_us;
-    bigpc.idle_warning_time=0;
-  } else {
-    int64_t idle_time=bigpc.clock.last_real_time_us-bigpc.last_input_time;
-    if (idle_time>=BIGPC_IDLE_RESTART_TIME) {
-      fmn_log_event("idle-restart","");
-      bigpc_reset();
-    } else if (idle_time>=BIGPC_IDLE_RESTART_WARN_TIME) {
-      bigpc.idle_warning_time=(BIGPC_IDLE_RESTART_TIME-idle_time)/1000000ll+1;
-    } else {
-      bigpc.idle_warning_time=0;
-    }
-  }
-}
-
-int bigpc_get_idle_warning_time_s() {
-  return bigpc.idle_warning_time;
-}
-
 /* Update.
  */
  
@@ -214,22 +119,9 @@ int bigpc_update() {
   
   // Miscellaneous high-level business logic that had to live here.
   bigpc_check_violin();
-  bigpc_check_dead_werewolf();
-  bigpc_check_idle();
   
   // Update game or top menu.
-  /*XXX menu and transition are now managed by the client
-  if (bigpc.menuc) {
-    bigpc_clock_skip(&bigpc.clock);
-    int err=bigpc_menu_update(bigpc.menuv[bigpc.menuc-1]);
-    if (err<0) return -1;
-    if (!err) bigpc_pop_menu();
-  } else if (bigpc.render->transition_in_progress) {
-    bigpc_clock_skip(&bigpc.clock);
-  } else {
-  /**/
-    fmn_update(bigpc_clock_update(&bigpc.clock),bigpc.input_state);
-  //}
+  fmn_update(bigpc_clock_update(&bigpc.clock),bigpc.input_state);
   
   // Render one frame.
   bigpc.render->w=bigpc.video->w;
@@ -240,30 +132,10 @@ int bigpc_update() {
   } else {
     if (bigpc_video_driver_begin_gx(bigpc.video)<0) return -1;
   }
-  #if 0 /* XXX old render api */
-  if (bigpc_render_update(fb,bigpc.render)<0) {
-    bigpc_video_driver_cancel(bigpc.video);
-    return -1;
-  }
-  #else /* new render api */
   bigpc.render->type->begin(bigpc.render);
   uint8_t render_result=fmn_render();
   bigpc.render->type->end(bigpc.render,render_result);
-  #endif
   bigpc_video_driver_end(bigpc.video);
 
   return bigpc.sigc?0:1;
-}
-
-/* Trivial accessors.
- */
-/*XXX 
-struct bigpc_menu *bigpc_get_menu() {
-  if (bigpc.menuc<1) return 0;
-  return bigpc.menuv[bigpc.menuc-1];
-}
-/**/
-
-uint32_t bigpc_get_game_time_ms() {
-  return bigpc.clock.last_game_time_ms;
 }
