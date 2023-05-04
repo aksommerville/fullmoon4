@@ -540,7 +540,7 @@ static void fmn_render_hero_overlay_compass() {
     .x=dstx*fmn_render_global.tilesize,
     .y=dsty*fmn_render_global.tilesize,
     .tileid=0x63,
-    .rotate=(fmn_render_global.compassangle*128.0f)/M_PI,
+    .rotate=(int8_t)((fmn_render_global.compassangle*128.0f)/M_PI),
     .size=fmn_render_global.tilesize,
     .xform=0,
     .tr=0,

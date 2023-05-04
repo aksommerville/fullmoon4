@@ -197,6 +197,18 @@ export class DataService {
         prev.ser.set(srcView);
       }
     }
+    this._preloadAsNeeded();
+  }
+  
+  /* Immediately after populating toc, an opportunity to decode resources in advance of usage.
+   * This matters for images! We need to load them all before the game starts.
+   */
+  _preloadAsNeeded() {
+    for (const res of this.toc) {
+      if (res.type === RESTYPE_IMAGE) {
+        res.obj = this._decodeResource(res);
+      }
+    }
   }
   
   /* Opportunity to filter early based on type and qualifier.

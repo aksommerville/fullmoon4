@@ -227,7 +227,6 @@ int8_t fmn_load_map(
   
   bigpc_load_cellphysics();
   bigpc_autobloom_plants();
-  fmn_map_dirty();
   return 1;
 }
 

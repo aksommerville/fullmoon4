@@ -13,6 +13,7 @@ export class WasmLoader {
     this.instance = null;
     this.memU8 = null;
     this.memU16 = null;
+    this.memS16 = null;
     this.memU32 = null;
     this.memF32 = null;
     this.serialWasm = null; // For reset, so we don't try to download twice.
@@ -39,6 +40,7 @@ export class WasmLoader {
       this.instance = result.instance;
       this.memU8 = new Uint8Array(this.instance.exports.memory.buffer);
       this.memU16 = new Uint16Array(this.instance.exports.memory.buffer);
+      this.memS16 = new Int16Array(this.instance.exports.memory.buffer);
       this.memU32 = new Uint32Array(this.instance.exports.memory.buffer);
       this.memF32 = new Float32Array(this.instance.exports.memory.buffer);
       return this.instance;
@@ -58,6 +60,7 @@ export class WasmLoader {
     this.instance = null;
     this.memU8 = null;
     this.memU16 = null;
+    this.memS16 = null;
     this.memU32 = null;
     this.memF32 = null;
   }

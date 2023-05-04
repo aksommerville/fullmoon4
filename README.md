@@ -13,8 +13,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### 2023-04-29 render-redesign
 
-- [ ] Web glue.
-- [ ] Web Renderer abstraction. Be ready for selectable CanvasRenderingContext2D/WebGL.
 - [ ] !!! I'm rendering the "from" state of transitions during update, not render. Find a way to make that OK.
 - [ ] Redesign sprites to interact more closely with render? Maybe not worth the effort, it's a lot of effort.
 - [ ] All thru the render unit, I've been treating pixels as RGBA. That's not the real design, figure it out right.

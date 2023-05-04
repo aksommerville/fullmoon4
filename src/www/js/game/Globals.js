@@ -20,6 +20,7 @@ export class Globals {
     this.p_fmn_global = 0;
     this.memU8 = null;
     this.memU16 = null;
+    this.memS16 = null;
     this.memU32 = null;
     this.memF32 = null;
   }
@@ -32,6 +33,7 @@ export class Globals {
     this.p_fmn_global = this.wasmLoader.instance.exports.fmn_global.value;
     this.memU8 = this.wasmLoader.memU8;
     this.memU16 = this.wasmLoader.memU16;
+    this.memS16 = this.wasmLoader.memS16;
     this.memU32 = this.wasmLoader.memU32;
     this.memF32 = this.wasmLoader.memF32;
     
@@ -165,8 +167,6 @@ export class Globals {
     return null;
   }
   
-  // Provide a nonzero (now) to automatically flower plants if they're ready.
-  // They won't update in DataService, only in Globals.
   setMap(map, now) {
     this.g_map.set(map.cells);
     this.g_maptsid[0] = map.bgImageId;

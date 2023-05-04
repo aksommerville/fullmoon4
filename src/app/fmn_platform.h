@@ -540,6 +540,7 @@ void fmn_log_event(const char *key,const char *fmt,...);
 
 /* Make the most sensible assumption for wildcard types, and assert known formats.
  * We return zero (FMN_VIDEO_PIXFMT_ANY) if unknown, otherwise a concrete pixfmt.
+ * These are implemented in the client.
  */
 uint8_t fmn_pixfmt_concrete(uint8_t pixfmt);
 uint8_t fmn_pixfmt_get_pixel_size(uint8_t pixfmt); // => pixel size in bits, 0 if unknown

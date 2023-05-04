@@ -107,7 +107,7 @@ static void _chalk_render(struct fmn_menu *menu) {
     vtx->bx=bx+margin+spacing*handx;
     vtx->by=by+margin+spacing*handy;
     vtx->pixel=0xffff00ff;
-    vtxc+=2;
+    vtxc++;
   }
   if (vtxc) fmn_draw_line(vtxv,vtxc);
   

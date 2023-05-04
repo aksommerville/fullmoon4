@@ -6,7 +6,6 @@ import { WasmLoader } from "../util/WasmLoader.js";
 import { DataService } from "./DataService.js";
 import { InputManager } from "./InputManager.js";
 import { Renderer } from "./Renderer.js";
-import { MenuFactory, ChalkMenu, VictoryMenu, GameOverMenu, HelloMenu } from "./Menu.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
@@ -18,13 +17,13 @@ export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
-      Renderer, MenuFactory, Clock, Constants, Globals,
+      Renderer, Clock, Constants, Globals,
       Synthesizer, SoundEffects,
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
-    renderer, menuFactory, clock, constants, globals,
+    renderer, clock, constants, globals,
     synthesizer, soundEffects
   ) {
     this.wasmLoader = wasmLoader;
@@ -32,7 +31,6 @@ export class Runtime {
     this.inputManager = inputManager;
     this.window = window;
     this.renderer = renderer;
-    this.menuFactory = menuFactory;
     this.clock = clock;
     this.constants = constants;
     this.globals = globals;
@@ -45,29 +43,42 @@ export class Runtime {
     this.debugging = false; // when true, updates only happen explicitly via debugStep()
     this.running = false;
     this.animationFramePending = false;
-    this.menus = []; // last one is active
     this.map = null;
     this.mapId = 0;
     this.clock.reset();
     
     this.wasmLoader.env.fmn_web_log = p => this.window.console.log(`[wasm] ${this.wasmLoader.zstringFromMemory(p)}`);
     this.wasmLoader.env.fmn_abort = () => this.dropAllState();
-    this.wasmLoader.env._fmn_begin_menu = (prompt, varargs) => this.beginMenu(prompt, varargs);
-    this.wasmLoader.env.fmn_prepare_transition = (transition) => this.renderer.prepareTransition(transition);
-    this.wasmLoader.env.fmn_commit_transition = () => this.renderer.commitTransition();
-    this.wasmLoader.env.fmn_cancel_transition = () => this.renderer.cancelTransition();
+    this.wasmLoader.env.fmn_reset = () => this.reset();
     this.wasmLoader.env.fmn_load_map = (mapId, cbSpawn) => this.loadMap(mapId, cbSpawn);
-    this.wasmLoader.env.fmn_map_dirty = () => this.mapDirty();
     this.wasmLoader.env.fmn_add_plant = (x, y) => this.addPlant(x, y);
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
     this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
+    this.wasmLoader.env.fmn_play_song = (songid) => this.playSong(songid);
     this.wasmLoader.env.fmn_get_string = (dst, dsta, id) => this.getString(dst, dsta, id);
     this.wasmLoader.env.fmn_find_map_command = (dstp, mask, vp) => this.findMapCommand(dstp, mask, vp);
     this.wasmLoader.env.fmn_find_direction_to_item = (itemid) => this.findDirectionToItem(itemid);
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     this.wasmLoader.env.fmn_log_event = (key, fmt, varags) => {};
+    
+    this.wasmLoader.env.fmn_video_init = (wmin, wmax, hmin, hmax, pixfmt) => this.renderer.fmn_video_init(wmin, wmax, hmin, hmax, pixfmt);
+    this.wasmLoader.env.fmn_video_get_framebuffer_size = (wv, hv) => this.renderer.fmn_video_get_framebuffer_size(wv, hv);
+    this.wasmLoader.env.fmn_video_get_pixfmt = () => 0x71; // RGBA
+    this.wasmLoader.env.fmn_video_rgba_from_pixel = (pixel) => pixel;
+    this.wasmLoader.env.fmn_video_pixel_from_rgba = (rgba) => rgba;
+    this.wasmLoader.env.fmn_video_get_image_size = (wv, hv, imageid) => this.renderer.fmn_video_get_image_size(wv, hv, imageid);
+    this.wasmLoader.env.fmn_video_init_image = (imageid, w, h) => this.renderer.fmn_video_init_image(imageid, w, h);
+    this.wasmLoader.env.fmn_draw_set_output = (imageid) => this.renderer.fmn_draw_set_output(imageid);
+    this.wasmLoader.env.fmn_draw_line = (v, c) => this.renderer.fmn_draw_line(v, c);
+    this.wasmLoader.env.fmn_draw_rect = (v, c) => this.renderer.fmn_draw_rect(v, c);
+    this.wasmLoader.env.fmn_draw_mintile = (v, c, imageid) => this.renderer.fmn_draw_mintile(v, c, imageid);
+    this.wasmLoader.env.fmn_draw_maxtile = (v, c, imageid) => this.renderer.fmn_draw_maxtile(v, c, imageid);
+    this.wasmLoader.env.fmn_draw_decal = (v, c, imageid) => this.renderer.fmn_draw_decal(v, c, imageid);
+    this.wasmLoader.env.fmn_draw_decal_swap = (v, c, imageid) => this.renderer.fmn_draw_decal_swap(v, c, imageid);
+    this.wasmLoader.env.fmn_draw_recal = (v, c, imageid) => this.renderer.fmn_draw_recal(v, c, imageid);
+    this.wasmLoader.env.fmn_draw_recal_swap = (v, c, imageid) => this.renderer.fmn_draw_recal_swap(v, c, imageid);
     
     // Fetch the data archive and wasm asap. This doesn't start the game or anything.
     this.preloadAtConstruction = Promise.all([
@@ -107,7 +118,6 @@ export class Runtime {
     this.synthesizer.reset();
     this.dataService.dropSavedGame();
     this.dataService.dropGameState();
-    this.menus = [];
     this.map = null;
     this.mapId = 0;
   }
@@ -139,10 +149,6 @@ export class Runtime {
     });
   }
   
-  _hackyExtraUpdatesInGame() {
-    if (this.globals.g_werewolf_dead[0] && !this.menus.length) this.synthesizer.playSong(null);
-  }
-  
   update(viaExplicitDebugger) {
     if (!this.running) return;
     if (!this.wasmLoader.instance) return;
@@ -160,19 +166,18 @@ export class Runtime {
       this.inputManager.update();
       if (!this.debugging) this.synthesizer.update();
     
-      if (this.gameShouldUpdate()) {
+      if (this.running) {
         const time = this.clock.update();
         this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
-        this._hackyExtraUpdatesInGame();
+        if (!this.running) return;
       } else {
         this.clock.skip();
-        if (this.menus.length > 0) {
-          const menu = this.menus[this.menus.length - 1];
-          menu.update(this.inputManager.state);
-        }
       }
     
-      this.renderer.render(this.menus);
+      this.renderer.begin();
+      if (this.wasmLoader.instance.exports.fmn_render()) {
+        this.renderer.commit();
+      }
     
       if (!this.debugging) this.scheduleUpdate();
     } catch (e) {
@@ -181,57 +186,15 @@ export class Runtime {
     }
   }
   
-  gameShouldUpdate() {
-    if (!this.running) return false;
-    if (this.menus.length) return false;
-    if (this.renderer.getTransitionMode()) return false;
-    return true;
-  }
-  
-  beginMenu(prompt, varargs) {
-    const options = [];
-    if (varargs) for (;;) {
-      const stringId = this.wasmLoader.memU32[varargs >> 2];
-      if (!stringId) break;
-      varargs += 4;
-      const cbid = this.wasmLoader.memU32[varargs >> 2];
-      const cb = this.wasmLoader.instance.exports.__indirect_function_table.get(cbid);
-      if (!cb) break;
-      options.push([stringId, cb]);
-    }
-    for (const menu of this.menus) menu.update(0xff);
-    const menu = this.menuFactory.newMenu(prompt, options, menu => this.dismissMenu(menu));
-    this.menus.push(menu);
-    
-    if (menu instanceof GameOverMenu) this.synthesizer.playSong(this.dataService.getSong(6));
-    else if (menu instanceof VictoryMenu) this.synthesizer.playSong(this.dataService.getSong(7));
-    else if (menu instanceof HelloMenu) this.synthesizer.playSong(this.dataService.getSong(1));
-    
-    return menu;
-  }
-  
-  dismissMenu(menu) {
-    const p = this.menus.indexOf(menu);
-    if (p < 0) return;
-    this.menus.splice(p, 1);
-    
-    if (menu instanceof ChalkMenu) this.renderer.mapDirty();
-    else if (menu instanceof VictoryMenu) this.reset();
-    else if (menu instanceof HelloMenu) this.synthesizer.playSong(this.dataService.getSong(3)); //TODO don't assume song 3
-    
-    this.inputManager.clearState();
-  }
-  
   loadMap(mapId, cbSpawn) {
-    this.dropWitheredPlants();
-    const map = this.dataService.getMap(mapId);
+    this._persistPlants();
+    const map = this.dataService.getMap(mapId, this.clock.lastGameTime);
     if (!map) return 0;
     cbSpawn = this.wasmLoader.instance.exports.__indirect_function_table.get(cbSpawn);
     this.map = map;
     this.mapId = mapId;
     this.globals.setMap(this.map, this.clock.lastGameTime);
     this.triggerMapSetup(cbSpawn);
-    this.renderer.mapDirty();
     if (map.songId) {
       const song = this.dataService.getSong(map.songId);
       this.synthesizer.playSong(song);
@@ -239,15 +202,9 @@ export class Runtime {
     return 1;
   }
   
-  dropWitheredPlants() {
-    this.globals.forEachPlant(p => {
-      if (p.state === this.constants.PLANT_STATE_DEAD) {
-        this.dataService.removePlant({
-          ...p,
-          mapId: this.mapId,
-        });
-      }
-    });
+  playSong(songid) {
+    const song = this.dataService.getSong(songid);
+    this.synthesizer.playSong(song);
   }
   
   triggerMapSetup(cbSpawn) {
@@ -264,32 +221,27 @@ export class Runtime {
     }
   }
   
-  mapDirty() {
-    this.renderer.mapDirty();
+  _persistPlants() {
     this.globals.forEachPlant(p => {
       p.mapId = this.mapId;
-      if (p.state === this.constants.PLANT_STATE_NONE) { // signal from app to delete plant
-        this.dataService.removePlant(p);
+      if (
+        (p.state === this.constants.PLANT_STATE_NONE) ||
+        (p.state === this.constants.PLANT_STATE_DEAD)
+      ) {
+        this.dataService.removePlant({ ...p, mapId: this.mapId });
         return;
       }
-      if ((p.state === this.constants.PLANT_STATE_GROW) && !p.flower_time) {
-        p.flower_time = this.clock.lastGameTime + this.constants.PLANT_FLOWER_TIME * 1000;
-        this.globals.updatePlant(p);
-      }
-      this.dataService.updatePlant(p);
+      this.dataService.updatePlant({ ...p, mapId: this.mapId });
+    });
+    this.globals.forEachSketch(s => {
+      this.dataService.updateSketch({ ...s, mapId: this.mapId });
     });
   }
   
   beginSketch(x, y) {
     const sketch = this.globals.getSketch(x, y, true, this.clock.lastGameTime);
     if (!sketch) return -1;
-    const menu = this.beginMenu(-2, null);
-    if (menu instanceof ChalkMenu) {
-      menu.setup(sketch, s => this.dataService.updateSketch({
-        ...s,
-        mapId: this.mapId,
-      }));
-    }
+    return sketch.bits;
   }
   
   addPlant(x, y) {
@@ -311,7 +263,6 @@ export class Runtime {
       mapId: this.mapId,
     });
     this.globals.g_map[y * this.constants.COLC + x] = 0x00;
-    this.renderer.mapDirty();
     return 0;
   }
   

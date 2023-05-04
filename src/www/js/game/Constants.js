@@ -107,12 +107,33 @@ export class Constants {
     this.AUDIO_FRAME_RATE = 44100;
     this.AUDIO_CHANNEL_COUNT = 16; // logical bus channels, not mono/stereo output
     
+    /*
     this.MENU_PAUSE = -1;
     this.MENU_CHALK = -2;
     this.MENU_TREASURE = -3;
     this.MENU_VICTORY = -4;
     this.MENU_GAMEOVER = -5;
     this.MENU_HELLO = -6;
+    /**/
+    
+    this.VIDEO_PIXFMT_ANY        = 0x00;
+    this.VIDEO_PIXFMT_ANY_1      = 0x10;
+    this.VIDEO_PIXFMT_Y1BE       = 0x11;
+    this.VIDEO_PIXFMT_W1BE       = 0x12;
+    this.VIDEO_PIXFMT_ANY_2      = 0x20;
+    this.VIDEO_PIXFMT_ANY_4      = 0x30;
+    this.VIDEO_PIXFMT_ANY_8      = 0x40;
+    this.VIDEO_PIXFMT_I8         = 0x41;
+    this.VIDEO_PIXFMT_Y8         = 0x42;
+    this.VIDEO_PIXFMT_ANY_16     = 0x50;
+    this.VIDEO_PIXFMT_RGB565LE   = 0x51;
+    this.VIDEO_PIXFMT_RGBA4444BE = 0x52;
+    this.VIDEO_PIXFMT_ANY_24     = 0x60;
+    this.VIDEO_PIXFMT_ANY_32     = 0x70;
+    this.VIDEO_PIXFMT_RGBA       = 0x71;
+    this.VIDEO_PIXFMT_BGRA       = 0x72;
+    this.VIDEO_PIXFMT_ARGB       = 0x73;
+    this.VIDEO_PIXFMT_ABGR       = 0x74;
   }
 }
 

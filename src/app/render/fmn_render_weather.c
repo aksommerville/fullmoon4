@@ -156,7 +156,7 @@ static void fmn_render_earthquake(int16_t dx) {
   fmn_draw_decal(&vtx,1,FMN_IMAGEID_SCRATCH);
 }
 
-/* General weather: Rain and wind, if applicable.
+/* General weather: Earthquake, rain, and wind, if applicable.
  */
  
 void fmn_render_weather() {
