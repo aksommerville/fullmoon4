@@ -107,6 +107,7 @@ export class Globals {
     this.g_blowbacknorm = new Float32Array(this.memU8.buffer, this.p_weather + 17, 2);
     this.g_damage_count = new Uint16Array(this.memU8.buffer, this.p_weather + 25, 1);
     this.g_earthquake_time = new Float32Array(this.memU8.buffer, this.p_weather + 29, 1);
+    this.g_facedir_gsbit = new Uint16Array(this.memU8.buffer, this.p_weather+33, 2);
   }
   
   /* Higher-level logical access with structured models.
@@ -179,6 +180,8 @@ export class Globals {
     this.g_indoors[0] = map.indoors;
     this.g_blowback[0] = map.blowback;
     this.g_herostartp[0] = map.herostartp;
+    this.g_facedir_gsbit[0] = map.facedir_gsbit[0];
+    this.g_facedir_gsbit[1] = map.facedir_gsbit[1];
     if (map.doors && map.doors.length) {
       const doorc = Math.min(map.doors.length, this.constants.DOOR_LIMIT);
       this.g_doorc[0] = doorc;

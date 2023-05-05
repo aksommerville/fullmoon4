@@ -60,6 +60,7 @@ export class FullmoonMap {
     this.neighbore = 0;
     this.neighborn = 0;
     this.neighbors = 0;
+    this.facedir_gsbit = [0, 0]; // [ccw, cw]
   }
   
   _copy(src) {
@@ -82,6 +83,7 @@ export class FullmoonMap {
     this.neighbore = src.neighbore;
     this.neighborn = src.neighborn;
     this.neighbors = src.neighbors;
+    this.facedir_gsbit = [...src.facedir_gsbit];
   }
   
   _decode(src, constants) {
@@ -163,6 +165,11 @@ export class FullmoonMap {
             extra: (v[argp + 1] << 8) | v[argp + 2],
           });
           break;
+          
+        case 0x65: {
+            this.facedir_gsbit[0] = (v[argp] << 8) | v[argp + 1];
+            this.facedir_gsbit[1] = (v[argp + 2] << 8) | v[argp + 3];
+          } break;
           
         case 0x80: this.sprites.push({
             x: v[argp] % constants.COLC,

@@ -19,7 +19,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
-- [ ] New gag: gsbit toggles when you change direction clockwise or counterclockwise (none for reverse).
+- [x] New gag: gsbit toggles when you change direction clockwise or counterclockwise (none for reverse).
 - [ ] Werewolf turns left to face the hero, after she's dead.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.

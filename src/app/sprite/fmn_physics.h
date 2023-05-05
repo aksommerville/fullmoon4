@@ -18,5 +18,6 @@ uint8_t fmn_dir_from_vector(float x,float y);
 uint8_t fmn_dir_from_vector_cardinal(float x,float y);
 uint8_t fmn_dir_reverse(uint8_t dir);
 void fmn_vector_from_dir(float *x,float *y,uint8_t dir);
+uint8_t fmn_angle_from_dir_change(uint8_t from,uint8_t to); // => 0..7, how many steps clockwise did it turn
 
 #endif

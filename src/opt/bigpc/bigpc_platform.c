@@ -45,6 +45,8 @@ static void bigpc_clear_map_commands() {
   fmn_global.sketchc=0;
   fmn_global.blowback=0;
   fmn_global.wind_dir=0;
+  fmn_global.facedir_gsbit_ccw=0;
+  fmn_global.facedir_gsbit_cw=0;
   
   bigpc.map_callbackc=0;
 }
@@ -173,6 +175,7 @@ static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,vo
       case 0x62: bigpc_add_door(arg[0],(arg[1]<<16)|arg[2],0,0x30,arg[3]); break;
       case 0x63: bigpc_add_callback(arg[0],(arg[1]<<8)|arg[2],arg[3]); break;
       case 0x64: bigpc_add_door(arg[0],(arg[1]<<16)|arg[2],0,0x20,0); break;
+      case 0x65: fmn_global.facedir_gsbit_ccw=(arg[0]<<8)|arg[1]; fmn_global.facedir_gsbit_cw=(arg[2]<<8)|arg[3]; break;
       
       case 0x80: if (ctx->cb_spawn) {
           int8_t x=arg[0]%FMN_COLC,y=arg[0]/FMN_COLC;

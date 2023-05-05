@@ -1,5 +1,6 @@
 #include "fmn_hero_internal.h"
 #include "app/fmn_game.h"
+#include "app/sprite/fmn_physics.h"
 
 /* Extra globals.
  */
@@ -62,6 +63,7 @@ int fmn_hero_reset() {
  
 void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
   if (fmn_global.hero_dead) return;
+  uint8_t facedir0=fmn_global.facedir;
 
   // Spell repudiation is highly transient; drop on any keypress.
   if (state) {
@@ -82,6 +84,19 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
   }
   
   fmn_hero_motion_input(state);
+  
+  if (facedir0!=fmn_global.facedir) {
+    switch (fmn_angle_from_dir_change(facedir0,fmn_global.facedir)) {
+      case 2: {
+          if (fmn_global.facedir_gsbit_cw) fmn_gs_set_bit(fmn_global.facedir_gsbit_cw,1);
+          if (fmn_global.facedir_gsbit_ccw) fmn_gs_set_bit(fmn_global.facedir_gsbit_ccw,0);
+        } break;
+      case 6: {
+          if (fmn_global.facedir_gsbit_cw) fmn_gs_set_bit(fmn_global.facedir_gsbit_cw,0);
+          if (fmn_global.facedir_gsbit_ccw) fmn_gs_set_bit(fmn_global.facedir_gsbit_ccw,1);
+        } break;
+    }
+  }
 }
 
 /* Update.

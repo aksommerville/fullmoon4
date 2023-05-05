@@ -391,6 +391,9 @@ extern struct fmn_global {
   uint8_t earthquake_dir;
   float earthquake_time;
   
+  uint16_t facedir_gsbit_ccw;
+  uint16_t facedir_gsbit_cw;
+  
 } fmn_global;
 
 /* App must implement these hooks for platform to call.

@@ -335,3 +335,23 @@ void fmn_vector_from_dir(float *x,float *y,uint8_t dir) {
   *x=0.0f;
   *y=0.0f;
 }
+
+uint8_t fmn_angle_from_dir(uint8_t dir) {
+  switch (dir) {
+    case FMN_DIR_N: return 0;
+    case FMN_DIR_NE: return 1;
+    case FMN_DIR_E: return 2;
+    case FMN_DIR_SE: return 3;
+    case FMN_DIR_S: return 4;
+    case FMN_DIR_SW: return 5;
+    case FMN_DIR_W: return 6;
+    case FMN_DIR_NW: return 7;
+  }
+  return 0;
+}
+
+uint8_t fmn_angle_from_dir_change(uint8_t from,uint8_t to) {
+  from=fmn_angle_from_dir(from);
+  to=fmn_angle_from_dir(to);
+  return (to-from)&7;
+}
