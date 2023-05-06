@@ -243,6 +243,74 @@ static int fmn_render_sprite_DEADWITCH(struct fmn_draw_mintile *vtxv,int vtxa,st
   return 4;
 }
 
+/* Multiple-mintile: PANDA
+ */
+ 
+static int fmn_render_sprite_PANDA(struct fmn_draw_mintile *vtxv,int vtxa,struct fmn_sprite *sprite) {
+  const int16_t ts=fmn_render_global.tilesize;
+  int vtxc=(sprite->bv[1]?4:6); // hands if awake, but if sleeping they are built-in to the body.
+  if (vtxa<vtxc) return vtxc;
+  const int16_t liftrange=ts-3;
+  int16_t pxx=sprite->x*ts;
+  int16_t pxy=sprite->y*ts;
+  // body:
+  vtxv[0].x=pxx;
+  vtxv[0].y=pxy;
+  vtxv[0].tileid=sprite->tileid;
+  vtxv[0].xform=0;
+  vtxv[1].x=pxx+ts;
+  vtxv[1].y=pxy;
+  vtxv[1].tileid=sprite->tileid+0x01;
+  vtxv[1].xform=0;
+  if (sprite->bv[1]) { // sleeping
+    vtxv[0].tileid+=4;
+    vtxv[1].tileid+=4;
+    vtxv[2].x=pxx;
+    vtxv[2].y=pxy+ts;
+    vtxv[2].tileid=sprite->tileid+0x10;
+    vtxv[2].xform=0;
+    vtxv[3].x=pxx+ts;
+    vtxv[3].y=pxy+ts;
+    vtxv[3].tileid=sprite->tileid+0x11;
+    vtxv[3].xform=0;
+    return vtxc;
+  }
+  // hands:
+  vtxv[2].x=pxx;
+  vtxv[2].y=pxy+ts-3;
+  vtxv[2].tileid=sprite->tileid+0x0e;
+  vtxv[2].xform=0;
+  vtxv[3].x=pxx+ts;
+  vtxv[3].y=pxy+ts-3;
+  vtxv[3].tileid=sprite->tileid+0x0f;
+  vtxv[3].xform=0;
+  // desk:
+  vtxv[4].x=pxx;
+  vtxv[4].y=pxy+ts;
+  vtxv[4].tileid=sprite->tileid+0x10;
+  vtxv[4].xform=0;
+  vtxv[5].x=pxx+ts;
+  vtxv[5].y=pxy+ts;
+  vtxv[5].tileid=sprite->tileid+0x11;
+  vtxv[5].xform=0;
+  // Hands go up based on rating (fv[0]), <0=left >0=right.
+  if (sprite->fv[0]<0.0f) {
+    vtxv[2].y+=sprite->fv[0]*liftrange;
+  } else {
+    vtxv[3].y-=sprite->fv[0]*liftrange;
+  }
+  // Rage face and highlighted desk, fv[1]
+  if (sprite->fv[1]>0.0f) {
+    vtxv[0].tileid+=2;
+    vtxv[1].tileid+=2;
+    if (fmn_render_global.framec&8) {
+      vtxv[4].tileid+=2;
+      vtxv[5].tileid+=2;
+    }
+  }
+  return vtxc;
+}
+
 /* Single-mintile sprite styles.
  */
  
@@ -277,9 +345,10 @@ static int fmn_render_sprite_mintile(struct fmn_draw_mintile *vtxv,int vtxa,stru
     case FMN_SPRITE_STYLE_PITCHFORK: return fmn_render_sprite_PITCHFORK(vtxv,vtxa,sprite);
     case FMN_SPRITE_STYLE_TWOFRAME: fmn_render_sprite_TWOFRAME(vtxv,sprite); return 1;
     case FMN_SPRITE_STYLE_EIGHTFRAME: fmn_render_sprite_EIGHTFRAME(vtxv,sprite); return 1;
-    case FMN_SPRITE_STYLE_WEREWOLF: return fmn_render_sprite_WEREWOLF(vtxv,vtxa,sprite); return 1;
-    case FMN_SPRITE_STYLE_FLOORFIRE: return fmn_render_sprite_FLOORFIRE(vtxv,vtxa,sprite); return 1;
-    case FMN_SPRITE_STYLE_DEADWITCH: return fmn_render_sprite_DEADWITCH(vtxv,vtxa,sprite); return 1;
+    case FMN_SPRITE_STYLE_WEREWOLF: return fmn_render_sprite_WEREWOLF(vtxv,vtxa,sprite);
+    case FMN_SPRITE_STYLE_FLOORFIRE: return fmn_render_sprite_FLOORFIRE(vtxv,vtxa,sprite);
+    case FMN_SPRITE_STYLE_DEADWITCH: return fmn_render_sprite_DEADWITCH(vtxv,vtxa,sprite);
+    case FMN_SPRITE_STYLE_PANDA: return fmn_render_sprite_PANDA(vtxv,vtxa,sprite);
       return 1;
   }
   return 0;
@@ -363,6 +432,7 @@ static inline int fmn_sprite_is_batchable(const struct fmn_sprite *sprite) {
     case FMN_SPRITE_STYLE_WEREWOLF:
     case FMN_SPRITE_STYLE_FLOORFIRE: // we have some discretion, could do this differently if we like.
     case FMN_SPRITE_STYLE_DEADWITCH:
+    case FMN_SPRITE_STYLE_PANDA:
       return 1;
   }
   return 0;

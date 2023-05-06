@@ -980,3 +980,12 @@ sound HADOUKEN
   env 0 ( 0x0000 80 0xffff 200 0x4000 * 0x0000 )
   norm 0 0.200
 end
+
+sound PANDA_CRY
+  len 1.000
+  fm 0 ( 3000 400 1500 600 400 ) 0.28 ( 1000 ) sine
+  env 0 ( 0x0000 150 0xffff 50 0x2000 200 0 )
+  delay 0 0.20 0.5 0.5 0.5 0.5
+  env 0 ( 0xffff * 0xffff 200 0 )
+  norm 0 0.300
+end

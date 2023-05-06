@@ -1,0 +1,6 @@
+controller panda
+image sprites
+tile 0xe3
+style panda
+physics edge sprites solid hole
+invmass 0

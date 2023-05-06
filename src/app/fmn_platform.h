@@ -180,6 +180,7 @@
 #define FMN_SFX_GROWL 72
 #define FMN_SFX_BARK 73
 #define FMN_SFX_HADOUKEN 74
+#define FMN_SFX_PANDA_CRY 75
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */
@@ -195,6 +196,7 @@
 #define FMN_SPRITE_STYLE_WEREWOLF   12 /* special */
 #define FMN_SPRITE_STYLE_FLOORFIRE  13 /* special */
 #define FMN_SPRITE_STYLE_DEADWITCH  14 /* special */
+#define FMN_SPRITE_STYLE_PANDA      15 /* special */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4
