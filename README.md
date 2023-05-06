@@ -19,6 +19,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
+- [x] Panda's fireballs are inadvertently participating in Thing Pong.
 - [ ] Chromeless package for itch.io
 - - Actually, let's dechromify the whole thing. All options, links, whatever, put in some extra popup menu. Click to open?
 - - [x] Simulate and mitigate vertical scrolling.

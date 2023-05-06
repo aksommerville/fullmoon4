@@ -136,6 +136,7 @@ static void scoreboard_cb_missile_oob(void *userdata,uint16_t eventid,void *payl
   struct fmn_sprite *sprite=userdata;
   struct fmn_sprite *missile=payload;
   if (!running) return;
+  if (missile->tileid!=0xb5) return; // only fish bones count
   if (missile->x<0.0f) {
     fmn_scoreboard_score(sprite,-1);
   } else if (missile->x>FMN_COLC) {
