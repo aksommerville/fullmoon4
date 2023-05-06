@@ -430,6 +430,17 @@ static void werewolf_update_SHOCK(struct fmn_sprite *sprite) {
 static void _werewolf_update(struct fmn_sprite *sprite,float elapsed) {
   fmn_hero_get_position(&herox,&heroy);
   stageclock+=elapsed;
+  
+  // A wee cudgel. If the hero is dead, let EAT run as usual, but everything else, freeze in IDLE state.
+  // Without this, he turns left to face her (default position, zero), and throws hadoukens at nothing.
+  if (fmn_global.hero_dead) {
+    switch (stage) {
+      case WEREWOLF_STAGE_EAT: break;
+      default: stage=WEREWOLF_STAGE_IDLE; break;
+    }
+    return;
+  }
+  
   switch (stage) {
     case WEREWOLF_STAGE_IDLE: werewolf_update_IDLE(sprite); break;
     case WEREWOLF_STAGE_SLEEP: break;

@@ -20,7 +20,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### May
 
 - [x] New gag: gsbit toggles when you change direction clockwise or counterclockwise (none for reverse).
-- [ ] Werewolf turns left to face the hero, after she's dead.
+- [x] Werewolf turns left to face the hero, after she's dead.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
