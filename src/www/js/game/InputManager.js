@@ -150,11 +150,11 @@ export class InputManager {
    *******************************************/
    
   onKey(event, value) {
-    if (event.repeat) return;
     const btnid = this.mapKey(event.code);
     if (!btnid) return;
     event.preventDefault();
     event.stopPropagation();
+    if (event.repeat) return; // Repeats for mapped keys, we do still want to preventDefault
     if (value) {
       if (this.state & btnid) return;
       this.state |= btnid;
@@ -264,7 +264,7 @@ export class InputManager {
       };
       this.gamepads[e.gamepad.index] = gamepad;
     }
-    console.log(`InputManager.onGamepadConnected`, e);
+    //console.log(`InputManager.onGamepadConnected`, e);
     gamepad.axes = e.gamepad.axes.map(v => {
       // MacOS unhelpfully reports dpads as hats regardless of the hardware's representation.
       // And Chrome makes it even worse by mapping that 0..7 or whatever, to -1..1.

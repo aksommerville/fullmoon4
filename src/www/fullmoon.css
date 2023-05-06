@@ -83,6 +83,7 @@ input.toggle:checked + label > * {
   flex-direction: column;
   justify-content: stretch;
   align-items: stretch;
+  position: relative;
 }
 
 /* HeaderUi
@@ -119,7 +120,8 @@ input.toggle:checked + label > * {
  *****************************************/
  
 .GameUi {
-  height: 90vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,12 +130,75 @@ input.toggle:checked + label > * {
 .GameUi > .gameView {
   image-rendering: pixelated;
 }
-.GameUi > .gameView.fuzzy { /* TODO Provide UI to enable this. It's a matter of taste. */
+.GameUi > .gameView.fuzzy {
   image-rendering: unset;
 }
 
+.GameUi > .gameView {
+  opacity: 0.5;
+  filter: blur(3px);
+}
 .GameUi > .gameView.running {
+  opacity: 1;
+  filter: blur(0);
   cursor: none;
+}
+
+/* MenuUi
+ **********************************************/
+ 
+.MenuUi {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.MenuUi.visible {
+  display: flex;
+}
+
+.MenuUi > .popup {
+  background-color: #edb;
+  color: #530;
+  border-radius: 1em;
+  box-shadow: #000 0 0 1em;
+  width: 80%;
+  height: 80%;
+  padding: 1em;
+  opacity: 0.8;
+  font-family: serif;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+}
+
+.MenuUi > .popup > h2 {
+  margin: 0;
+}
+
+.MenuUi > .popup > .footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+}
+
+.MenuUi > .popup > .footer > a {
+  margin-left: 1em;
+}
+.MenuUi > .popup > .footer > .spacer {
+  flex: 1;
+}
+
+/* MenuOptionsUi
+ **************************************************/
+ 
+.MenuOptionsUi {
+  flex: 1;
 }
 
 /* ErrorModal

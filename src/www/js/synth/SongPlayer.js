@@ -13,6 +13,7 @@ export class SongPlayer {
     this.msPerTick = 1000 / this.song.ticksPerSecond;
     this.notes = []; // as a safety net, we track all held notes
     this.foresightTime = 100; // Read ahead in time, up to so many ms. Zero is valid.
+    this.enabled = true; // We track time regardless, but if disabled will not emit any events.
   }
   
   update() {
@@ -35,6 +36,17 @@ export class SongPlayer {
     this.eventp = 0;
   }
   
+  enable(enable) {
+    if (enable) {
+      if (this.enabled) return;
+      this.enabled = true;
+    } else {
+      if (!this.enabled) return;
+      this.enabled = false;
+      this.releaseAll();
+    }
+  }
+  
   _nextEvent() {
     if (this.song.events.length < 1) return;
   
@@ -53,7 +65,11 @@ export class SongPlayer {
       const opcode = (event >> 16) & 0xff;
       const a = (event >> 8) & 0x7f;
       const b = event & 0x7f;
-      this.synthesizer.event(chid, opcode, a, b, this.delay);
+      // Note On are only emitted when enabled. All other events flow through regardless.
+      // (eg it's important that the synthesizer capture program and control changes, in case music turns back on later).
+      if (this.enabled || (opcode !== 0x90)) {
+        this.synthesizer.event(chid, opcode, a, b, this.delay);
+      }
       
       if (opcode === 0x90) this.notes.push([chid, a]);
       else if (opcode === 0x80) {
@@ -64,6 +80,7 @@ export class SongPlayer {
   }
   
   releaseAll() {
+    // Releasing voices happens regardless of (enabled).
     for (const [chid, a] of this.notes) {
       this.synthesizer.event(chid, 0x80, a, 0x40);
     }

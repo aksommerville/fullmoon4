@@ -5,6 +5,7 @@ let dstpath = "";
 let srcpath = "";
 let favicon = "";
 let css = "";
+let target = "";
 for (let argi=2; argi<process.argv.length; ) {
   const arg = process.argv[argi++];
   if (arg === "--help") {
@@ -22,6 +23,10 @@ for (let argi=2; argi<process.argv.length; ) {
   } else if (arg.startsWith("--css=")) {
     if (css) throw new Error(`Multiple css`);
     css = arg.substring(6);
+    
+  } else if (arg.startsWith("--target=")) {
+    if (target) throw new Error("Multiple target");
+    target = arg.substring(9);
   
   } else if (arg.startsWith("-")) {
     throw new Error(`Unexpected argument ${JSON.stringify(arg)}`);

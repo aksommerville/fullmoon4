@@ -7,24 +7,30 @@ import { DataService } from "../game/DataService.js";
 import { AudioChannel } from "./AudioChannel.js";
 import { AudioVoice } from "./AudioVoice.js";
 import { SongPlayer } from "./SongPlayer.js";
+import { Preferences } from "../game/Preferences.js";
  
 export class Synthesizer {
   static getDependencies() {
-    return [Window, Globals, Constants, DataService];
+    return [Window, Globals, Constants, DataService, Preferences];
   }
-  constructor(window, globals, constants, dataService) {
+  constructor(window, globals, constants, dataService, preferences) {
     this.window = window;
     this.globals = globals;
     this.constants = constants;
     this.dataService = dataService;
+    this.preferences = preferences;
     
     this.context = null;
     this.channels = []; // Channels don't exist until configured.
     this.fqpids = []; // Parallel to (channels).
     this.voices = [];
-    this.songPlayer = null;
+    this.soundEffects = [];
+    this.songPlayer = null; // null if no song or music disabled by prefs
+    this.song = null; // regardless of prefs
     this.overrideInstrumentPid = null; // only fiddle should use
     this.pausedForViolin = false; // Song pauses while violin active. Otherwise playback as usual.
+    
+    this.preferences.fetchAndListen(p => this.onPreferencesChanged(p));
   }
   
   /* Entry points from Runtime.
@@ -48,8 +54,10 @@ export class Synthesizer {
     }
     for (const voice of this.voices) voice.abort();
     for (const channel of this.channels) if (channel) channel.abort();
+    for (const effect of this.soundEffects) effect.stop();
     this.voices = [];
     this.channels = [];
+    this.soundEffects = [];
     this.fqpids = [];
     if (this.songPlayer) this.songPlayer.reset();
   }
@@ -57,6 +65,10 @@ export class Synthesizer {
   pause() {
     if (!this.context) return;
     if (this.songPlayer) this.songPlayer.releaseAll();
+    for (const voice of this.voices) voice.abort();
+    for (const effect of this.soundEffects) effect.stop();
+    this.voices = [];
+    this.soundEffects = [];
     this.context.suspend();
   }
   
@@ -103,10 +115,20 @@ export class Synthesizer {
     }
   }
   
+  /* React to preferences.
+   *********************************************/
+   
+  onPreferencesChanged(prefs) {
+    if (this.songPlayer) {
+      this.songPlayer.enable(prefs.musicEnable);
+    }
+  }
+  
   /* MIDI and MIDI-ish events.
    *************************************************************/
    
   playSong(song, force) {
+    this.song = song;
     if (this.songPlayer) {
       if ((this.songPlayer.song === song) && !force) return;
       this.songPlayer.releaseAll();
@@ -114,6 +136,7 @@ export class Synthesizer {
     }
     if (!song) return;
     this.songPlayer = new SongPlayer(this, song);
+    this.songPlayer.enable(this.preferences.prefs.musicEnable);
   }
   
   /* As a general rule, we are a MIDI receiver.
@@ -242,6 +265,11 @@ export class Synthesizer {
     node.connect(gain);
     gain.connect(this.context.destination);
     node.start(this.context.currentTime + ((delay > 0) ? (delay / 1000) : 0));
+    this.soundEffects.push(node);
+    node.onended = () => {
+      const p = this.soundEffects.indexOf(node);
+      if (p >= 0) this.soundEffects.splice(p, 1);
+    };
   }
   
   // For fiddle. If (pid) nonzero, every channel will use it and Program Change will be ignored.

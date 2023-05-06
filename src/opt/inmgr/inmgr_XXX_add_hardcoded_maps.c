@@ -97,6 +97,7 @@ static const struct inmgr_map inmgr_map_sn30[]={ // SN30 and Xbox 360
   BTN(0x00010130,USE)
   BTN(0x00010133,MENU)
   BTNA(0x0001013a,quit) // select
+  BTNA(0x0001013e,screencap)
   HORZ15(0x00030000)
   VERT15(0x00030001)
   HORZ1(0x00030010)
@@ -111,7 +112,7 @@ static const struct inmgr_map inmgr_map_atari_stick[]={
 };
 
 static const struct inmgr_map inmgr_map_atari_gamepad[]={
-		BTNA(0x0001008b,quit) // start
+  BTNA(0x0001008b,quit) // start
   BTN(0x00010130,USE)
   BTN(0x00010133,MENU)
   HORZ1(0x00030010)

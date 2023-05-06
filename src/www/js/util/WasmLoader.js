@@ -18,6 +18,8 @@ export class WasmLoader {
     this.memF32 = null;
     this.serialWasm = null; // For reset, so we don't try to download twice.
     this.currentUrl = null;
+    this.loadingUrl = null;
+    this.loadingPromise = null;
     
     // Owner should fill this in before loading.
     this.env = {
@@ -49,10 +51,20 @@ export class WasmLoader {
   
   acquireSerial(url) {
     if (this.serialWasm && (url === this.currentUrl)) return Promise.resolve(this.serialWasm);
-    return this.window.fetch(url).then((rsp) => {
+    if (this.loadingPromise && (url === this.loadingUrl)) return this.loadingPromise;
+    this.loadingUrl = url;
+    return this.loadingPromise = this.window.fetch(url).then((rsp) => {
       if (rsp.ok) return rsp.arrayBuffer();
       if (rsp.status === 555) return rsp.json().then(e => { throw e; });
       throw rsp;
+    }).then((v) => {
+      this.loadingUrl = null;
+      this.loadingPromise = null;
+      return v;
+    }).catch((e) => {
+      this.loadingUrl = null;
+      this.loadingPromise = null;
+      throw e;
     });
   }
   

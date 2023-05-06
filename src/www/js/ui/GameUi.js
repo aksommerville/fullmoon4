@@ -5,17 +5,19 @@
 import { Dom } from "../util/Dom.js";
 import { InputManager } from "../game/InputManager.js";
 import { Constants } from "../game/Constants.js";
+import { Preferences } from "../game/Preferences.js";
 
 export class GameUi {
   static getDependencies() {
-    return [HTMLElement, Dom, InputManager, Window, Constants];
+    return [HTMLElement, Dom, InputManager, Window, Constants, Preferences];
   }
-  constructor(element, dom, inputManager, window, constants) {
+  constructor(element, dom, inputManager, window, constants, preferences) {
     this.element = element;
     this.dom = dom;
     this.inputManager = inputManager;
     this.window = window;
     this.constants = constants;
+    this.preferences = preferences;
     
     this.running = false;
     
@@ -25,22 +27,22 @@ export class GameUi {
     this.buildUi();
     
     this.inputManager.registerTouchListeners(this.element);
+    this.preferencesListener = this.preferences.fetchAndListen(p => this.onPreferences(p));
   }
   
   onRemoveFromDom() {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
+    if (this.preferencesListener) {
+      this.preferences.unlisten(this.preferencesListener);
+      this.preferencesListener = null;
+    }
   }
   
   buildUi() {
     this.element.innerHTML = "";
     const canvas = this.dom.spawn(this.element, "CANVAS", ["gameView"]);
-  }
-  
-  // There is no corresponding "exitFullscreen"; browser takes care of it.
-  enterFullscreen() {
-    this.element.querySelector(".gameView").requestFullscreen();
   }
   
   getCanvas() {
@@ -79,5 +81,12 @@ export class GameUi {
     const canvas = this.element.querySelector(".gameView");
     canvas.style.width = `${dstw}px`;
     canvas.style.height = `${dsth}px`;
+  }
+  
+  onPreferences(prefs) {
+    switch (prefs.scaling) {
+      case "nearest": this.element.querySelector(".gameView").classList.remove("fuzzy"); break;
+      case "linear": this.element.querySelector(".gameView").classList.add("fuzzy"); break;
+    }
   }
 }

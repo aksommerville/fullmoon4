@@ -46,6 +46,11 @@ struct bigpc_render_type {
   void (*del)(struct bigpc_render_driver *driver);
   int (*init)(struct bigpc_render_driver *driver,struct bigpc_video_driver *video);
   
+  /* Optional, for screencaps.
+   * On success, driver produces packed RGBA in a new buffer at (*dstpp), caller frees it.
+   */
+  int (*read_framebuffer)(void *dstpp,int *w,int *h,struct bigpc_render_driver *driver);
+  
   // New heavy-client video API.
   // To reduce overhead, all types must implement all of these, and there are no wrapper functions.
   int8_t (*video_init)(

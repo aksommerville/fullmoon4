@@ -88,7 +88,6 @@ void bigpc_cb_event(struct bigpc_input_driver *driver,int devid,int btnid,int va
 void bigpc_cb_state_change(void *userdata,uint8_t playerid,uint16_t btnid,uint8_t value,uint16_t state) {
   //fprintf(stderr,"%s %d.%04x=%d [%04x]\n",__func__,playerid,btnid,value,state);
   if (playerid) return; // For now, we're strictly one-player. (TODO I'd like at least a secret two-player easter egg eventually)
-  //bigpc.input_state=state;
   if (value) bigpc.input_state|=btnid;
   else bigpc.input_state&=~btnid;
 }
@@ -100,7 +99,7 @@ void bigpc_cb_action(void *userdata,uint8_t playerid,uint16_t actionid) {
     case BIGPC_ACTIONID_fullscreen: bigpc_video_set_fullscreen(bigpc.video,bigpc.video->fullscreen?0:1); break;
     case BIGPC_ACTIONID_pause: break;//TODO hard pause/resume
     case BIGPC_ACTIONID_step: break;//TODO step frame, when paused
-    case BIGPC_ACTIONID_screencap: break;//TODO
+    case BIGPC_ACTIONID_screencap: bigpc_cap_screen(); break;
     case BIGPC_ACTIONID_save: break;//TODO
     case BIGPC_ACTIONID_restore: break;//TODO
     case BIGPC_ACTIONID_mainmenu: break;//TODO

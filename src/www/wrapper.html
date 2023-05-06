@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<head>
+  <title>Full Moon</title>
+  
+<style>
+
+html {
+  background-color: #000;
+  color: #fff;
+}
+
+.view_html_game_page {
+}
+
+.html_embed_widget {
+}
+
+.game_frame {
+  width: 640px;
+  height: 384px;
+  margin: 0 auto;
+  position: relative;
+  background-position: 50% 50%;
+  background: #191919;
+}
+
+iframe {
+  height: 0;
+  width: 0;
+  border: 0;
+  box-sizing: border-box;
+  max-height: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  min-width: 100%;
+}
+
+</style>
+
+<script>
+window.addEventListener("load", () => {
+  document.querySelector("iframe").focus();
+});
+</script>
+  
+</head>
+<body>
+  <div class="view_html_game_page">
+    <div class="html_embed_widget">
+      <div class="game_frame" data-width="640" data-height="380">
+        <iframe
+          allow="autoplay; fullscreen *; gamepad; cross-origin-isolated"
+          allowtransparency="true"
+          webkitallowfullscreen="true"
+          allowfullscreen="true"
+          scrolling="no"
+          src="./index.html"
+          frameborder="0"
+          id="game_drop"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

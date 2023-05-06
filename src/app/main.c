@@ -5,9 +5,12 @@
  * I need this for demo kiosks. Disable for production!
  * You can disable via the build: -DFMN_IDLE_WARNING_TIME=0
  */
+#define FMN_IDLE_WARNING_TIME 0.0f
 #ifndef FMN_IDLE_WARNING_TIME
   #define FMN_IDLE_WARNING_TIME 30.0f
   #define FMN_IDLE_RESTART_TIME 45.0f
+#elif !defined(FMN_IDLE_RESTART_TIME)
+  #define FMN_IDLE_RESTART_TIME (FMN_IDLE_WARNING_TIME+15.0f)
 #endif
 
 #define ELAPSED_TIME_LIMIT 1000
@@ -46,7 +49,7 @@ static uint8_t fmn_is_idle(struct fmn_menu *menu,uint8_t input) {
 }
 
 int fmn_get_idle_warning_time_s() {
-  if (idle_time<FMN_IDLE_WARNING_TIME) return -1;
+  if (idle_time<=FMN_IDLE_WARNING_TIME) return -1;
   return (int)(FMN_IDLE_RESTART_TIME-idle_time);
 }
 

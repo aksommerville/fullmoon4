@@ -3,9 +3,8 @@
  */
  
 import { Dom } from "../util/Dom.js";
-import { HeaderUi } from "./HeaderUi.js";
 import { GameUi } from "./GameUi.js";
-import { FooterUi } from "./FooterUi.js";
+import { MenuUi } from "./MenuUi.js";
 import { ErrorModal } from "./ErrorModal.js";
 import { Runtime } from "../game/Runtime.js";
 import { DataService } from "../game/DataService.js";
@@ -22,12 +21,13 @@ export class RootUi {
     this.runtime = runtime;
     this.dataService = dataService;
     
-    this.header = null;
-    this.footer = null;
+    this.menu = null;
     this.game = null;
     this.ready = false;
     
     this.buildUi();
+    
+    this.element.addEventListener("click", (e) => this.onClick(e));
     
     /* If either DataService or WasmLoader fails during its preload, we should report it immediately.
      */
@@ -41,32 +41,14 @@ export class RootUi {
   
   buildUi() {
     this.element.innerHTML = "";
-    
-    this.header = this.dom.spawnController(this.element, HeaderUi);
     this.game = this.dom.spawnController(this.element, GameUi);
-    this.footer = this.dom.spawnController(this.element, FooterUi);
-    
-    this.header.onReset = () => this.reset();
-    this.header.onFullscreen = () => this.game.enterFullscreen();
-    this.header.onPause = () => {
-      this.game.setRunning(false);
-      this.runtime.pause();
-    };
-    this.header.onResume = () => {
-      this.game.setRunning(true);
-      this.runtime.resume();
-    };
-    this.header.onConfigureInput = () => this.onConfigureInput();
-    this.header.onDebugPause = () => this.runtime.debugPauseToggle();
-    this.header.onDebugStep = () => this.runtime.debugStep();
-    if (this.ready) this.header.setReady(true);
-    
+    this.menu = this.dom.spawnController(this.element, MenuUi);
+    this.menu.onfullscreen = () => this.enterFullscreen();
     this.runtime.setRenderTarget(this.game.getCanvas());
+    this.reset();
   }
   
   reset() {
-    this.header.reset();
-    this.header.blurResetButton(); // debatable
     this.runtime.reset()
       .then(() => this.onLoaded())
       .catch(e => this.onError(e));
@@ -86,18 +68,25 @@ export class RootUi {
   onForcedPause() {
     // This event comes from Runtime, so we don't notify them.
     this.game.setRunning(false);
-    this.header.setPaused(true);
   }
   
   dataLoaded() {
     this.ready = true;
-    this.header.setReady(true);
   }
   
-  onConfigureInput() {
-    this.game.setRunning(false);
-    this.runtime.pause();
-    this.header.setPaused(true);
-    const modal = this.dom.spawnModal(InputConfigurationModal);
+  onClick(e) {
+    if (this.runtime.running) {
+      this.game.setRunning(false);
+      this.runtime.pause();
+      this.menu.show(true);
+    } else {
+      this.game.setRunning(true);
+      this.runtime.resume();
+      this.menu.show(false);
+    }
+  }
+  
+  enterFullscreen() {
+    this.element.requestFullscreen();
   }
 }

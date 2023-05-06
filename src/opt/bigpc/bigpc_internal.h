@@ -141,4 +141,6 @@ void bigpc_cb_event(struct bigpc_input_driver *driver,int devid,int btnid,int va
 void bigpc_cb_state_change(void *userdata,uint8_t playerid,uint16_t btnid,uint8_t value,uint16_t state);
 void bigpc_cb_action(void *userdata,uint8_t playerid,uint16_t actionid);
 
+void bigpc_cap_screen();
+
 #endif

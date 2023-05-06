@@ -304,6 +304,36 @@ static void _gl2_begin(struct bigpc_render_driver *driver) {
   fmn_gl2_framebuffer_use_object(driver,&DRIVER->mainfb);
 }
 
+/* Read framebuffer.
+ */
+ 
+static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_driver *driver) {
+  fmn_gl2_texture_use_object(driver,&DRIVER->mainfb);
+  void *v=malloc(DRIVER->mainfb.w*DRIVER->mainfb.h*4);
+  if (!v) return -1;
+  glGetTexImage(GL_TEXTURE_2D,0,GL_RGBA,GL_UNSIGNED_BYTE,v);
+  *(void**)dstpp=v;
+  *w=DRIVER->mainfb.w;
+  *h=DRIVER->mainfb.h;
+  
+  // But of course, GL is all backward...
+  int rowlen=DRIVER->mainfb.w<<2;
+  void *rowbuf=malloc(rowlen);
+  if (rowbuf) {
+    uint8_t *a=v;
+    uint8_t *b=a+rowlen*(DRIVER->mainfb.h-1);
+    int c=DRIVER->mainfb.h<<1;
+    for (;c-->0;a+=rowlen,b-=rowlen) {
+      memcpy(rowbuf,a,rowlen);
+      memcpy(a,b,rowlen);
+      memcpy(b,rowbuf,rowlen);
+    }
+    free(rowbuf);
+  }
+  
+  return 0;
+}
+
 /* Type.
  */
  
@@ -313,6 +343,7 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .objlen=sizeof(struct bigpc_render_driver_gl2),
   .del=_gl2_del,
   .init=_gl2_init,
+  .read_framebuffer=_gl2_read_framebuffer,
   
   .video_init=_gl2_video_init,
   .video_get_framebuffer_size=_gl2_video_get_framebuffer_size,

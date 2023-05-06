@@ -19,6 +19,15 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
+- [ ] Chromeless package for itch.io
+- - Actually, let's dechromify the whole thing. All options, links, whatever, put in some extra popup menu. Click to open?
+- - [x] Simulate and mitigate vertical scrolling.
+- - [x] Loading wasm twice.
+- - - We already try to mitigate this in WasmLoader, but it doesn't have a sense of "loading in progress".
+- - [ ] Failures on launch in Itch only. Everything downloads, we hear the hello music, video is black with Dot's hat in the origin corner.
+- - [x] Platform pause menu.
+- - [ ] Launch input config from pause
+- [x] Idle warning shows up always, when I tried to disable it.
 - [x] New gag: gsbit toggles when you change direction clockwise or counterclockwise (none for reverse).
 - [x] Werewolf turns left to face the hero, after she's dead.
 - [ ] Beta test.

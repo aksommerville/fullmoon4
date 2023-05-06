@@ -18,7 +18,6 @@ struct bigpc_audio_driver;
 struct bigpc_input_driver;
 struct bigpc_synth_driver;
 struct bigpc_render_driver;
-//XXX struct bigpc_menu;
 
 void bigpc_quit();
 int bigpc_init(int argc,char **argv);
@@ -26,12 +25,6 @@ int bigpc_init(int argc,char **argv);
 /* Returns zero to request termination, <0 on real errors, or >0 to proceed.
  */
 int bigpc_update();
-
-/* Return the active menu if there is one.
- * For now I'm assuming we will not render downstack menus. If that changes, we could add an index here.
- *XXX no longer relevant after render-redesign
- */
-//struct bigpc_menu *bigpc_get_menu();
 
 uint32_t bigpc_get_game_time_ms();
 int bigpc_get_idle_warning_time_s();
