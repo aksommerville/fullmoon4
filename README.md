@@ -22,9 +22,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Chromeless package for itch.io
 - - Actually, let's dechromify the whole thing. All options, links, whatever, put in some extra popup menu. Click to open?
 - - [ ] Failures on launch in Itch only. Everything downloads, we hear the hello music, video is black with Dot's hat in the origin corner.
-- - [ ] Launch input config from pause
+- - [x] Launch input config from pause
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
+- - [ ] Input config needs this bad.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.

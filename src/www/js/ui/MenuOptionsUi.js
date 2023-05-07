@@ -3,14 +3,16 @@
  */
  
 import { Dom } from "../util/Dom.js";
+import { InputConfigurationModal } from "./InputConfigurationModal.js";
 
 export class MenuOptionsUi {
   static getDependencies() {
-    return [HTMLElement, Dom];
+    return [HTMLElement, Dom, "discriminator"];
   }
-  constructor(element, dom) {
+  constructor(element, dom, discriminator) {
     this.element = element;
     this.dom = dom;
+    this.discriminator = discriminator;
     
     this.onchange = (prefs) => {}; // Parent should replace.
     this.onfullscreen = () => {};
@@ -31,9 +33,7 @@ export class MenuOptionsUi {
       { label: "Fullscreen", cb: () => this.onfullscreen() },
     ]);
     this.addRowButtons(table, "Input", [
-      { label: "Keyboard", cb: () => this.onEditInputKeyboard() },
-      { label: "Gamepad", cb: () => this.onEditInputGamepad() },
-      { label: "Touch", cb: () => this.onEditInputTouch() },
+      { label: "Configure", cb: () => this.onConfigureInput() },
     ]);
   }
   
@@ -42,8 +42,9 @@ export class MenuOptionsUi {
     const tdk = this.dom.spawn(tr, "TD", ["key"], label);
     const tdv = this.dom.spawn(tr, "TD", ["value"]);
     for (const option of options) {
-      const lbl = this.dom.spawn(tdv, "LABEL", option);
-      this.dom.spawn(lbl, "INPUT", { type: "radio", name: label, value: option });
+      const id = `MenuOptionsUi-${this.discriminator}-${label}-${option}`;
+      this.dom.spawn(tdv, "INPUT", { id, type: "radio", name: label, value: option });
+      this.dom.spawn(tdv, "LABEL", { for: id }, option);
     }
   }
   
@@ -96,16 +97,8 @@ export class MenuOptionsUi {
   /* Events.
    ******************************************/
    
-  onEditInputKeyboard() {
-    console.log(`MenuOptionsUi.onEditInputKeyboard`);
-  }
-  
-  onEditInputGamepad() {
-    console.log(`MenuOptionsUi.onEditInputGamepad`);
-  }
-  
-  onEditInputTouch() {
-    console.log(`MenuOptionsUi.onEditInputTouch`);
+  onConfigureInput() {
+    this.dom.spawnModal(InputConfigurationModal);
   }
   
   onChange(e) {

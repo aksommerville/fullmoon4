@@ -8,7 +8,6 @@ import { MenuUi } from "./MenuUi.js";
 import { ErrorModal } from "./ErrorModal.js";
 import { Runtime } from "../game/Runtime.js";
 import { DataService } from "../game/DataService.js";
-import { InputConfigurationModal } from "./InputConfigurationModal.js";
 
 export class RootUi {
   static getDependencies() {
@@ -44,6 +43,7 @@ export class RootUi {
     this.game = this.dom.spawnController(this.element, GameUi);
     this.menu = this.dom.spawnController(this.element, MenuUi);
     this.menu.onfullscreen = () => this.enterFullscreen();
+    this.menu.ondismiss = () => this.dismissMenu();
     this.runtime.setRenderTarget(this.game.getCanvas());
     this.reset();
   }
@@ -84,6 +84,12 @@ export class RootUi {
       this.runtime.resume();
       this.menu.show(false);
     }
+  }
+  
+  dismissMenu() {
+    this.game.setRunning(true);
+    this.runtime.resume();
+    this.menu.show(false);
   }
   
   enterFullscreen() {

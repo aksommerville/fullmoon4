@@ -18,6 +18,7 @@ export class MenuUi {
     this.visible = false;
     this.menuOptionsUi = null;
     this.onfullscreen = null;
+    this.ondismiss = null;
     
     this.buildUi();
     
@@ -43,7 +44,8 @@ export class MenuUi {
   buildUi() {
     this.element.innerHTML = "";
     const pop = this.dom.spawn(this.element, "DIV", ["popup"], { "on-click": e => e.stopPropagation() });
-    this.dom.spawn(pop, "H2", "Full Moon");
+    const header = this.dom.spawn(pop, "H2", "Full Moon: Settings");
+    this.dom.spawn(header, "INPUT", { type: "button", value: "OK", "on-click": () => this.ondismiss?.() });
     this.menuOptionsUi = this.dom.spawnController(pop, MenuOptionsUi);
     this.menuOptionsUi.onchange = p => this.onPrefsChangedDownstream(p);
     this.menuOptionsUi.onfullscreen = () => this.onfullscreen?.();

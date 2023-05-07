@@ -86,36 +86,6 @@ input.toggle:checked + label > * {
   position: relative;
 }
 
-/* HeaderUi
- ******************************************/
- 
-.HeaderUi {
-  border-bottom: 1px solid #888;
-  height: 5vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.HeaderUi > .spacer {
-  flex: 1;
-}
-
-/* FooterUi
- **********************************************/
- 
-.FooterUi {
-  border-top: 1px solid #888;
-  height: 5vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.FooterUi > * {
-  margin: 0 1em;
-}
-
 /* GameUi
  *****************************************/
  
@@ -167,8 +137,10 @@ input.toggle:checked + label > * {
   color: #530;
   border-radius: 1em;
   box-shadow: #000 0 0 1em;
-  width: 80%;
-  height: 80%;
+  max-width: 80%;
+  max-height: 80%;
+  min-width: 200px;
+  min-height: 200px;
   padding: 1em;
   opacity: 0.8;
   font-family: serif;
@@ -179,6 +151,9 @@ input.toggle:checked + label > * {
 
 .MenuUi > .popup > h2 {
   margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .MenuUi > .popup > .footer {
@@ -199,6 +174,32 @@ input.toggle:checked + label > * {
  
 .MenuOptionsUi {
   flex: 1;
+}
+
+.MenuOptionsUi td.value {
+  height: 2em; /* Padding in my inputs didn't affect the table row heights... odd */
+}
+
+.MenuOptionsUi input[type="radio"] + label {
+  border: 1px solid #000;
+  border-right: 0;
+  padding: 0.25em 0.5em;
+}
+.MenuOptionsUi input[type="radio"] + label:last-of-type {
+  border-right: 1px solid #000;
+  border-top-right-radius: 1em;
+  border-bottom-right-radius: 1em;
+}
+.MenuOptionsUi input[type="radio"] + label:first-of-type {
+  border-top-left-radius: 1em;
+  border-bottom-left-radius: 1em;
+}
+.MenuOptionsUi input[type="radio"]:checked + label {
+  background-color: #ff0;
+  color: #000;
+}
+.MenuOptionsUi input[type="radio"] {
+  display: none;
 }
 
 /* ErrorModal
