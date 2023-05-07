@@ -7,6 +7,13 @@ ifeq ($(MAKECMDGOALS),clean)
   clean:;rm -rf mid out
 else
 
+# XXX playing around to get automatic release tags...
+BUILDTAG:=$(strip $(shell git status -s))
+ifeq (,$(BUILDTAG)) # Working directory is clean, look for a tag.
+  $(info wd clean)
+  GITHEAD:=$(shell git rev-parse HEAD)
+endif
+
 include etc/config.mk
 etc/config.mk:|etc/config.mk.example;$(PRECMD) cp etc/config.mk.example $@
   
