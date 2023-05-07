@@ -31,7 +31,7 @@ export class RootUi {
     /* If either DataService or WasmLoader fails during its preload, we should report it immediately.
      */
     this.runtime.preloadAtConstruction
-      .then(() => this.dataLoaded())
+      .then(() => this.reset())
       .catch(e => this.onError(e));
       
     this.runtime.onError = e => this.onError(e);
@@ -45,7 +45,6 @@ export class RootUi {
     this.menu.onfullscreen = () => this.enterFullscreen();
     this.menu.ondismiss = () => this.dismissMenu();
     this.runtime.setRenderTarget(this.game.getCanvas());
-    this.reset();
   }
   
   reset() {

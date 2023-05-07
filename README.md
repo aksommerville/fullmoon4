@@ -19,9 +19,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
-- [ ] Chromeless package for itch.io
+- [x] Chromeless package for itch.io
 - - Actually, let's dechromify the whole thing. All options, links, whatever, put in some extra popup menu. Click to open?
-- - [ ] Failures on launch in Itch only. Everything downloads, we hear the hello music, video is black with Dot's hat in the origin corner.
+- - [x] Failures on launch in Itch only. Everything downloads, we hear the hello music, video is black with Dot's hat in the origin corner.
 - - [x] Launch input config from pause
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
