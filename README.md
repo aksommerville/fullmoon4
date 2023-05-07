@@ -13,37 +13,26 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### 2023-04-29 render-redesign
 
-- [ ] !!! I'm rendering the "from" state of transitions during update, not render. Find a way to make that OK.
+- [ ] !!! I'm rendering the "from" state of transitions during update, not render. Find a way to make that OK. (it does work, both web and native)
 - [ ] Redesign sprites to interact more closely with render? Maybe not worth the effort, it's a lot of effort.
 - [ ] All thru the render unit, I've been treating pixels as RGBA. That's not the real design, figure it out right.
 
 ### May
 
-- [x] Panda's fireballs are inadvertently participating in Thing Pong.
 - [ ] Chromeless package for itch.io
 - - Actually, let's dechromify the whole thing. All options, links, whatever, put in some extra popup menu. Click to open?
-- - [x] Simulate and mitigate vertical scrolling.
-- - [x] Loading wasm twice.
-- - - We already try to mitigate this in WasmLoader, but it doesn't have a sense of "loading in progress".
 - - [ ] Failures on launch in Itch only. Everything downloads, we hear the hello music, video is black with Dot's hat in the origin corner.
-- - [x] Platform pause menu.
 - - [ ] Launch input config from pause
-- [x] Idle warning shows up always, when I tried to disable it.
-- [x] New gag: gsbit toggles when you change direction clockwise or counterclockwise (none for reverse).
-- [x] Werewolf turns left to face the hero, after she's dead.
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- [x] Two sets of map resource: Demo and Full. I think other resources don't matter, let tree-shaking handle it.
-- - [x] linux: Segfault launching full with no maps. (it should fail, but not segfault).
-- - ...also filter sound and instrument, it's easy to tell which sets are valid at build time.
-- [ ] Tree-shake resources when packing.
 - [ ] Scripts to analyze logs.
 - [ ] Build: version tags and distributable packages.
 
 ### After GDEX
 
+- [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] MacOS: App icon
 - [ ] Eliminate transparency from map images, incorporate the background in each tile.

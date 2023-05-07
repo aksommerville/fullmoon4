@@ -22,7 +22,7 @@ export class ResService {
     this.toc = []; // {type, id, name, q, lang, path, serial, object}
     this.dirties = []; // {type, id} The named TOC entries should have a fresh (object) and no (serial).
     this.dirtyDebounce = null;
-    this.mapSet = "-demo"; // "-demo" or "-full"
+    this.mapSet = "-full"; // "-demo" or "-full" //TODO Add UI for toggling this.
     
     this.reloadAll();
     
@@ -294,6 +294,7 @@ export class ResService {
    
   dirty(type, id, object, name) {
     // TODO Can we use this same function for deleting? Maybe with (object===null)?
+    if (type === "map") type += this.mapSet;
     let res = this.toc.find(r => r.type === type && r.id === id);
     if (!res) {
       res = {
