@@ -69,6 +69,14 @@ export class InputManager {
     for (const {cb} of this.listeners) cb(event);
   }
   
+  simulateConnectionOfUnmappedDevices() {
+    for (const g of this.gamepads) {
+      if (!g) continue;
+      if (this.gamepadMaps.find(m => m.id === g.id)) continue;
+      this.broadcast({ type: "gamepadconnected", gamepad: g });
+    }
+  }
+  
   forEachGamepad(cb) {
     for (const g of this.gamepads) {
       if (!g) continue;

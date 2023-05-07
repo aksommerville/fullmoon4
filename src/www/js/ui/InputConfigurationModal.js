@@ -22,7 +22,7 @@ export class InputConfigurationModal {
     // It's not gamepads we care about, so much as gamepad *maps*.
     // But we do need this listener.
     this.inputListenerId = this.inputManager.listen(e => this.onInputManagerEvent(e));
-    //this.inputManager.forEachGamepad(g => this.addDevice(g));
+    this.inputManager.simulateConnectionOfUnmappedDevices();
     
     // We will only be presented when the runtime is paused.
     // So we need to pump InputManager for updates manually.
