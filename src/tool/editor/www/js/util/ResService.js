@@ -18,10 +18,11 @@ export class ResService {
     
     this.DIRTY_DEBOUNCE_TIME = 5000;
     
-    this.types = ["image", "tileprops", "map", "song", "string", "sprite", "chalk"];
+    this.types = ["image", "tileprops", "map-demo", "map-full", "song", "string", "sprite", "chalk"];
     this.toc = []; // {type, id, name, q, lang, path, serial, object}
     this.dirties = []; // {type, id} The named TOC entries should have a fresh (object) and no (serial).
     this.dirtyDebounce = null;
+    this.mapSet = "-demo"; // "-demo" or "-full"
     
     this.reloadAll();
     
@@ -78,6 +79,7 @@ export class ResService {
   }
   
   getResourceObject(type, idOrName) {
+    if (type === "map") type += this.mapSet;
     if (typeof(idOrName) === "string") {
       const res = this.toc.find(r => r.type === type && r.name === idOrName);
       if (res) return res.object;
@@ -89,6 +91,7 @@ export class ResService {
   }
   
   getResourceName(type, id) {
+    if (type === "map") type += this.mapSet;
     const res = this.toc.find(r => r.type === type && r.id === id);
     if (!res) return "";
     return res.name || "";
@@ -140,6 +143,8 @@ export class ResService {
       case "tileprops": return this.loadText(type, base, (src, id) => this.imageService.decodeTileprops(src, id));
       case "string": return this.loadStrings(base);
       case "map": return this.loadText(type, base, (src, id) => this.mapService.decode(src, id));
+      case "map-full": return this.loadText(type, base, (src, id) => this.mapService.decode(src, id));
+      case "map-demo": return this.loadText(type, base, (src, id) => this.mapService.decode(src, id));
       case "song": return this.loadTocOnly(type, base);
       case "sprite": return this.loadText(type, base, (src, id) => this.spriteService.decode(src, id));
       case "chalk": return this.loadText(type, base, (src, id) => src);
@@ -369,6 +374,7 @@ export class ResService {
    ***************************************************/
    
   unusedId(type) {
+    if (type === "map") type += this.mapSet;
     const used = [];
     let hi = 0;
     for (const res of this.toc) {
@@ -385,6 +391,7 @@ export class ResService {
   }
   
   resolveId(type, src) {
+    if (type === "map") type += this.mapSet;
     let id = +src;
     if (!isNaN(id)) return id;
     const r = this.toc.find(e => e.type === type && e.name === src);

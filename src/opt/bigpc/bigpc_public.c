@@ -122,6 +122,8 @@ int bigpc_update() {
   
   // Update game or top menu.
   fmn_update(bigpc_clock_update(&bigpc.clock),bigpc.input_state);
+  if (bigpc.aborted) return -1;
+  if (bigpc.sigc) return 0;
   
   // Render one frame.
   bigpc.render->w=bigpc.video->w;

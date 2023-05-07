@@ -20,6 +20,8 @@
   _(archive) \
   _(showtoc) \
   _(extract)
+  
+#define FMN_RESTYPE_KNOWN_UNKNOWN -1
 
 struct mkd_config {
   const char *exename;
@@ -60,11 +62,19 @@ struct mkd_respath {
   int basec;
   const char *qname; // Qualifier name, if we can determine.
   int qnamec;
-  int restype; // FMN_RESTYPE_* from opt/datafile/fmn_datafile.h, or zero.
+  int restype; // FMN_RESTYPE_* from opt/datafile/fmn_datafile.h, or FMN_RESTYPE_KNOWN_UNKNOWN, or zero.
   int resid; // From start of basename, or zero.
   int resq; // Qualifier or zero.
 };
 int mkd_respath_eval(struct mkd_respath *respath,const char *src);
+
+const char *mkd_restype_repr(int restype);
+int mkd_restype_eval(const char *src,int srcc);
+int mkd_qualifier_eval(int type,const char *src,int srcc);
+
+/* Generate a friendly human-readable form of any qualified resource ID.
+ */
+int mkd_resid_repr(char *dst,int dsta,int type,int qualifier,int id);
 
 /* Verify that a single input or output path was provided, then read or write it.
  * Reads into (mkd.src,mkd.srcc) or writes from (mkd.dst).

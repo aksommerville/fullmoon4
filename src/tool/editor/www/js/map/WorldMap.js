@@ -19,7 +19,7 @@ export class WorldMapGenerator {
    */
   generateWorldMap(toc) {
     if (!toc.length) return new WorldMap(0, 0);
-    if (toc.find(res => ((res.type !== "map") || !res.object))) {
+    if (toc.find(res => (!res.type.startsWith?.("map") || !res.object))) {
       throw new Error(`Invalid TOC for world map generation, expected maps`);
     }
     const pending = [...toc];

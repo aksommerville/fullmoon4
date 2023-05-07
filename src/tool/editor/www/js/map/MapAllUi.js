@@ -30,8 +30,9 @@ export class MapAllUi {
     this.scratchCanvas.width = FullmoonMap.COLC * this.NATURAL_TILESIZE;
     this.scratchCanvas.height = FullmoonMap.ROWC * this.NATURAL_TILESIZE;
     
+    const mapResType = "map" + this.resService.mapSet;
     this.worldMap = this.worldMapGenerator.generateWorldMap(
-      this.resService.toc.filter(res => res.type === "map")
+      this.resService.toc.filter(res => res.type === mapResType)
     );
     
     this.buildUi();

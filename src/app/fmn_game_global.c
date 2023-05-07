@@ -75,7 +75,10 @@ int fmn_game_load_map(int mapid) {
   fmn_game_event_unlisten_all();
   fmn_game_drop_map_singletons();
   int err=fmn_load_map(mapid,cb_spawn);
-  if (err<=0) return err;
+  if (err<=0) {
+    fmn_log("map:%d not found",mapid);
+    return err;
+  }
   
   if (fmn_global.facedir_gsbit_cw) fmn_gs_set_bit(fmn_global.facedir_gsbit_cw,0);
   if (fmn_global.facedir_gsbit_ccw) fmn_gs_set_bit(fmn_global.facedir_gsbit_ccw,0);
@@ -403,20 +406,6 @@ void fmn_game_begin_earthquake(uint8_t dir) {
   fmn_global.earthquake_dir=dir;
   fmn_sound_effect(FMN_SFX_EARTHQUAKE);
 }
-
-/* Callback from Game Over menu.
- */
- 
-#if 0 /* TODO menu callbacks */
-static void cb_game_over_ok() {
-  fmn_log_event("restart","");
-  fmn_global.hero_dead=0;
-  fmn_global.werewolf_dead=0;
-  fmn_hero_kill_velocity();
-  fmn_game_load_map(1);
-  fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
-}
-#endif
 
 /* Update.
  */

@@ -51,7 +51,10 @@ endef
 #----------------------------------------------------------
 # Data rules, for packing every resource into a single archive.
 #  $1 target
-#  $2 archive
+#  $2 full archive
+#  $3 demo archive
+#  $4 additional qfilter: "TYPE1:QUALIFIER1 TYPE1:QUALIFIER2 ..."
+# Omit $3 and $4 to include all resources.
 
 define SINGLE_DATA_ARCHIVE
 
@@ -60,9 +63,19 @@ $1_DATA_IN:=$(filter-out src/data/chalk/%,$(filter src/data/%,$(SRCFILES)))
 $1_DATA_MID:=$$(patsubst src/data/%,$($1_MIDDIR)/data/%,$$($1_DATA_IN))
 
 # With these rules, any change to mkdatac (think like, adding a new synth command), will force rebuild of every resource.
-# I think it's ok. Individual runs of mkdatac are so fast you can't even time them.
+# I think it's ok. Individual runs of mkdatac are fast.
 
-$2:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $$($1_DATA_MID)
+ifeq ($2,$2$(strip $3)$(strip $4)) # demo and addl omitted. Include everything.
+  $2:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $$($1_DATA_MID)
+else # Separate demo and full archives with optional extra filter.
+  $1_DATA_QFILTER:=$$(foreach Q,$4,--qfilter=$$Q)
+  ifneq (,$(strip $2))
+    $2:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $$($1_DATA_MID) --qfilter=map:full $$($1_DATA_QFILTER)
+  endif
+  ifneq (,$(strip $3))
+    $3:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $$($1_DATA_MID) --qfilter=map:demo $$($1_DATA_QFILTER)
+  endif
+endif
   
 $($1_MIDDIR)/data/% \
   :src/data/% $(tools_EXE_mkdatac) \

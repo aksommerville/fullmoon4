@@ -54,7 +54,27 @@ int mkd_main_extract() {
    * (lot of times, qualifier is not in play and won't be provided).
    */
   int type=mkd_config_get_arg_int(&mkd.config,"type",4);
+  if (!type) {
+    const char *src=0;
+    int srcc=mkd_config_get_arg_string(&src,&mkd.config,"type",4);
+    if (srcc>0) {
+      if ((type=mkd_restype_eval(src,srcc))<1) {
+        fprintf(stderr,"%s: Unknown type name '%.*s'\n",mkd.config.exename,srcc,src);
+        return -2;
+      }
+    }
+  }
   int qualifier=mkd_config_get_arg_int(&mkd.config,"qualifier",9);
+  if (!qualifier) {
+    const char *src=0;
+    int srcc=mkd_config_get_arg_string(&src,&mkd.config,"qualifier",9);
+    if (srcc>0) {
+      if ((qualifier=mkd_qualifier_eval(type,src,srcc))<0) {
+        fprintf(stderr,"%s: Failed to parse qualifier '%.*s' for type %d.\n",mkd.config.exename,srcc,src,type);
+        return -2;
+      }
+    }
+  }
   int id=mkd_config_get_arg_int(&mkd.config,"id",2);
   
   struct mkd_extract_context ctx={

@@ -37,10 +37,11 @@ int mkd_main_single() {
     respath.restype,respath.resid,respath.resq
   );
   
-  // If we fail to determine the type, don't do anything but report success.
-  // Maybe want to warn or fail in this case? But there are files, eg "chalk", that live under src/data but are not data resources.
+  // Check for unknown types.
+  if (respath.restype==FMN_RESTYPE_KNOWN_UNKNOWN) return 0;
   if (!respath.restype) {
-    return 0;
+    fprintf(stderr,"%s: Unknown resource type.\n",respath.path);
+    return -2;
   }
   
   //TODO Filter by qualifier.

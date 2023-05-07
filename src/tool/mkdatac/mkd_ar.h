@@ -47,6 +47,12 @@ int mkd_ar_for_each_of_type_qualifier(
   void *userdata
 );
 
+int mkd_ar_filter(
+  struct mkd_ar *ar,
+  int (*test)(int type,int qualifier,int id,const char *path,const void *v,int c,void *userdata),
+  void *userdata
+);
+
 int mkd_ar_encode(struct sr_encoder *dst,const struct mkd_ar *ar);
 
 #endif

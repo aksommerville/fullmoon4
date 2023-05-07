@@ -38,7 +38,7 @@ Each Offset can be used to determine the length of the preceding entry.
 | 0x00 | Illegal    | |
 | 0x01 | Image      | Size and colorspace (TODO) |
 | 0x02 | Song       | |
-| 0x03 | Map        | |
+| 0x03 | Map        | 1=full, 2=demo |
 | 0x04 | Tileprops  | |
 | 0x05 | Sprite     | |
 | 0x06 | String     | Language |

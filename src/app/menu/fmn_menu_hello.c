@@ -12,7 +12,7 @@ static void hello_dismiss(struct fmn_menu *menu) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
     fmn_dismiss_menu(menu);
-    fmn_game_load_map(1);
+    if (fmn_game_load_map(1)<0) fmn_abort();
   }
 }
 

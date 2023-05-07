@@ -315,6 +315,26 @@ int mkd_ar_for_each_of_type_qualifier(
   return 0;
 }
 
+/* Filter resources.
+ */
+ 
+int mkd_ar_filter(
+  struct mkd_ar *ar,
+  int (*test)(int type,int qualifier,int id,const char *path,const void *v,int c,void *userdata),
+  void *userdata
+) {
+  int i=ar->entryc,rmc=0;
+  struct mkd_ar_entry *entry=ar->entryv+i-1;
+  for (;i-->0;entry--) {
+    if (test(entry->type,entry->qualifier,entry->id,entry->path,entry->v,entry->c,userdata)) continue;
+    mkd_ar_entry_cleanup(entry);
+    ar->entryc--;
+    memmove(entry,entry+1,sizeof(struct mkd_ar_entry)*(ar->entryc-i));
+    rmc++;
+  }
+  return rmc;
+}
+
 /* Generate the real TOC with state changes and all, but in the native byte order.
  */
  

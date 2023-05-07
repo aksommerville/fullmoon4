@@ -35,12 +35,17 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Pretty up the public web page.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- [ ] Two sets of map resource: Demo and Full. I think other resources don't matter, let tree-shaking handle it.
+- [x] Two sets of map resource: Demo and Full. I think other resources don't matter, let tree-shaking handle it.
+- - [x] linux: Segfault launching full with no maps. (it should fail, but not segfault).
+- - ...also filter sound and instrument, it's easy to tell which sets are valid at build time.
 - [ ] Tree-shake resources when packing.
 - [ ] Scripts to analyze logs.
+- [ ] Build: version tags and distributable packages.
 
 ### After GDEX
 
+- [ ] MacOS: Build two independent app bundles. Demo and Full.
+- [ ] MacOS: App icon
 - [ ] Eliminate transparency from map images, incorporate the background in each tile.
 - [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.

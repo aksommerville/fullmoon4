@@ -26,12 +26,19 @@ void mkd_config_cleanup(struct mkd_config *config) {
  
 static void mkd_config_print_help(struct mkd_config *config,const char *topic,int topicc) {
   fprintf(stderr,
+    "\n"
     "Usage: %s --single -oOUTPUT INPUT\n"
-    "   Or: %s --archive -oOUTPUT [INPUT...]\n"
-    "   Or: %s --showtoc --in=ARCHIVE\n"
-    "   Or: %s --extract -oOUTPUT --in=ARCHIVE --type=INT --qualifier=INT --id=INT\n",
+    "   Or: %s --archive -oOUTPUT [INPUT...] [--qfilter=TYPE:QUALIFIER...]\n"
+    "   Or: %s --showtoc --in=ARCHIVE [--type=TYPE] [--qualifier=QUALIFIER] [--summary] [--quiet] [--numeric]\n"
+    "   Or: %s --extract -oOUTPUT --in=ARCHIVE --type=TYPE --qualifier=QUALIFIER --id=INT\n",
     config->exename,config->exename,config->exename,config->exename
   );
+  fprintf(stderr,
+    "\n"
+    "If --qfilter provided with --archive, resources of that type are only emitted if their qualifier matches.\n"
+    "Resources of other types will be included as usual.\n"
+  );
+  fprintf(stderr,"\n");
 }
 
 /* Positional argument.

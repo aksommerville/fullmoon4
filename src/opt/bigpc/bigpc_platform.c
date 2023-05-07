@@ -7,6 +7,8 @@
  */
  
 void fmn_abort() {
+  fprintf(stderr,"%s! Exitting due to error.\n",__func__);
+  bigpc.aborted=1;
   bigpc.sigc++;
 }
 

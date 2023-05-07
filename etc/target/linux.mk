@@ -13,8 +13,9 @@ linux_OPT_ENABLE:=evdev alsa glx drm gl2 soft minsyn
 linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr midi pcmprint
 
 linux_EXE:=$(linux_OUTDIR)/fullmoon
-linux_DATA:=$(linux_OUTDIR)/data
-linux-all:$(linux_EXE) $(linux_DATA)
+linux_DATA_FULL:=$(linux_OUTDIR)/data-full
+linux_DATA_DEMO:=$(linux_OUTDIR)/data-demo
+linux-all:$(linux_EXE) $(linux_DATA_FULL) $(linux_DATA_DEMO)
 
 linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses \
   $(linux_CC_EXTRA) \
@@ -29,6 +30,17 @@ ifneq (,$(linux_USE_XINERAMA))
   linux_LDPOST+=-lXinerama
 endif
 
-$(eval $(call SINGLE_DATA_ARCHIVE,linux,$(linux_DATA)))
+# Always filter instrument and sound (0 means no resources produced, if no synthesizers enabled; these resources always have a qualifier).
+linux_QFILTER:=instrument:0 sound:0
+ifneq (,$(strip $(filter minsyn,$(linux_OPT_ENABLE))))
+  linux_QFILTER+=instrument:minsyn sound:minsyn
+endif
+ifneq (,$(strip $(filter stdsyn,$(linux_OPT_ENABLE))))
+  linux_QFILTER+=instrument:stdsyn sound:stdsyn
+endif
 
-linux-run:$(linux_EXE) $(linux_DATA);$(linux_EXE) --data=$(linux_DATA) $(linux_RUN_ARGS)
+$(eval $(call SINGLE_DATA_ARCHIVE,linux,$(linux_DATA_FULL),$(linux_DATA_DEMO),$(linux_QFILTER)))
+
+linux-run-full:$(linux_EXE) $(linux_DATA_FULL);$(linux_EXE) --data=$(linux_DATA_FULL) $(linux_RUN_ARGS)
+linux-run-demo:$(linux_EXE) $(linux_DATA_DEMO);$(linux_EXE) --data=$(linux_DATA_DEMO) $(linux_RUN_ARGS)
+linux-run:linux-run-demo

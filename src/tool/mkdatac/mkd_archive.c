@@ -2,11 +2,110 @@
 #include "mkd_ar.h"
 #include "mkd_instrument_format.h"
 
+/* Helper for storing and applying type/qualifier filters.
+ */
+ 
+struct mkd_qfilter {
+  struct mkd_qfilter_rule {
+    int type,qualifier;
+  } *rulev;
+  int rulec,rulea;
+};
+
+static void mkd_qfilter_cleanup(struct mkd_qfilter *qfilter) {
+  if (qfilter->rulev) free(qfilter->rulev);
+}
+
+static int mkd_qfilter_search(const struct mkd_qfilter *qfilter,int type,int qualifier) {
+  int lo=0,hi=qfilter->rulec;
+  while (lo<hi) {
+    int ck=(lo+hi)>>1;
+    const struct mkd_qfilter_rule *q=qfilter->rulev+ck;
+         if (type<q->type) hi=ck;
+    else if (type>q->type) lo=ck+1;
+    else if (qualifier<q->qualifier) hi=ck;
+    else if (qualifier>q->qualifier) lo=ck+1;
+    else return ck;
+  }
+  return -lo-1;
+}
+
+// Take input like "instrument:WebAudio" or "1:123" and add a rule.
+static int mkd_qfilter_add_string(struct mkd_qfilter *qfilter,const char *src,int srcc) {
+  if (!src) return -1;
+  if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
+  int sepp=-1,i=0;
+  for (;i<srcc;i++) if (src[i]==':') { sepp=i; break; }
+  if (sepp<0) return -1;
+  int type,qualifier;
+  if ((type=mkd_restype_eval(src,sepp))<1) return -1;
+  if ((qualifier=mkd_qualifier_eval(type,src+sepp+1,srcc-sepp-1))<0) return -1;
+  int p=mkd_qfilter_search(qfilter,type,qualifier);
+  if (p>=0) return 0;
+  p=-p-1;
+  if (qfilter->rulec>=qfilter->rulea) {
+    int na=qfilter->rulea+8;
+    if (na>INT_MAX/sizeof(struct mkd_qfilter_rule)) return -1;
+    void *nv=realloc(qfilter->rulev,sizeof(struct mkd_qfilter_rule)*na);
+    if (!nv) return -1;
+    qfilter->rulev=nv;
+    qfilter->rulea=na;
+  }
+  struct mkd_qfilter_rule *rule=qfilter->rulev+p;
+  memmove(rule+1,rule,sizeof(struct mkd_qfilter_rule)*(qfilter->rulec-p));
+  memset(rule,0,sizeof(struct mkd_qfilter_rule));
+  qfilter->rulec++;
+  rule->type=type;
+  rule->qualifier=qualifier;
+  return 0;
+}
+
+static int mkd_qfilter_test(const struct mkd_qfilter *qfilter,int type,int qualifier) {
+  int p=mkd_qfilter_search(qfilter,type,qualifier);
+  if (p>=0) return 1; // This combo is explicitly named. YES.
+  p=-p-1;
+  // This type was named with any other qualifier: NO.
+  if ((p>0)&&(qfilter->rulev[p-1].type==type)) return 0;
+  if ((p<qfilter->rulec)&&(qfilter->rulev[p].type==type)) return 0;
+  // Never heard of this type: YES
+  return 1;
+}
+
+/* Apply filter to one resource.
+ */
+ 
+static int mkd_archive_filter_cb(int type,int qualifier,int id,const char *path,const void *v,int c,void *userdata) {
+  struct mkd_qfilter *qfilter=userdata;
+  return mkd_qfilter_test(qfilter,type,qualifier);
+}
+
 /* Digest, after adding all input files.
  */
  
 static int mkd_archive_digest(struct mkd_ar *ar) {
-  // Maybe nothing to do here? We expanded instruments and strings during input processing.
+  
+  // Apply qfilter if present.
+  struct mkd_qfilter qfilter={0};
+  const struct mkd_arg *arg=mkd.config.argv;
+  int i=mkd.config.argc;
+  for (;i-->0;arg++) {
+    if (arg->kc!=7) continue;
+    if (memcmp(arg->k,"qfilter",7)) continue;
+    if (mkd_qfilter_add_string(&qfilter,arg->v,arg->vc)<0) {
+      fprintf(stderr,"%s: Failed to evaluate filter rule '%.*s'\n",mkd.config.exename,arg->vc,arg->v);
+      mkd_qfilter_cleanup(&qfilter);
+      fprintf(stderr,"%s:%d\n",__FILE__,__LINE__);
+      return -2;
+    }
+  }
+  if (qfilter.rulec) {
+    if (mkd_ar_filter(ar,mkd_archive_filter_cb,&qfilter)<0) {
+      mkd_qfilter_cleanup(&qfilter);
+      return -1;
+    }
+  }
+  mkd_qfilter_cleanup(&qfilter);
+  
   return 0;
 }
 
@@ -181,9 +280,10 @@ static int mkd_archive_add_strings(struct mkd_ar *ar,struct mkd_respath *respath
 static int mkd_archive_add_file(struct mkd_ar *ar,const char *path) {
   struct mkd_respath respath={0};
   if (mkd_respath_eval(&respath,path)<0) return 0;
+  if (respath.restype==FMN_RESTYPE_KNOWN_UNKNOWN) return 0;
   if (!respath.restype) {
-    // This is fine. There are files in our data directory which are not actually resources.
-    return 0;
+    fprintf(stderr,"%s: Failed to determine resource type.\n",path);
+    return -2;
   }
   void *serial=0;
   int serialc=fmn_file_read(&serial,path);

@@ -69,6 +69,7 @@ extern struct bigpc {
   struct bigpc_config config;
   
   volatile int sigc;
+  int aborted;
   
   struct bigpc_video_driver *video;
   struct bigpc_audio_driver *audio;
