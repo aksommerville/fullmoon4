@@ -2,6 +2,7 @@
 *~
 mid
 out
+/pack
 /scratch
 .DS_Store
 /etc/config.mk

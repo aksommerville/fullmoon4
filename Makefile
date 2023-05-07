@@ -2,6 +2,7 @@ all:
 .SILENT:
 .SECONDARY:
 PRECMD=echo "  $1 $(@F)" ; mkdir -p $(@D) ;
+force:
 
 ifeq ($(MAKECMDGOALS),clean)
   clean:;rm -rf mid out
