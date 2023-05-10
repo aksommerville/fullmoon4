@@ -20,14 +20,16 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### May
 
 - [ ] Beta test.
-- [ ] Pretty up the public web page.
+- [x] Pretty up the public web page.
 - - [ ] Input config needs this bad.
 - - [ ] Rethink paradigm for keyboard input mapping. Or at least let it scroll vertically.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
-- [ ] New "info" site for upload to aksommerville.com. Let Itch be the main "play, pay, and download" site.
+- [x] New "info" site for upload to aksommerville.com. Let Itch be the main "play, pay, and download" site.
+- [ ] Input config not visible if launched while fullscreen.
+- - Combine that with it doesn't scroll at little iframe sizes, and you got a bit of a problem.
 
 ### After GDEX
 

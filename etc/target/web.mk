@@ -113,11 +113,12 @@ web_INFO_CSS:=$(web_INFO_DIR)/fminfo.css
 web_INFO_JS:=$(web_INFO_DIR)/bootstrap.js
 web_INFO_FAVICON:=$(web_INFO_DIR)/favicon.ico
 web_INFO_BANNER:=$(web_INFO_DIR)/itch-banner.png
+web_INFO_ENGLISH_WORDS:=$(web_INFO_DIR)/english-words.png
 web_INFO_GAME_HTML:=$(web_INFO_DIR)/game.html
 web_INFO_GAME_EXE:=$(web_INFO_DIR)/fullmoon.wasm
 web_INFO_GAME_JS:=$(web_INFO_DIR)/fullmoon.js
 web_INFO_GAME_DATA:=$(web_INFO_DIR)/fullmoon.data
-web_INFO_FILES:=$(web_INFO_HTML) $(web_INFO_IFRAME) $(web_INFO_CSS) $(web_INFO_JS) $(web_INFO_FAVICON) $(web_INFO_BANNER) \
+web_INFO_FILES:=$(web_INFO_HTML) $(web_INFO_IFRAME) $(web_INFO_CSS) $(web_INFO_JS) $(web_INFO_FAVICON) $(web_INFO_BANNER) $(web_INFO_ENGLISH_WORDS) \
   $(web_INFO_GAME_HTML) $(web_INFO_GAME_EXE) $(web_INFO_GAME_JS) $(web_INFO_GAME_DATA)
  
 web-all:$(web_INFO_FILES)
@@ -126,7 +127,9 @@ $(web_INFO_HTML):src/info/index.html;$(PRECMD) cp $< $@
 $(web_INFO_IFRAME):src/info/iframe-placeholder.html;$(PRECMD) cp $< $@
 $(web_INFO_CSS):src/info/fminfo.css;$(PRECMD) cp $< $@
 $(web_INFO_FAVICON):src/info/favicon.ico;$(PRECMD) cp $< $@
+# must call out each image individually. TODO get smarter about this, it's already getting old
 $(web_INFO_BANNER):src/info/itch-banner.png;$(PRECMD) cp $< $@
+$(web_INFO_ENGLISH_WORDS):src/info/english-words.png;$(PRECMD) cp $< $@
 $(web_INFO_GAME_HTML):$(web_HTSA_HTML);$(PRECMD) cp $< $@
 $(web_INFO_GAME_EXE):$(web_HTSA_EXE);$(PRECMD) cp $< $@
 $(web_INFO_GAME_JS):$(web_HTSA_JS);$(PRECMD) cp $< $@
