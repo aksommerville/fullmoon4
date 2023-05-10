@@ -19,19 +19,15 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
-- [x] Chromeless package for itch.io
-- - Actually, let's dechromify the whole thing. All options, links, whatever, put in some extra popup menu. Click to open?
-- - [x] Failures on launch in Itch only. Everything downloads, we hear the hello music, video is black with Dot's hat in the origin corner.
-- - [x] Launch input config from pause
 - [ ] Beta test.
 - [ ] Pretty up the public web page.
 - - [ ] Input config needs this bad.
 - - [ ] Rethink paradigm for keyboard input mapping. Or at least let it scroll vertically.
-- - [x] New joysticks don't seem to appear. ...confirmed, if they connected before the modal appeared.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
-- [x] Build: version tags and distributable packages.
+- [ ] Metal
+- [ ] New "info" site for upload to aksommerville.com. Let Itch be the main "play, pay, and download" site.
 
 ### After GDEX
 
@@ -75,12 +71,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Translation.
-- [ ] Web input: Key events are triggering the pause button when focussed. Why isn't it just space bar?
 - [ ] Touch input.
 - [ ] Input configuration.
 - - [ ] UI for mapping.
 - [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
+- - 2023-05-07: A quick test (no actual rendering, just clear the framebuffer), and WebGL is no better.
 - [ ] Unit tests.
 - - [ ] General-purpose test runner.
 - - [ ] C tests

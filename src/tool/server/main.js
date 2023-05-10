@@ -24,7 +24,7 @@ for (const arg of process.argv.slice(2)) {
   else if (arg.startsWith("--htalias=")) htalias.push(arg.substr(10).split(':'));
   else {
     console.log(`Unexpected argument '${arg}'`);
-    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH [--makeable=PATH...] [--midi-broadcast] [--htalias=req:localpath...]`);
+    console.log(`Usage: ${process.argv[1]} [--host=localhost] [--port=8080] --htdocs=PATH [--makeable=PATH[:SERVE_AS]...] [--midi-broadcast] [--htalias=req:localpath...]`);
     process.exit(1);
   }
 }
@@ -158,8 +158,9 @@ const server = http.createServer((req, rsp) => {
     
     // Things that get processed at build time have to be declared with "--makeable".
     // We invoke `make` every time somebody requests one.
-    const localPath = makeable.find(m => m.endsWith(path));
-    if (localPath) {
+    const mkbl = makeable.find(m => m.endsWith(path));
+    if (mkbl) {
+      const localPath = mkbl.split(':')[0];
       freshenMakeableFile(localPath).then(() => {
         serveFile(rsp, localPath);
         console.log(`200 GET ${req.url}`);

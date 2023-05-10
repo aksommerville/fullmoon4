@@ -104,6 +104,42 @@ web_HTSA_DATA:=$(web_HTSA_DIR)/fullmoon.data
 $(web_HTSA_DATA):$(web_HTSA_DIR)/fullmoon-demo.data;$(PRECMD) cp $< $@
 
 #-----------------------------------------------------------
+# Info site for aksommerville.com
+
+web_INFO_DIR:=$(web_OUTDIR)/info
+web_INFO_HTML:=$(web_INFO_DIR)/index.html
+web_INFO_IFRAME:=$(web_INFO_DIR)/iframe-placeholder.html
+web_INFO_CSS:=$(web_INFO_DIR)/fminfo.css
+web_INFO_JS:=$(web_INFO_DIR)/bootstrap.js
+web_INFO_FAVICON:=$(web_INFO_DIR)/favicon.ico
+web_INFO_BANNER:=$(web_INFO_DIR)/itch-banner.png
+web_INFO_GAME_HTML:=$(web_INFO_DIR)/game.html
+web_INFO_GAME_EXE:=$(web_INFO_DIR)/fullmoon.wasm
+web_INFO_GAME_JS:=$(web_INFO_DIR)/fullmoon.js
+web_INFO_GAME_DATA:=$(web_INFO_DIR)/fullmoon.data
+web_INFO_FILES:=$(web_INFO_HTML) $(web_INFO_IFRAME) $(web_INFO_CSS) $(web_INFO_JS) $(web_INFO_FAVICON) $(web_INFO_BANNER) \
+  $(web_INFO_GAME_HTML) $(web_INFO_GAME_EXE) $(web_INFO_GAME_JS) $(web_INFO_GAME_DATA)
+ 
+web-all:$(web_INFO_FILES)
+
+$(web_INFO_HTML):src/info/index.html;$(PRECMD) cp $< $@
+$(web_INFO_IFRAME):src/info/iframe-placeholder.html;$(PRECMD) cp $< $@
+$(web_INFO_CSS):src/info/fminfo.css;$(PRECMD) cp $< $@
+$(web_INFO_FAVICON):src/info/favicon.ico;$(PRECMD) cp $< $@
+$(web_INFO_BANNER):src/info/itch-banner.png;$(PRECMD) cp $< $@
+$(web_INFO_GAME_HTML):$(web_HTSA_HTML);$(PRECMD) cp $< $@
+$(web_INFO_GAME_EXE):$(web_HTSA_EXE);$(PRECMD) cp $< $@
+$(web_INFO_GAME_JS):$(web_HTSA_JS);$(PRECMD) cp $< $@
+$(web_INFO_GAME_DATA):$(web_HTSA_DATA);$(PRECMD) cp $< $@
+
+web_INFO_SRC_JS:=$(filter src/info/%.js,$(SRCFILES))
+$(web_INFO_JS):$(web_INFO_SRC_JS);$(call PRECMD,web) $(NODE) src/tool/packjs/main.js -o$@ $(web_INFO_SRC_JS)
+
+web_INFO_ARCHIVE:=$(web_OUTDIR)/fullmoon-info.tar.gz
+web-all:$(web_INFO_ARCHIVE)
+$(web_INFO_ARCHIVE):$(web_INFO_FILES);$(PRECMD) cd $(web_OUTDIR) ; tar -czf fullmoon-info.tar.gz info
+
+#-----------------------------------------------------------
 # Commands.
 
 # This is what you want during development. You can edit C, JS and data files, and just refresh the browser to pick up the changes.
@@ -113,6 +149,15 @@ web-run:$(web_EXE) $(web_HTSA_DATA);$(NODE) src/tool/server/main.js \
 # Same as web-run, but on INADDR_ANY, so other hosts on your network can reach it (eg mobile).
 web-run-routable:$(web_EXE) $(web_HTSA_DATA);$(NODE) src/tool/server/main.js \
   --htdocs=src/www --makeable=$(web_HTSA_DATA) --makeable=$(web_EXE) --host=0.0.0.0
+  
+# Simulate aksommerville.com locally.
+web-run-info:$(web_HTSA_HTML) $(web_HTSA_JS) $(web_HTSA_EXE) $(web_HTSA_DATA); \
+  $(NODE) src/tool/server/main.js --htdocs=src/info \
+  --makeable=$(web_HTSA_HTML):/game.html \
+  --makeable=$(web_HTSA_JS) \
+  --makeable=$(web_HTSA_EXE) \
+  --makeable=$(web_HTSA_DATA) \
+  --makeable=$(web_INFO_JS)
 
 # Run our maps editor.
 web-edit:;$(NODE) src/tool/editor/main.js --htdocs=src/tool/editor/www --data=src/data
@@ -127,8 +172,8 @@ web-run-prod:$(web_HTSA_FILES);$(NODE) src/tool/server/main.js --htdocs=$(web_HT
 
 # Optionally deploy straight to a remote server.
 ifeq (,$(findstring --,-$(web_DEPLOY_USER)-$(web_DEPLOY_HOST)-$(web_DEPLOY_PATH)-))
-  web-deploy:$(web_HTSA_ARCHIVE_DEMO); \
-    ssh $(web_DEPLOY_USER)@$(web_DEPLOY_HOST) "cd $(web_DEPLOY_PATH) && cat - >fullmoon.tar.gz && tar -xzf fullmoon.tar.gz && rm -rf fullmoon && mv fmweb fullmoon" <$(web_HTSA_ARCHIVE_DEMO)
+  web-deploy:$(web_INFO_ARCHIVE); \
+    ssh $(web_DEPLOY_USER)@$(web_DEPLOY_HOST) "cd $(web_DEPLOY_PATH) && cat - >fullmoon.tar.gz && tar -xzf fullmoon.tar.gz && rm -fr fullmoon && mv info fullmoon" <$(web_INFO_ARCHIVE)
 else
   web-deploy:;echo "Must set: web_DEPLOY_USER web_DEPLOY_HOST web_DEPLOY_PATH" ; exit 1
 endif

@@ -1,4 +1,7 @@
-/* Renderer.js
+/* RendererGl.js
+ * Identical interface as Renderer2d, owner can swap them.
+ *TODO This isn't actually implemented yet.
+ * Got as far as clearing the buffer, and it's already consuming just as much CPU on "GPU Process" as CanvasRenderingContext2D, so not much point.
  */
  
 import { Constants } from "./Constants.js";
@@ -6,7 +9,7 @@ import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
 import { Dom } from "../util/Dom.js";
 
-export class Renderer {
+export class RendererGl {
   static getDependencies() {
     return [Constants, Globals, DataService, Dom];
   }
@@ -37,12 +40,20 @@ export class Renderer {
   
   begin() {
     if (!this.canvas) return;
-    this.ctx = this.canvas.getContext("2d");
+    if (!this.ctx) {
+      this.ctx = this.canvas.getContext("webgl");
+      if (!this.ctx) throw new Error("webgl not available");
+    }
+    this.ctx.viewport(0, 0, this.ctx.drawingBufferWidth, this.ctx.drawingBufferHeight);
     this.dstimage = null;
   }
   
   commit() {
-    this.ctx = null;
+    //TODO Is it destructive to drop the context every frame?
+    if (!this.ctx) return;
+    this.ctx.clearColor(0.5, 0.25, 0.0, 1.0);
+    this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
+    //this.ctx = null;
   }
   
   /* Public API, overhead.
@@ -102,10 +113,10 @@ export class Renderer {
         this.images[imageid] = this.dom.createElement("CANVAS", { width: this.canvas.width, height: this.canvas.height });
       }
       this.dstimage = this.images[imageid];
-      this.ctx = this.dstimage.getContext("2d");
+      this.ctx = this.dstimage.getContext("webgl");
     } else {
       this.dstimage = null;
-      this.ctx = this.canvas.getContext("2d");
+      this.ctx = this.canvas.getContext("webgl");
     }
     return 0;
   }
@@ -115,6 +126,7 @@ export class Renderer {
 
   fmn_draw_line(v, c) {
     if (!this.ctx) return;
+    return;//TODO
     while (c-->0) {
       const ax = this.globals.memS16[v >> 1] + 0.5; v += 2;
       const ay = this.globals.memS16[v >> 1] + 0.5; v += 2;
@@ -132,24 +144,26 @@ export class Renderer {
     }
   }
 
- fmn_draw_rect(v, c) {
-   if (!this.ctx) return;
-   while (c-->0) {
-     const x = this.globals.memS16[v >> 1]; v += 2;
-     const y = this.globals.memS16[v >> 1]; v += 2;
-     const w = this.globals.memS16[v >> 1]; v += 2;
-     const h = this.globals.memS16[v >> 1]; v += 2;
-     const a = this.globals.memU8[v++];
-     const b = this.globals.memU8[v++];
-     const g = this.globals.memU8[v++];
-     const r = this.globals.memU8[v++];
-     this.ctx.fillStyle = `rgb(${r} ${g} ${b} / ${a/255})`;
-     this.ctx.fillRect(x, y, w, h);
-   }
- }
+  fmn_draw_rect(v, c) {
+    if (!this.ctx) return;
+    return;//TODO
+    while (c-->0) {
+      const x = this.globals.memS16[v >> 1]; v += 2;
+      const y = this.globals.memS16[v >> 1]; v += 2;
+      const w = this.globals.memS16[v >> 1]; v += 2;
+      const h = this.globals.memS16[v >> 1]; v += 2;
+      const a = this.globals.memU8[v++];
+      const b = this.globals.memU8[v++];
+      const g = this.globals.memU8[v++];
+      const r = this.globals.memU8[v++];
+      this.ctx.fillStyle = `rgb(${r} ${g} ${b} / ${a/255})`;
+      this.ctx.fillRect(x, y, w, h);
+    }
+  }
 
   fmn_draw_mintile(v, c, srcimageid) {
     if (!this.ctx) return;
+    return;//TODO
     const srcimage = this.getImage(srcimageid);
     if (!srcimage) return;
     const w = srcimage.naturalWidth >> 4;
@@ -169,6 +183,7 @@ export class Renderer {
 
   fmn_draw_maxtile(v, c, srcimageid) {
     if (!this.ctx) return;
+    return;//TODO
     const srcimage = this.getImage(srcimageid);
     if (!srcimage) return;
     const tilew = srcimage.naturalWidth >> 4;
@@ -211,6 +226,7 @@ export class Renderer {
 
   fmn_draw_decal(v, c, srcimageid) {
     if (!this.ctx) return;
+    return;//TODO
     const srcimage = this.getImage(srcimageid);
     if (!srcimage) return;
     while (c-->0) {
@@ -228,6 +244,7 @@ export class Renderer {
   
   fmn_draw_decal_swap(v, c, srcimageid) {
     if (!this.ctx) return;
+    return;//TODO
     const srcimage = this.getImage(srcimageid);
     if (!srcimage) return;
     while (c-->0) {
@@ -247,6 +264,7 @@ export class Renderer {
 
   fmn_draw_recal(v, c, srcimageid) {
     if (!this.ctx) return;
+    return;//TODO
     const srcimage = this.getImage(srcimageid);
     if (!srcimage) return;
     const recalCtx = this.recalScratch.getContext("2d");
@@ -277,6 +295,7 @@ export class Renderer {
   
   fmn_draw_recal_swap(v, c, srcimageid) {
     if (!this.ctx) return;
+    return;//TODO
     const srcimage = this.getImage(srcimageid);
     if (!srcimage) return;
     while (c-->0) {
@@ -365,5 +384,5 @@ export class Renderer {
   }
 }
 
-Renderer.singleton = true;
+RendererGl.singleton = true;
 

@@ -68,6 +68,7 @@ web() { # Everything is packaged correctly by make; just copy and rename.
   cp out/web/fullmoon-full.tar.gz $OUTDIR/fullmoon-web-full-$BUILDTAG.tar.gz
   cp out/web/fullmoon-demo.zip $OUTDIR/fullmoon-web-demo-$BUILDTAG.zip
   cp out/web/fullmoon-full.zip $OUTDIR/fullmoon-web-full-$BUILDTAG.zip
+  cp out/web/fullmoon-info.tar.gz $OUTDIR/fullmoon-web-info-$BUILDTAG.tar.gz
 }
 
 single_target() { # $1=TARGET

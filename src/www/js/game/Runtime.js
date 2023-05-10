@@ -5,7 +5,8 @@
 import { WasmLoader } from "../util/WasmLoader.js";
 import { DataService } from "./DataService.js";
 import { InputManager } from "./InputManager.js";
-import { Renderer } from "./Renderer.js";
+import { Renderer2d } from "./Renderer2d.js";
+import { RendererGl } from "./RendererGl.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
@@ -17,20 +18,20 @@ export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
-      Renderer, Clock, Constants, Globals,
+      Renderer2d, RendererGl, Clock, Constants, Globals,
       Synthesizer, SoundEffects,
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
-    renderer, clock, constants, globals,
+    renderer2d, rendererGl, clock, constants, globals,
     synthesizer, soundEffects
   ) {
     this.wasmLoader = wasmLoader;
     this.dataService = dataService;
     this.inputManager = inputManager;
     this.window = window;
-    this.renderer = renderer;
+    this.renderer = renderer2d; // rendererGl or renderer2d, same interface. TODO let user choose
     this.clock = clock;
     this.constants = constants;
     this.globals = globals;
