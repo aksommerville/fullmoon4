@@ -62,7 +62,7 @@ input.toggle:checked + label > * {
 }
 
 .modalStack .modalFrame {
-  background-color: #fff;
+  background-color: #cba;
   color: #000;
   border: 1px solid #000;
   border-radius: 1em;
@@ -224,6 +224,8 @@ input.toggle:checked + label > * {
   align-items: stretch;
   width: 80vw;
   height: 80vh;
+  max-width: 1024px;
+  max-height: 1024px;
 }
 
 .InputConfigurationModal > .deviceList {
@@ -231,6 +233,8 @@ input.toggle:checked + label > * {
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: scroll;
+  font-size: 9pt;
+  max-width: 30%;
 }
 
 .InputConfigurationModal > .detailsPanel {
@@ -238,6 +242,7 @@ input.toggle:checked + label > * {
   min-width: 100px;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 }
 
 .InputConfigurationModal > .deviceList > .entry {
@@ -270,4 +275,50 @@ input.toggle:checked + label > * {
 .InputConfigurationModal > .detailsPanel > .keyboardHeader {
   display: flex;
   flex-direction: row;
+}
+
+.InputConfigurationModal .keyboard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  max-height: 500px;
+}
+.InputConfigurationModal .keyboard .dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.InputConfigurationModal .keyboard .dpadMid {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.InputConfigurationModal .keyboard .kRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.InputConfigurationModal .keyboard input {
+  width: 10em;
+  height: 2em;
+}
+.InputConfigurationModal .input-pic-dpad {
+  background-image: url('./fmchrome.png');
+  background-position: -1px -1px;
+  width: 53px;
+  height: 53px;
+}
+.InputConfigurationModal .input-pic-use {
+  background-image: url('./fmchrome.png');
+  background-position: -55px -1px;
+  width: 19px;
+  height: 19px;
+}
+.InputConfigurationModal .input-pic-choose {
+  background-image: url('./fmchrome.png');
+  background-position: -55px -21px;
+  width: 19px;
+  height: 19px;
 }

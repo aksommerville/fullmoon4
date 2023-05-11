@@ -3,6 +3,7 @@
  
 import { Dom } from "../util/Dom.js";
 import { InputManager } from "../game/InputManager.js";
+import { PressAKeyModal } from "./PressAKeyModal.js";
 
 export class InputConfigurationModal {
   static getDependencies() {
@@ -88,13 +89,34 @@ export class InputConfigurationModal {
   }
   
   populateDetailsForKeyboard(panel) {
-    const header = this.dom.spawn(panel, "DIV", ["keyboardHeader"]);
-    this.dom.spawn(header, "INPUT", { type: "button", value: "+", "on-click": () => this.onAddKeyMap() });
-    this.dom.spawn(header, "DIV", ["tattle"]);
-    const mapContainer = this.dom.spawn(panel, "DIV", ["mapContainer"], { "data-deviceId": "Keyboard" });
-    for (const entry of this.inputManager.keyMaps) {
-      this.addKeyMapEntry(mapContainer, entry.code, entry.btnid);
-    }
+    const getKeyName = (btnid) => {
+      for (const entry of this.inputManager.keyMaps) {
+        if (entry.btnid === btnid) return entry.code;
+      }
+      return "";
+    };
+    const spawnKeyButton = (parent, btnid) => {
+      this.dom.spawn(parent, "INPUT", {
+        type: "button",
+        value: getKeyName(btnid),
+        "data-btnid": btnid,
+        "on-click": () => this.reassignKey(btnid),
+      });
+    };
+    const container = this.dom.spawn(panel, "DIV", ["keyboard"]);
+    const dpad = this.dom.spawn(container, "DIV", ["dpad"]);
+    spawnKeyButton(dpad, InputManager.INPUT_UP);
+    const dpadMid = this.dom.spawn(dpad, "DIV", ["dpadMid"]);
+    spawnKeyButton(dpadMid, InputManager.INPUT_LEFT);
+    this.dom.spawn(dpadMid, "DIV", ["input-pic-dpad"]);
+    spawnKeyButton(dpadMid, InputManager.INPUT_RIGHT);
+    spawnKeyButton(dpad, InputManager.INPUT_DOWN);
+    const useRow = this.dom.spawn(container, "DIV", ["kRow"]);
+    this.dom.spawn(useRow, "DIV", ["input-pic-use"]);
+    spawnKeyButton(useRow, InputManager.INPUT_USE);
+    const chooseRow = this.dom.spawn(container, "DIV", ["kRow"]);
+    this.dom.spawn(chooseRow, "DIV", ["input-pic-choose"]);
+    spawnKeyButton(chooseRow, InputManager.INPUT_MENU);
   }
   
   addKeyMapEntry(mapContainer, code, btnid) {
@@ -269,6 +291,21 @@ export class InputConfigurationModal {
       case "Touch": this.updateTouchMapFromUi(); break;
       default: this.updateGamepadMapFromUi(deviceId); break;
     }
+  }
+  
+  reassignKey(btnid) {
+    const modal = this.dom.spawnModal(PressAKeyModal);
+    modal.setBtnid(btnid);
+    modal.onchoose = (code) => {
+      const newMaps = [...this.inputManager.keyMaps];
+      const p = newMaps.findIndex(m => m.btnid === btnid);
+      if (p >= 0) newMaps[p] = { code, btnid };
+      else newMaps.push({ code, btnid });
+      this.inputManager.updateKeyMaps(newMaps);
+      
+      const input = this.element.querySelector(`input[data-btnid='${btnid}']`);
+      if (input) input.value = code;
+    };
   }
 }
 

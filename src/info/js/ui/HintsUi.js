@@ -27,6 +27,6 @@ export class HintsUi {
     this.dom.spawn(this.element, "H2", "For Non-Native English Speakers");
     this.dom.spawn(this.element, "DIV", ["advice"], "...hopefully you've managed to translate this page!");
     this.dom.spawn(this.element, "DIV", ["advice"], "There's one puzzle that requires a firm understanding of English.");
-    this.dom.spawn(this.dom.spawn(this.element, "DIV", ["spoiler"]), "IMG", { src: "./english-words.png" });
+    this.dom.spawn(this.dom.spawn(this.element, "DIV", ["spoiler"]), "IMG", { src: "./img/english-words.png" });
   }
 }

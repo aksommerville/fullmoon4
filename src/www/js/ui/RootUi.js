@@ -92,6 +92,6 @@ export class RootUi {
   }
   
   enterFullscreen() {
-    this.element.requestFullscreen();
+    this.dom.document.body.requestFullscreen();
   }
 }
