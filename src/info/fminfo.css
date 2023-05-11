@@ -162,3 +162,7 @@ footer {
 .LinksUi {
   padding: 0.5em;
 }
+
+.LinksUi .packages {
+  width: 100%;
+}

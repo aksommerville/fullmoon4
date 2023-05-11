@@ -23,6 +23,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Pretty up the public web page.
 - - [ ] Input config needs this bad.
 - - [ ] Rethink paradigm for keyboard input mapping. Or at least let it scroll vertically.
+- - [x] Store final artifacts in S3, load dynamically in the info site.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.

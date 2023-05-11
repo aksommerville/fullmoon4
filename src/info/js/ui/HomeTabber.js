@@ -45,8 +45,15 @@ export class HomeTabber {
   selectTab(name) {
     for (const element of this.element.querySelectorAll(".tab.selected")) element.classList.remove("selected");
     for (const element of this.element.querySelectorAll(".panel.selected")) element.classList.remove("selected");
-    this.element.querySelector(`.tabBar > .tab[data-name='${name}']`).classList.add("selected");
-    this.element.querySelector(`.panelContainer > .panel[data-name='${name}']`).classList.add("selected");
+    const tab = this.element.querySelector(`.tabBar > .tab[data-name='${name}']`);
+    const panel = this.element.querySelector(`.panelContainer > .panel[data-name='${name}']`);
+    if (tab) {
+      tab.classList.add("selected");
+    }
+    if (panel) {
+      panel.classList.add("selected");
+      if (panel._fmn_controller && panel._fmn_controller.onShowTab) panel._fmn_controller.onShowTab();
+    }
   }
   
   onTabClick(event) {
