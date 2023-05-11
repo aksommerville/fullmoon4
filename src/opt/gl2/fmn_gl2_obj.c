@@ -322,7 +322,7 @@ static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_d
   if (rowbuf) {
     uint8_t *a=v;
     uint8_t *b=a+rowlen*(DRIVER->mainfb.h-1);
-    int c=DRIVER->mainfb.h<<1;
+    int c=DRIVER->mainfb.h>>1;
     for (;c-->0;a+=rowlen,b-=rowlen) {
       memcpy(rowbuf,a,rowlen);
       memcpy(a,b,rowlen);

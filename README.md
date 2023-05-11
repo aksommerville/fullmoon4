@@ -31,6 +31,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] New "info" site for upload to aksommerville.com. Let Itch be the main "play, pay, and download" site.
 - [ ] Input config not visible if launched while fullscreen.
 - - Combine that with it doesn't scroll at little iframe sizes, and you got a bit of a problem.
+- [x] Segfault attempting a screencap
 
 ### After GDEX
 
