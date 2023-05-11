@@ -32,7 +32,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Input config not visible if launched while fullscreen.
 - - [x] Combine that with it doesn't scroll at little iframe sizes, and you got a bit of a problem.
 - [x] Segfault attempting a screencap
-- [ ] Dom.js: Can we stick modalBlotter inside modalStack? Clicking on a background modal should dismiss the foreground, and I'd prefer the background ones black out a bit.
+- [x] Dom.js: Can we stick modalBlotter inside modalStack? Clicking on a background modal should dismiss the foreground, and I'd prefer the background ones black out a bit.
 
 ### After GDEX
 

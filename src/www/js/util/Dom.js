@@ -130,7 +130,6 @@ export class Dom {
   }
   
   dismissModals() {
-    this.document.body.querySelector(".modalBlotter")?.remove();
     this.document.body.querySelector(".modalStack")?.remove();
   }
   
@@ -140,6 +139,8 @@ export class Dom {
     frame.remove();
     if (!this.document.body.querySelector(".modalFrame")) {
       this.dismissModals();
+    } else {
+      this._replaceModalBlotter();
     }
   }
   
@@ -149,6 +150,8 @@ export class Dom {
         frame.remove();
         if (!this.document.body.querySelector(".modalFrame")) {
           this.dismissModals();
+        } else {
+          this._replaceModalBlotter();
         }
         return;
       }
@@ -158,25 +161,32 @@ export class Dom {
   
   _spawnModalFrame() {
     const stack = this._requireModalStack();
-    return this.spawn(stack, "DIV", ["modalFrame"]);
+    const frame = this.spawn(stack, "DIV", ["modalFrame"]);
+    this._replaceModalBlotter();
+    return frame;
   }
   
   _requireModalStack() {
-    let blotter = this.document.body.querySelector(".modalBlotter");
-    if (!blotter) {
-      blotter = this.spawn(this.document.body, "DIV", ["modalBlotter"]);
-    }
     let stack = this.document.body.querySelector(".modalStack");
     if (!stack) {
-      stack = this.spawn(this.document.body, "DIV", ["modalStack"], {
-        "on-mousedown": (event) => {
-          if (event.target === stack) {
-            this.popTopModal();
-          }
-        },
-      });
+      stack = this.spawn(this.document.body, "DIV", ["modalStack"]);
     }
     return stack;
+  }
+  
+  _replaceModalBlotter() {
+    const stack = this.document.body.querySelector(".modalStack");
+    if (!stack) return;
+    const frames = Array.from(stack.querySelectorAll(".modalFrame"));
+    if (frames.length < 1) return;
+    const topFrame = frames[frames.length - 1];
+    let blotter = stack.querySelector(".modalBlotter");
+    if (!blotter) blotter = this.createElement("DIV", ["modalBlotter"], {
+      "on-mousedown": (event) => {
+        this.popTopModal();
+      },
+    });
+    stack.insertBefore(blotter, topFrame);
   }
 }
 

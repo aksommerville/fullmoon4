@@ -44,7 +44,7 @@ input.toggle:checked + label > * {
   top: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 100;
+  /*z-index: 100;*/
   background-color: #000;
   opacity: 0.8;
 }
