@@ -119,7 +119,7 @@ web_INFO_GAME_EXE:=$(web_INFO_DIR)/fullmoon.wasm
 web_INFO_GAME_JS:=$(web_INFO_DIR)/fullmoon.js
 web_INFO_GAME_DATA:=$(web_INFO_DIR)/fullmoon.data
 web_INFO_GAME_FMCHROME:=$(web_INFO_DIR)/fmchrome.png
-web_INFO_IMAGES:=$(patsubst $(web_INFO_DIR)/img/%,src/info/img/%,$(filter src/info/img/%,$(SRCFILES)))
+web_INFO_IMAGES:=$(patsubst src/info/img/%,$(web_INFO_DIR)/img/%,$(filter src/info/img/%,$(SRCFILES)))
 web_INFO_FILES:=$(web_INFO_HTML) $(web_INFO_IFRAME) $(web_INFO_CSS) $(web_INFO_JS) $(web_INFO_FAVICON) $(web_INFO_IMAGES) \
   $(web_INFO_GAME_HTML) $(web_INFO_GAME_EXE) $(web_INFO_GAME_JS) $(web_INFO_GAME_DATA) $(web_INFO_GAME_FMCHROME)
  

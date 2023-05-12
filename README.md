@@ -20,19 +20,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### May
 
 - [ ] Beta test.
-- [x] Pretty up the public web page.
-- - [x] Input config needs this bad.
-- - [x] Rethink paradigm for keyboard input mapping. Or at least let it scroll vertically.
-- - [x] Store final artifacts in S3, load dynamically in the info site.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
-- [x] New "info" site for upload to aksommerville.com. Let Itch be the main "play, pay, and download" site.
-- [x] Input config not visible if launched while fullscreen.
-- - [x] Combine that with it doesn't scroll at little iframe sizes, and you got a bit of a problem.
-- [x] Segfault attempting a screencap
-- [x] Dom.js: Can we stick modalBlotter inside modalStack? Clicking on a background modal should dismiss the foreground, and I'd prefer the background ones black out a bit.
 
 ### After GDEX
 
