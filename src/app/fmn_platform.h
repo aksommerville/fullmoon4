@@ -417,7 +417,6 @@ void fmn_update(uint32_t timems,uint8_t input);
 void fmn_gs_notify(uint16_t p,uint16_t c);
 
 /* Called when we're ready for the next scene.
- * fmn_draw_* calls are valid only during this.
  * Normally one render per update, but that's not guaranteed.
  * Return nonzero if you rendered a complete frame that should be delivered to output.
  * Return zero if you did nothing, and we should keep the prior frame.
@@ -518,6 +517,7 @@ void fmn_log_event(const char *key,const char *fmt,...);
 
 /* Rendering API.
  * Everything named "fmn_draw_*" is only valid during fmn_render.
+ * UPDATE: Draw calls are safe any time after init, but rendering to image zero can only be during fmn_render.
  * I'll use "fmn_video_*" for functions safe to call any time.
  * Render ops all take an array of primitives.
  * Depending on implementation, it can be much more efficient to do large batches than individual ops.

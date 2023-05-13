@@ -1,6 +1,8 @@
 #include "fmn_platform.h"
 #include "fmn_game.h"
 
+void fmn_render_init(); // app/render/fmn_render_main.c
+
 /* Idle warning time, automatically issues a warning, then restarts, when idle.
  * I need this for demo kiosks. Disable for production!
  * You can disable via the build: -DFMN_IDLE_WARNING_TIME=0
@@ -32,6 +34,7 @@ int fmn_init() {
   last_update_time=0;
   const int16_t tilesize=16;
   if (fmn_video_init(FMN_COLC*tilesize,FMN_COLC*tilesize,FMN_ROWC*tilesize,FMN_ROWC*tilesize,FMN_VIDEO_PIXFMT_RGBA)<0) return -1;
+  fmn_render_init();
   if (fmn_game_init()<0) return -1;
   return 0;
 }

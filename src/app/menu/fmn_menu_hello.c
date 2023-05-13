@@ -61,7 +61,7 @@ static void hello_stars_render(struct fmn_menu *menu) {
     uint8_t b=luma+X%31-16; X=(a*X+c)%m;
     uint8_t a=X+framec; if (a>=0x80) a=0xff-a;
     a+=0x40;
-    vtx->pixel=(r<<24)|(g<<16)|(b<<8)|a;
+    vtx->pixel=fmn_video_pixel_from_rgba((r<<24)|(g<<16)|(b<<8)|a);
     
   }
   fmn_draw_line(hello_stars_vtxv,HELLO_STARS_VTXC);

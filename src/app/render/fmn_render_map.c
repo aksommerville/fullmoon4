@@ -88,7 +88,7 @@ void fmn_render_freshen_map() {
         vtx->ay=sketch->y*ts+margin+spacing*((points>> 8)&15);
         vtx->bx=sketch->x*ts+margin+spacing*((points>> 4)&15);
         vtx->by=sketch->y*ts+margin+spacing*((points    )&15);
-        vtx->pixel=0xffffffff;
+        vtx->pixel=fmn_render_global.chalk_color;
         vtxc++;
       }
     }

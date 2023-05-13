@@ -21,6 +21,7 @@
 #define clock sprite->fv[0]
 #define swimdx sprite->fv[1]
 #define swimdy sprite->fv[2]
+#define lifetime sprite->fv[3]
 #define secret_tileid sprite->argv[0] /* left of two tiles to display above my head during surrender (a word bubble hopefully) */
 
 /* Choose swim destination, after we're defeated.
@@ -360,14 +361,23 @@ static void seamonster_update_SURFACE(struct fmn_sprite *sprite,float elapsed) {
 static void seamonster_update_SPIT(struct fmn_sprite *sprite,float elapsed) {
 }
 
+/* OK to start firing missiles yet?
+ * Providing a wee window at the start of each screen where a speedrunner can operate free of missiles.
+ */
+ 
+static int seamonster_too_early(struct fmn_sprite *sprite) {
+  return (lifetime<3.0f);
+}
+
 /* Update.
  */
  
 static void _seamonster_update(struct fmn_sprite *sprite,float elapsed) {
+  lifetime+=elapsed;
   if (sleeping) return;
   if ((clock-=elapsed)<=0.0f) switch (stage) {
     case SEAMONSTER_STAGE_LURK: seamonster_begin_SWIM(sprite); break;
-    case SEAMONSTER_STAGE_SWIM: if (defeated) seamonster_begin_SWIM(sprite); else seamonster_begin_SURFACE(sprite); break;
+    case SEAMONSTER_STAGE_SWIM: if (defeated||seamonster_too_early(sprite)) seamonster_begin_SWIM(sprite); else seamonster_begin_SURFACE(sprite); break;
     case SEAMONSTER_STAGE_SURFACE: seamonster_begin_SPIT(sprite); break;
     case SEAMONSTER_STAGE_SPIT: seamonster_begin_LURK(sprite); break;
   } else switch (stage) {

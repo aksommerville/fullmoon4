@@ -148,3 +148,14 @@ void fmn_map_dirty() {
 uint8_t fmn_render_transition_in_progress() {
   return fmn_render_global.transition;
 }
+
+/* Init.
+ */
+ 
+void fmn_render_init() {
+  fmn_render_global.chalk_color=fmn_video_pixel_from_rgba(0xffffffff);
+  fmn_render_global.violin_line_color=fmn_video_pixel_from_rgba(0x886644ff);
+  fmn_render_global.violin_highlight_line_color=fmn_video_pixel_from_rgba(0xcc0000ff);
+  fmn_render_global.rain_color=fmn_video_pixel_from_rgba(0x00008880);
+  fmn_render_global.wind_color=fmn_video_pixel_from_rgba(0xccccccc0);
+}

@@ -13,9 +13,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### 2023-04-29 render-redesign
 
-- [ ] !!! I'm rendering the "from" state of transitions during update, not render. Find a way to make that OK. (it does work, both web and native)
-- [ ] Redesign sprites to interact more closely with render? Maybe not worth the effort, it's a lot of effort.
-- [ ] All thru the render unit, I've been treating pixels as RGBA. That's not the real design, figure it out right.
+- [x] !!! I'm rendering the "from" state of transitions during update, not render. Find a way to make that OK. (it does work, both web and native)
+- [x] Redesign sprites to interact more closely with render? Maybe not worth the effort, it's a lot of effort. ...not worth it
+- [x] All thru the render unit, I've been treating pixels as RGBA. That's not the real design, figure it out right.
 
 ### May
 
@@ -25,6 +25,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Scripts to analyze logs.
 - [ ] Metal
 - [x] Music consistently skips a few beats at startup.
+- [ ] Tweak firenozzle timing on third screen so a determined speedrunner can pass thru without stopping.
+- [x] seamonster and raccoon: Delay before first missile? I want to make it more deterministic for speed running. ...i think raccoons are ok.
 
 ### After GDEX
 

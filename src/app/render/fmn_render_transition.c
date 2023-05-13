@@ -120,7 +120,7 @@ static void fmn_render_fade2(
     uint32_t rgba=fmn_render_global.transition_color|a;
     struct fmn_draw_rect vtx={
       .x=0,.y=0,.w=fmn_render_global.fbw,.h=fmn_render_global.fbh,
-      .pixel=rgba,//TODO not all renderers will use RGBA pixels
+      .pixel=fmn_video_pixel_from_rgba(rgba),
     };
     fmn_draw_rect(&vtx,1);
   }
@@ -151,7 +151,7 @@ static void fmn_render_spotlight(
   if (p>=c) {
     struct fmn_draw_rect vtx={
       .x=0,.y=0,.w=fmn_render_global.fbw,.h=fmn_render_global.fbh,
-      .pixel=fmn_render_global.transition_color|0xff,
+      .pixel=fmn_video_pixel_from_rgba(fmn_render_global.transition_color|0xff),
     };
     fmn_draw_rect(&vtx,1);
     return;
@@ -177,7 +177,7 @@ static void fmn_render_spotlight(
   int16_t radius=((c-p)*radius_limit)/c;
   
   // Circle shape will be tricky. First draw the four rectangles entirely outside the spotlight.
-  uint32_t bgcolor=fmn_render_global.transition_color|0xff;
+  uint32_t bgcolor=fmn_video_pixel_from_rgba(fmn_render_global.transition_color|0xff);
   int16_t ax=fx-radius,zx=fx+radius,ay=fy-radius,zy=fy+radius;
   {
     struct fmn_draw_rect vtxv[4];

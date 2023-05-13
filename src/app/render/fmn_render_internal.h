@@ -37,7 +37,7 @@ extern struct fmn_render_global {
   int transition; // FMN_TRANSITION_*
   int transitionp,transitionc; // frames; (p) counts up to (c)
   int hero_above_transition;
-  uint32_t transition_color;
+  uint32_t transition_color; // rgbx
   int16_t transition_from_x,transition_from_y; // in fb pixels, for spotlight
   int16_t transition_to_x,transition_to_y; // ''
   
@@ -47,6 +47,12 @@ extern struct fmn_render_global {
   struct fmn_draw_line particlev[FMN_RENDER_PARTICLE_LIMIT];
   int particlec;
   float illuminationp;
+  
+  uint32_t chalk_color;
+  uint32_t violin_line_color;
+  uint32_t violin_highlight_line_color;
+  uint32_t rain_color;
+  uint32_t wind_color;
   
 } fmn_render_global;
 

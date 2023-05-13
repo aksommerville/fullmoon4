@@ -89,7 +89,7 @@ static void fmn_render_rain() {
     }
     particle->bx=particle->ax;
     particle->by=particle->ay-length;
-    particle->pixel=0x00008880; //TODO pixfmt
+    particle->pixel=fmn_render_global.rain_color;
   }
   fmn_draw_line(fmn_render_global.particlev,fmn_render_global.particlec);
 }
@@ -127,7 +127,7 @@ static void fmn_render_wind(float nx,float ny) {
     particle->bx=particle->ax+taildx;
     particle->by=particle->ay+taildy;
     
-    particle->pixel=0xccccccc0;
+    particle->pixel=fmn_render_global.wind_color;
   }
   fmn_draw_line(fmn_render_global.particlev,fmn_render_global.particlec);
 }

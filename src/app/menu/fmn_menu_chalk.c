@@ -6,6 +6,8 @@
 #define handy menu->argv[2]
 #define anchorx menu->argv[3] /* <0 if not dragging */
 #define anchory menu->argv[4]
+#define line_color menu->argv[5]
+#define highlight_color menu->argv[6]
 
 /* Dismiss.
  */
@@ -96,7 +98,7 @@ static void _chalk_render(struct fmn_menu *menu) {
       vtx->ay=by+margin+spacing*((points>> 8)&15);
       vtx->bx=bx+margin+spacing*((points>> 4)&15);
       vtx->by=by+margin+spacing*((points    )&15);
-      vtx->pixel=0xffffffff;
+      vtx->pixel=line_color;
       vtxc++;
     }
   }
@@ -106,7 +108,7 @@ static void _chalk_render(struct fmn_menu *menu) {
     vtx->ay=by+margin+spacing*anchory;
     vtx->bx=bx+margin+spacing*handx;
     vtx->by=by+margin+spacing*handy;
-    vtx->pixel=0xffff00ff;
+    vtx->pixel=highlight_color;
     vtxc++;
   }
   if (vtxc) fmn_draw_line(vtxv,vtxc);
@@ -140,6 +142,8 @@ void fmn_menu_init_CHALK(struct fmn_menu *menu) {
   menu->render=_chalk_render;
   handx=handy=1;
   anchorx=anchory=-1;
+  line_color=fmn_video_pixel_from_rgba(0xffffffff);
+  highlight_color=fmn_video_pixel_from_rgba(0xffff00ff);
 }
 
 /* Some shared chalk-drawing stuff.

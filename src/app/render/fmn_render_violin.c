@@ -10,11 +10,11 @@ struct fmn_violin_context {
   int16_t x,y,w,h; // full bounds within mainfb
   struct fmn_violin_line {
     int16_t y; // absolute
-    uint32_t rgba;
+    uint32_t pixel;
   } linev[4]; // top to bottom
   struct fmn_violin_bar {
     int16_t x; // absolute
-    uint32_t rgba;
+    uint32_t pixel;
   } barv[FMN_VIOLIN_BAR_LIMIT];
   struct fmn_violin_note {
     int16_t x,y; // absolute
@@ -41,13 +41,13 @@ static void fmn_violin_begin(struct fmn_violin_context *ctx) {
   int i=0;
   for (;i<4;i++,line++) {
     line->y=ctx->y+((i+1)*ctx->h)/5;
-    line->rgba=0x886644ff;
+    line->pixel=fmn_render_global.violin_line_color;
   }
   switch (fmn_global.wand_dir) {
-    case FMN_DIR_N: ctx->linev[0].rgba=0xcc0000ff; break;
-    case FMN_DIR_E: ctx->linev[1].rgba=0xcc0000ff; break;
-    case FMN_DIR_W: ctx->linev[2].rgba=0xcc0000ff; break;
-    case FMN_DIR_S: ctx->linev[3].rgba=0xcc0000ff; break;
+    case FMN_DIR_N: ctx->linev[0].pixel=fmn_render_global.violin_highlight_line_color; break;
+    case FMN_DIR_E: ctx->linev[1].pixel=fmn_render_global.violin_highlight_line_color; break;
+    case FMN_DIR_W: ctx->linev[2].pixel=fmn_render_global.violin_highlight_line_color; break;
+    case FMN_DIR_S: ctx->linev[3].pixel=fmn_render_global.violin_highlight_line_color; break;
   }
   
   int note_spacing=ctx->w/FMN_VIOLIN_SONG_LENGTH;
@@ -61,7 +61,7 @@ static void fmn_violin_begin(struct fmn_violin_context *ctx) {
   int barc=0;
   for (;(x<ctx->x+ctx->w)&&(barc<FMN_VIOLIN_BAR_LIMIT);x+=bar_spacing,bar++,barc++) {
     bar->x=x;
-    bar->rgba=0x886644ff;
+    bar->pixel=fmn_render_global.violin_line_color;
   }
   
   uint8_t songp=fmn_global.violin_songp;
@@ -110,12 +110,12 @@ static void fmn_render_violin_context(struct fmn_violin_context *ctx) {
   int i;
   const struct fmn_violin_bar *bar=ctx->barv;
   for (i=FMN_VIOLIN_BAR_LIMIT;i-->0;bar++) {
-    if (!bar->rgba) continue;
+    if (!bar->pixel) continue;
     lvtx->ax=bar->x;
     lvtx->ay=ctx->linev[0].y;
     lvtx->bx=bar->x;
     lvtx->by=ctx->linev[3].y;
-    lvtx->pixel=bar->rgba;
+    lvtx->pixel=bar->pixel;
     lvtx++;
   }
   const struct fmn_violin_line *line=ctx->linev;
@@ -124,7 +124,7 @@ static void fmn_render_violin_context(struct fmn_violin_context *ctx) {
     lvtx->ay=line->y;
     lvtx->bx=ctx->x+ctx->w;
     lvtx->by=line->y;
-    lvtx->pixel=line->rgba;
+    lvtx->pixel=line->pixel;
   }
   fmn_draw_line(linev,lvtx-linev);
 
