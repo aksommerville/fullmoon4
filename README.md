@@ -25,7 +25,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Scripts to analyze logs.
 - [ ] Metal
 - [x] Music consistently skips a few beats at startup.
-- [ ] Tweak firenozzle timing on third screen so a determined speedrunner can pass thru without stopping.
+- [x] Tweak firenozzle timing on third screen so a determined speedrunner can pass thru without stopping.
 - [x] seamonster and raccoon: Delay before first missile? I want to make it more deterministic for speed running. ...i think raccoons are ok.
 
 ### After GDEX

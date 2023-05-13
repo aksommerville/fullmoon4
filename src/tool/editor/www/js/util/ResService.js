@@ -22,7 +22,7 @@ export class ResService {
     this.toc = []; // {type, id, name, q, lang, path, serial, object}
     this.dirties = []; // {type, id} The named TOC entries should have a fresh (object) and no (serial).
     this.dirtyDebounce = null;
-    this.mapSet = "-full"; // "-demo" or "-full" //TODO Add UI for toggling this.
+    this.mapSet = "-demo"; // "-demo" or "-full" //TODO Add UI for toggling this.
     
     this.reloadAll();
     
