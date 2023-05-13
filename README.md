@@ -24,6 +24,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
+- [x] Music consistently skips a few beats at startup.
 
 ### After GDEX
 

@@ -77,20 +77,25 @@ static void _minsyn_update_mono(int16_t *v,int c,struct bigpc_synth_driver *driv
   
     int updc=c;
     if (DRIVER->song&&!DRIVER->songpause) {
-      struct midi_event event={0};
-      updc=midi_file_next(&event,DRIVER->song,0);
-      if (updc<0) {
-        fprintf(stderr,"minsyn: song end or error\n");
-        midi_file_del(DRIVER->song);
-        DRIVER->song=0;
-        continue;
+      if (DRIVER->startup_delay>0) {
+        if ((DRIVER->startup_delay-=c)<=0) DRIVER->startup_delay=0;
       }
-      if (updc) { // no song event; proceed with signal
-        if (updc>c) updc=c;
-      } else {
-        if (event.opcode==0xff) ; // Ignore Meta events; we would interpret them as System Reset.
-        else driver->type->event(driver,event.chid,event.opcode,event.a,event.b);
-        continue;
+      if (!DRIVER->startup_delay) {
+        struct midi_event event={0};
+        updc=midi_file_next(&event,DRIVER->song,0);
+        if (updc<0) {
+          fprintf(stderr,"minsyn: song end or error\n");
+          midi_file_del(DRIVER->song);
+          DRIVER->song=0;
+          continue;
+        }
+        if (updc) { // no song event; proceed with signal
+          if (updc>c) updc=c;
+        } else {
+          if (event.opcode==0xff) ; // Ignore Meta events; we would interpret them as System Reset.
+          else driver->type->event(driver,event.chid,event.opcode,event.a,event.b);
+          continue;
+        }
       }
     }
     
@@ -129,6 +134,9 @@ static int _minsyn_init(struct bigpc_synth_driver *driver) {
   else return -1;
   
   minsyn_generate_sine(DRIVER->sine,MINSYN_WAVE_SIZE_SAMPLES);
+  
+  // Wait half a second before playing music. This can safely be zero, but you might get some chop at startup.
+  DRIVER->startup_delay=driver->rate>>1;
   
   return 0;
 }
@@ -294,7 +302,7 @@ static void minsyn_note_on(struct bigpc_synth_driver *driver,uint8_t chid,uint8_
  */
  
 static void _minsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
-  //fprintf(stderr,"%s %02x %02x %02x %02x\n",__func__,chid,opcode,a,b);
+  //fprintf(stderr,"%lld %s %02x %02x %02x %02x\n",llnow(),__func__,chid,opcode,a,b);
   switch (opcode) {
     case MIDI_OPCODE_NOTE_OFF: minsyn_release_chid_noteid(driver,chid,a); break;
     case MIDI_OPCODE_NOTE_ON: minsyn_note_on(driver,chid,a,b); break;

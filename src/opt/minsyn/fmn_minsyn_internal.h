@@ -130,6 +130,10 @@ struct bigpc_synth_driver_minsyn {
   int16_t sine[MINSYN_WAVE_SIZE_SAMPLES]; // reference wave for generating new ones.
   int instrument_by_chid[16];
   int songpause;
+  
+  // At startup only, wait so many frames before updating music. Sound effects can play around it.
+  // This is a cheesy mitigation for rough starts to the audio driver, seemingly due to the general heavy load around startup.
+  int startup_delay;
 };
 
 #define DRIVER ((struct bigpc_synth_driver_minsyn*)driver)
