@@ -11,12 +11,6 @@ I want this thing ready to show off at GDEX 2023. Anything not necessary for dem
 
 And tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### 2023-04-29 render-redesign
-
-- [x] !!! I'm rendering the "from" state of transitions during update, not render. Find a way to make that OK. (it does work, both web and native)
-- [x] Redesign sprites to interact more closely with render? Maybe not worth the effort, it's a lot of effort. ...not worth it
-- [x] All thru the render unit, I've been treating pixels as RGBA. That's not the real design, figure it out right.
-
 ### May
 
 - [ ] Beta test.
@@ -24,16 +18,13 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
-- [x] Music consistently skips a few beats at startup.
-- [x] Tweak firenozzle timing on third screen so a determined speedrunner can pass thru without stopping.
-- [x] seamonster and raccoon: Delay before first missile? I want to make it more deterministic for speed running. ...i think raccoons are ok.
 
 ### After GDEX
 
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] MacOS: App icon
-- [ ] Eliminate transparency from map images, incorporate the background in each tile.
+- [x] Eliminate transparency from map images, incorporate the background in each tile.
 - [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.

@@ -9,33 +9,24 @@ void fmn_render_freshen_map() {
   const int16_t ts=fmn_render_global.tilesize;
   const int16_t halfts=ts>>1;
   
-  // One or two mintiles per cell.
-  //TODO It's stupid, treating these as transparent. Just draw each cell with its full content.
+  // One mintile per cell.
   {
-    struct fmn_draw_mintile vtxv[FMN_COLC*FMN_ROWC*2];
-    int vtxc=0;
+    struct fmn_draw_mintile vtxv[FMN_COLC*FMN_ROWC];
+    struct fmn_draw_mintile *vtx=vtxv;
     const uint8_t *src=fmn_global.map;
     int yi=FMN_ROWC;
     int16_t dsty=halfts;
     for (;yi-->0;dsty+=ts) {
       int xi=FMN_COLC;
       int dstx=halfts;
-      for (;xi-->0;src++,dstx+=ts) {
-        vtxv[vtxc].x=dstx;
-        vtxv[vtxc].y=dsty;
-        vtxv[vtxc].xform=0;
-        vtxv[vtxc].tileid=0;
-        vtxc++;
-        if (*src) {
-          vtxv[vtxc].x=dstx;
-          vtxv[vtxc].y=dsty;
-          vtxv[vtxc].xform=0;
-          vtxv[vtxc].tileid=*src;
-          vtxc++;
-        }
+      for (;xi-->0;src++,dstx+=ts,vtx++) {
+        vtx->x=dstx;
+        vtx->y=dsty;
+        vtx->xform=0;
+        vtx->tileid=*src;
       }
     }
-    fmn_draw_mintile(vtxv,vtxc,fmn_global.maptsid);
+    fmn_draw_mintile(vtxv,FMN_COLC*FMN_ROWC,fmn_global.maptsid);
   }
   
   // Plants.
