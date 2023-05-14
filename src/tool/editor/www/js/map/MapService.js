@@ -199,8 +199,9 @@ export class MapService {
     }
     if (resService && map) {
       const myIdAsString = map.id.toString();
+      const mapType = "map" + resService.mapSet;
       for (const { type, object } of resService.toc) {
-        if (type !== "map") continue;
+        if (type !== mapType) continue;
         if (!object || (object === map)) continue;
         for (const command of object.commands) {
           if ((command[0] === "door") || (command[0] === "buried_door")) {
@@ -253,10 +254,11 @@ export class MapService {
     switch (poi.type) {
     
       case "entrance": {
-          for (const { type, object } of resService.toc) {
-            if (type !== "map") continue;
+          for (const { type, object, qualifier } of resService.toc) {
+            if (type !== "map" + resService.mapSet) continue;
             if (object === map) continue;
             if (object.id !== poi.mapId) continue;
+            if (qualifier !== map.qualifier) continue;
             for (const command of object.commands) {
               if (command[0] !== "door") continue;
               if (+command[1] !== poi.dstx) continue;

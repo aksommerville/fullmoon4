@@ -84,6 +84,11 @@ export class ToolbarUi {
     
     this.dom.spawn(this.element, "DIV", ["spacer"]);
     
+    const mapSetMenu = this.dom.spawn(this.element, "SELECT", ["mapSet"], { "on-change": () => this.onMapSetSelected() });
+    this.dom.spawn(mapSetMenu, "OPTION", { value: "-full" }, "Full");
+    this.dom.spawn(mapSetMenu, "OPTION", { value: "-demo" }, "Demo");
+    mapSetMenu.value = this.resService.mapSet;
+    
     const shortcutsMenu = this.dom.spawn(this.element, "SELECT", ["shortcuts"], { "on-change": () => this.onShortcutSelected() });
     this.dom.spawn(shortcutsMenu, "OPTION", { value: "", disabled: "disabled" }, "Shortcuts");
     this.dom.spawn(shortcutsMenu, "OPTION", { value: "#map/all" }, "Maps");
@@ -143,6 +148,10 @@ export class ToolbarUi {
     const destination = menu.value;
     menu.value = "";
     if (destination) this.window.location = destination;
+  }
+  
+  onMapSetSelected() {
+    this.resService.mapSet = this.element.querySelector(".mapSet").value;
   }
   
   /* Palette.
