@@ -19,6 +19,9 @@ export class MapAllUi {
     this.worldMapGenerator = worldMapGenerator;
     this.window = window;
     
+    // Owner:
+    this.setTattleText = (text) => {};
+    
     this.NATURAL_TILESIZE = 16; // for rendering scratch maps. should match the real game.
     this.TILESIZE = 4; // for our measurement purposes
     this.SPACING = 1;
@@ -34,6 +37,9 @@ export class MapAllUi {
     this.worldMap = this.worldMapGenerator.generateWorldMap(
       this.resService.toc.filter(res => res.type === mapResType)
     );
+    
+    this.element.addEventListener("mousemove", e => this.onMouseMove(e));
+    this.lastTattleMapId = 0;
     
     this.buildUi();
     this.renderSoon();
@@ -154,5 +160,22 @@ export class MapAllUi {
         context.fillRect(x, y, this.NATURAL_TILESIZE, this.NATURAL_TILESIZE);
       }
     }
+  }
+  
+  onMouseMove(event) {
+    const mapId = this.getMapIdForEvent(event);
+    if (mapId === this.lastTattleMapId) return;
+    this.lastTattleMapId = mapId;
+    this.setTattleText(mapId || "");
+  }
+  
+  getMapIdForEvent(event) {
+    const x = Math.floor(event.offsetX / this.COLW);
+    if ((x < 0) || (x >= this.worldMap.w)) return 0;
+    const y = Math.floor(event.offsetY / this.ROWH);
+    if ((y < 0) || (y >= this.worldMap.h)) return 0;
+    const map = this.worldMap.maps[y * this.worldMap.w + x];
+    if (!map) return 0;
+    return map.id;
   }
 }

@@ -18,7 +18,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
-- [ ] editor:ImageAllUi: Show names.
+- [x] editor:ImageAllUi: Show names.
+- [ ] Can I make rubber trees that you can squeeze between them by pushing?
+- [ ] Westward blowback seems slower than eastward, or is that my imagination?
 
 ### Full Maps
 
@@ -26,6 +28,24 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.
 - [ ] image castleext: Water-into-trees, 4 tiles needed.
+- [ ] Decide where each treasure goes. Filling in with Cheese.
+- [ ] desert: tiles for forest boundary
+- [ ] image steppe: Entirely temporary
+- [ ] steppe/beach boundary in blowback border
+- [ ] Sea should be the same color everywhere, pick one.
+- [ ] Church: join path at welcome mat.
+- [ ] village: wattle-and-daub houses need an extensible roof
+
+#### Major areas
+
+- [ ] Castle (int) -- seven_circles
+- [ ] Village N -- snowglobe
+- [ ] Forest C -- toil_and_trouble
+- [ ] Swamp SW -- One Hundred Wheels?
+- [ ] Beach SE -- eye_of_newt
+- [ ] Steppe N -- First Frost?
+- [ ] Desert E -- Blood for Silver
+- [ ] Mountains NW -- A Stone to Take My Place?
 
 ### After GDEX
 
@@ -44,7 +64,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.
-- - [ ] MapAllUi: Populate tattle.
+- - [x] MapAllUi: Populate tattle.
 - - [ ] Delete maps (and resources in general)
 - - [ ] ImageAllUi: Show names
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.

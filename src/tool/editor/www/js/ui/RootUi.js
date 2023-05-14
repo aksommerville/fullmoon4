@@ -100,6 +100,7 @@ export class RootUi {
   navigateMapAll(args) {
     const content = this.clearContent();
     this.contentController = this.dom.spawnController(content, MapAllUi);
+    this.contentController.setTattleText = (text) => this.toolbar.setTattleText(text);
   }
   
   navigateImage(args) {

@@ -225,6 +225,16 @@ export class WorldMapGenerator {
       }
     }
   }
+  
+  growMap(input, dx, dy) {
+    if (!dx && !dy) return input;
+    if (dx && dy) throw new Error(`WorldMapGenerator.growMap(${dx},${dy}) one arg must be zero`);
+    const output = new WorldMap(input.w + Math.abs(dx), input.h + Math.abs(dy));
+    const dstx = (dx < 0) ? -dx : 0;
+    const dsty = (dy < 0) ? -dy : 0;
+    this.copyMap(output, dstx, dsty, input);
+    return output;
+  }
 }
 
 WorldMapGenerator.singleton = true;

@@ -24,7 +24,7 @@ export class ImageAllUi {
       if (res.type !== "image") continue;
       const card = this.dom.spawn(this.element, "DIV", ["card"], { "on-click": () => this.onClickImage(res.id) });
       this.dom.spawn(card, "IMG", { src: res.path });
-      this.dom.spawn(card, "DIV", res.id);
+      this.dom.spawn(card, "DIV", `${res.id}: ${res.name}`);
     }
   }
   
