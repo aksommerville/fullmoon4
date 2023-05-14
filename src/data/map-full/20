@@ -13,3 +13,5 @@
 song toil_and_trouble
 tilesheet dots
 door 10 9 1 8 3
+sprite 6 4 treasure item:BROOM 0 0
+sprite 8 4 treasure item:WAND 0 0

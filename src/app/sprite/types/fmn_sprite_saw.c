@@ -23,12 +23,13 @@ static void saw_locate_limits(struct fmn_sprite *sprite) {
   int8_t row=(int8_t)sprite->y;
   if ((col<0)||(row<0)||(col>=FMN_COLC)||(row>=FMN_ROWC)) return;
   uint8_t cellp=row*FMN_COLC+col;
-  // The track tiles are 0x08 on the left and 0x0a on the right.
+  uint8_t midtile=fmn_global.map[cellp];
+  // We must start on the middle tile. Read left and right until we find something else; that's the end tile.
   // If we don't find an end tile, keep the default +-1.
   uint8_t leftp=0xff,rightp=0xff;
   uint8_t i;
-  for (i=0;i<=col;i++) if (fmn_global.map[cellp-i]==0x08) { leftp=cellp-i; break; }
-  for (i=0;i<FMN_COLC-col;i++) if (fmn_global.map[cellp+i]==0x0a) { rightp=cellp+i; break; }
+  for (i=0;i<=col;i++) if (fmn_global.map[cellp-i]!=midtile) { leftp=cellp-i; break; }
+  for (i=0;i<FMN_COLC-col;i++) if (fmn_global.map[cellp+i]!=midtile) { rightp=cellp+i; break; }
   if (leftp!=0xff) xlo=sprite->x-(cellp-leftp);
   if (rightp!=0xff) xhi=sprite->x+(rightp-cellp);
 }

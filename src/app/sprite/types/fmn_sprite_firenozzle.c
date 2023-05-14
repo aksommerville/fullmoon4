@@ -2,9 +2,19 @@
 #include "app/hero/fmn_hero.h"
 #include "app/fmn_game.h"
 
+/* (range) is the fire size in cells.
+ * (off_time_ds) how long between bursts, in s/10. Bursts are always 1 second (on_time, below).
+ * If (off_time_ds==0):
+ *   (init_phase) is gsbit -- bit off = fire on. Stomp to turn off, the more common case.
+ * If (off_time_ds==1):
+ *   (init_phase) is gsbit -- bit off = fire off. Stomp to turn on, eg for a cheesy trap.
+ * If (off_time_ds>1):
+ *   (init_phase) is the normalized starting time 0..255, turns off at zero.
+ * gsbit zero is not legal. If (off_time_ds,init_phase) both zero, the nozzle is always on.
+ */
 #define range sprite->argv[0]
 #define off_time_ds sprite->argv[1]
-#define init_phase sprite->argv[2] /* gsbit if (off_time_ds==0) */
+#define init_phase sprite->argv[2] /* gsbit if (off_time_ds==0); inverted gsbit if (off_time_ds==1) */
 
 // Direction is knowable canonically from (xform), but we express more comprehensibly as (dx,dy).
 #define dx sprite->sv[0]
@@ -12,6 +22,7 @@
 
 #define period sprite->fv[0]
 #define clock sprite->fv[1]
+#define cool_down_clock sprite->fv[2]
 #define tileid0 sprite->bv[0]
 #define status sprite->bv[1]
 #define flamec sprite->bv[2]
@@ -19,6 +30,7 @@
 #define on_time 1.0f
 #define huff_time 0.80f
 #define width 0.600f
+#define cool_down_time 0.500f /* if actuated by a gsbit, there's a delay before turning off */
 
 // (status) is shared with the renderer
 #define FIRENOZZLE_STATUS_IDLE 0
@@ -30,9 +42,11 @@
  
 static void _firenozzle_gsbit(void *userdata,uint16_t p,uint8_t v) {
   struct fmn_sprite *sprite=userdata;
+  if (off_time_ds==1) v=!v;
   if (v) {
     if (status==FIRENOZZLE_STATUS_IDLE) return;
-    status=FIRENOZZLE_STATUS_IDLE;
+    if (cool_down_clock>0.0f) return;
+    cool_down_clock=cool_down_time;
   } else {
     if (status==FIRENOZZLE_STATUS_PUFF) return;
     status=FIRENOZZLE_STATUS_PUFF;
@@ -70,18 +84,18 @@ static void _firenozzle_init(struct fmn_sprite *sprite) {
   }
   flamec=range;
   tileid0=sprite->tileid;
-  if (off_time_ds) {
+  if (off_time_ds>1) {
     // Run on a cycle, no controller bit.
     period=off_time_ds/10.0f+on_time;
     clock=(init_phase*period)/256.0f;
   } else if (init_phase) {
-    // Control via gsbit. (note that the sense is inverted: BIT OFF means FIRE ON)
+    // Control via gsbit.
     period=clock=0.0f;
     fmn_gs_listen_bit(init_phase,_firenozzle_gsbit,sprite);
     if (fmn_gs_get_bit(init_phase)) {
-      status=FIRENOZZLE_STATUS_IDLE;
+      status=off_time_ds?FIRENOZZLE_STATUS_PUFF:FIRENOZZLE_STATUS_IDLE;
     } else {
-      status=FIRENOZZLE_STATUS_PUFF;
+      status=off_time_ds?FIRENOZZLE_STATUS_IDLE:FIRENOZZLE_STATUS_PUFF;
     }
   } else {
     // Always on.
@@ -131,7 +145,7 @@ static void firenozzle_check_hero(struct fmn_sprite *sprite) {
  */
  
 static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
-  if (off_time_ds) { // timer in play
+  if (off_time_ds>1) { // timer in play
     clock+=elapsed;
     while (clock>=period) clock-=period;
     if (clock>=period-on_time) {
@@ -143,6 +157,13 @@ static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
     } else if (clock>=period-on_time-huff_time) status=FIRENOZZLE_STATUS_HUFF;
     else status=FIRENOZZLE_STATUS_IDLE;
   } else if (status==FIRENOZZLE_STATUS_PUFF) { // controlled externally
+    if (cool_down_clock>0.0f) {
+      if ((cool_down_clock-=elapsed)<=0.0f) {
+        status=FIRENOZZLE_STATUS_IDLE;
+        cool_down_clock=0.0f;
+        return;
+      }
+    }
     firenozzle_check_hero(sprite);
   }
 }

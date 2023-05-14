@@ -69,17 +69,6 @@ Secrets:
  - Written spells and songs. (lowest priority, because they aren't collectible)
  - Pick one of several doors. The compass shows you which one is not a trap.
 
-### Corn
-
-Quantity.
-
-Press button to toss corn.
-Corn on the ground will attract a crow, which after eating the corn will lead you somewhere.
-We'll need some global service that can examine game state and decide where's the next place you should go.
-Crows stick around for say 3 screen transitions?
-
-TODO needs a trick usage or two.
-
 ### Pitcher
 
 Fill with various liquids.
@@ -103,8 +92,7 @@ Quantity.
 Place on soil disturbed by the shovel to plant.
 A planted seed must first be watered, then it sprouts and after some time, blooms.
 A bloomed plant has an item you can collect: seed, nitro, match, corn, coin.
-
-TODO Are seed and corn too similar? Should they be the same thing?
+Seeds on the ground will attract a crow, which after eating will lead you somewhere.
 
 ### Coin
 
@@ -186,3 +174,13 @@ TODO Needs some tricks.
 
 Use to temporarily increase walking speed.
 
+### Membership Hat
+
+Passively changes Dot's appearance.
+A certain class of monster will attack you if not wearing the hat.
+(and since it's an item, you can't do anything else while wearing)
+
+### Snow Globe
+
+Wield like the wand: Hold A, then tap the dpad.
+Wielding in one direction causes an earthquake that shuffles all moveable sprites the opposite direction.
