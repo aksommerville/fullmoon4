@@ -170,6 +170,44 @@ begin 32 # bass
   env 15 0x10 20 0x08 250 .. 10 0x38 15 0x1b 400
 end
 
+#--- Blood For Silver ---
+begin 33 # lead
+  wave 0xff 0x80 0x40 0x20 0x10
+  mixwave 0xc0 0xa0 0x30 0x10 0x08
+  env 20 0x80 30 0x30 300 .. 15 0xff 30 0x40 400
+  mixenv 20 0xff 50 0x80 400
+end
+begin 34 # rhythm guitar
+  wave 0xff 0x80 0x55 0x40 0x34
+  env 20 0x50 30 0x20 300 .. 10 0x90 50 0x40 500
+end
+
+#--- First Frost ---
+begin 35 # lead
+  wave 0x40 0x08 0x18 0x02 0x08
+  env 15 0x80 20 0x10 500 .. 10 0xff 20 0x18 1000
+end
+begin 36 # bass
+  wave 0x40
+  env 40 0xa0 30 0x60 400 .. 30 0xff 30 0x80 500
+end
+begin 37 # late bells
+  wave 0x40
+  env 10 0xa0 25 0x10 400
+end
+
+#--- Gloom For Company ---
+begin 38 # lead
+  wave 0x20 0x04 0x10 0x02 0x08 0x01 0x04
+  mixwave 0x30
+  mixenv 1 0xff 60 0xc0 500
+  env 40 0x80 40 0x40 800 .. 30 0xff 30 0x60 1000
+end
+begin 39 # bass
+  wave 0x80 0x50
+  env 15 0x60 20 0x10 250 .. 10 0xa0 15 0x20 400
+end
+
 #------------------------------------------------ Sound effects ----------------------------------------
 
 sound BELL
@@ -258,42 +296,42 @@ sound TOM_1
   len 0.100
   fm ( 800 10 50 ) 0.5 ( 2000 ) sine
   env ( 0 10 0xffff 30 0x2000 * 0 )
-  mlt 0.200
+  mlt 0.150
 end
 
 sound TOM_2
   len 0.100
   fm ( 800 10 70 ) 0.5 ( 2000 ) sine
   env ( 0 10 0xffff 30 0x2000 * 0 )
-  mlt 0.200
+  mlt 0.150
 end
 
 sound TOM_3
   len 0.100
   fm ( 800 10 100 ) 0.5 ( 2000 ) sine
   env ( 0 10 0xffff 30 0x2000 * 0 )
-  mlt 0.200
+  mlt 0.150
 end
 
 sound TOM_4
   len 0.100
   fm ( 800 10 150 ) 0.7 ( 2000 ) sine
   env ( 0 10 0xffff 30 0x2000 * 0 )
-  mlt 0.200
+  mlt 0.150
 end
 
 sound TOM_5
   len 0.100
   fm ( 800 10 250 ) 0.7 ( 2000 ) sine
   env ( 0 10 0xffff 30 0x2000 * 0 )
-  mlt 0.200
+  mlt 0.150
 end
 
 sound TOM_6
   len 0.100
   fm ( 800 10 350 ) 0.7 ( 2000 ) sine
   env ( 0 10 0xffff 30 0x2000 * 0 )
-  mlt 0.200
+  mlt 0.150
 end
 
 sound CLOSED_HAT

@@ -21,6 +21,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] editor:ImageAllUi: Show names.
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
 - [ ] Westward blowback seems slower than eastward, or is that my imagination?
+- [ ] minsyn drums too loud
 
 ### Full Maps
 
@@ -41,10 +42,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Castle (int) -- seven_circles
 - [ ] Village N -- snowglobe
 - [ ] Forest C -- toil_and_trouble
-- [ ] Swamp SW -- One Hundred Wheels?
+- [ ] Swamp SW -- gloom_for_company
 - [ ] Beach SE -- eye_of_newt
-- [ ] Steppe N -- First Frost?
-- [ ] Desert E -- Blood for Silver
+- [ ] Steppe N -- first_frost
+- [ ] Desert E -- blood_for_silver
 - [ ] Mountains NW -- A Stone to Take My Place?
 
 ### After GDEX

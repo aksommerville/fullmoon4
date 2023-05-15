@@ -29,6 +29,7 @@ export class Synthesizer {
     this.song = null; // regardless of prefs
     this.overrideInstrumentPid = null; // only fiddle should use
     this.pausedForViolin = false; // Song pauses while violin active. Otherwise playback as usual.
+    this.volume15 = 0x40; // Volume for channel 15, it doesn't have a Channel object.
     
     this.preferences.fetchAndListen(p => this.onPreferencesChanged(p));
   }
@@ -135,6 +136,7 @@ export class Synthesizer {
       this.songPlayer = null;
     }
     if (!song) return;
+    this.volume15 = 0x40;
     this.songPlayer = new SongPlayer(this, song);
     this.songPlayer.enable(this.preferences.prefs.musicEnable);
   }
@@ -150,9 +152,13 @@ export class Synthesizer {
     
     // Channel 15 is special, it's for sound effects.
     if (chid === 0x0f) {
+      if ((opcode === 0xb0) && (a === 0x07)) {
+        this.volume15 = b;
+        return;
+      }
       if (opcode !== 0x90) return;
       if (!this.context) return;
-      this.startSoundEffect(a, b, delay);
+      this.startSoundEffect(a, (b * this.volume15) >> 7, delay);
       return;
     }
   

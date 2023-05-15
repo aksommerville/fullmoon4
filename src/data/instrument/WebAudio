@@ -267,6 +267,52 @@ begin 32 # bass
   env 15 80 20 30 250 .. 10 f8 15 5b 400
 end
 
+#--- Blood For Silver ---
+begin 33 # lead
+  wave ffff
+  modRate 1
+  modRange 4
+  modEnv c0 10 ff 100 80 500 00
+  env 20 80 30 30 300 .. 15 ff 30 40 400
+end
+begin 34 # rhythm guitar
+  wave sawtooth
+  env 20 50 30 20 300 .. 10 90 50 40 500
+end
+
+#--- First Frost ---
+begin 35 # lead
+  wave ffff b000
+  modRate 1
+  modRange 1
+  modEnv ff 500 80 1000 00 1 00
+  env 20 80 20 20 500 .. 10 ff 30 30 1000
+end
+begin 36 # bass
+  wave ffff
+  env 40 a0 30 60 400 .. 30 ff 30 80 500
+end
+begin 37 # late bells
+  wave ffff
+  modRate 9
+  modRange 3
+  env 10 a0 25 10 400
+end
+
+#--- Gloom For Company ---
+begin 38 # lead
+  wave 2000 1000
+  modRate 2
+  modRange 1.5
+  env 40 80 40 40 500 .. 30 ff 30 70 1000
+end
+begin 39 # bass
+  wave f0a0 5050
+  modRate 0.5
+  modRange 1
+  env 15 60 20 20 250 .. 10 a0 15 40 400
+end
+
 #-------------------------------------- Final Sound Effects --------------------------------
 
 sound BELL
