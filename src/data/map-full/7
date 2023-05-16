@@ -16,3 +16,5 @@ neighborw 6
 neighbore 8
 neighborn 10
 neighbors 28
+sprite 18 6 treasure item:BROOM 0 0
+sprite 18 9 treasure item:BELL 0 0

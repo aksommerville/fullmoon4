@@ -16,3 +16,5 @@ neighborw 17
 neighborn 25
 neighbore 31
 neighbors 86
+sprite 11 8 treasure item:UMBRELLA 0 0
+sprite 14 7 treasure item:HAT 0 0

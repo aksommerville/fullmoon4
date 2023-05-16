@@ -16,3 +16,5 @@ neighborw 52
 neighbors 26
 neighbore 57
 neighborn 59
+sprite 6 4 treasure item:SNOWGLOBE 0 0
+sprite 11 4 treasure item:COMPASS 0 0

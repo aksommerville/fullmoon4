@@ -17,3 +17,4 @@ neighborn 12
 neighborw 21
 neighbore 23
 sprite 7 4 cow 0 0 0
+sprite 14 2 treasure item:PITCHER 0 0

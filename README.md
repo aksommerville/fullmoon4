@@ -22,6 +22,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
 - [ ] Westward blowback seems slower than eastward, or is that my imagination?
 - [ ] minsyn drums too loud
+- [ ] pushblock: Don't make a sound if we can tell we won't be moving.
+- [ ] wildflower: Option to flip horizontally
 
 ### Full Maps
 

@@ -15,3 +15,5 @@ neighbore 2
 neighborw 4
 neighbors 39
 neighborn 46
+sprite 4 4 treasure item:SHOVEL 0 0
+sprite 7 4 treasure item:CHALK 0 0

@@ -204,18 +204,23 @@ export class MapService {
         if (type !== mapType) continue;
         if (!object || (object === map)) continue;
         for (const command of object.commands) {
-          if ((command[0] === "door") || (command[0] === "buried_door")) {
-            if (command[3] === myIdAsString) {
-              const x = +command[4], y = +command[5];
-              pois.push({
-                type: "entrance",
-                x, y,
-                index: pois.filter(p => p.x === x && p.y === y).length,
-                mapId: object.id,
-                dstx: +command[1],
-                dsty: +command[2],
-              });
-            }
+          let x=-1, y=-1;
+          if ((command[0] === "door") && (command[3] === myIdAsString)) {
+            x = +command[4];
+            y = +command[5];
+          } else if ((command[0] === "buried_door") && (command[4] === myIdAsString)) {
+            x = +command[5];
+            y = +command[6];
+          }
+          if (x >= 0) {
+            pois.push({
+              type: "entrance",
+              x, y,
+              index: pois.filter(p => p.x === x && p.y === y).length,
+              mapId: object.id,
+              dstx: +command[1],
+              dsty: +command[2],
+            });
           }
         }
       }
@@ -233,7 +238,11 @@ export class MapService {
     poi.x = x;
     poi.y = y;
     switch (poi.type) {
-      case "entrance": command[4] = x.toString(); command[5] = y.toString(); break;
+      case "entrance": if (command[0] === "door") {
+          command[4] = x.toString(); command[5] = y.toString();
+        } else {
+          command[5] = x.toString(); command[6] = y.toString();
+        } break;
       case "exit": command[1] = x.toString(); command[2] = y.toString(); break;
       case "sprite": command[1] = x.toString(); command[2] = y.toString(); break;
       case "hero": command[1] = x.toString(); command[2] = y.toString(); break;
@@ -254,20 +263,28 @@ export class MapService {
     switch (poi.type) {
     
       case "entrance": {
-          for (const { type, object, qualifier } of resService.toc) {
+          for (const { type, object } of resService.toc) {
             if (type !== "map" + resService.mapSet) continue;
             if (object === map) continue;
             if (object.id !== poi.mapId) continue;
-            if (qualifier !== map.qualifier) continue;
             for (const command of object.commands) {
-              if (command[0] !== "door") continue;
-              if (+command[1] !== poi.dstx) continue;
-              if (+command[2] !== poi.dsty) continue;
-              if (+command[3] !== map.id) continue;
-              if (+command[4] !== poi.x) continue;
-              if (+command[5] !== poi.y) continue;
-              remoteMapHandle[0] = object;
-              return command;
+              if (command[0] === "door") {
+                if (+command[1] !== poi.dstx) continue;
+                if (+command[2] !== poi.dsty) continue;
+                if (+command[3] !== map.id) continue;
+                if (+command[4] !== poi.x) continue;
+                if (+command[5] !== poi.y) continue;
+                remoteMapHandle[0] = object;
+                return command;
+              } else if (command[0] === "buried_door") {
+                if (+command[1] !== poi.dstx) continue;
+                if (+command[2] !== poi.dsty) continue;
+                if (+command[4] !== map.id) continue;
+                if (+command[5] !== poi.x) continue;
+                if (+command[6] !== poi.y) continue;
+                remoteMapHandle[0] = object;
+                return command;
+              }
             }
           }
         } break;
