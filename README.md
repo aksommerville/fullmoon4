@@ -31,13 +31,13 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.
 - [ ] image castleext: Water-into-trees, 4 tiles needed.
-- [ ] Decide where each treasure goes. Filling in with Cheese.
+- [x] Decide where each treasure goes. Filling in with Cheese.
 - [ ] desert: tiles for forest boundary
 - [ ] image steppe: Entirely temporary
 - [ ] steppe/beach boundary in blowback border
 - [ ] Sea should be the same color everywhere, pick one.
 - [ ] Church: join path at welcome mat.
-- [ ] village: wattle-and-daub houses need an extensible roof
+- [x] village: wattle-and-daub houses need an extensible roof
 
 #### Major areas
 

@@ -231,7 +231,7 @@ int8_t fmn_load_map(
   fmn_map_for_each_command(serial,serialc,fmn_load_map_cb_command,&ctx);
   
   bigpc_load_cellphysics();
-  bigpc_autobloom_plants();
+  if (!fmn_global.indoors) bigpc_autobloom_plants();
   return 1;
 }
 

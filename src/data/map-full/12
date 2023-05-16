@@ -9,7 +9,7 @@
 3131142311112421231111242121231112020225
 0200303131313131313131313131311423120225
 1b1b1b1b1c020202020202020402023014220125
-2b2b2b2b2c020202021a1b1b1b1b1b1c20220225
+5d5d5d5d5e020202021a1b1b1b1b1c0220220225
 tilesheet village
 song snowglobe
 neighbors 11
@@ -17,3 +17,14 @@ neighborw 22
 neighbore 53
 neighborn 60
 sprite 7 6 gate 0 0 0
+door 12 5 113 7 10
+door 17 1 114 14 9
+door 13 5 113 7 10
+buried_treasure 2 3 gs:graverob1 item:COIN
+buried_treasure 4 3 gs:graverob2 item:COIN
+buried_treasure 6 3 gs:graverob3 item:COIN
+buried_treasure 8 3 gs:graverob4 item:COIN
+buried_treasure 2 5 gs:graverob5 item:COIN
+buried_treasure 4 5 gs:graverob6 item:COIN
+buried_treasure 6 5 gs:graverob7 item:COIN
+buried_treasure 8 5 gs:graverob8 item:COIN
