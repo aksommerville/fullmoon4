@@ -5,6 +5,7 @@
  */
  
 void fmn_web_log(const char *msg);
+void fmn_web_log_event(const char *msg);
 
 /* Represent numbers.
  */
@@ -246,6 +247,46 @@ void fmn_log(const char *fmt,...) {
   if (dstc>=sizeof(dst)) dstc=sizeof(dst)-1;
   dst[dstc]=0;
   fmn_web_log(dst);
+}
+
+/* fmn_log_event: printf-like logging.
+ */
+ 
+void fmn_log_event(const char *key,const char *fmt,...) {
+  if (!fmt||!fmt[0]) fmt="";
+  char dst[256];
+  int dstc=0;
+  if (key) {
+    for (;*key;key++) {
+      if (dstc>=32) break;
+      dst[dstc++]=*key;
+    }
+    dst[dstc++]=':';
+  }
+  va_list vargs;
+  va_start(vargs,fmt);
+  while (*fmt) {
+    int cpc=0;
+    while (fmt[cpc]&&(fmt[cpc]!='%')) cpc++;
+    if (cpc) {
+      if (dstc>sizeof(dst)-cpc) break;
+      memcpy(dst+dstc,fmt,cpc);
+      dstc+=cpc;
+      fmt+=cpc;
+    } else if ((fmt[0]=='%')&&(fmt[1]=='%')) {
+      if (dstc>=sizeof(dst)) break;
+      dst[dstc++]='%';
+    } else {
+      struct fmn_log_unit unit;
+      fmt+=fmn_log_unit_eval(&unit,fmt);
+      int err=fmn_log_unit_output(dst+dstc,sizeof(dst)-dstc,&unit,&vargs);
+      if ((err<0)||(dstc>(int)sizeof(dst)-err)) break;
+      dstc+=err;
+    }
+  }
+  if (dstc>=sizeof(dst)) dstc=sizeof(dst)-1;
+  dst[dstc]=0;
+  fmn_web_log_event(dst);
 }
 
 /* memcpy and friends

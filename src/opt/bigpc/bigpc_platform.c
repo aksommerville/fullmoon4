@@ -205,7 +205,6 @@ int8_t fmn_load_map(
     const uint8_t *cmdv,uint16_t cmdc
   )
 ) {
-  fmn_log_event("map","%d",mapid);
   
   const uint8_t *serial=0;
   int serialc=fmn_datafile_get_any(&serial,bigpc.datafile,FMN_RESTYPE_MAP,mapid);
@@ -249,7 +248,6 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
     for (;i-->0;already++) {
       if (already->x!=x) continue;
       if (already->y!=y) continue;
-      fmn_log_event("double-plant","%d,%d",x,y);
       return -1;
     }
   }
@@ -264,14 +262,11 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
     for (;i-->0;q++) {
       if ((q->state==FMN_PLANT_STATE_NONE)||(q->state==FMN_PLANT_STATE_DEAD)) {
         plant=q;
-        fmn_log_event("reuse-plant","%d,%d",x,y);
         break;
       }
     }
   }
   if (!plant) return -1;
-  
-  fmn_log_event("plant","%d,%d",x,y);
   
   if (fmn_global.map[y*FMN_COLC+x]==0x0f) {
     fmn_global.map[y*FMN_COLC+x]=0x00;
@@ -320,7 +315,6 @@ uint32_t fmn_begin_sketch(uint16_t x,uint16_t y) {
       }
     }
     if (!sketch) return 0xffffffff;
-    fmn_log_event("sketch","%d,%d 0x%x",x,y,sketch->bits);
     sketch->x=x;
     sketch->y=y;
     sketch->pad=0;

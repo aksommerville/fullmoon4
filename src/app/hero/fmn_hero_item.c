@@ -89,6 +89,7 @@ static void fmn_hero_seed_begin() {
   if (tileid==0x0f) { // plantable dirt
     int8_t result=fmn_add_plant(fmn_global.shovelx,fmn_global.shovely);
     if (result>=0) { // planted!
+      fmn_log_event("plant","%d,%d",fmn_global.shovelx,fmn_global.shovely);
       fmn_sound_effect(FMN_SFX_PLANT);
       fmn_map_dirty();
       return;
@@ -123,6 +124,7 @@ static void fmn_hero_seed_begin() {
     return;
   }
   fmn_sound_effect(FMN_SFX_SEED_DROP);
+  fmn_log_event("seed-drop","%d,%d",fmn_global.shovelx,fmn_global.shovely);
 }
 
 /* Coin.
@@ -670,8 +672,10 @@ static void fmn_hero_chalk_begin() {
   uint32_t bits=fmn_begin_sketch(x,y);
   if (bits==0xffffffff) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+    fmn_log_event("sketch-reject","%d,%d",x,y);
     return;
   }
+  fmn_log_event("sketch","%d,%d,0x%x",x,y,bits);
   fmn_hero.chalking=2; // there will be one update between here and the modal; ignore it // TODO render-redesign: is this still true?
   struct fmn_menu *menu=fmn_begin_menu(FMN_MENU_CHALK,bits);
   if (!menu) return;

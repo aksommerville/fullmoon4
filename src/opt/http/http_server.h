@@ -1,0 +1,23 @@
+/* http_server.h
+ * Private.
+ */
+ 
+#ifndef HTTP_SERVER_H
+#define HTTP_SERVER_H
+
+struct http_server {
+  int refc;
+  struct http_context *context;
+  int fd;
+};
+ 
+void http_server_del(struct http_server *server);
+int http_server_ref(struct http_server *server);
+
+struct http_server *http_server_new(struct http_context *context);
+
+int http_server_init_tcp_stream(struct http_server *server);
+int http_server_bind(struct http_server *server,const char *host,int port);
+int http_server_listen(struct http_server *server,int clientc);
+
+#endif

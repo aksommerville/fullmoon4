@@ -77,8 +77,10 @@ int fmn_game_load_map(int mapid) {
   int err=fmn_load_map(mapid,cb_spawn);
   if (err<=0) {
     fmn_log("map:%d not found",mapid);
+    fmn_log_event("map-not-found","%d",mapid);
     return err;
   }
+  fmn_log_event("map","%d",mapid);
   
   if (fmn_global.facedir_gsbit_cw) fmn_gs_set_bit(fmn_global.facedir_gsbit_cw,0);
   if (fmn_global.facedir_gsbit_ccw) fmn_gs_set_bit(fmn_global.facedir_gsbit_ccw,0);

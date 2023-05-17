@@ -24,6 +24,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] minsyn drums too loud
 - [ ] pushblock: Don't make a sound if we can tell we won't be moving.
 - [ ] wildflower: Option to flip horizontally
+- [ ] Native fiddle tool.
 
 ### Full Maps
 

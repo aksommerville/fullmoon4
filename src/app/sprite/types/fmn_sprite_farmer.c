@@ -142,7 +142,10 @@ static void farmer_begin_SOW(struct fmn_sprite *sprite,int8_t col,int8_t row) {
   sprite->physics=physics0;
   sprite->tileid=tileid0;
   if (fmn_add_plant(col,row)<0) {
+    fmn_log_event("plant-rejected","%d,%d",col,row);
     farmer_begin_GO_HOME(sprite);
+  } else {
+    fmn_log_event("plant","%d,%d",col,row);
   }
   fmn_map_dirty();
 }
