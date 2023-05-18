@@ -8,6 +8,16 @@
 struct http_xfer {
   int refc;
   struct http_context *context;
+  int hold;
+  
+  int method;
+  char *path; // verbatim, including query
+  int pathc;
+  int status_code;
+  char *status_text;
+  int status_textc;
+  char *body;
+  int bodyc,bodya;
 };
  
 void http_xfer_del(struct http_xfer *xfer);

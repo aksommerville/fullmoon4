@@ -16,3 +16,21 @@ const char *http_method_repr(int method) {
   }
   return "?";
 }
+
+/* URL encoding.
+ */
+ 
+int http_url_encode(char *dst,int dsta,const char *src,int srcc) {
+  return -1;//TODO
+}
+
+int http_url_decode(char *dst,int dsta,const char *src,int srcc) {
+  return -1;//TODO
+}
+
+/* Integers.
+ */
+ 
+int http_int_eval(int *dst,const char *src,int srcc) {
+  return -1;//TODO
+}

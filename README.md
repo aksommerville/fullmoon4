@@ -13,7 +13,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
-- [ ] Beta test.
+- [x] Beta test.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.

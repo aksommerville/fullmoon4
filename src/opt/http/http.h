@@ -84,6 +84,8 @@ int http_websocket_send(struct http_socket *socket,int type,const void *v,int c)
 
 /* Selected API for reading request xfers.
  * More details are available in http_xfer.h.
+ * If you are reading a bunch of query params, it's way more efficient to iterate than to get each individually.
+ * Query parameters longer than some internal limit will be quietly ignored. Currently 1024 bytes.
  */
 int http_xfer_get_method(const struct http_xfer *xfer);
 int http_xfer_get_path_verbatim(void *dstpp,const struct http_xfer *xfer); // escapes encoded, query included
@@ -168,10 +170,15 @@ int http_xfer_append_query(struct http_xfer *xfer,const char *k,int kc,const cha
 int http_xfer_append_query_int(struct http_xfer *xfer,const char *k,int kc,int v);
 int http_xfer_set_header(struct http_xfer *xfer,const char *k,int kc,const char *v,int vc);
 int http_xfer_append_body(struct http_xfer *xfer,const void *src,int srcc);
+int http_xfer_set_body(struct http_xfer *xfer,const void *src,int srcc);
+//TODO I think we need a one-shot path and query setter. As is, we inefficiently reallocate the path for each param.
 
 /* General helpers.
  *************************************************************************/
  
 const char *http_method_repr(int method);
+int http_url_encode(char *dst,int dsta,const char *src,int srcc);
+int http_url_decode(char *dst,int dsta,const char *src,int srcc);
+int http_int_eval(int *dst,const char *src,int srcc);
 
 #endif

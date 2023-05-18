@@ -22,7 +22,8 @@
 
 #define period sprite->fv[0]
 #define clock sprite->fv[1]
-#define cool_down_clock sprite->fv[2]
+#define stage_clock sprite->fv[2]
+#define change_clock sprite->fv[3]
 #define tileid0 sprite->bv[0]
 #define status sprite->bv[1]
 #define flamec sprite->bv[2]
@@ -30,7 +31,7 @@
 #define on_time 1.0f
 #define huff_time 0.80f
 #define width 0.600f
-#define cool_down_time 0.500f /* if actuated by a gsbit, there's a delay before turning off */
+#define min_stage_time 0.250f /* if actuated by a gsbit, must be on or off so long before changing */
 
 // (status) is shared with the renderer
 #define FIRENOZZLE_STATUS_IDLE 0
@@ -45,11 +46,10 @@ static void _firenozzle_gsbit(void *userdata,uint16_t p,uint8_t v) {
   if (off_time_ds==1) v=!v;
   if (v) {
     if (status==FIRENOZZLE_STATUS_IDLE) return;
-    if (cool_down_clock>0.0f) return;
-    cool_down_clock=cool_down_time;
+    change_clock=min_stage_time-stage_clock;
   } else {
     if (status==FIRENOZZLE_STATUS_PUFF) return;
-    status=FIRENOZZLE_STATUS_PUFF;
+    change_clock=min_stage_time-stage_clock;
   }
 }
 
@@ -145,6 +145,7 @@ static void firenozzle_check_hero(struct fmn_sprite *sprite) {
  */
  
 static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
+  stage_clock+=elapsed;
   if (off_time_ds>1) { // timer in play
     clock+=elapsed;
     while (clock>=period) clock-=period;
@@ -156,15 +157,21 @@ static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
       firenozzle_check_hero(sprite);
     } else if (clock>=period-on_time-huff_time) status=FIRENOZZLE_STATUS_HUFF;
     else status=FIRENOZZLE_STATUS_IDLE;
-  } else if (status==FIRENOZZLE_STATUS_PUFF) { // controlled externally
-    if (cool_down_clock>0.0f) {
-      if ((cool_down_clock-=elapsed)<=0.0f) {
-        status=FIRENOZZLE_STATUS_IDLE;
-        cool_down_clock=0.0f;
-        return;
+  } else { // controlled by gsbit
+    if (change_clock!=0.0f) {
+      if ((change_clock-=elapsed)<=0.0f) {
+        stage_clock=0.0f;
+        change_clock=0.0f;
+        if (status==FIRENOZZLE_STATUS_PUFF) {
+          status=FIRENOZZLE_STATUS_IDLE;
+        } else {
+          status=FIRENOZZLE_STATUS_PUFF;
+        }
       }
     }
-    firenozzle_check_hero(sprite);
+    if (status==FIRENOZZLE_STATUS_PUFF) {
+      firenozzle_check_hero(sprite);
+    }
   }
 }
 
