@@ -1,6 +1,9 @@
 #include "fiddle_internal.h"
 #include <signal.h>
 #include <unistd.h>
+#include <sys/poll.h>
+
+struct http_xfer *fiddle_held_xfer=0;//XXX
 
 struct fiddle fiddle={0};
 
@@ -44,7 +47,7 @@ int main(int argc,char **argv) {
   
   if (
     !http_serve(fiddle.http,fiddle.port)||
-    !http_listen(fiddle.http,0,"/*",fiddle_httpcb_default,0)
+    !http_listen(fiddle.http,0,"/**",fiddle_httpcb_default,0)
   ) {
     fprintf(stderr,"%s: Failed to initialize HTTP server on port %d.\n",fiddle.exename,fiddle.port);
     fiddle_cleanup();
@@ -57,6 +60,26 @@ int main(int argc,char **argv) {
       fprintf(stderr,"%s: Error updating HTTP context.\n",fiddle.exename);
       fiddle_cleanup();
       return 1;
+    }
+    if (!http_context_get_server_by_index(fiddle.http,0)) {
+      fprintf(stderr,"%s: Abort due to server removal.\n",fiddle.exename);
+      fiddle_cleanup();
+      return 1;
+    }
+    
+    //XXX
+    if (fiddle_held_xfer) {
+      struct pollfd pollfd={.fd=STDIN_FILENO,.events=POLLIN};
+      if (poll(&pollfd,1,0)>0) {
+        char msg[256];
+        int msgc=read(STDIN_FILENO,msg,sizeof(msg));
+        http_xfer_set_body(fiddle_held_xfer,msg,msgc);
+        http_xfer_set_header(fiddle_held_xfer,"Content-Type",12,"text/plain",-1);
+        http_xfer_set_status(fiddle_held_xfer,200,0);
+        http_xfer_ready(fiddle_held_xfer);
+        http_xfer_del(fiddle_held_xfer);
+        fiddle_held_xfer=0;
+      }
     }
   }
   

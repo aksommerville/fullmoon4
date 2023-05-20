@@ -11,8 +11,10 @@
 #include <errno.h>
 #include <netdb.h>
 #include <sys/socket.h>
+#include <stdarg.h>
 
 #include "http.h"
+#include "http_dict.h"
 #include "http_context.h"
 #include "http_server.h"
 #include "http_socket.h"

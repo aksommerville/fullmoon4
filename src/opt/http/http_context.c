@@ -19,6 +19,11 @@ void http_context_del(struct http_context *context) {
     free(context->serverv);
   }
   
+  if (context->socketv) {
+    while (context->socketc-->0) http_socket_del(context->socketv[context->socketc]);
+    free(context->socketv);
+  }
+  
   free(context);
 }
 
@@ -130,6 +135,70 @@ void http_context_remove_server(struct http_context *context,struct http_server 
   }
 }
 
+/* Attach a new socket.
+ */
+ 
+struct http_socket *http_context_add_new_socket(struct http_context *context,int fd) {
+  if (!context||(fd<0)) return 0;
+  if (context->socketc>=context->socketa) {
+    int na=context->socketa+16;
+    if (na>INT_MAX/sizeof(void*)) return 0;
+    void *nv=realloc(context->socketv,sizeof(void*)*na);
+    if (!nv) return 0;
+    context->socketv=nv;
+    context->socketa=na;
+  }
+  struct http_socket *socket=http_socket_new(context);
+  if (!socket) return 0;
+  context->socketv[context->socketc++]=socket;
+  socket->fd=fd;
+  return socket;
+}
+
+/* Remove socket.
+ */
+ 
+void http_context_remove_socket(struct http_context *context,struct http_socket *socket) {
+  if (!context||!socket) return;
+  int i=context->socketc;
+  while (i-->0) {
+    if (context->socketv[i]!=socket) continue;
+    context->socketc--;
+    memmove(context->socketv+i,context->socketv+i+1,sizeof(void*)*(context->socketc-i));
+    http_socket_del(socket);
+    return;
+  }
+}
+
+/* Get server or socket by fd or index.
+ */
+ 
+struct http_server *http_context_get_server_by_index(const struct http_context *context,int p) {
+  if (!context||(p<0)) return 0;
+  if (p>=context->serverc) return 0;
+  return context->serverv[p];
+}
+
+struct http_server *http_context_get_server_by_fd(const struct http_context *context,int fd) {
+  if (!context||(fd<0)) return 0;
+  int i=context->serverc;
+  while (i-->0) {
+    struct http_server *server=context->serverv[i];
+    if (server->fd==fd) return server;
+  }
+  return 0;
+}
+ 
+struct http_socket *http_context_get_socket_by_fd(const struct http_context *context,int fd) {
+  if (!context||(fd<0)) return 0;
+  int i=context->socketc;
+  while (i-->0) {
+    struct http_socket *socket=context->socketv[i];
+    if (socket->fd==fd) return socket;
+  }
+  return 0;
+}
+
 /* Create server, public convenience.
  */
  
@@ -202,4 +271,27 @@ struct http_listener *http_listen_websocket(
   }
   
   return listener;
+}
+
+/* Find listener for request.
+ */
+ 
+struct http_listener *http_context_find_listener_for_request(
+  const struct http_context *context,
+  const struct http_xfer *req
+) {
+  if (!context||!req) return 0;
+  const char *path=0;
+  int pathc=http_xfer_get_path(&path,req);
+  if ((pathc<0)||(pathc>sizeof(path))) return 0;
+  int method=http_xfer_get_method(req);
+  struct http_listener **p=context->listenerv;
+  int i=context->listenerc;
+  for (;i-->0;p++) {
+    struct http_listener *listener=*p;
+    if (listener->method&&(listener->method!=method)) continue;
+    if (listener->pathc&&!http_wildcard_match(listener->path,listener->pathc,path,pathc)) continue;
+    return listener;
+  }
+  return 0;
 }

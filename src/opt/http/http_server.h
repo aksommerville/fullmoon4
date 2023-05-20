@@ -20,4 +20,9 @@ int http_server_init_tcp_stream(struct http_server *server);
 int http_server_bind(struct http_server *server,const char *host,int port);
 int http_server_listen(struct http_server *server,int clientc);
 
+/* Accept one connection, update all state accordingly.
+ * Normally creates a new socket in the context.
+ */
+int http_server_accept(struct http_server *server);
+
 #endif

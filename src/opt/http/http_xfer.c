@@ -8,8 +8,8 @@ void http_xfer_del(struct http_xfer *xfer) {
   if (!xfer) return;
   if (xfer->refc-->1) return;
   
-  if (xfer->path) free(xfer->path);
-  if (xfer->status_text) free(xfer->status_text);
+  if (xfer->line) free(xfer->line);
+  http_dict_cleanup(&xfer->headers);
   if (xfer->body) free(xfer->body);
   
   free(xfer);
@@ -42,248 +42,109 @@ struct http_xfer *http_xfer_new(struct http_context *context) {
 
 /* Trivial accessors.
  */
- 
-int http_xfer_get_method(const struct http_xfer *xfer) {
-  return xfer->method;
-}
-
-int http_xfer_get_path_verbatim(void *dstpp,const struct http_xfer *xfer) {
-  *(void**)dstpp=xfer->path;
-  return xfer->pathc;
-}
-
-int http_xfer_get_body(void *dstpp,const struct http_xfer *xfer) {
-  *(void**)dstpp=xfer->body;
-  return xfer->bodyc;
-}
-
-int http_xfer_set_status(struct http_xfer *xfer,int code,const char *fmt,...) {
-  xfer->status_code=code;
-  if (fmt&&fmt[0]) {
-    va_list vargs;
-    va_start(vargs,fmt);
-    char tmp[256];
-    int tmpc=vsnprintf(tmp,sizeof(tmp),fmt,vargs);
-    if ((tmpc>0)&&(tmpc<sizeof(tmp))) {
-      char *nv=malloc(tmpc+1);
-      if (nv) {
-        if (xfer->status_text) free(xfer->status_text);
-        xfer->status_text=nv;
-        xfer->status_textc=tmpc;
-        return 0;
-      }
-    }
-  }
-  xfer->status_textc=0;
-  return 0;
-}
 
 int http_xfer_hold(struct http_xfer *xfer) {
-  xfer->hold=1;
+  if (!xfer||(xfer->state!=HTTP_XFER_STATE_UNSET)) return -1;
+  xfer->state=HTTP_XFER_STATE_DEFERRED;
   return 0;
 }
 
 int http_xfer_ready(struct http_xfer *xfer) {
-  xfer->hold=0;
-  //TODO do we need to notify the context?
+  if (!xfer||(xfer->state!=HTTP_XFER_STATE_DEFERRED)) return -1;
+  xfer->state=HTTP_XFER_STATE_DEFERRAL_COMPLETE;
   return 0;
 }
 
-int http_xfer_set_method(struct http_xfer *xfer,int method) {
-  xfer->method=method;
-  return 0;
-}
-
-int http_xfer_set_path_verbatim(struct http_xfer *xfer,const char *src,int srcc) {
-  if (!src) srcc=0; else if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
-  char *nv=0;
-  if (srcc) {
-    if (!(nv=malloc(srcc+1))) return -1;
-    memcpy(nv,src,srcc);
-    nv[srcc]=0;
-  }
-  if (xfer->path) free(xfer->path);
-  xfer->path=nv;
-  xfer->pathc=srcc;
-  return 0;
-}
-
-/* Path without query, resolving escapes.
+/* Access to Request-Line or Status-Line.
  */
-
-int http_xfer_get_path(char *dst,int dsta,const struct http_xfer *xfer) {
-  const char *src=xfer->path;
+ 
+int http_xfer_get_status(const struct http_xfer *xfer) {
+  if (!xfer) return 0;
+  int srcp=0;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]>0x20)) srcp++;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]<=0x20)) srcp++;
+  const char *src=xfer->line+srcp;
   int srcc=0;
-  while ((srcc<xfer->pathc)&&(xfer->path[srcc]!='?')) srcc++;
-  return http_url_decode(dst,dsta,src,srcc);
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp++]>0x20)) srcc++;
+  int status=0;
+  if (http_int_eval(&status,src,srcc)<0) return 0;
+  return status;
 }
 
-int http_xfer_set_path(struct http_xfer *xfer,const char *src,int srcc) {
+int http_xfer_get_status_message(void *dstpp,const struct http_xfer *xfer) {
+  if (!xfer) return 0;
+  int srcp=0;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]>0x20)) srcp++;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]<=0x20)) srcp++;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]>0x20)) srcp++;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]<=0x20)) srcp++;
+  *(void**)dstpp=xfer->line+srcp;
+  return xfer->linec-srcp;
+}
+
+int http_xfer_get_method(const struct http_xfer *xfer) {
+  if (!xfer) return 0;
+  const char *src=xfer->line;
+  int srcc=0;
+  while ((srcc<xfer->linec)&&((unsigned char)src[srcc]>0x20)) srcc++;
+  return http_method_eval(src,srcc);
+}
+
+int http_xfer_get_path(void *dstpp,const struct http_xfer *xfer) {
+  if (!xfer) return 0;
+  int srcp=0;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]>0x20)) srcp++;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]<=0x20)) srcp++;
+  *(void**)dstpp=xfer->line+srcp;
+  int pathc=0;
+  while ((srcp<xfer->linec)&&((unsigned char)xfer->line[srcp]>0x20)&&(xfer->line[srcp]!='?')) { srcp++; pathc++; }
+  return pathc;
+}
+
+int http_xfer_set_line(struct http_xfer *xfer,const char *src,int srcc) {
+  if (!xfer) return -1;
   if (!src) srcc=0; else if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
-  int dstc=0,dsta=(srcc+32)&~15;
-  char *dst=malloc(dsta);
-  if (!dst) return -1;
-  int srcp=0; for (;srcp<srcc;srcp++) {
-    if (dstc>dsta-4) {
-      dsta+=16;
-      void *nv=realloc(dst,dsta);
-      if (!nv) { free(dst); return -1; }
-      dst=nv;
-    }
-    if (
-      ((src[srcp]>='a')&&(src[srcp]<='z'))||
-      ((src[srcp]>='A')&&(src[srcp]<='Z'))||
-      ((src[srcp]>='0')&&(src[srcp]<='9'))||
-      (src[srcp]=='.')||
-      (src[srcp]==',')||
-      (src[srcp]=='/')||
-      (src[srcp]=='~')||
-      (src[srcp]=='-')||
-      (src[srcp]=='_')
-    ) {
-      dst[dstc++]=src[srcp];
-    } else {
-      dst[dstc++]='%';
-      dst[dstc++]="0123456789abcdef"[((uint8_t)*src)>>4];
-      dst[dstc++]="0123456789abcdef"[((uint8_t)*src)&15];
-    }
-  }
-  dst[dstc]=0;
-  if (xfer->path) free(xfer->path);
-  xfer->path=dst;
-  xfer->pathc=dstc;
+  while (srcc&&((unsigned char)src[srcc-1]<=0x20)) srcc--;
+  while (srcc&&((unsigned char)src[0]<=0x20)) { src++; srcc--; }
+  char *nv=malloc(srcc+1);
+  if (!nv) return -1;
+  memcpy(nv,src,srcc);
+  nv[srcc]=0;
+  if (xfer->line) free(xfer->line);
+  xfer->line=nv;
+  xfer->linec=srcc;
   return 0;
+}
+
+int http_xfer_set_status(struct http_xfer *xfer,int code,const char *fmt,...) {
+  if ((code<100)||(code>999)) code=500;
+  char tmp[256];
+  int tmpc=snprintf(tmp,sizeof(tmp),"HTTP/1.1 %3d ",code);
+  if ((tmpc<1)||(tmpc>=sizeof(tmp))) return -1;
+  va_list vargs;
+  va_start(vargs,fmt);
+  int err=vsnprintf(tmp+tmpc,sizeof(tmp)-tmpc,fmt,vargs);
+  if ((err<0)||(tmpc+err>sizeof(tmp))) err=0;
+  tmpc+=err;
+  return http_xfer_set_line(xfer,tmp,tmpc);
 }
 
 /* Access to headers.
  */
       
 int http_xfer_get_header(void *dstpp,const struct http_xfer *xfer,const char *k,int kc) {
-  return -1;//TODO
+  return http_dict_get(dstpp,&xfer->headers,k,kc);
 }
 
-int http_xfer_set_header(struct http_xfer *xfer,const char *k,int kc,const char *v,int vc) {
-  return -1;//TODO
-}
-
-/* Access to query parameters.
- */
- 
-static int http_xfer_for_query_1(const char *src,int srcc,int (*cb)(const char *k,int kc,const char *v,int vc,void *userdata),void *userdata) {
-  char ek[64],ev[1024];
-  while (srcc>0) {
-    if (*src=='&') { src++; srcc--; continue; }
-    const char *k=src;
-    int kc=0;
-    while ((srcc>0)&&(*src!='=')&&(*src!='&')) { src++; srcc--; kc++; }
-    const char *v=0;
-    int vc=0;
-    if (srcc&&(*src=='=')) {
-      src++; srcc--;
-      v=src;
-      while ((srcc>0)&&(*src!='&')) { src++; srcc--; vc++; }
-    }
-    int ekc=http_url_decode(ek,sizeof(ek),k,kc);
-    if ((ekc<0)||(ekc>sizeof(ek))) continue;
-    int evc=http_url_decode(ev,sizeof(ev),v,vc);
-    if ((evc<0)||(evc>sizeof(ev))) continue;
-    int err=cb(ek,ekc,ev,evc,userdata);
-    if (err) return err;
-  }
-  return 0;
-}
- 
-int http_xfer_for_query(const struct http_xfer *xfer,int (*cb)(const char *k,int kc,const char *v,int vc,void *userdata),void *userdata) {
-  if (!cb) return -1;
-  int err;
-  
-  const char *src=xfer->path;
-  int srcc=xfer->pathc;
-  while (srcc&&(*src!='?')) { src++; srcc--; }
-  if (srcc) {
-    if (err=http_xfer_for_query_1(src+1,srcc-1,cb,userdata)) return err;
-  }
-  
-  const char *content_type=0;
-  int content_typec=http_xfer_get_header(&content_type,xfer,"Content-Type",12);
-  if ((content_typec==33)&&!memcmp(content_type,"application/x-www-form-urlencoded",33)) {
-    if (err=http_xfer_for_query_1(src+1,srcc-1,cb,userdata)) return err;
-  }
-  
-  return 0;
-}
-
-struct http_xfer_get_query_string_context {
-  const char *k;
-  int kc;
-  char *dst;
-  int dsta;
-};
-
-static int http_xfer_get_query_string_cb(const char *k,int kc,const char *v,int vc,void *userdata) {
-  struct http_xfer_get_query_string_context *ctx=userdata;
-  if (ctx->kc!=kc) return 0;
-  if (memcmp(ctx->k,k,kc)) return 0;
-  if (!vc) return -1; // 0 would mean "continue iteration"
-  if (vc<=ctx->dsta) {
-    memcpy(ctx->dst,v,vc);
-    if (vc<ctx->dsta) ctx->dst[vc]=0;
-  }
-  return vc;
-}
-
-int http_xfer_get_query_string(char *dst,int dsta,const struct http_xfer *xfer,const char *k,int kc) {
-  if (!k) kc=0; else if (kc<0) { kc=0; while (k[kc]) kc++; }
-  struct http_xfer_get_query_string_context ctx={
-    .k=k,
-    .kc=kc,
-    .dst=dst,
-    .dsta=dsta,
-  };
-  int dstc=http_xfer_for_query(xfer,http_xfer_get_query_string_cb,&ctx);
-  if (dstc<0) {
-    if (dsta>0) dst[0]=0;
-    return 0;
-  }
-  if (!dstc) return -1; // not found
-  return dstc;
-}
-
-int http_xfer_get_query_int(int *dst,const struct http_xfer *xfer,const char *k,int kc) {
-  char src[32];
-  int srcc=http_xfer_get_query_string(src,sizeof(src),xfer,k,kc);
-  if ((srcc<0)||(srcc>sizeof(src))) return -1;
+int http_xfer_get_header_int(int *dst,const struct http_xfer *xfer,const char *k,int kc) {
+  const char *src=0;
+  int srcc=http_dict_get(&src,&xfer->headers,k,kc);
+  if (srcc<=0) return -1;
   return http_int_eval(dst,src,srcc);
 }
 
-int http_xfer_append_query(struct http_xfer *xfer,const char *k,int kc,const char *v,int vc) {
-  if (!k) kc=0; else if (kc<0) { kc=0; while (k[kc]) kc++; }
-  if (!v) vc=0; else if (vc<0) { vc=0; while (v[vc]) vc++; }
-  int ekc=http_url_encode(0,0,k,kc);
-  int evc=http_url_encode(0,0,v,vc);
-  int nc=xfer->pathc+1+ekc+1+evc;
-  char *nv=malloc(nc+1);
-  if (!nv) return -1;
-  memcpy(nv,xfer->path,xfer->pathc);
-  char sep='?';
-  int i=xfer->pathc;
-  while (i-->0) if (xfer->path[i]=='?') { sep='&'; break; }
-  nv[xfer->pathc]=sep;
-  if (http_url_encode(nv+xfer->pathc+1,nc-1-xfer->pathc,k,kc)!=ekc) { free(nv); return -1; }
-  nv[xfer->pathc+1+ekc]='=';
-  if (http_url_encode(nv+xfer->pathc+1+ekc+1,nc-1-ekc-1-xfer->pathc,v,vc)!=evc) { free(nv); return -1; }
-  nv[nc]=0;
-  if (xfer->path) free(xfer->path);
-  xfer->path=nv;
-  xfer->pathc=nc;
-  return 0;
-}
-
-int http_xfer_append_query_int(struct http_xfer *xfer,const char *k,int kc,int src) {
-  char v[16];
-  int vc=snprintf(v,sizeof(v),"%d",src);
-  if ((vc<1)||(vc>=sizeof(v))) return -1;
-  return http_xfer_append_query(xfer,k,kc,v,vc);
+int http_xfer_set_header(struct http_xfer *xfer,const char *k,int kc,const char *v,int vc) {
+  return http_dict_set(&xfer->headers,k,kc,v,vc);
 }
 
 /* Access to body.
@@ -319,4 +180,25 @@ int http_xfer_append_body(struct http_xfer *xfer,const void *src,int srcc) {
   memcpy(xfer->body+xfer->bodyc,src,srcc);
   xfer->bodyc+=srcc;
   return 0;
+}
+
+int http_xfer_append_bodyf(struct http_xfer *xfer,const char *fmt,...) {
+  if (!xfer) return -1;
+  if (!fmt||!fmt[0]) return 0;
+  while (1) {
+    va_list vargs;
+    va_start(vargs,fmt);
+    int err=vsnprintf(xfer->body+xfer->bodyc,xfer->bodya-xfer->bodyc,fmt,vargs);
+    if ((err<0)||(err>=INT_MAX)) return -1;
+    if (xfer->bodyc<xfer->bodya-err) {
+      xfer->bodyc+=err;
+      return 0;
+    }
+    int na=xfer->bodyc+err+1;
+    if (na<INT_MAX-1024) na=(na+1024)&~1023;
+    void *nv=realloc(xfer->body,na);
+    if (!nv) return -1;
+    xfer->body=nv;
+    xfer->bodya=na;
+  }
 }

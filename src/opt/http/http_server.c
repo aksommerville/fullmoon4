@@ -46,6 +46,8 @@ struct http_server *http_server_new(struct http_context *context) {
 int http_server_init_tcp_stream(struct http_server *server) {
   if (!server||(server->fd>=0)) return -1;
   if ((server->fd=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP))<0) return -1;
+  int one=1;
+  setsockopt(server->fd,SOL_SOCKET,SO_REUSEADDR,&one,sizeof(one));
   return 0;
 }
 
@@ -71,5 +73,26 @@ int http_server_bind(struct http_server *server,const char *host,int port) {
 int http_server_listen(struct http_server *server,int clientc) {
   if (!server||(server->fd<0)) return -1;
   if (listen(server->fd,clientc)<0) return -1;
+  return 0;
+}
+
+/* Accept.
+ */
+ 
+int http_server_accept(struct http_server *server) {
+  if (!server||(server->fd<0)) return -1;
+  char sockaddr[256];
+  socklen_t sockaddrc=sizeof(sockaddr);
+  int clientfd=accept(server->fd,(struct sockaddr*)sockaddr,&sockaddrc);
+  if (clientfd<0) {
+    fprintf(stderr,"accept failed: %m\n");
+    http_context_remove_server(server->context,server);
+    return 0;
+  }
+  struct http_socket *socket=http_context_add_new_socket(server->context,clientfd);
+  if (!socket) {
+    close(clientfd);
+    return -1;
+  }
   return 0;
 }

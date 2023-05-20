@@ -2,7 +2,7 @@
 # Rules for building programs that might be used during the rest of the build.
 # Initially, all the build-time tools were written for Node and do not require building, but I'm getting away from that.
 
-tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses
+tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses -Wno-format-overflow
 tools_CC:=gcc -c -MMD -O3 -Isrc $(tools_CCOPT) $(tools_CC_EXTRA)
 tools_LD:=gcc
 tools_LDPOST:=-lz -lm
@@ -19,6 +19,7 @@ tools_CFILES:=$(filter-out src/opt/assist/assist_main.c, \
   $(filter src/tool/%.c $(tools_OPT_PATTERN),$(SRCFILES)) \
 )
 tools_OFILES:=$(patsubst src/%,$(tools_MIDDIR)/%.o,$(basename $(tools_CFILES)))
+-include $(tools_OFILES:.o=.d)
 
 tools_NAMES:=$(filter-out common,$(sort $(foreach F,$(filter src/tool/%,$(tools_CFILES)),$(word 3,$(subst /, ,$F)))))
 

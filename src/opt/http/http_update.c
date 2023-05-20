@@ -4,7 +4,16 @@
  */
  
 static int http_update_fd_error(struct http_context *context,int fd) {
-  fprintf(stderr,"%s %d\n",__func__,fd);//TODO
+  struct http_server *server=http_context_get_server_by_fd(context,fd);
+  if (server) {
+    http_context_remove_server(context,server);
+    return 0;
+  }
+  struct http_socket *socket=http_context_get_socket_by_fd(context,fd);
+  if (socket) {
+    http_context_remove_socket(context,socket);
+    return 0;
+  }
   return 0;
 }
 
@@ -12,7 +21,34 @@ static int http_update_fd_error(struct http_context *context,int fd) {
  */
  
 static int http_update_fd_read(struct http_context *context,int fd) {
-  fprintf(stderr,"%s %d\n",__func__,fd);//TODO
+  
+  struct http_server *server=http_context_get_server_by_fd(context,fd);
+  if (server) {
+    if (http_server_accept(server)<0) {
+      fprintf(stderr,"Lost server on fd %d\n",fd);
+      http_context_remove_server(context,server);
+    }
+    return 0;
+  }
+  
+  struct http_socket *socket=http_context_get_socket_by_fd(context,fd);
+  if (socket) {
+    if (http_socket_read(socket)<0) {
+      if (http_socket_ok_to_close(socket)) {
+        //fprintf(stderr,"Lost socket on fd %d and it seems ok.\n",fd);
+        http_context_remove_socket(context,socket);
+        return 0;
+      } else {
+        fprintf(stderr,"Lost socket on fd %d mid-transaction.\n",fd);
+        return -1;
+      }
+    }
+    if (http_socket_digest_input(socket)<0) {
+      return -1;
+    }
+    return 0;
+  }
+  
   return 0;
 }
 
@@ -20,7 +56,13 @@ static int http_update_fd_read(struct http_context *context,int fd) {
  */
  
 static int http_update_fd_write(struct http_context *context,int fd) {
-  fprintf(stderr,"%s %d\n",__func__,fd);//TODO
+  struct http_socket *socket=http_context_get_socket_by_fd(context,fd);
+  if (socket) {
+    if (http_socket_write(socket)<0) {
+      return -1;
+    }
+    return 0;
+  }
   return 0;
 }
 
@@ -40,7 +82,24 @@ static int http_context_pollfdv_rebuild(struct http_context *context) {
     pollfd->events=POLLIN|POLLERR|POLLHUP;
   }
   
-  //TODO streams
+  struct http_socket **socket=context->socketv;
+  for (i=context->socketc;i-->0;socket++) {
+    if ((*socket)->fd<0) continue;
+    struct pollfd *pollfd=http_context_pollfdv_require(context);
+    if (!pollfd) return -1;
+    pollfd->fd=(*socket)->fd;
+    
+    // If this socket had a deferred response that finished, encode it.
+    if ((*socket)->rsp&&((*socket)->rsp->state==HTTP_XFER_STATE_DEFERRAL_COMPLETE)) {
+      if (http_socket_encode_xfer(*socket,(*socket)->rsp)<0) return -1;
+    }
+    
+    if ((*socket)->wbufc) {
+      pollfd->events=POLLOUT|POLLERR|POLLHUP;
+    } else {
+      pollfd->events=POLLIN|POLLERR|POLLHUP;
+    }
+  }
 
   return 0;
 }
@@ -67,7 +126,11 @@ int http_update(struct http_context *context,int toms) {
   }
   
   int err=poll(context->pollfdv,context->pollfdc,toms);
-  if (err<=0) return err;
+  if (!err) return 0;
+  if (err<0) {
+    if (errno==EINTR) return 0;
+    return err;
+  }
   
   const struct pollfd *pollfd=context->pollfdv;
   int i=context->pollfdc;

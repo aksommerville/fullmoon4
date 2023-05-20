@@ -12,7 +12,8 @@ struct http_context;
 struct http_server;
 struct http_socket;
 struct http_listener;
-struct http_xfer;
+struct http_xfer; // request or response
+struct http_dict; // headers
 
 #define HTTP_METHOD_GET       1
 #define HTTP_METHOD_POST      2
@@ -40,6 +41,12 @@ int http_update(struct http_context *context,int toms);
 /* Servers.
  **************************************************************************/
 
+/* List all servers. Also a reasonable way to ask "are there any servers?".
+ * Servers which fail at accept() will quietly remove themselves.
+ * If you want to fail in that case, reasonable, but you have to poll for it.
+ */
+struct http_server *http_context_get_server_by_index(const struct http_context *context,int p);
+
 /* Create a server and start listening.
  * We will only listen on localhost, as this library is not suitable for facing the public internet.
  * You'll normally do this once per context. But can listen on as many ports as you like.
@@ -53,6 +60,8 @@ struct http_server *http_serve(struct http_context *context,int port);
  * (method) may be zero to match all.
  * In (path), a single star matches between slashes, and two stars match any amount of anything.
  * (path) does not include the query string.
+ * *** For efficiency's sake, we do not decode percent-escapes in the path. ***
+ * It's expected that anything addressable shouldn't need to be escaped.
  * You get just one callback, when the request body has been fully received.
  */
 struct http_listener *http_listen(
@@ -87,10 +96,12 @@ int http_websocket_send(struct http_socket *socket,int type,const void *v,int c)
  * If you are reading a bunch of query params, it's way more efficient to iterate than to get each individually.
  * Query parameters longer than some internal limit will be quietly ignored. Currently 1024 bytes.
  */
+int http_xfer_get_status(const struct http_xfer *xfer);
+int http_xfer_get_status_message(void *dstpp,const struct http_xfer *xfer);
 int http_xfer_get_method(const struct http_xfer *xfer);
-int http_xfer_get_path_verbatim(void *dstpp,const struct http_xfer *xfer); // escapes encoded, query included
-int http_xfer_get_path(char *dst,int dsta,const struct http_xfer *xfer); // escapes resolved, no query
+int http_xfer_get_path(void *dstpp,const struct http_xfer *xfer); // no query; may contain escapes
 int http_xfer_get_header(void *dstpp,const struct http_xfer *xfer,const char *k,int kc);
+int http_xfer_get_header_int(int *dst,const struct http_xfer *xfer,const char *k,int kc);
 int http_xfer_get_body(void *dstpp,const struct http_xfer *xfer);
 int http_xfer_for_query(const struct http_xfer *xfer,int (*cb)(const char *k,int kc,const char *v,int vc,void *userdata),void *userdata);
 int http_xfer_get_query_string(char *dst,int dsta,const struct http_xfer *xfer,const char *k,int kc);
@@ -103,6 +114,7 @@ int http_xfer_get_query_int(int *dst,const struct http_xfer *xfer,const char *k,
 int http_xfer_set_status(struct http_xfer *xfer,int code,const char *fmt,...);
 int http_xfer_set_header(struct http_xfer *xfer,const char *k,int kc,const char *v,int vc);
 int http_xfer_append_body(struct http_xfer *xfer,const void *src,int srcc);
+int http_xfer_append_bodyf(struct http_xfer *xfer,const char *fmt,...);
 
 /* Normally, a listener fills its response synchronously.
  * If you need to delay, eg to make a callout of your own, call "hold" before returning from the listener callback,
@@ -110,6 +122,8 @@ int http_xfer_append_body(struct http_xfer *xfer,const void *src,int srcc);
  */
 int http_xfer_hold(struct http_xfer *xfer);
 int http_xfer_ready(struct http_xfer *xfer);
+int http_xfer_ref(struct http_xfer *xfer);
+void http_xfer_del(struct http_xfer *xfer);
 
 /* Clients.
  ****************************************************************************/
@@ -163,22 +177,22 @@ struct http_xfer *http_request(
 
 void http_context_cancel_request(struct http_context *context,struct http_xfer *xfer);
 
-int http_xfer_set_method(struct http_xfer *xfer,int method);
-int http_xfer_set_path_verbatim(struct http_xfer *xfer,const char *src,int srcc); // Path and query, pre-encoded.
-int http_xfer_set_path(struct http_xfer *xfer,const char *src,int srcc); // Just path, and we url encode it.
-int http_xfer_append_query(struct http_xfer *xfer,const char *k,int kc,const char *v,int vc); // We url encode.
-int http_xfer_append_query_int(struct http_xfer *xfer,const char *k,int kc,int v);
 int http_xfer_set_header(struct http_xfer *xfer,const char *k,int kc,const char *v,int vc);
 int http_xfer_append_body(struct http_xfer *xfer,const void *src,int srcc);
 int http_xfer_set_body(struct http_xfer *xfer,const void *src,int srcc);
-//TODO I think we need a one-shot path and query setter. As is, we inefficiently reallocate the path for each param.
+int http_xfer_append_bodyf(struct http_xfer *xfer,const char *fmt,...);
 
 /* General helpers.
  *************************************************************************/
  
 const char *http_method_repr(int method);
+int http_method_eval(const char *src,int srcc);
 int http_url_encode(char *dst,int dsta,const char *src,int srcc);
 int http_url_decode(char *dst,int dsta,const char *src,int srcc);
 int http_int_eval(int *dst,const char *src,int srcc);
+int http_memcasecmp(const void *a,const void *b,int c);
+int http_measure_space(const char *src,int srcc);
+int http_measure_line(const char *src,int srcc); // => thru \r\n, or zero
+int http_wildcard_match(const char *pat,int patc,const char *src,int srcc);
 
 #endif
