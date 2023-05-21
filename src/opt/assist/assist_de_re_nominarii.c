@@ -575,9 +575,29 @@ int assist_get_resource_id_by_name(const char *tname,const char *rname,int rname
   return assist_restype_id_by_name(restype,rname,rnamec);
 }
 
+int assist_get_resource_name_by_id(void *dstpp,const char *tname,int id) {
+  struct assist_restype *restype=assist_restype_get(tname);
+  if (!restype) return 0;
+  int p=assist_res_search(restype,id,0);
+  if (p<0) p=-p-1;
+  if ((p<restype->resc)&&(restype->resv[p].id==id)) {
+    *(void**)dstpp=restype->resv[p].name;
+    return restype->resv[p].namec;
+  }
+  return 0;
+}
+
 int assist_get_gsbit_by_name(const char *name,int namec) {
   if (!name) return -1;
   if (namec<0) { namec=0; while (name[namec]) namec++; }
   if (assist_gsbit_require()<0) return -1;
   return assist_gsbit_id_by_name(name,namec);
+}
+
+/* Instrument names actually don't exist.
+ * We could hard-code the General MIDI names, but that's not much help because we're not using them.
+ */
+ 
+int assist_get_instrument_name(void *dstpp,int id) {
+  return 0;
 }

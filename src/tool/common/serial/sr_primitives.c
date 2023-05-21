@@ -471,7 +471,7 @@ int sr_string_eval(char *dst,int dsta,const char *src,int srcc) {
   return dstc;
 }
 
-/* Represnt string, non-JSON.
+/* Reprsent string, non-JSON.
  */
  
 int sr_string_repr(char *dst,int dsta,const char *src,int srcc) {
@@ -536,7 +536,7 @@ int sr_string_repr_json(char *dst,int dsta,const char *src,int srcc) {
   int dstc=0,srcp=0;
   if (dstc<dsta) dst[dstc]='"';
   dstc++;
-  for (;srcp<srcc;srcp++) {
+  while (srcp<srcc) {
     switch (src[srcp]) {
       case '\\': case '"': if (dstc<=dsta-2) { dst[dstc++]='\\'; dst[dstc++]=src[srcp]; } else dstc+=2; srcp++; break;
       //TODO I'm not sure this is the complete set of JSON named escapes.

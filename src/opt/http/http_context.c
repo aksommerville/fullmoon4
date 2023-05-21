@@ -281,15 +281,36 @@ struct http_listener *http_context_find_listener_for_request(
   const struct http_xfer *req
 ) {
   if (!context||!req) return 0;
+  
+  // Get the request path and method as stated.
   const char *path=0;
   int pathc=http_xfer_get_path(&path,req);
-  if ((pathc<0)||(pathc>sizeof(path))) return 0;
+  if (pathc<0) return 0;
   int method=http_xfer_get_method(req);
+  
+  // If it's a WebSocket upgrade request, find WebSocket listeners only.
+  if (method==HTTP_METHOD_GET) {
+    const char *connection=0;
+    int connectionc=http_xfer_get_header(&connection,req,"Connection",10);
+    if ((connectionc==7)&&!memcmp(connection,"Upgrade",7)) {
+      const char *upgrade=0;
+      int upgradec=http_xfer_get_header(&upgrade,req,"Upgrade",7);
+      if ((upgradec==9)&&!memcmp(upgrade,"websocket",9)) {
+        method=HTTP_METHOD_WEBSOCKET;
+      }
+    }
+  }
+  
+  // Find a matching listener.
   struct http_listener **p=context->listenerv;
   int i=context->listenerc;
   for (;i-->0;p++) {
     struct http_listener *listener=*p;
-    if (listener->method&&(listener->method!=method)) continue;
+    if (listener->method) {
+      if (listener->method!=method) continue;
+    } else {
+      if (method==HTTP_METHOD_WEBSOCKET) continue; // WEBSOCKET doesn't match wildcard methods.
+    }
     if (listener->pathc&&!http_wildcard_match(listener->path,listener->pathc,path,pathc)) continue;
     return listener;
   }

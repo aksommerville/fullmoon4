@@ -30,10 +30,17 @@ struct fmn_datafile;
 void fmn_datafile_del(struct fmn_datafile *file);
 
 struct fmn_datafile *fmn_datafile_open(const char *path);
+int fmn_datafile_reopen(struct fmn_datafile *file);
 
 /* Direct access to encoded resources.
  * This can only be done via iteration.
  */
+int fmn_datafile_for_each_qualifier(
+  struct fmn_datafile *file,
+  uint16_t type,
+  int (*cb)(uint16_t qualifier,void *userdata),
+  void *userdata
+);
 int fmn_datafile_for_each(
   struct fmn_datafile *file,
   int (*cb)(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata),
@@ -64,6 +71,7 @@ int fmn_datafile_get_any(void *dstpp,struct fmn_datafile *file,uint16_t type,uin
 int fmn_file_read(void *dstpp,const char *path);
 int fmn_file_write(const char *path,const void *src,int srcc);
 int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,char type,void *userdata),void *userdata);
+char fmn_file_get_type(const char *path);
 
 /* Knowledge of specific resource type formats.
  ************************************************************/

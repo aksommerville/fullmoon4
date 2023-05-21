@@ -258,6 +258,7 @@ static int sr_encoder_json_comma_if_needed(struct sr_encoder *encoder) {
     if (encoder->v[p]==',') return 0;
     if ((unsigned char)encoder->v[p]<=0x20) continue;
     if (sr_encode_u8(encoder,',')<0) return encoder->jsonctx=-1;
+    return 0;
   }
   return 0;
 }

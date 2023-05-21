@@ -4,6 +4,9 @@
 
 #include "http_internal.h"
 
+int sr_base64_encode(char *dst,int dsta,const void *src,int srcc);
+int sr_sha1(void *dst,int dsta,const void *src,int srcc);
+
 /* Encode a request or response onto the socket's write buffer.
  */
  
@@ -22,6 +25,44 @@ int http_socket_encode_xfer(struct http_socket *socket,struct http_xfer *xfer) {
   if (http_socket_wbuf_append(socket,"\r\n",2)<0) return -1;
   if (http_socket_wbuf_append(socket,xfer->body,xfer->bodyc)<0) return -1;
   xfer->state=HTTP_XFER_STATE_SEND;
+  return 0;
+}
+
+/* Upgrade request to WebSocket.
+ */
+ 
+static int http_xfer_upgrade_websocket(struct http_socket *socket,struct http_xfer *xfer,struct http_listener *listener) {
+  
+  const char *hkey=0;
+  int hkeyc=http_xfer_get_header(&hkey,xfer,"Sec-WebSocket-Key",17);
+  char prekey[256],digest[20];
+  int prekeyc=hkeyc+36;
+  if ((hkeyc<1)||(prekeyc>sizeof(prekey))) return -1;
+  memcpy(prekey,hkey,hkeyc);
+  memcpy(prekey+hkeyc,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11",36);
+  sr_sha1(digest,sizeof(digest),prekey,prekeyc);
+  char postkey[256];
+  int postkeyc=sr_base64_encode(postkey,sizeof(postkey),digest,20);
+  if ((postkeyc<0)||(postkeyc>sizeof(postkey))) return -1;
+  
+  struct http_xfer *rsp=http_xfer_new(socket->context);
+  if (!rsp) return -1;
+  http_xfer_set_line(rsp,"HTTP/1.1 101 Upgrade to WebSocket",-1);
+  http_xfer_set_header(rsp,"Sec-WebSocket-Accept",20,postkey,postkeyc);
+  http_xfer_set_header(rsp,"Upgrade",7,"WebSocket",9);
+  http_xfer_set_header(rsp,"Connection",10,"Upgrade",7);
+  http_socket_encode_xfer(socket,rsp);
+  http_xfer_del(rsp);
+  
+  socket->protocol=HTTP_PROTOCOL_WEBSOCKET;
+  if (http_listener_ref(listener)<0) return -1;
+  if (socket->listener) http_listener_del(socket->listener);
+  socket->listener=listener;
+  
+  if (socket->listener->cb_connect) {
+    if (socket->listener->cb_connect(socket,socket->listener->userdata)<0) return -1;
+  }
+  
   return 0;
 }
 
@@ -61,8 +102,8 @@ static int http_xfer_received(struct http_socket *socket,struct http_xfer *xfer)
   
   // Upgrade to WebSocket.
   if (listener->cb_connect||listener->cb_message) {
-    fprintf(stderr,"*** TODO WebSocket ***\n");//TODO
-    return -1;
+    if (http_xfer_upgrade_websocket(socket,xfer,listener)<0) return -1;
+    return 0;
   }
   
   // Misconfigured listener.
@@ -197,6 +238,64 @@ static int http_protocol_http_input(struct http_socket *socket,struct http_xfer 
   return 0;
 }
 
+/* Receive input on a WebSocket.
+ * NB: (src) is not const; we overwrite in place if it's masked.
+ * As currently implemented, (src) always belongs to (socket->rbuf) so that's safe.
+ */
+ 
+static int http_protocol_ws_input(struct http_socket *socket,uint8_t *src,int srcc) {
+  
+  // Fixed-length preamble.
+  if (srcc<2) return 0;
+  uint8_t flags=src[0]&0xf0;
+  uint8_t opcode=src[0]&0x0f;
+  uint8_t hasmask=src[1]&0x80;
+  const uint8_t *mask=0;
+  int len=src[1]&0x7f;
+  int srcp=2;
+  
+  if (!(flags&0x80)) {
+    fprintf(stderr,"WebSocket packet with continuation: We don't support this.\n");
+    return -1;
+  }
+  
+  // Length.
+  if (len==0x7e) {
+    if (srcc<4) return 0;
+    len=(src[2]<<8)|src[3];
+    srcp=4;
+  } else if (len==0x7f) {
+    if (srcc<10) return 0;
+    if (memcmp(src+2,"\0\0\0\0\0",5)) return -1; // >24-bit length, forget that.
+    len=(src[7]<<16)|(src[8]<<8)|src[9];
+    srcp=10;
+  }
+  
+  // Mask.
+  if (hasmask) {
+    if (srcp>srcc-4) return 0;
+    mask=src+srcp;
+    srcp+=4;
+  }
+  
+  // Payload.
+  if (srcp>srcc-len) return 0;
+  uint8_t *body=src+srcp;
+  srcp+=len;
+  
+  // Apply mask.
+  if (hasmask) {
+    int i=0; for (;i<len;i++) body[i]^=mask[i&3];
+  }
+  
+  // Send to delegate.
+  if (socket->listener&&socket->listener->cb_message) {
+    if (socket->listener->cb_message(socket,opcode,body,len,socket->listener->userdata)<0) return -1;
+  }
+  
+  return srcp;
+}
+
 /* Digest input, return length consumed or zero if not ready.
  */
  
@@ -231,7 +330,10 @@ static int http_socket_digest_input_1(struct http_socket *socket,const char *src
     return http_protocol_http_input(socket,socket->rsp,src,srcc);
   }
   
-  // TODO HTTP_PROTOCOL_WEBSOCKET
+  // WEBSOCKET: Unpack frames and deliver.
+  if (socket->protocol==HTTP_PROTOCOL_WEBSOCKET) {
+    return http_protocol_ws_input(socket,(uint8_t*)src,srcc);
+  }
 
   return 0;
 }

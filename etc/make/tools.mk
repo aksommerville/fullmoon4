@@ -11,7 +11,7 @@ tools_MIDDIR:=mid/tools
 tools_OUTDIR:=out/tools
 
 tools_OPT_PATTERN:=$(foreach U, \
-  datafile png assist pcmprint http, \
+  datafile png assist pcmprint http alsa minsyn midi, \
   src/opt/$U/%.c \
 )
 

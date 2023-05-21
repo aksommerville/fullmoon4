@@ -99,6 +99,31 @@ int fmn_datafile_decode_toc(struct fmn_datafile *file) {
 /* TOC Iterators.
  */
  
+int fmn_datafile_for_each_qualifier(
+  struct fmn_datafile *file,
+  uint16_t type,
+  int (*cb)(uint16_t qualifier,void *userdata),
+  void *userdata
+) {
+  if (!file||!cb) return -1;
+  int16_t qv[16];
+  int qc=0;
+  const struct fmn_datafile_toc_entry *entry=file->entryv;
+  int i=file->entryc,err;
+  for (;i-->0;entry++) {
+    if (entry->type>type) break;
+    if (entry->type<type) continue;
+    
+    int j=qc,already=0; while (j-->0) {
+      if (qv[j]==entry->qualifier) { already=1; break; }
+    }
+    if (already) continue;
+    if (qc<sizeof(qv)/sizeof(qv[0])) qv[qc++]=entry->qualifier;
+    if (err=cb(entry->qualifier,userdata)) return err;
+  }
+  return 0;
+}
+ 
 int fmn_datafile_for_each(
   struct fmn_datafile *file,
   int (*cb)(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata),

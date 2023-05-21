@@ -129,6 +129,87 @@ int http_xfer_set_status(struct http_xfer *xfer,int code,const char *fmt,...) {
   return http_xfer_set_line(xfer,tmp,tmpc);
 }
 
+/* Query string.
+ */
+ 
+static int http_for_query_text(const char *src,int srcc,int (*cb)(const char *k,int kc,const char *v,int vc,void *userdata),void *userdata) {
+  int srcp=0,err;
+  while (srcp<srcc) {
+    if (src[srcp]=='&') { srcp++; continue; }
+    const char *ksrc=src+srcp,*vsrc=0;
+    int ksrcc=0,vsrcc=0;
+    while ((srcp<srcc)&&(src[srcp]!='=')&&(src[srcp]!='&')) { srcp++; ksrcc++; }
+    if ((srcp<srcc)&&(src[srcp]=='=')) {
+      srcp++;
+      vsrc=src+srcp;
+      while ((srcp<srcc)&&(src[srcp++]!='&')) vsrcc++;
+    }
+    if (err=cb(ksrc,ksrcc,vsrc,vsrcc,userdata)) return err;
+  }
+  return 0;
+}
+ 
+int http_xfer_for_query(const struct http_xfer *xfer,int (*cb)(const char *k,int kc,const char *v,int vc,void *userdata),void *userdata) {
+  if (!xfer||!cb) return -1;
+  int linep=0,err;
+  while ((linep<xfer->linec)&&((unsigned char)xfer->line[linep]>0x20)) linep++;
+  while ((linep<xfer->linec)&&((unsigned char)xfer->line[linep]<=0x20)) linep++;
+  while ((linep<xfer->linec)&&((unsigned char)xfer->line[linep]>0x20)) {
+    if (xfer->line[linep++]=='?') {
+      const char *src=xfer->line+linep;
+      int srcc=0;
+      while ((linep<xfer->linec)&&((unsigned char)xfer->line[linep++]>0x20)) srcc++;
+      if (err=http_for_query_text(src,srcc,cb,userdata)) return err;
+      break;
+    }
+  }
+  const char *ct=0;
+  int ctc=http_xfer_get_header(&ct,xfer,"Content-Type",12);
+  if ((ctc==33)&&!memcmp(ct,"application/x-www-form-urlencoded",33)) {
+    if (err=http_for_query_text(xfer->body,xfer->bodyc,cb,userdata)) return err;
+  }
+  return 0;
+}
+
+struct http_xfer_get_query_string_context {
+  char *dst;
+  int dsta;
+  int dstc;
+  const char *k;
+  int kc;
+};
+
+static int http_xfer_get_query_string_cb(const char *k,int kc,const char *v,int vc,void *userdata) {
+  struct http_xfer_get_query_string_context *ctx=userdata;
+  // To be strictly correct, we should url-decode (k) as well.
+  // But I don't like that. A key should be arranged to not need escapes, and if the client escapes it anyway, well fuck him.
+  if (kc!=ctx->kc) return 0;
+  if (memcmp(k,ctx->k,kc)) return 0;
+  ctx->dstc=http_url_decode(ctx->dst,ctx->dsta,v,vc);
+  return 1;
+}
+
+int http_xfer_get_query_string(char *dst,int dsta,const struct http_xfer *xfer,const char *k,int kc) {
+  if (!dst||(dsta<0)) dsta=0;
+  if (!k) kc=0; else if (kc<0) { kc=0; while (k[kc]) kc++; }
+  struct http_xfer_get_query_string_context ctx={
+    .dst=dst,
+    .dsta=dsta,
+    .k=k,
+    .kc=kc,
+  };
+  http_xfer_for_query(xfer,http_xfer_get_query_string_cb,&ctx);
+  if (ctx.dstc<dsta) dst[ctx.dstc]=0;
+  return ctx.dstc;
+}
+  
+int http_xfer_get_query_int(int *dst,const struct http_xfer *xfer,const char *k,int kc) {
+  char src[32];
+  int srcc=http_xfer_get_query_string(src,sizeof(src),xfer,k,kc);
+  if ((srcc<0)||(srcc>sizeof(src))) return -1;
+  return http_int_eval(dst,src,srcc);
+}
+
 /* Access to headers.
  */
       

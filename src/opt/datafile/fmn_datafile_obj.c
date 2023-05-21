@@ -36,3 +36,20 @@ struct fmn_datafile *fmn_datafile_open(const char *path) {
   
   return file;
 }
+
+/* Re-open.
+ */
+ 
+int fmn_datafile_reopen(struct fmn_datafile *file) {
+  if (!file) return -1;
+
+  if (file->serial) free(file->serial);
+  file->serial=0;
+  file->serialc=0;
+  file->entryc=0;
+  
+  if ((file->serialc=fmn_file_read(&file->serial,file->path))<0) return -1;
+  if (fmn_datafile_decode_toc(file)<0) return -1;
+  
+  return 0;
+}

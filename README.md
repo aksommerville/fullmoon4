@@ -25,6 +25,14 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] pushblock: Don't make a sound if we can tell we won't be moving.
 - [ ] wildflower: Option to flip horizontally
 - [ ] Native fiddle tool.
+- - [x] http: WebSocket
+- - [ ] inotify helper
+- - [x] Report peak and RMS continuously over WebSocket.
+- - [x] MIDI-In. Manage at the web app, and call `POST /api/midi`.
+- - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
+- - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
+- - [ ] Show me which instruments are used by each song.
+- - [ ] Possible to populate the instruments menu with the selected program on channel 14?
 - [ ] web: Handle high-frequency monitors. We use requestAnimationFrame but then assume 60 Hz.
 - [ ] Disable shovel underlay while pumpkinned.
 - [ ] Moonsong's chalkboard should be chalkable, make it work.
@@ -33,6 +41,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Put some pushblocks near the snow globe, to show it off.
 - [ ] Beach SW, the rain spell educator looks like it has something to do with the lambda block but it doesn't.
 - [ ] Is the panda too distracting, at Seamonster Pong?
+- [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
 
 ### Full Maps
 

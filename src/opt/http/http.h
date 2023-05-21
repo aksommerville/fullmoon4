@@ -103,7 +103,7 @@ int http_xfer_get_path(void *dstpp,const struct http_xfer *xfer); // no query; m
 int http_xfer_get_header(void *dstpp,const struct http_xfer *xfer,const char *k,int kc);
 int http_xfer_get_header_int(int *dst,const struct http_xfer *xfer,const char *k,int kc);
 int http_xfer_get_body(void *dstpp,const struct http_xfer *xfer);
-int http_xfer_for_query(const struct http_xfer *xfer,int (*cb)(const char *k,int kc,const char *v,int vc,void *userdata),void *userdata);
+int http_xfer_for_query(const struct http_xfer *xfer,int (*cb)(const char *k,int kc,const char *v,int vc,void *userdata),void *userdata); // => (k,v) encoded
 int http_xfer_get_query_string(char *dst,int dsta,const struct http_xfer *xfer,const char *k,int kc);
 int http_xfer_get_query_int(int *dst,const struct http_xfer *xfer,const char *k,int kc);
 

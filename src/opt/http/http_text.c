@@ -1,5 +1,15 @@
 #include "http_internal.h"
 
+/* Hex digit.
+ */
+ 
+static int http_hexdigit_eval(char src) {
+  if ((src>='0')&&(src<='9')) return src-'0';
+  if ((src>='a')&&(src<='f')) return src-'a'+10;
+  if ((src>='A')&&(src<='F')) return src-'A'+10;
+  return -1;
+}
+
 /* Method.
  */
  
@@ -27,6 +37,7 @@ int http_method_eval(const char *src,int srcc) {
   if (srcc>sizeof(norm)) return HTTP_METHOD_UNKNOWN;
   int i=srcc; while (i-->0) {
     if ((src[i]>='a')&&(src[i]<='z')) norm[i]=src[i]-0x20;
+    else norm[i]=src[i];
   }
   #define _(tag) if ((srcc==sizeof(#tag)-1)&&!memcmp(norm,#tag,srcc)) return HTTP_METHOD_##tag;
   _(GET)
@@ -45,11 +56,59 @@ int http_method_eval(const char *src,int srcc) {
  */
  
 int http_url_encode(char *dst,int dsta,const char *src,int srcc) {
-  return -1;//TODO
+  if (!dst||(dsta<0)) dsta=0;
+  if (!src) srcc=0; else if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
+  int dstc=0,srcp=0;
+  for (;srcp<srcc;srcp++) {
+    uint8_t ch=src[srcp];
+    if (
+      (ch<=0x20)||
+      (ch>0x7e)||
+      (ch=='/')||
+      (ch=='?')||
+      (ch=='=')||
+      (ch=='&')||
+      (ch=='#')
+    ) {
+      if (dstc<=dsta-3) {
+        dst[dstc++]='%';
+        dst[dstc++]="0123456789abcdef"[ch>>4];
+        dst[dstc++]="0123456789abcdef"[ch&15];
+      } else dstc+=3;
+    } else {
+      if (dstc<dsta) dst[dsta]=ch;
+      dstc++;
+    }
+  }
+  if (dstc<dsta) dst[dstc]=0;
+  return dstc;
 }
 
 int http_url_decode(char *dst,int dsta,const char *src,int srcc) {
-  return -1;//TODO
+  if (!dst||(dsta<0)) dsta=0;
+  if (!src) srcc=0; else if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
+  int dstc=0,srcp=0;
+  while (srcp<srcc) {
+    if ((src[srcp]=='%')&&(srcp<=srcc-3)) {
+      int hi=http_hexdigit_eval(src[srcp+1]);
+      int lo=http_hexdigit_eval(src[srcp+2]);
+      if ((hi>=0)&&(lo>=0)) {
+        if (dstc<dsta) dst[dstc]=(hi<<4)|lo;
+        dstc++;
+        srcp+=3;
+      } else {
+        if (dstc<dsta) dst[dstc]='%';
+        dstc++;
+        srcp++;
+      }
+    } else {
+      if (dstc<dsta) dst[dstc]=src[srcp];
+      dstc++;
+      srcp++;
+    }
+  }
+  if (dstc<dsta) dst[dstc]=0;
+  return dstc;
 }
 
 /* Integers.

@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <dirent.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #ifndef O_BINARY
   #define O_BINARY 0
@@ -110,4 +111,20 @@ int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,ch
   }
   closedir(dir);
   return 0;
+}
+
+/* Get file type.
+ */
+ 
+char fmn_file_get_type(const char *path) {
+  if (!path||!path[0]) return 0;
+  struct stat st={0};
+  if (stat(path,&st)<0) return 0;
+  if (S_ISREG(st.st_mode)) return 'f';
+  if (S_ISDIR(st.st_mode)) return 'd';
+  if (S_ISLNK(st.st_mode)) return 'l'; // shouldn't happen; we used stat not lstat
+  if (S_ISCHR(st.st_mode)) return 'c';
+  if (S_ISBLK(st.st_mode)) return 'b';
+  if (S_ISSOCK(st.st_mode)) return 's';
+  return '?';
 }
