@@ -34,17 +34,19 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Show me which instruments are used by each song.
 - - [ ] Possible to populate the instruments menu with the selected program on channel 14?
 - [x] web: Handle high-frequency monitors. We use requestAnimationFrame but then assume 60 Hz.
-- [ ] Disable shovel underlay while pumpkinned.
-- [ ] Moonsong's chalkboard should be chalkable, make it work.
-- [ ] Gravestones too, why aren't they?
+- [x] Disable shovel underlay while pumpkinned.
+- [x] Moonsong's chalkboard should be chalkable, make it work.
+- [x] Gravestones too, why aren't they?
 - [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
-- [ ] Put some pushblocks near the snow globe, to show it off.
-- [ ] Beach SW, the rain spell educator looks like it has something to do with the lambda block but it doesn't.
+- [x] Put some pushblocks near the snow globe, to show it off.
+- [x] Beach SW, the rain spell educator looks like it has something to do with the lambda block but it doesn't.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
 - [ ] Chalk alphabet education.
 - [ ] chalkguard: fireworks
 - [ ] "Bring matches" watchduck at the cave entrance, demo.
+- [x] Village transmogrification platform is shovellable; shouldn't be.
+- [x] Lambda block: Some kind of visual change while attracted, so you can tell something happened, when you're blocking its motion.
 
 ### Full Maps
 

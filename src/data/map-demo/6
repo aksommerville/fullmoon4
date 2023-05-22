@@ -17,3 +17,5 @@ neighborn 7
 neighbors 18
 neighbore 57
 sprite 8 2 treasure item:SNOWGLOBE 0 0
+sprite 9 8 pushblock 0 0 0
+sprite 12 8 pushblock 0 0 0

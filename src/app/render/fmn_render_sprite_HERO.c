@@ -475,6 +475,7 @@ static void fmn_render_hero_underlay_broom(int16_t addx,int16_t addy) {
 
 // also used for seeds and pitcher
 static void fmn_render_hero_underlay_shovel(int16_t addx,int16_t addy) {
+  if (fmn_global.transmogrification) return; // No sense showing while pumpkinned.
   if (addx||addy) return; // don't draw this while transitioning
   if ((fmn_global.shovelx<0)||(fmn_global.shovelx>=FMN_COLC)) return;
   if ((fmn_global.shovely<0)||(fmn_global.shovely>=FMN_ROWC)) return;
