@@ -1,9 +1,11 @@
 #include "app/sprite/fmn_sprite.h"
 
 #define varietal sprite->argv[0]
+#define flop sprite->argv[1]
 
 static void _wildflower_init(struct fmn_sprite *sprite) {
   sprite->tileid+=(varietal&3)*2;
+  if (flop) sprite->xform=FMN_XFORM_XREV;
 }
 
 static int16_t _wildflower_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {

@@ -40,13 +40,34 @@ static int pushblock_check_solids_cb(struct fmn_sprite *q,void *userdata) {
   if (point->y>q->y+q->radius) return 0;
   return 1;
 }
+
+static int pushblock_physics_cb(struct fmn_sprite *q,void *userdata) {
+  struct fmn_sprite *sprite=userdata;
+  if (q==sprite) return 0;
+  if (!(q->physics&FMN_PHYSICS_SPRITES)) return 0;
+  if (!fmn_physics_check_sprites(0,0,q,sprite)) return 0;
+  return 1;
+}
  
-static void pushblock_prepare_motion(struct fmn_sprite *sprite,uint8_t dir) {
+static uint8_t pushblock_prepare_motion(struct fmn_sprite *sprite,uint8_t dir) {
   
   float dx,dy;
   fmn_vector_from_dir(&dx,&dy,dir);
   float dstx=sprite->x+dx;
   float dsty=sprite->y+dy;
+  
+  sprite->x=dstx;
+  sprite->y=dsty;
+  sprite->radius-=0.3f;
+  uint8_t collision=0;
+  if (
+    fmn_physics_check_edges(0,0,sprite)||
+    fmn_physics_check_grid(0,0,sprite,sprite->physics)||
+    fmn_sprites_for_each(pushblock_physics_cb,sprite)
+  ) collision=1;
+  sprite->radius+=0.3f;
+  sprite->x-=dx;
+  sprite->y-=dy;
   
   slidedir=dir;
   slidetime=0.0f;
@@ -64,14 +85,18 @@ static void pushblock_prepare_motion(struct fmn_sprite *sprite,uint8_t dir) {
   if ((fract>=0.5f-FMN_PUSHBLOCK_TARGET_FUDGE)&&(fract<=0.5+FMN_PUSHBLOCK_TARGET_FUDGE)) {
     slidedst=whole+0.5f;
   }
+  
+  return collision?0:1;
 }
 
 /* Begin push.
  */
  
 static void pushblock_push(struct fmn_sprite *sprite) {
-  fmn_sound_effect(FMN_SFX_PUSH);
-  pushblock_prepare_motion(sprite,pressdir);
+  if (pushblock_prepare_motion(sprite,pressdir)) {
+    fmn_sound_effect(FMN_SFX_PUSH);
+  }
+  // If it doesn't look possible, try anyway. Just don't make the "fwish" sound.
   pressdir=0;
   presstime=0.0f;
 }

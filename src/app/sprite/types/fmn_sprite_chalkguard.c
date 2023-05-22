@@ -16,6 +16,7 @@ static char chalkguard_word_b[16];
 #define tileid0 sprite->bv[0]
 #define match_state sprite->bv[1] /* 0=none, 1=left, 2=right */
 #define highlight_time sprite->fv[0]
+#define full_time sprite->fv[1]
 
 /* Init.
  */
@@ -92,14 +93,39 @@ static void chalkguard_set_blockade(struct fmn_sprite *sprite,float dx,uint8_t b
 /* Call one of these once after a chalk change.
  */
  
+static void chalkguard_highlight(struct fmn_sprite *sprite) {
+  if (full_time<0.5f) return;
+  highlight_time=CHALKGUARD_HIGHLIGHT_TIME;
+  struct fmn_sprite *tattle=fmn_sprite_generate_noparam(0,sprite->x,sprite->y-1.0f);
+  if (tattle) {
+    tattle->imageid=sprite->imageid;
+    tattle->tileid=0xf7;
+    tattle->style=FMN_SPRITE_STYLE_DOUBLEWIDE;
+    tattle->layer=150;
+  }
+}
+
+static int chalkguard_find_tattle(struct fmn_sprite *q,void *userdata) {
+  if (q->tileid!=0xf7) return 0;
+  if (q->style!=FMN_SPRITE_STYLE_DOUBLEWIDE) return 0;
+  if (q->layer!=150) return 0;
+  *(void**)userdata=q;
+  return 1;
+}
+
+static void chalkguard_drop_tattle(struct fmn_sprite *sprite) {
+  struct fmn_sprite *tattle=0;
+  if (fmn_sprites_for_each(chalkguard_find_tattle,&tattle)) fmn_sprite_kill(tattle);
+}
+ 
 static void chalkguard_match(struct fmn_sprite *sprite,float dx) {
   chalkguard_set_blockade(sprite,dx,0);
   chalkguard_set_blockade(sprite,-dx,1);
   uint8_t nstate=(dx>0.0f)?2:1;
   if (match_state!=nstate) {
     match_state=nstate;
-    highlight_time=CHALKGUARD_HIGHLIGHT_TIME;
     sprite->tileid=tileid0+1;
+    chalkguard_highlight(sprite);
   }
 }
 
@@ -108,8 +134,8 @@ static void chalkguard_match_none(struct fmn_sprite *sprite) {
   chalkguard_set_blockade(sprite,1.0f,1);
   if (match_state!=0) {
     match_state=0;
-    highlight_time=CHALKGUARD_HIGHLIGHT_TIME;
     sprite->tileid=tileid0+1;
+    chalkguard_highlight(sprite);
   }
 }
 
@@ -151,10 +177,12 @@ static int16_t _chalkguard_interact(struct fmn_sprite *sprite,uint8_t itemid,uin
  */
  
 static void _chalkguard_update(struct fmn_sprite *sprite,float elapsed) {
+  full_time+=elapsed;
   if (highlight_time>0.0f) {
     if ((highlight_time-=elapsed)<=0.0f) {
       highlight_time=0.0f;
       sprite->tileid=tileid0;
+      chalkguard_drop_tattle(sprite);
     }
   }
 }

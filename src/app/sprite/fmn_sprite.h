@@ -149,6 +149,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_magicdoor     48
 #define FMN_SPRCTL_bittattle     49
 #define FMN_SPRCTL_panda         50
+#define FMN_SPRCTL_watchduck     51
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -201,7 +202,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(pamcake) \
   _(magicdoor) \
   _(bittattle) \
-  _(panda)
+  _(panda) \
+  _(watchduck)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

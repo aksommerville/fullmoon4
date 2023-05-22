@@ -15,10 +15,19 @@ song seven_circles
 neighbore 2
 neighborw 10
 neighbors 23
-sketch 10 2 853504
-sketch 11 2 606243
-sketch 12 2 99466
-sketch 13 2 265860
+
+# FISH
+#sketch 10 2 853504
+#sketch 11 2 606243
+#sketch 12 2 99466
+#sketch 13 2 265860
+
+# WORM
+sketch 10 2 264788
+sketch 11 2 41224
+sketch 12 2 857616
+sketch 13 2 399876
+
 door 6 1 34 9 10
 neighborn 50
 sprite 17 1 34 0 0 0

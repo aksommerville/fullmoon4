@@ -1,0 +1,8 @@
+controller watchduck
+image hero
+tile 0xb0
+style tile
+layer 128
+physics edge sprites solid hole blowable
+radius 0.4
+invmass 128

@@ -13,40 +13,27 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### May
 
-- [x] Beta test.
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
-- [x] editor:ImageAllUi: Show names.
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
-- [x] Westward blowback seems slower than eastward, or is that my imagination? ...imagination
 - [ ] minsyn drums too loud
-- [ ] pushblock: Don't make a sound if we can tell we won't be moving.
-- [ ] wildflower: Option to flip horizontally
+- [x] pushblock: Don't make a sound if we can tell we won't be moving.
+- [x] wildflower: Option to flip horizontally
 - [ ] Native fiddle tool.
-- - [x] http: WebSocket
 - - [ ] inotify helper
-- - [x] Report peak and RMS continuously over WebSocket.
-- - [x] MIDI-In. Manage at the web app, and call `POST /api/midi`.
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
 - - [ ] Show me which instruments are used by each song.
 - - [ ] Possible to populate the instruments menu with the selected program on channel 14?
-- [x] web: Handle high-frequency monitors. We use requestAnimationFrame but then assume 60 Hz.
-- [x] Disable shovel underlay while pumpkinned.
-- [x] Moonsong's chalkboard should be chalkable, make it work.
-- [x] Gravestones too, why aren't they?
 - [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
-- [x] Put some pushblocks near the snow globe, to show it off.
-- [x] Beach SW, the rain spell educator looks like it has something to do with the lambda block but it doesn't.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
-- [ ] Chalk alphabet education.
-- [ ] chalkguard: fireworks
-- [ ] "Bring matches" watchduck at the cave entrance, demo.
-- [x] Village transmogrification platform is shovellable; shouldn't be.
-- [x] Lambda block: Some kind of visual change while attracted, so you can tell something happened, when you're blocking its motion.
+- [x] Chalk alphabet education.
+- [x] chalkguard: fireworks
+- [x] "Bring matches" watchduck at the cave entrance, demo.
+- [x] demo cave, first ladder triggers turnaround ...i think this is ok
 
 ### Full Maps
 
