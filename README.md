@@ -20,7 +20,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Metal
 - [x] editor:ImageAllUi: Show names.
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
-- [ ] Westward blowback seems slower than eastward, or is that my imagination?
+- [x] Westward blowback seems slower than eastward, or is that my imagination? ...imagination
 - [ ] minsyn drums too loud
 - [ ] pushblock: Don't make a sound if we can tell we won't be moving.
 - [ ] wildflower: Option to flip horizontally
@@ -33,7 +33,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
 - - [ ] Show me which instruments are used by each song.
 - - [ ] Possible to populate the instruments menu with the selected program on channel 14?
-- [ ] web: Handle high-frequency monitors. We use requestAnimationFrame but then assume 60 Hz.
+- [x] web: Handle high-frequency monitors. We use requestAnimationFrame but then assume 60 Hz.
 - [ ] Disable shovel underlay while pumpkinned.
 - [ ] Moonsong's chalkboard should be chalkable, make it work.
 - [ ] Gravestones too, why aren't they?
@@ -42,6 +42,9 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Beach SW, the rain spell educator looks like it has something to do with the lambda block but it doesn't.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
+- [ ] Chalk alphabet education.
+- [ ] chalkguard: fireworks
+- [ ] "Bring matches" watchduck at the cave entrance, demo.
 
 ### Full Maps
 
@@ -73,6 +76,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] MacOS: App icon
+- [ ] linux: PulseAudio
 - [x] Eliminate transparency from map images, incorporate the background in each tile.
 - [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.

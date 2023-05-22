@@ -26,6 +26,12 @@ export class Clock {
     this.UPDATE_INTERVAL_MAX_MS = 100; // 16 is a typical rate, and you got to allow like triple that. 100 is very long.
     this.MISSED_UPDATE_TOLERANCE = 0; // >0 to require multiple misses before panicking.
     
+    /* Protection against high-frequency monitors.
+     * We want to update at about 60 Hz (ie 16.667 ms).
+     * If they come in significantly faster than that, ignore the frame.
+     */
+    this.MINIMUM_REAL_UPDATE_INTERVAL_MS = 14;
+    
     /* When debugging, we advance game time by a uniform amount regardless of real time.
      * 16 ms is close to 60 Hz.
      */
@@ -91,6 +97,7 @@ export class Clock {
     } else {
       const now = this.window.Date.now();
       const elapsedReal = now - this.lastRealTime;
+      if (elapsedReal < this.MINIMUM_REAL_UPDATE_INTERVAL_MS) return 0;
       const elapsedGame = Math.max(this.SHORTEST_UPDATE_MS, Math.min(this.LONGEST_UPDATE_MS, elapsedReal));
       this.lastRealTime = now;
       this.lastGameTime += elapsedGame;

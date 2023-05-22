@@ -168,17 +168,25 @@ export class Runtime {
       this.inputManager.update();
       if (!this.debugging) this.synthesizer.update();
     
+      let updated = true;
       if (this.running) {
         const time = this.clock.update();
-        this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
+        if (time) {
+          this.wasmLoader.instance.exports.fmn_update(time, this.inputManager.state);
+        } else {
+          updated = false;
+        }
         if (!this.running) return;
       } else {
         this.clock.skip();
+        //TODO Should we still render in this case?
       }
     
-      this.renderer.begin();
-      if (this.wasmLoader.instance.exports.fmn_render()) {
-        this.renderer.commit();
+      if (updated) {
+        this.renderer.begin();
+        if (this.wasmLoader.instance.exports.fmn_render()) {
+          this.renderer.commit();
+        }
       }
     
       if (!this.debugging) this.scheduleUpdate();
