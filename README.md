@@ -19,8 +19,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Metal
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
 - [ ] minsyn drums too loud
-- [x] pushblock: Don't make a sound if we can tell we won't be moving.
-- [x] wildflower: Option to flip horizontally
 - [ ] Native fiddle tool.
 - - [ ] inotify helper
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
@@ -30,10 +28,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
-- [x] Chalk alphabet education.
-- [x] chalkguard: fireworks
-- [x] "Bring matches" watchduck at the cave entrance, demo.
-- [x] demo cave, first ladder triggers turnaround ...i think this is ok
 
 ### Full Maps
 
@@ -41,13 +35,11 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.
 - [ ] image castleext: Water-into-trees, 4 tiles needed.
-- [x] Decide where each treasure goes. Filling in with Cheese.
 - [ ] desert: tiles for forest boundary
 - [ ] image steppe: Entirely temporary
 - [ ] steppe/beach boundary in blowback border
-- [ ] Sea should be the same color everywhere, pick one.
+- [x] Sea should be the same color everywhere, pick one. 21475d
 - [ ] Church: join path at welcome mat.
-- [x] village: wattle-and-daub houses need an extensible roof
 
 #### Major areas
 
@@ -66,7 +58,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] MacOS: App icon
 - [ ] linux: PulseAudio
-- [x] Eliminate transparency from map images, incorporate the background in each tile.
 - [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
@@ -78,9 +69,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.
-- - [x] MapAllUi: Populate tattle.
 - - [ ] Delete maps (and resources in general)
-- - [ ] ImageAllUi: Show names
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
 - [ ] Rekajigger Constants.js, use actual inlinable constants.
 - [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
