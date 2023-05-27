@@ -256,10 +256,10 @@ int bigpc_config_guess_data_path() {
       return 0;
     }
   
-    int pathlen=eslashp+5;
+    int pathlen=eslashp+10;
     if (!(bigpc.config.data_path=malloc(pathlen+1))) return -1;
     memcpy(bigpc.config.data_path,bigpc.exename,eslashp);
-    memcpy(bigpc.config.data_path+eslashp,"/data",6);
+    memcpy(bigpc.config.data_path+eslashp,"/data-demo",11);
     fprintf(stderr,"%s: '--data=PATH' not provided. Guessing '%s'\n",bigpc.exename,bigpc.config.data_path);
     return 0;
   }
