@@ -110,10 +110,10 @@ int fmn_gl2_texture_init(struct fmn_gl2_texture *texture,const void *src,int src
   struct png_image *replace=png_image_reformat(image,0,0,image->w,image->h,depth,colortype,0);
   png_image_del(image);
   if (!(image=replace)) return -1;
-  
+
   switch ((image->depth<<8)|image->colortype) {
     case 0x0806: glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image->w,image->h,0,GL_RGBA,GL_UNSIGNED_BYTE,replace->pixels); break;
-    case 0x0802: glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,image->w,image->h,0,GL_RGB,GL_UNSIGNED_BYTE,replace->pixels); break;
+    case 0x0802: glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,image->w,image->h,0,GL_RGB,GL_UNSIGNED_BYTE,replace->pixels); break;
     default: png_image_del(image); return -1;
   }
   texture->w=image->w;

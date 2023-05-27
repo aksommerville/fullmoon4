@@ -308,6 +308,10 @@ static void _gl2_begin(struct bigpc_render_driver *driver) {
  */
  
 static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_driver *driver) {
+  #if FMN_USE_bcm
+    // glGetTexImage not found on the Pi. This is only for taking screencaps, so not bothering to investigate.
+    return -1;
+  #else
   fmn_gl2_texture_use_object(driver,&DRIVER->mainfb);
   void *v=malloc(DRIVER->mainfb.w*DRIVER->mainfb.h*4);
   if (!v) return -1;
@@ -330,7 +334,7 @@ static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_d
     }
     free(rowbuf);
   }
-  
+  #endif
   return 0;
 }
 

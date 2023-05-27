@@ -5,7 +5,7 @@
 tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses -Wno-format-overflow
 tools_CC:=gcc -c -MMD -O3 -Isrc $(tools_CCOPT) $(tools_CC_EXTRA)
 tools_LD:=gcc
-tools_LDPOST:=-lz -lm
+tools_LDPOST:=-lz -lm -lpthread
 
 tools_MIDDIR:=mid/tools
 tools_OUTDIR:=out/tools
