@@ -104,6 +104,7 @@ extern struct bigpc {
 } bigpc;
 
 void bigpc_config_cleanup(struct bigpc_config *config);
+void bigpc_config_init();
 int bigpc_configure_argv(int argc,char **argv);
 int bigpc_configure_kv(const char *k,int kc,const char *v,int vc);
 int bigpc_config_ready();

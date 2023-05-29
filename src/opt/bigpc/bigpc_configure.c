@@ -217,6 +217,13 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   return -2;
 }
 
+/* Initial defaults.
+ */
+ 
+void bigpc_config_init() {
+  bigpc.config.video_fullscreen=1;
+}
+
 /* Finish configuration.
  */
  

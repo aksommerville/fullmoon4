@@ -45,6 +45,7 @@ void bigpc_quit() {
  
 int bigpc_init(int argc,char **argv) {
   int err;
+  bigpc_config_init();
   if ((err=bigpc_configure_argv(argc,argv))<0) return err;
   if ((err=bigpc_config_ready())<0) return err;
   
