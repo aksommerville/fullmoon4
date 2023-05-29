@@ -1,5 +1,6 @@
 #include "bigpc_clock.h"
 #include <sys/time.h>
+#include <time.h>
 
 // This is more about preventing 64-to-32-bit overflow than about timekeeping.
 // Five seconds is an extremely long interval between updates.

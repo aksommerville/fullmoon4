@@ -39,3 +39,8 @@ web_DEPLOY_PATH:=
 
 tools_CC_EXTRA:=-Wno-format-overflow
 tools_OPT_EXTRA:=alsa
+
+linux_USE_GLX:=1
+linux_USE_DRM:=1
+linux_USE_ALSA:=1
+linux_USE_PULSE:=1

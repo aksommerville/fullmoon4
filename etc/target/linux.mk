@@ -7,7 +7,7 @@ linux_OUTDIR:=out/linux
 
 # Truly optional units, ie you can change these (remember to update LDPOST et al).
 # You must enable at least one of (glx,drm), otherwise you're not going to see anything.
-linux_OPT_ENABLE:=evdev alsa glx drm gl2 soft minsyn
+linux_OPT_ENABLE:=evdev gl2 soft minsyn
 
 # The rest are mandatory, no alternatives:
 linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr midi pcmprint
@@ -22,12 +22,26 @@ linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses
   -I/usr/include/libdrm \
   $(foreach U,$(linux_OPT_ENABLE),-DFMN_USE_$U=1)
 linux_LD:=gcc
-linux_LDPOST:=-lm -lX11 -lGL -lGLX -lEGL -ldrm -lgbm -lz -lpthread
+linux_LDPOST:=-lm -lGL -lz -lpthread
 
 ifneq (,$(linux_USE_XINERAMA))
   linux_OPT_ENABLE+=xinerama
   linux_CC+=-DFMN_USE_xinerama
   linux_LDPOST+=-lXinerama
+endif
+ifneq (,$(linux_USE_GLX))
+  linux_OPT_ENABLE+=glx
+  linux_LDPOST+=-lX11
+endif
+ifneq (,$(linux_USE_DRM))
+  linux_OPT_ENABLE+=drm
+  linux_LDPOST+=-ldrm -lEGL -lgbm
+endif
+ifneq (,$(linux_USE_ALSA))
+  linux_OPT_ENABLE+=alsa
+endif
+ifneq (,$(linux_USE_PULSE))
+  #TODO pulseaudio
 endif
 
 # Always filter instrument and sound (0 means no resources produced, if no synthesizers enabled; these resources always have a qualifier).
