@@ -16,7 +16,7 @@
 #include <limits.h>
 #include <stddef.h>
 #include <math.h> /* I'll add implementations as they become needed. See src/platform/fmn_platform_libm.c */
-#if FMN_USE_macos
+#ifdef memcpy
   // Seems that my MacOS libc has memcpy as a macro. No worries, under macos we're definitely using a real libc, use the real headers.
   #include <stdlib.h>
   #include <string.h>

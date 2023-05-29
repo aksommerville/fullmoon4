@@ -20,6 +20,18 @@ int64_t bigpc_now_us() {
   return (int64_t)tv.tv_sec*1000000ll+tv.tv_usec;
 }
 
+double bigpc_now_real_s() {
+  struct timespec tv={0};
+  clock_gettime(CLOCK_REALTIME,&tv);
+  return tv.tv_sec+tv.tv_nsec/1000000000.0;
+}
+
+double bigpc_now_cpu_s() {
+  struct timespec tv={0};
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tv);
+  return tv.tv_sec+tv.tv_nsec/1000000000.0;
+}
+
 /* Reset clock.
  */
 
@@ -30,6 +42,14 @@ void bigpc_clock_reset(struct bigpc_clock *clock) {
   clock->skew_us=0;
   clock->underflowc=0;
   clock->overflowc=0;
+}
+
+/* Start time. Should only be called once.
+ */
+ 
+void bigpc_clock_capture_start_time(struct bigpc_clock *clock) {
+  clock->starttime_real=bigpc_now_real_s();
+  clock->starttime_cpu=bigpc_now_cpu_s();
 }
 
 /* Update real-time clock, account for real-time faults, and
@@ -85,4 +105,13 @@ void bigpc_clock_skip(struct bigpc_clock *clock) {
   clock->skipc++;
   int64_t elapsed_us=bigpc_clock_update_real_time(clock);
   clock->skew_us=0;
+}
+
+/* Estimate CPU load.
+ */
+ 
+double bigpc_clock_estimate_cpu_load(const struct bigpc_clock *clock) {
+  double elapsed_real=bigpc_now_real_s()-clock->starttime_real;
+  double elapsed_cpu=bigpc_now_cpu_s()-clock->starttime_cpu;
+  return elapsed_cpu/elapsed_real;
 }

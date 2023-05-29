@@ -42,8 +42,18 @@ static int fiddle_pcm_init() {
     .format=BIGPC_AUDIO_FORMAT_s16n,
     .device=0,
   };
-  if (!(fiddle.audio=calloc(1,bigpc_audio_type_alsa.objlen))) return -1;
-  fiddle.audio->type=&bigpc_audio_type_alsa;
+  
+  const struct bigpc_audio_type *type=0;
+  #if FMN_USE_alsa
+    type=&bigpc_audio_type_alsa;
+  #endif
+  if (!type) {
+    fprintf(stderr,"%s:%d:%s: No audio driver.\n",__FILE__,__LINE__,__func__);
+    return -1;
+  }
+  
+  if (!(fiddle.audio=calloc(1,type->objlen))) return -1;
+  fiddle.audio->type=type;
   fiddle.audio->refc=1;
   fiddle.audio->delegate.cb_pcm_out=fiddle_pcm_cb;
   fiddle.audio->rate=config.rate;

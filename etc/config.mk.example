@@ -33,3 +33,9 @@ web_CCINC_EXTRA:=
 web_DEPLOY_USER:=
 web_DEPLOY_HOST:=
 web_DEPLOY_PATH:=
+
+#---------------------------------------------
+# Other targets.
+
+tools_CC_EXTRA:=-Wno-format-overflow
+tools_OPT_EXTRA:=alsa

@@ -28,6 +28,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
+- [x] macos: app icon
+- [x] macos: Show CPU load at quit
 
 ### Full Maps
 
@@ -56,8 +58,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
-- [ ] MacOS: App icon
 - [ ] linux: PulseAudio
+- [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
 - [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.

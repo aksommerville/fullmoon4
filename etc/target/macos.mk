@@ -24,7 +24,7 @@ $(macos_NIB):$(macos_XIB);$(PRECMD) ibtool --compile $@ $<
 $(macos_PLIST):$(macos_PLIST_SRC);$(PRECMD) cp $< $@
 $(macos_ICON):$(macos_ICONS);$(PRECMD) iconutil -c icns -o $@ $(macos_ICONS_DIR)
 
-macos-all:$(macos_EXE) $(macos_DATA_FULL $(macos_DATA_DEMO) $(macos_ICON) $(macos_NIB) $(macos_PLIST)
+macos-all:$(macos_EXE) $(macos_DATA_FULL) $(macos_DATA_DEMO) $(macos_ICON) $(macos_NIB) $(macos_PLIST)
 
 macos_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses \
   $(macos_CC_EXTRA) \
@@ -45,6 +45,6 @@ endif
 $(eval $(call SINGLE_DATA_ARCHIVE,macos,$(macos_DATA_FULL),$(macos_DATA_DEMO),$(macos_QFILTER)))
 
 # TODO Smarten up the automatic data file detection; do not require a command-line arg!
-macos-run-full:$(macos_EXE) $(macos_DATA_FULL);open -W $(macos_EXE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_FULL) $(macos_RUN_ARGS)
-macos-run-demo:$(macos_EXE) $(macos_DATA_DEMO);open -W $(macos_EXE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_DEMO) $(macos_RUN_ARGS)
+macos-run-full:$(macos_EXE) $(macos_DATA_FULL);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_FULL) $(macos_RUN_ARGS)
+macos-run-demo:$(macos_EXE) $(macos_DATA_DEMO);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_DEMO) $(macos_RUN_ARGS)
 macos-run:macos-run-demo

@@ -7,6 +7,8 @@
 #include <stdint.h>
 
 int64_t bigpc_now_us();
+double bigpc_now_real_s();
+double bigpc_now_cpu_s();
 
 struct bigpc_clock {
   int64_t last_real_time_us;
@@ -32,6 +34,9 @@ struct bigpc_clock {
   // For your curiosity only.
   int64_t first_real_time_us;
   int framec,skipc; // Count of "update" and "skip" calls.
+
+  // Tracking CPU consumption, a separate concern but obviously "clocky".
+  double starttime_real,starttime_cpu;
 };
 
 void bigpc_clock_reset(struct bigpc_clock *clock);
@@ -43,5 +48,10 @@ void bigpc_clock_reset(struct bigpc_clock *clock);
  */
 uint32_t bigpc_clock_update(struct bigpc_clock *clock);
 void bigpc_clock_skip(struct bigpc_clock *clock);
+
+// Start time is for the process (trimming startup and teardown). It never resets.
+void bigpc_clock_capture_start_time(struct bigpc_clock *clock);
+
+double bigpc_clock_estimate_cpu_load(const struct bigpc_clock *clock);
 
 #endif

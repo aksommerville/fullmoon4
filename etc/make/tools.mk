@@ -2,7 +2,7 @@
 # Rules for building programs that might be used during the rest of the build.
 # Initially, all the build-time tools were written for Node and do not require building, but I'm getting away from that.
 
-tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses -Wno-format-overflow
+tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses
 tools_CC:=gcc -c -MMD -O3 -Isrc $(tools_CCOPT) $(tools_CC_EXTRA)
 tools_LD:=gcc
 tools_LDPOST:=-lz -lm -lpthread
@@ -10,10 +10,10 @@ tools_LDPOST:=-lz -lm -lpthread
 tools_MIDDIR:=mid/tools
 tools_OUTDIR:=out/tools
 
-tools_OPT_PATTERN:=$(foreach U, \
-  datafile png assist pcmprint http alsa minsyn midi, \
-  src/opt/$U/%.c \
-)
+tools_OPT_ENABLE:=datafile png assist pcmprint http minsyn midi $(tools_OPT_EXTRA)
+
+tools_CC+=$(patsubst %,-DFMN_USE_%=1,$(tools_OPT_ENABLE))
+tools_OPT_PATTERN:=$(foreach U,$(tools_OPT_ENABLE),src/opt/$U/%.c)
 
 tools_CFILES:=$(filter-out src/opt/assist/assist_main.c, \
   $(filter src/tool/%.c $(tools_OPT_PATTERN),$(SRCFILES)) \
