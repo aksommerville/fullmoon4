@@ -12,11 +12,11 @@ extern const struct bigpc_audio_type bigpc_audio_type_msaudio;
 extern const struct bigpc_audio_type bigpc_audio_type_dummy;
 
 static const struct bigpc_audio_type *bigpc_audio_typev[]={
-#if FMN_USE_alsa
-  &bigpc_audio_type_alsa,
-#endif
 #if FMN_USE_pulse
   &bigpc_audio_type_pulse,
+#endif
+#if FMN_USE_alsa
+  &bigpc_audio_type_alsa,
 #endif
 #if FMN_USE_macaudio
   &bigpc_audio_type_macaudio,

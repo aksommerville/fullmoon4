@@ -31,10 +31,35 @@ static int alsapcm_list_devices_1(
 ) {
   int err;
   struct snd_pcm_hw_params hwparams;
+  
   // O_NONBLOCK here prevents us from stalling when some other client is using ALSA.
   // Seems like in that case, we will never actually get audio output, but from our perspective we'll appear to.
+  // Update: Devices don't become available immediately after the other client closes them.
+  // I'm having trouble with Romassist, reopening PCM out immediately after the menu has closed.
+  // So try a fixed delay on EBUSY?
+  // ...1 second did NOT work but 10 seconds did. uh. We're not going sleep for 10 seconds.
+  // Without O_NONBLOCK it waits for the device, but waits forever if some other client is using it.
+  
+  /* plundersquad doesn't have this problem. what is it using?
+   * ...libasound
+   * Also, I've been launching via Romassist on the VCS for months with no trouble. This problem only happens on the Nuc.
+   * Is it something to do with PulseAudio?
+   * Would we be better served by the PulseAudio client?
+   * 2023-05-29: Leaving this be for now, and will try Pulse for the Nuc.
+   */
+  
   int fd=open(path,O_RDONLY|O_NONBLOCK);
-  if (fd<0) return -1;
+  //int fd=open(path,O_RDONLY);
+  if (fd<0) {
+    fprintf(stderr,"!!! %s open failed: (%d) %m\n",path,errno);
+    if (errno==EBUSY) {
+      fprintf(stderr,"sleep a bit a try again...\n");
+      usleep(1000000);
+      fd=open(path,O_RDONLY|O_NONBLOCK);
+      if (fd>=0) fprintf(stderr,"...hey sleeping fixed it!\n");
+    }
+    if (fd<0) return -1;
+  }
   
   if ((err=ioctl(fd,SNDRV_PCM_IOCTL_PVERSION,&device->protocol_version))<0) goto _done_;
   device->compiled_version=SNDRV_PCM_VERSION;
@@ -71,6 +96,116 @@ static int alsapcm_list_devices_1(
   return err;
 }
 
+/* Helper to list and sort devices within one directory.
+ * It's important that we sort, so we guess the same way every time.
+ */
+ 
+struct alsapcm_devlist {
+  char **v; // full path
+  int c,a;
+};
+
+static void alsapcm_devlist_cleanup(struct alsapcm_devlist *devlist) {
+  if (devlist->v) {
+    while (devlist->c-->0) free(devlist->v[devlist->c]);
+    free(devlist->v);
+  }
+  memset(devlist,0,sizeof(struct alsapcm_devlist));
+}
+
+static int alsapcm_devlist_append(struct alsapcm_devlist *devlist,const char *src) {
+  if (devlist->c>=devlist->a) {
+    int na=devlist->a+16;
+    if (na>INT_MAX/sizeof(void*)) return -1;
+    void *nv=realloc(devlist->v,sizeof(void*)*na);
+    if (!nv) return -1;
+    devlist->v=nv;
+    devlist->a=na;
+  }
+  if (!(devlist->v[devlist->c]=strdup(src))) return -1;
+  devlist->c++;
+  return 0;
+}
+
+static int alsapcm_devlist_gather(struct alsapcm_devlist *devlist,const char *dirpath) {
+  if (!dirpath) return 0;
+  int dirpathc=0; while (dirpath[dirpathc]) dirpathc++;
+  char path[1024];
+  if (dirpathc>=sizeof(path)) return -1;
+  memcpy(path,dirpath,dirpathc);
+  path[dirpathc++]='/';
+  DIR *dir=opendir(dirpath);
+  if (!dir) return -1;
+  struct dirent *de;
+  while (de=readdir(dir)) {
+    if (de->d_type!=DT_CHR) continue;
+    if (memcmp(de->d_name,"pcm",3)) continue;
+    int basec=3; while (de->d_name[basec]) basec++;
+    if (de->d_name[basec-1]!='p') continue;
+    if (dirpathc>=sizeof(path)-basec) continue;
+    memcpy(path+dirpathc,de->d_name,basec+1);
+    if (alsapcm_devlist_append(devlist,path)<0) {
+      closedir(dir);
+      return 0;
+    }
+  }
+  closedir(dir);
+  return 0;
+}
+
+static void alsafd_devpath_parse(int *card,int *device,const char *path) {
+  *card=*device=0;
+  char stage='p';
+  for (;*path;path++) {
+    if (*path=='/') {
+      *card=*device=0;
+      stage='p';
+    } else if (stage=='p') {
+      if (*path=='C') stage='c';
+    } else if (stage=='c') {
+      if ((*path>='0')&&(*path<='9')) {
+        (*card)*=10;
+        (*card)+=(*path)-'0';
+      } else if (*path=='D') stage='d';
+      else stage='p';
+    } else if (stage=='d') {
+      if ((*path>='0')&&(*path<='9')) {
+        (*device)*=10;
+        (*device)+=(*path)-'0';
+      } else if (*path=='c') stage='c';
+      else stage='p';
+    }
+  }
+}
+
+static int alsapcm_devlist_cmp(const void *a,const void *b) {
+  const char *A=*(void**)a,*B=*(void**)b;
+  int ac,ad,bc,bd;
+  alsafd_devpath_parse(&ac,&ad,A);
+  alsafd_devpath_parse(&bc,&bd,B);
+  if (ac<bc) return -1;
+  if (ac>bc) return 1;
+  if (ad<bd) return -1;
+  if (ad>bd) return 1;
+  return strcmp(a,b);
+}
+
+static void alsapcm_devlist_sort(struct alsapcm_devlist *devlist) {
+  qsort(devlist->v,devlist->c,sizeof(void*),alsapcm_devlist_cmp);
+}
+
+static int alsapcm_devlist_init(struct alsapcm_devlist *devlist,const char *dirpath) {
+  if (alsapcm_devlist_gather(devlist,dirpath)<0) return -1;
+  alsapcm_devlist_sort(devlist);
+  return 0;
+}
+
+static const char *alsapcm_basename(const char *path) {
+  const char *base=path;
+  int i=0; for (;path[i];i++) if (path[i]=='/') base=path+i+1;
+  return base;
+}
+
 /* List devices.
  */
  
@@ -81,40 +216,26 @@ int alsapcm_list_devices(
 ) {
   if (!cb) return -1;
   if (!path||!path[0]) path="/dev/snd";
-  DIR *dir=opendir(path);
-  if (!dir) return -1;
-  int err;
-  struct snd_pcm_info info;
-  struct alsapcm_device device;
-  char subpath[1024];
-  int pathc=0;
-  while (path[pathc]) pathc++;
-  if (pathc>=sizeof(subpath)) {
-    closedir(dir);
+  //fprintf(stderr,"%s %s...\n",__func__,path);
+  struct alsapcm_devlist devlist={0};
+  if (alsapcm_devlist_init(&devlist,path)<0) {
+    alsapcm_devlist_cleanup(&devlist);
     return -1;
   }
-  memcpy(subpath,path,pathc);
-  if (subpath[pathc-1]!='/') subpath[pathc++]='/';
-  struct dirent *de;
-  while (de=readdir(dir)) {
-    if (de->d_type!=DT_CHR) continue;
-    const char *base=de->d_name;
-    int basec=0;
-    while (base[basec]) basec++;
-    if (pathc>=sizeof(subpath)-basec) {
-      closedir(dir);
-      return -1;
-    }
-    memcpy(subpath+pathc,base,basec+1);
-    if (alsapcm_list_devices_1(&device,subpath,&info)<0) continue;
-    device.basename=base;
-    device.path=path;
+  int i=0,err;
+  for (;i<devlist.c;i++) {
+    //fprintf(stderr,"  %s?\n",devlist.v[i]);
+    struct alsapcm_device device={0};
+    struct snd_pcm_info info={0};
+    if (alsapcm_list_devices_1(&device,devlist.v[i],&info)<0) continue;
+    device.basename=alsapcm_basename(devlist.v[i]);
+    device.path=devlist.v[i];
     if (err=cb(&device,userdata)) {
-      closedir(dir);
+      alsapcm_devlist_cleanup(&devlist);
       return err;
     }
   }
-  closedir(dir);
+  alsapcm_devlist_cleanup(&devlist);
   return 0;
 }
 
@@ -162,6 +283,18 @@ static int alsapcm_find_device_keep(
 
 static int alsapcm_find_device_cb(struct alsapcm_device *device,void *userdata) {
   struct alsapcm_find_device_context *ctx=userdata;
+  
+  /*
+  fprintf(stderr,
+    "  %s (%s) pro=%d hdr=%d card=%d dev=%d sub=%d id=%s name=%s subname=%s class=%d subclass=%d rate=%d..%d,chanc=%d..%d\n",
+    device->basename,device->path,
+    device->protocol_version,device->compiled_version,
+    device->card,device->device,device->subdevice,
+    device->id,device->name,device->subname,
+    device->dev_class,device->dev_subclass,
+    device->ratelo,device->ratehi,device->chanclo,device->chanchi
+  );
+  /**/
   
   // Disqualify if the rate or channel ranges don't overlap.
   if (device->ratehi<ctx->ratelo) return 0;

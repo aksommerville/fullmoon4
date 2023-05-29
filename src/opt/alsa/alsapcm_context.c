@@ -191,7 +191,9 @@ static int alsapcm_select_device_path(
   // Searching explicitly in "/dev/snd" forces return of an absolute path.
   // If we passed null instead, we'd get the same result, but the basename only.
   if (!(alsapcm->device=alsapcm_find_device("/dev/snd",ratelo,ratehi,chanclo,chanchi))) {
+    //fprintf(stderr,"alsapcm_find_device failed (%d..%d,%d..%d)\n",ratelo,ratehi,chanclo,chanchi);
     // If it failed with the exact setup params, that's ok, try again with the default ranges.
+    // It's normal for the first try to fail, since it asks for mono and some devices, eg mine, will only allow stereo.
     if (setup) {
       if (alsapcm->device=alsapcm_find_device("/dev/snd",22050,48000,1,2)) return 0;
     }
@@ -218,7 +220,9 @@ static int alsapcm_open_device(struct alsapcm *alsapcm) {
     alsapcm->fd=-1;
     return -1;
   }
-              
+  
+  fprintf(stderr,"alsapcm: Using device '%s'\n",alsapcm->device);
+
   return 0;
 }
 

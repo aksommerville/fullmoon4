@@ -31,17 +31,22 @@ ifneq (,$(linux_USE_XINERAMA))
 endif
 ifneq (,$(linux_USE_GLX))
   linux_OPT_ENABLE+=glx
+  linux_CC+=-DFMN_USE_glx=1
   linux_LDPOST+=-lX11
 endif
 ifneq (,$(linux_USE_DRM))
   linux_OPT_ENABLE+=drm
+  linux_CC+=-DFMN_USE_drm=1
   linux_LDPOST+=-ldrm -lEGL -lgbm
 endif
 ifneq (,$(linux_USE_ALSA))
   linux_OPT_ENABLE+=alsa
+  linux_CC+=-DFMN_USE_alsa=1
 endif
 ifneq (,$(linux_USE_PULSE))
-  #TODO pulseaudio
+  linux_OPT_ENABLE+=pulse
+  linux_CC+=-DFMN_USE_pulse=1
+  linux_LDPOST+=-lpulse-simple
 endif
 
 # Always filter instrument and sound (0 means no resources produced, if no synthesizers enabled; these resources always have a qualifier).
