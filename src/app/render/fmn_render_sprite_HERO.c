@@ -224,7 +224,7 @@ static void fmn_render_hero_head(uint8_t tileid,uint8_t xform) {
 
 static void fmn_render_hero_hat(uint8_t tileid,uint8_t xform) {
   float dy=-0.75f;
-  if (fmn_global.selected_item==FMN_ITEM_HAT) {
+  if ((fmn_global.selected_item==FMN_ITEM_HAT)&&fmn_global.itemv[FMN_ITEM_HAT]) {
     switch (tileid) {
       case 0x00: tileid=0x3c; break;
       case 0x01: tileid=0x3d; break;
