@@ -90,6 +90,7 @@ static const struct inmgr_map inmgr_map_ps2_knockoff[]={
 static const struct inmgr_map inmgr_map_zelda[]={
   BTN(0x00010130,MENU)
   BTN(0x00010131,USE)
+		BTNA(0x00010139,quit)
   HORZ1(0x00030010)
   VERT1(0x00030011)
 };
@@ -106,6 +107,7 @@ static const struct inmgr_map inmgr_map_sn30[]={ // SN30 and Xbox 360
 };
 
 static const struct inmgr_map inmgr_map_atari_stick[]={
+  BTNA(0x000100ac,quit)
   BTN(0x00010130,USE)
   BTN(0x00010131,MENU)
   HORZ1(0x00030010)
@@ -130,7 +132,8 @@ static const struct inmgr_map inmgr_map_black_on_black[]={
 
 static const struct inmgr_map inmgr_map_xbox[]={
   BTN(0x00010130,USE)
-  BTN(0x00010133,MENU)
+  BTN(0x00010134,MENU)
+		BTNA(0x0001013b,quit)
   HORZ1(0x00030010)
   VERT1(0x00030011)
 };
@@ -138,6 +141,7 @@ static const struct inmgr_map inmgr_map_xbox[]={
 static const struct inmgr_map inmgr_map_pro2[]={
   BTN(0x00010131,USE)
   BTN(0x00010134,MENU)
+		BTNA(0x0001013b,quit)
   HORZ1(0x00030010)
   VERT1(0x00030011)
 };
