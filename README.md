@@ -31,6 +31,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] macos: app icon
 - [x] macos: Show CPU load at quit
 - [ ] getGamepads() only exists in secure contexts; fails in prod today in Firefox, if you load HTTP.
+- [ ] Firefox/Linux: bgbits sometimes vanishes. You get a black background with sprites on top.
 
 ### Full Maps
 

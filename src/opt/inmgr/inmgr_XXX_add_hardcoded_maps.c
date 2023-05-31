@@ -82,6 +82,7 @@ static const struct inmgr_map inmgr_map_logikey[]={
 static const struct inmgr_map inmgr_map_ps2_knockoff[]={
   BTN(0x00010122,USE)
   BTN(0x00010123,MENU)
+  BTNA(0x00010129,quit)
   HORZ1(0x00030010)
   VERT1(0x00030011)
 };
