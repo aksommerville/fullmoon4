@@ -214,6 +214,7 @@ export class InputManager {
    
   _updateGamepad() {
     const axisThreshold = 0.1; // TODO configurable per device (per axis?)
+    if (!this.window.navigator.getGamepads) return; // old browser, or unsecure connection
     for (const src of this.window.navigator.getGamepads()) {
       if (!src) continue;
       const gamepad = this.gamepads[src.index];
@@ -263,6 +264,7 @@ export class InputManager {
   }
   
   onGamepadConnected(e) {
+    if (!e.gamepad) return;
     let gamepad = this.gamepads[e.gamepad.index];
     if (!gamepad) {
       gamepad = {
@@ -288,6 +290,7 @@ export class InputManager {
   }
   
   onGamepadDisconnected(e) {
+    if (!e.gamepad) return;
     const gamepad = this.gamepads[e.gamepad.index];
     if (!gamepad) return;
     this.gamepads[e.gamepad.index] = null;
