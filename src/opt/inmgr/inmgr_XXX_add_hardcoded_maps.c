@@ -95,8 +95,9 @@ static const struct inmgr_map inmgr_map_zelda[]={
   VERT1(0x00030011)
 };
 
-static const struct inmgr_map inmgr_map_sn30[]={ // SN30 and Xbox 360
+static const struct inmgr_map inmgr_map_sn30[]={ // SN30, N30, and Xbox 360
   BTN(0x00010130,USE)
+  BTN(0x00010131,MENU) // B on N30
   BTN(0x00010133,MENU)
   BTNA(0x0001013a,quit) // select
   //BTNA(0x0001013e,screencap)
