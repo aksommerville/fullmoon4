@@ -75,17 +75,18 @@ static int fmn_render_hero_cheese() {
 static int fmn_render_hero_injury() {
   uint8_t tileid_body=0,tileid_head=0,tileid_hat=0;
   float hatdy=0.0f;
+  int behatted=(fmn_global.selected_item==FMN_ITEM_HAT)&&fmn_global.itemv[FMN_ITEM_HAT];
   if (fmn_global.transmogrification==1) { // pumpkin
     if (fmn_rh.framec&4) {
-      tileid_hat=(fmn_global.selected_item==FMN_ITEM_HAT)?0x0f:0x33;
+      tileid_hat=behatted?0x0f:0x33;
       tileid_body=0x2e;
     } else {
-      tileid_hat=(fmn_global.selected_item==FMN_ITEM_HAT)?0x0e:0x03;
+      tileid_hat=behatted?0x0e:0x03;
       tileid_body=0x2d;
     }
     hatdy=-0.375f;
   } else { // normal
-    if (fmn_global.selected_item==FMN_ITEM_HAT) {
+    if (behatted) {
       tileid_hat=(fmn_rh.framec&4)?0x0e:0x0f;
       tileid_head=(fmn_rh.framec&4)?0x13:0x43;
       tileid_body=(fmn_rh.framec&4)?0x23:0x53;
@@ -111,7 +112,7 @@ static int fmn_render_hero_pumpkin() {
   uint8_t tileid_body=0x1d;
   uint8_t tileid_hat=0x00;
   float hatdy=-0.375f;
-  if (fmn_global.selected_item==FMN_ITEM_HAT) {
+  if ((fmn_global.selected_item==FMN_ITEM_HAT)&&fmn_global.itemv[FMN_ITEM_HAT]) {
     switch (tileid_hat) {
       case 0x00: tileid_hat=0x3c; break;
       case 0x01: tileid_hat=0x3d; break;
