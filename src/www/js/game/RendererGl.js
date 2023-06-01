@@ -14,6 +14,7 @@ export class RendererGl {
     return [Constants, Globals, DataService, Dom];
   }
   constructor(constants, globals, dataService, dom) {
+    throw new Error("RendererGl not implemented");
     this.constants = constants;
     this.globals = globals;
     this.dataService = dataService;

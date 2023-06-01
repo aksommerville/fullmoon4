@@ -6,7 +6,7 @@ import { WasmLoader } from "../util/WasmLoader.js";
 import { DataService } from "./DataService.js";
 import { InputManager } from "./InputManager.js";
 import { Renderer2d } from "./Renderer2d.js";
-import { RendererGl } from "./RendererGl.js";
+//import { RendererGl } from "./RendererGl.js";
 import { Clock } from "./Clock.js";
 import { Constants } from "./Constants.js";
 import { Globals } from "./Globals.js";
@@ -18,13 +18,13 @@ export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
-      Renderer2d, RendererGl, Clock, Constants, Globals,
+      Renderer2d, /*RendererGl,*/ Clock, Constants, Globals,
       Synthesizer, SoundEffects, Document
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
-    renderer2d, rendererGl, clock, constants, globals,
+    renderer2d, /*rendererGl,*/ clock, constants, globals,
     synthesizer, soundEffects, document
   ) {
     this.wasmLoader = wasmLoader;

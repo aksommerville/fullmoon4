@@ -22,7 +22,7 @@ export class Renderer2d {
     this.fbw = 0;
     this.fbh = 0;
     this.pixfmt = 0;
-    this.images = []; // sparse; keyed by id
+    this.images = []; // [id]:{id,image,ctx}, sparse, image can be <img> or <canvas>, not that it matters
     this.dstimage = null; // null for main (ie this.canvas), or something from this.images
     this.recalScratch = null;
   }
@@ -34,12 +34,22 @@ export class Renderer2d {
       this.recalScratch = this.dom.createElement("CANVAS", { width: this.fbw, height: this.fbh });
     }
     this.dstimage = null;
+    this.ctx = null;
+    this.images[0] = {
+      id: 0,
+      image: this.canvas,
+      ctx: null,
+    };
   }
   
   begin() {
-    if (!this.canvas) return;
-    this.ctx = this.canvas.getContext("2d");
-    this.dstimage = null;
+    if (!this.images[0]) return;
+    if (!this.images[0].image) return;
+    if (!this.images[0].ctx) {
+      this.images[0].ctx = this.images[0].image.getContext("2d", { alpha: false });
+    }
+    this.ctx = this.images[0].ctx;
+    this.dstimage = this.images[0].image;
   }
   
   commit() {
@@ -93,21 +103,28 @@ export class Renderer2d {
 
   fmn_video_init_image(imageid, w, h) {
     if (imageid < 1) return;
-    this.images[imageid] = this.dom.createElement("CANVAS", { width: w, height: h });
+    this.images[imageid] = {
+      id: imageid,
+      image: this.dom.createElement("CANVAS", { width: w, height: h }),
+      ctx: null,
+    };
   }
 
   fmn_draw_set_output(imageid) {
     if (imageid < 0) return -1;
-    if (imageid) {
-      if (!this.images[imageid]) {
-        this.images[imageid] = this.dom.createElement("CANVAS", { width: this.canvas.width, height: this.canvas.height });
-      }
-      this.dstimage = this.images[imageid];
-      this.ctx = this.dstimage.getContext("2d");
-    } else {
-      this.dstimage = null;
-      this.ctx = this.canvas.getContext("2d");
+    if (!this.images[imageid]) {
+      this.images[imageid] = {
+        id: imageid,
+        image: this.dom.createElement("CANVAS", { width: this.canvas.width, height: this.canvas.height }),
+        ctx: null,
+      };
     }
+    const r = this.images[imageid];
+    if (!r.ctx) {
+      r.ctx = r.image.getContext("2d", { alpha: false });
+    }
+    this.dstimage = r.image;
+    this.ctx = r.ctx;
     return 0;
   }
   
@@ -303,12 +320,15 @@ export class Renderer2d {
    
   getImage(id) {
     if (!id) return this.canvas;
-    let image = this.images[id];
-    if (image !== undefined) return image;
-    if (image = this.dataService.getImage(id)) {
-      return this.images[id] = image;
-    }
-    return this.images[id] = null;
+    let r = this.images[id];
+    if (r) return r.image;
+    const image = this.dataService.getImage(id);
+    this.images[id] = {
+      id,
+      image,
+      ctx: null,
+    };
+    return image;
   }
    
   renderDecal(dstx, dsty, src, srcx, srcy, w, h, xform) {
