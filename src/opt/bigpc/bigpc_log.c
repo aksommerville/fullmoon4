@@ -10,7 +10,7 @@
  
 void fmn_log(const char *fmt,...) {
   if (!fmt||!fmt[0]) return;
-  char buf[256];
+  char buf[512];
   va_list vargs;
   va_start(vargs,fmt);
   int bufc=vsnprintf(buf,sizeof(buf),fmt,vargs);

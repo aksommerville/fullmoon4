@@ -162,7 +162,10 @@ static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,vo
       case 0x03: fmn_global.blowback=1; break;
       
       case 0x20: bigpc_play_song(arg[0]); break;
-      case 0x21: fmn_global.maptsid=arg[0]; break;
+      case 0x21: {
+          fmn_global.maptsid=arg[0]; 
+          bigpc_load_cellphysics();
+        } break;
       case 0x22: fmn_global.herostartp=arg[0]; break;
       case 0x23: if (fmn_global.wind_dir=arg[0]) fmn_global.wind_time=86400.0f; else fmn_global.wind_time=0.0f; break;
       
@@ -229,7 +232,6 @@ int8_t fmn_load_map(
 
   fmn_map_for_each_command(serial,serialc,fmn_load_map_cb_command,&ctx);
   
-  bigpc_load_cellphysics();
   if (!fmn_global.indoors) bigpc_autobloom_plants();
   return 1;
 }

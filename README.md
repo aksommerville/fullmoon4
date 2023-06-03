@@ -32,6 +32,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] macos: Show CPU load at quit
 - [x] getGamepads() only exists in secure contexts; fails in prod today in Firefox, if you load HTTP.
 - [ ] Firefox/Linux: bgbits sometimes vanishes. You get a black background with sprites on top.
+- [x] firewall haywire if you load during a tilesheet change (current full maps does it)
+- [x] chalkguard, full maps: not registering initial word, why??? ...my bad. "sketch" commands must come before "sprite".
 
 ### Full Maps
 
@@ -87,7 +89,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] verify: Resources named by sprite config, eg chalkguard strings
 - [ ] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
-- [ ] verify: Map flag commands eg ANCILLARY must come before sprites and doors.
+- [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Summoning the crow potentially examines every command in every map, every time. Can we pre-index all that by itemid?

@@ -19,5 +19,3 @@ neighborn 11
 neighbors 15
 door 11 3 20 10 9
 sprite 4 9 treasure item:FEATHER 0 0
-sprite 17 2 pushblock 0 0 0
-sprite 8 2 pushblock 0 0 0
