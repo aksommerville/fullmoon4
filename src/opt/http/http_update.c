@@ -14,6 +14,8 @@ static int http_update_fd_error(struct http_context *context,int fd) {
     http_context_remove_socket(context,socket);
     return 0;
   }
+  struct http_extfd *extfd=http_context_get_extfd_by_fd(context,fd);
+  if (extfd) return extfd->cb(fd,extfd->userdata);
   return 0;
 }
 
@@ -51,6 +53,9 @@ static int http_update_fd_read(struct http_context *context,int fd) {
     }
     return 0;
   }
+  
+  struct http_extfd *extfd=http_context_get_extfd_by_fd(context,fd);
+  if (extfd) return extfd->cb(fd,extfd->userdata);
   
   return 0;
 }
@@ -102,6 +107,14 @@ static int http_context_pollfdv_rebuild(struct http_context *context) {
     } else {
       pollfd->events=POLLIN|POLLERR|POLLHUP;
     }
+  }
+  
+  struct http_extfd *extfd=context->extfdv;
+  for (i=context->extfdc;i-->0;extfd++) {
+    struct pollfd *pollfd=http_context_pollfdv_require(context);
+    if (!pollfd) return -1;
+    pollfd->fd=extfd->fd;
+    pollfd->events=POLLIN|POLLERR|POLLHUP;
   }
 
   return 0;

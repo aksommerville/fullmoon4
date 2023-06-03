@@ -7,3 +7,64 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* Generic modals.
+ *********************************************************/
+
+.modalBlotter {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+  background-color: #000;
+  opacity: 0.8;
+}
+
+.modalStack {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 101;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalStack .modalFrame {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 1em;
+  box-shadow: #000 0 0 2em 0.5em;
+  padding: 1em;
+  position: absolute;
+  max-width: 90vw;
+}
+
+/* UsageModal.
+ ***********************************************************/
+ 
+.UsageModal {
+  min-width: 200px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  align-items: start;
+}
+
+.UsageModal > * {
+  flex: 1;
+  border-right: 1px solid #000;
+}
+.UsageModal > *:last-child {
+  border-right: 0;
+}
+
+.UsageModal .notice {
+  background-color: #fcc;
+}

@@ -27,6 +27,13 @@
 #define MINSYN_WAVE_SIZE_SAMPLES (1<<MINSYN_WAVE_SIZE_BITS)
 #define MINSYN_WAVE_SHIFT (32-MINSYN_WAVE_SIZE_BITS)
 
+/* In normal operation, we should let waves and PCMs gather in memory.
+ * But during fiddle, resources get swapped on the fly and our cache could grow unlimited.
+ * Aim for the total instrument count of your resource set here.
+ */
+#define MINSYN_PCM_COUNT_GC_THRESHOLD 150
+#define MINSYN_WAVE_COUNT_GC_THRESHOLD 60
+
 struct minsyn_env {
   int32_t v; // current level in 24 bits
   int32_t dv;
@@ -209,5 +216,7 @@ static inline uint8_t minsyn_env_next(struct minsyn_env *env) {
 static inline void minsyn_signal_add_v(int16_t *dst,const int16_t *src,int c) {
   for (;c-->0;dst++,src++) (*dst)+=(*src);
 }
+
+void minsyn_gc(struct bigpc_synth_driver *driver);
 
 #endif

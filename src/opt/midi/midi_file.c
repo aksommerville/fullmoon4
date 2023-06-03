@@ -419,7 +419,7 @@ int midi_file_next(struct midi_event *event,struct midi_file *file,int *trackp) 
       file->extra_delay=1;
       return 1;
     }
-    return 0;
+    return -1;
   }
   
   int framec=midi_file_frames_from_ticks(file,mindelay);

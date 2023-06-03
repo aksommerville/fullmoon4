@@ -1,5 +1,6 @@
 #include "fiddle_internal.h"
 #include "opt/datafile/fmn_datafile.h"
+#include "opt/midi/midi.h"
 
 int assist_get_sound_name(void *dstpp,int id);
 int assist_get_instrument_name(void *dstpp,int id);
@@ -154,7 +155,8 @@ static int fiddle_httpcb_get_songs_cb(uint16_t type,uint16_t qualifier,uint32_t 
   int jsonctx=sr_encode_json_object_start(&ctx->encoder,0,0);
   sr_encode_json_string(&ctx->encoder,"name",4,name,namec);
   sr_encode_json_int(&ctx->encoder,"id",2,id);
-  return sr_encode_json_object_end(&ctx->encoder,jsonctx);
+  if (sr_encode_json_object_end(&ctx->encoder,jsonctx)<0) return -1;
+  return 0;
 }
  
 int fiddle_httpcb_get_songs(struct http_xfer *req,struct http_xfer *rsp,void *userdata) {
@@ -168,6 +170,187 @@ int fiddle_httpcb_get_songs(struct http_xfer *req,struct http_xfer *rsp,void *us
   http_xfer_set_body(rsp,ctx.encoder.v,ctx.encoder.c);
   sr_encoder_cleanup(&ctx.encoder);
   http_xfer_set_header(rsp,"Content-Type",12,"application/json",-1);
+  return http_xfer_set_status(rsp,200,"OK");
+}
+
+/* GET /api/insusage
+ */
+ 
+struct fiddle_httpcb_insusage_context {
+  struct sr_encoder encoder;
+  uint8_t *insv,*sndv;
+  int insc,insa,sndc,snda;
+};
+
+static void fiddle_httpcb_insusage_context_cleanup(struct fiddle_httpcb_insusage_context *ctx) {
+  sr_encoder_cleanup(&ctx->encoder);
+  if (ctx->insv) free(ctx->insv);
+  if (ctx->sndv) free(ctx->sndv);
+}
+
+static int fiddle_httpcb_insusage_search(const uint8_t *v,int c,uint8_t id) {
+  int lo=0,hi=c;
+  while (lo<hi) {
+    int ck=(lo+hi)>>1;
+         if (id<v[ck]) hi=ck;
+    else if (id>v[ck]) lo=ck+1;
+    else return ck;
+  }
+  return -lo-1;
+}
+
+static int fiddle_httpcb_insusage_insert(uint8_t **v,int *c,int *a,int p,uint8_t id) {
+  if ((p<0)||(p>*c)) return -1;
+  if (*c>=*a) {
+    int na=(*a)+16;
+    void *nv=realloc(*v,na);
+    if (!nv) return -1;
+    *v=nv;
+    *a=na;
+  }
+  memmove((*v)+p+1,(*v)+p,(*c)-p);
+  (*c)++;
+  (*v)[p]=id;
+  return 0;
+}
+
+static void fiddle_httpcb_insusage_add_ins(struct fiddle_httpcb_insusage_context *ctx,uint8_t ins) {
+  int p=fiddle_httpcb_insusage_search(ctx->insv,ctx->insc,ins);
+  if (p>=0) return;
+  fiddle_httpcb_insusage_insert(&ctx->insv,&ctx->insc,&ctx->insa,-p-1,ins);
+}
+
+static void fiddle_httpcb_insusage_add_snd(struct fiddle_httpcb_insusage_context *ctx,uint8_t snd) {
+  int p=fiddle_httpcb_insusage_search(ctx->sndv,ctx->sndc,snd);
+  if (p>=0) return;
+  fiddle_httpcb_insusage_insert(&ctx->sndv,&ctx->sndc,&ctx->snda,-p-1,snd);
+}
+
+static int fiddle_httpcb_insusage_1(struct fiddle_httpcb_insusage_context *ctx,const uint8_t *src,int srcc) {
+  int jsonctx,i;
+  ctx->insc=0;
+  ctx->sndc=0;
+  
+  struct midi_file *file=midi_file_new_borrow(src,srcc);
+  if (!file) return -1;
+  while (1) {
+    struct midi_event event={0};
+    int framec=midi_file_next(&event,file,0);
+    if (framec<0) {
+      break;
+    } else if (framec>0) {
+      midi_file_advance(file,framec);
+    } else {
+      switch (event.opcode) {
+        case MIDI_OPCODE_PROGRAM: fiddle_httpcb_insusage_add_ins(ctx,event.a); break;
+        case MIDI_OPCODE_NOTE_ON: if (event.chid==0x0f) fiddle_httpcb_insusage_add_snd(ctx,event.a); break;
+      }
+    }
+  }
+  midi_file_del(file);
+  
+  if ((jsonctx=sr_encode_json_array_start(&ctx->encoder,"instruments",11))<0) return -1;
+  for (i=0;i<ctx->insc;i++) sr_encode_json_int(&ctx->encoder,0,0,ctx->insv[i]);
+  sr_encode_json_array_end(&ctx->encoder,jsonctx);
+  if ((jsonctx=sr_encode_json_array_start(&ctx->encoder,"sounds",6))<0) return -1;
+  for (i=0;i<ctx->sndc;i++) sr_encode_json_int(&ctx->encoder,0,0,ctx->sndv[i]);
+  sr_encode_json_array_end(&ctx->encoder,jsonctx);
+  return 0;
+}
+
+static int fiddle_httpcb_get_insusage_cb(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  struct fiddle_httpcb_insusage_context *ctx=userdata;
+  int jsonctx=sr_encode_json_object_start(&ctx->encoder,0,0);
+  sr_encode_json_int(&ctx->encoder,"id",2,id);
+  if (fiddle_httpcb_insusage_1(ctx,v,c)<0) return -1;
+  if (sr_encode_json_object_end(&ctx->encoder,jsonctx)<0) return -1;
+  return 0;
+}
+ 
+int fiddle_httpcb_get_insusage(struct http_xfer *req,struct http_xfer *rsp,void *userdata) {
+  struct fiddle_httpcb_insusage_context ctx={0};
+  sr_encode_json_array_start(&ctx.encoder,0,0);
+  fmn_datafile_for_each_of_type(fiddle.datafile,FMN_RESTYPE_SONG,fiddle_httpcb_get_insusage_cb,&ctx);
+  if (sr_encode_json_array_end(&ctx.encoder,0)<0) {
+    fiddle_httpcb_insusage_context_cleanup(&ctx);
+    return http_xfer_set_status(rsp,500,"Internal error");
+  }
+  http_xfer_set_body(rsp,ctx.encoder.v,ctx.encoder.c);
+  http_xfer_set_header(rsp,"Content-Type",12,"application/json",-1);
+  fiddle_httpcb_insusage_context_cleanup(&ctx);
+  return http_xfer_set_status(rsp,200,"OK");
+}
+
+/* GET /api/datarate
+ */
+ 
+struct fiddle_datarate_context {
+  struct sr_encoder encoder;
+  int sndc,sndb,sndms;
+  int songc,songb,songms;
+};
+
+static void fiddle_datarate_context_cleanup(struct fiddle_datarate_context *ctx) {
+  sr_encoder_cleanup(&ctx->encoder);
+}
+
+static int fiddle_datarate_cb_song(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  struct fiddle_datarate_context *ctx=userdata;
+  ctx->songc++;
+  ctx->songb+=c;
+  struct midi_file *midi=midi_file_new_borrow(v,c);
+  if (midi) {
+    midi_file_set_output_rate(midi,1000); // tick=ms
+    while (1) {
+      struct midi_event event={0};
+      int err=midi_file_next(&event,midi,0);
+      if (err<0) break;
+      if (!err) continue;
+      ctx->songms+=err;
+      midi_file_advance(midi,err);
+    }
+    midi_file_del(midi);
+  }
+  return 0;
+}
+
+static int fiddle_datarate_cb_sound(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  struct fiddle_datarate_context *ctx=userdata;
+  const uint8_t *src=v;
+  ctx->sndc++;
+  ctx->sndb+=c;
+  switch (qualifier) {
+    case 1: break; // TODO WebAudio
+    case 2: { // minsyn: Data starts with duration s, u1.7
+        if (c>=1) {
+          ctx->sndms+=(src[0]*1000)>>7;
+        }
+      } break;
+    case 3: break; // TODO stdsyn
+  }
+  return 0;
+}
+ 
+int fiddle_httpcb_get_datarate(struct http_xfer *req,struct http_xfer *rsp,void *userdata) {
+  struct fiddle_datarate_context ctx={0};
+  
+  fmn_datafile_for_each_of_type(fiddle.datafile,FMN_RESTYPE_SONG,fiddle_datarate_cb_song,&ctx);
+  fmn_datafile_for_each_of_qualified_type(fiddle.datafile,FMN_RESTYPE_SOUND,fiddle.drivers_qualifier,fiddle_datarate_cb_sound,&ctx);
+  
+  sr_encode_json_object_start(&ctx.encoder,0,0);
+  sr_encode_json_int(&ctx.encoder,"soundCount",10,ctx.sndc);
+  sr_encode_json_int(&ctx.encoder,"soundSize",9,ctx.sndb);
+  sr_encode_json_int(&ctx.encoder,"soundTime",9,ctx.sndms);
+  sr_encode_json_int(&ctx.encoder,"songCount",9,ctx.songc);
+  sr_encode_json_int(&ctx.encoder,"songSize",8,ctx.songb);
+  sr_encode_json_int(&ctx.encoder,"songTime",8,ctx.songms);
+  if (sr_encode_json_object_end(&ctx.encoder,0)<0) {
+    fiddle_datarate_context_cleanup(&ctx);
+    return http_xfer_set_status(rsp,500,"Internal error");
+  }
+  http_xfer_set_body(rsp,ctx.encoder.v,ctx.encoder.c);
+  http_xfer_set_header(rsp,"Content-Type",12,"application/json",-1);
+  fiddle_datarate_context_cleanup(&ctx);
   return http_xfer_set_status(rsp,200,"OK");
 }
 

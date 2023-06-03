@@ -119,6 +119,24 @@ static int fiddle_load_sound(uint16_t type,uint16_t qualifier,uint32_t id,const 
   return 0;
 }
 
+int fiddle_drivers_reload_data() {
+  if (fiddle.synth&&fiddle.datafile) {
+    if (fiddle.synth->type->set_instrument) {
+      fmn_datafile_for_each_of_qualified_type(
+        fiddle.datafile,FMN_RESTYPE_INSTRUMENT,fiddle.drivers_qualifier,
+        fiddle_load_instrument,0
+      );
+    }
+    if (fiddle.synth->type->set_sound) {
+      fmn_datafile_for_each_of_qualified_type(
+        fiddle.datafile,FMN_RESTYPE_SOUND,fiddle.drivers_qualifier,
+        fiddle_load_sound,0
+      );
+    }
+  }
+  return 0;
+}
+
 /* Set drivers to a qualifier.
  */
  
@@ -138,6 +156,7 @@ int fiddle_drivers_set(int qualifier) {
     fiddle.synth=0;
   }
   fiddle.songid=0;
+  fiddle.drivers_qualifier=qualifier;
   
   switch (qualifier) {
     case 1: { // WebAudio
@@ -155,22 +174,13 @@ int fiddle_drivers_set(int qualifier) {
     // Anything else, eg zero, just leave the drivers unset.
   }
   
-  if (fiddle.synth&&fiddle.datafile) {
-    if (fiddle.synth->type->set_instrument) {
-      fmn_datafile_for_each_of_qualified_type(
-        fiddle.datafile,FMN_RESTYPE_INSTRUMENT,qualifier,
-        fiddle_load_instrument,0
-      );
-    }
-    if (fiddle.synth->type->set_sound) {
-      fmn_datafile_for_each_of_qualified_type(
-        fiddle.datafile,FMN_RESTYPE_SOUND,qualifier,
-        fiddle_load_sound,0
-      );
-    }
-  }
+  fiddle_drivers_reload_data();
   
   return fiddle_drivers_play(1);
+}
+
+int fiddle_drivers_reset() {
+  return fiddle_drivers_set(fiddle.drivers_qualifier);
 }
 
 /* Access to drivers.

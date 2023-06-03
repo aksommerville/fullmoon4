@@ -24,6 +24,10 @@ void http_context_del(struct http_context *context) {
     free(context->socketv);
   }
   
+  if (context->extfdv) {
+    free(context->extfdv);
+  }
+  
   free(context);
 }
 
@@ -314,5 +318,47 @@ struct http_listener *http_context_find_listener_for_request(
     if (listener->pathc&&!http_wildcard_match(listener->path,listener->pathc,path,pathc)) continue;
     return listener;
   }
+  return 0;
+}
+
+/* Extra file descriptors, where we lend out our poller.
+ */
+ 
+int http_context_add_fd(struct http_context *context,int fd,int (*cb)(int fd,void *userdata),void *userdata) {
+  if (!context||!cb||(fd<0)) return -1;
+  int i=context->extfdc;
+  while (i-->0) if (context->extfdv[i].fd==fd) return -1;
+  if (context->extfdc>=context->extfda) {
+    int na=context->extfda+16;
+    if (na>INT_MAX/sizeof(struct http_extfd)) return -1;
+    void *nv=realloc(context->extfdv,sizeof(struct http_extfd)*na);
+    if (!nv) return -1;
+    context->extfdv=nv;
+    context->extfda=na;
+  }
+  struct http_extfd *extfd=context->extfdv+context->extfdc++;
+  extfd->fd=fd;
+  extfd->userdata=userdata;
+  extfd->cb=cb;
+  return 0;
+}
+
+void http_context_remove_fd(struct http_context *context,int fd) {
+  if (!context) return;
+  int i=context->extfdc;
+  while (i-->0) {
+    struct http_extfd *extfd=context->extfdv+i;
+    if (extfd->fd==fd) {
+      context->extfdc--;
+      memmove(extfd,extfd+1,sizeof(struct http_extfd)*(context->extfdc-i));
+      return;
+    }
+  }
+}
+
+struct http_extfd *http_context_get_extfd_by_fd(const struct http_context *context,int fd) {
+  struct http_extfd *extfd=context->extfdv;
+  int i=context->extfdc;
+  for (;i-->0;extfd++) if (extfd->fd==fd) return extfd;
   return 0;
 }

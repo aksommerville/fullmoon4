@@ -20,16 +20,23 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
 - [ ] minsyn drums too loud
 - [ ] Native fiddle tool.
-- - [ ] inotify helper
+- - [x] inotify helper
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
-- - [ ] Show me which instruments are used by each song.
+- - [x] Show me which instruments are used by each song.
 - - [x] Possible to populate the instruments menu with the selected program on channel 14?
 - - [ ] Mysterious segfault. Refreshed browser while song running and fiddle C code had changed.
+- - [x] minsyn: Must detect and discard unused waves every so often.
 - [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
+- - Also noticing in blood_for_silver, as i build up inotify. (no midi in, just data changes)
+- - These, and the segfault above, might be due to borrowed songs in minsyn:   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
+- - Problem is the live game depends on that serial address to detect redundant requests.
+- - [ ] Can we move the redundant-song check up to the platform level, and make it undefined at the synth level?
+- - I want songs to continue playing across archive reloads, in fiddle. (in fact this is very important)
 - [ ] Firefox/Linux: bgbits sometimes vanishes. You get a black background with sprites on top.
+- [ ] Measure full memory usage after all songs and sound effects have played -- I'm concerned it might be too high for the Pi.
 
 ### Full Maps
 

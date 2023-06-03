@@ -12,6 +12,7 @@ static void minsyn_resource_reuse(struct minsyn_resource *resource) {
     free(resource->v);
     resource->v=0;
   }
+  resource->ready=0;
   resource->c=0;
   resource->waveid=0;
   resource->pcmid=0;

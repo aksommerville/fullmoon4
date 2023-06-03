@@ -52,6 +52,10 @@ static void minsyn_drop_defunct_voices(struct bigpc_synth_driver *driver) {
       memmove(playback,playback+1,sizeof(struct minsyn_playback)*(DRIVER->playbackc-i));
     }
   }
+  if (
+    (DRIVER->wavec>=MINSYN_WAVE_COUNT_GC_THRESHOLD)||
+    (DRIVER->pcmc>=MINSYN_PCM_COUNT_GC_THRESHOLD)
+  ) minsyn_gc(driver);
 }
 
 /* Update, main.

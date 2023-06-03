@@ -38,6 +38,13 @@ struct http_context *http_context_new();
  */
 int http_update(struct http_context *context,int toms);
 
+/* You may hijack the context's poll for arbitrary input files.
+ * (input only, for now at least).
+ * (fd,userdata) are borrowed weakly by the context.
+ */
+int http_context_add_fd(struct http_context *context,int fd,int (*cb)(int fd,void *userdata),void *userdata);
+void http_context_remove_fd(struct http_context *context,int fd);
+
 /* Servers.
  **************************************************************************/
 

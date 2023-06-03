@@ -14,6 +14,10 @@
 #include "opt/bigpc/bigpc_audio.h"
 #include "tool/common/serial/serial.h"
 
+#if FMN_USE_inotify
+  #include "opt/inotify/inotify.h"
+#endif
+
 extern struct fiddle {
 
   const char *exename;
@@ -30,6 +34,7 @@ extern struct fiddle {
   struct bigpc_synth_driver *synth;
   int songid;
   int latest_soundid;
+  int drivers_qualifier;
   
   struct http_socket **websocketv;
   int websocketc,websocketa;
@@ -39,6 +44,10 @@ extern struct fiddle {
   int vumeter_samplec;
   int16_t vumeter_lo,vumeter_hi;
   float vumeter_sqsum; // sqrt(sqsum/samplec)=rms, we don't precalculate because we'll keep adding to it. range 0..1
+  
+  #if FMN_USE_inotify
+    struct inotify *inotify;
+  #endif
 
 } fiddle;
 
@@ -49,6 +58,8 @@ int fiddle_httpcb_get_synths(struct http_xfer *req,struct http_xfer *rsp,void *u
 int fiddle_httpcb_get_sounds(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
 int fiddle_httpcb_get_instruments(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
 int fiddle_httpcb_get_songs(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
+int fiddle_httpcb_get_insusage(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
+int fiddle_httpcb_get_datarate(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
 int fiddle_httpcb_post_synth_use(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
 int fiddle_httpcb_post_sound_play(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
 int fiddle_httpcb_post_song_play(struct http_xfer *req,struct http_xfer *rsp,void *userdata);
@@ -71,6 +82,8 @@ int fiddle_spawn_process_sync(const char *cmd,int (*cb)(int status,const char *l
 
 void fiddle_drivers_quit();
 int fiddle_drivers_set(int qualifier);
+int fiddle_drivers_reload_data();
+int fiddle_drivers_reset();
 int fiddle_drivers_play(int play);
 int fiddle_drivers_update();
 int fiddle_drivers_lock();

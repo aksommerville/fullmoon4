@@ -7,6 +7,8 @@ import { FiddleService } from "../FiddleService.js";
 import { Comm } from "../util/Comm.js";
 import { MidiInService } from "../util/MidiInService.js";
 import { VumeterUi } from "./VumeterUi.js";
+import { UsageModal } from "./UsageModal.js";
+import { DataRateModal } from "./DataRateModal.js";
 
 export class RootUi {
   static getDependencies() {
@@ -46,6 +48,8 @@ export class RootUi {
     this.dom.spawn(songsRow, "SELECT", ["song"], { "on-change": () => this.playSong() });
     const controlsRow = this.dom.spawn(this.element, "DIV");
     this.dom.spawn(controlsRow, "INPUT", { type: "button", value: "PANIC", "on-click": () => this.panic() });
+    this.dom.spawn(controlsRow, "INPUT", { type: "button", value: "Usage", "on-click": () => this.showUsage() });
+    this.dom.spawn(controlsRow, "INPUT", { type: "button", value: "Data rate", "on-click": () => this.getDataRate() });
     this.dom.spawn(this.element, "PRE", ["error"]);
     this.vumeter = this.dom.spawnController(this.element, VumeterUi);
   }
@@ -159,5 +163,31 @@ export class RootUi {
   
   panic() {
     this.comm.post("/api/midi", { opcode: 0xff }).catch(e => this.reportError(e));
+  }
+  
+  showUsage() {
+    const usageButton = this.element.querySelector("input[value='Usage']");
+    usageButton.disabled = true;
+    this.comm.get("/api/insusage").then(rsp => rsp.json()).then(usage => {
+      const modal = this.dom.spawnModal(UsageModal);
+      modal.setup(usage);
+      usageButton.disabled = false;
+    }).catch(e => {
+      this.reportError(e);
+      usageButton.disabled = false;
+    });
+  }
+  
+  getDataRate() {
+    const rateButton = this.element.querySelector("input[value='Data rate']");
+    rateButton.disabled = true;
+    this.comm.get("/api/datarate").then(rsp => rsp.json()).then(report => {
+      const modal = this.dom.spawnModal(DataRateModal);
+      modal.setup(report);
+      rateButton.disabled = false;
+    }).catch(e => {
+      this.reportError(e);
+      rateButton.disabled = false;
+    });
   }
 }
