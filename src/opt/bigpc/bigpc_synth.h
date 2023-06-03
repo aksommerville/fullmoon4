@@ -91,6 +91,7 @@ struct bigpc_synth_type {
   void (*event)(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
   int (*play_song)(struct bigpc_synth_driver *driver,const void *src,int srcc,int force);
   void (*pause_song)(struct bigpc_synth_driver *driver,int pause);
+  int (*get_instrument_by_channel)(struct bigpc_synth_driver *driver,uint8_t chid);
 };
 
 const struct bigpc_synth_type *bigpc_synth_type_by_index(int p);

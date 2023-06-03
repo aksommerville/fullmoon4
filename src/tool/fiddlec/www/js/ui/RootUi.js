@@ -132,6 +132,8 @@ export class RootUi {
     if (!status) return;
     this.element.querySelector(".synth").value = status.synth || "";
     this.element.querySelector(".song").value = status.song || 0;
+    this.element.querySelector(".instrument").value = status.instrument || 0;
+    this.element.querySelector(".sound").value = status.sound || 0;
   }
   
   chooseSynth() {

@@ -17,7 +17,7 @@ static int fiddle_qualifier_from_query(const struct http_xfer *xfer) {
   return 0;
 }
 
-/* GET /api/status => {synth,song}
+/* GET /api/status => {synth,song,sound,instrument}
  */
  
 int fiddle_httpcb_get_status(struct http_xfer *req,struct http_xfer *rsp,void *userdata) {
@@ -29,7 +29,13 @@ int fiddle_httpcb_get_status(struct http_xfer *req,struct http_xfer *rsp,void *u
   } else {
     sr_encode_json_null(&dst,"synth",5);
   }
+  if (fiddle.synth&&fiddle.synth->type->get_instrument_by_channel) {
+    sr_encode_json_int(&dst,"instrument",10,fiddle.synth->type->get_instrument_by_channel(fiddle.synth,14));
+  } else {
+    sr_encode_json_int(&dst,"instrument",10,0);
+  }
   sr_encode_json_int(&dst,"song",4,fiddle.songid);
+  sr_encode_json_int(&dst,"sound",5,fiddle.latest_soundid);
   
   sr_encode_json_object_end(&dst,0);
   http_xfer_set_body(rsp,dst.v,dst.c);
@@ -184,6 +190,7 @@ int fiddle_httpcb_post_sound_play(struct http_xfer *req,struct http_xfer *rsp,vo
   int id=0;
   if (http_xfer_get_query_int(&id,req,"id",2)<0) return http_xfer_set_status(rsp,400,"Sound id required");
   if ((id<1)||(id>0x7f)) return http_xfer_set_status(rsp,500,"Sound id %d not in 1..127",id);
+  fiddle.latest_soundid=id;
   if (fiddle.synth->type->event) {
     if (fiddle_drivers_lock()>=0) {
       fiddle.synth->type->event(fiddle.synth,0x0f,0x98,id,0x40);

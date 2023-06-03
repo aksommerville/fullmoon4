@@ -1,6 +1,7 @@
 #include "fiddle_internal.h"
 
 extern const struct bigpc_audio_type bigpc_audio_type_alsa;
+extern const struct bigpc_audio_type bigpc_audio_type_pulse;
 extern const struct bigpc_synth_type bigpc_synth_type_minsyn;
 
 /* Drop all drivers.
@@ -46,6 +47,8 @@ static int fiddle_pcm_init() {
   const struct bigpc_audio_type *type=0;
   #if FMN_USE_alsa
     type=&bigpc_audio_type_alsa;
+  #elif FMN_USE_pulse
+    type=&bigpc_audio_type_pulse;
   #endif
   if (!type) {
     fprintf(stderr,"%s:%d:%s: No audio driver.\n",__FILE__,__LINE__,__func__);

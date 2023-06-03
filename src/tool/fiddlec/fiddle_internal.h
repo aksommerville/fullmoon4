@@ -29,6 +29,7 @@ extern struct fiddle {
   struct bigpc_audio_driver *audio;
   struct bigpc_synth_driver *synth;
   int songid;
+  int latest_soundid;
   
   struct http_socket **websocketv;
   int websocketc,websocketa;

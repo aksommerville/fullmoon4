@@ -38,7 +38,9 @@ web_DEPLOY_PATH:=
 # Other targets.
 
 tools_CC_EXTRA:=-Wno-format-overflow
-tools_OPT_EXTRA:=alsa
+tools_LD_EXTRA:=
+tools_LDPOST_EXTRA:=
+tools_OPT_EXTRA:=
 
 linux_USE_GLX:=1
 linux_USE_DRM:=1

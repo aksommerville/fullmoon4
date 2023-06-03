@@ -24,16 +24,12 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
 - - [ ] Show me which instruments are used by each song.
-- - [ ] Possible to populate the instruments menu with the selected program on channel 14?
+- - [x] Possible to populate the instruments menu with the selected program on channel 14?
+- - [ ] Mysterious segfault. Refreshed browser while song running and fiddle C code had changed.
 - [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
-- [x] macos: app icon
-- [x] macos: Show CPU load at quit
-- [x] getGamepads() only exists in secure contexts; fails in prod today in Firefox, if you load HTTP.
 - [ ] Firefox/Linux: bgbits sometimes vanishes. You get a black background with sprites on top.
-- [x] firewall haywire if you load during a tilesheet change (current full maps does it)
-- [x] chalkguard, full maps: not registering initial word, why??? ...my bad. "sketch" commands must come before "sprite".
 
 ### Full Maps
 

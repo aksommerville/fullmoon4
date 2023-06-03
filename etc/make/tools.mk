@@ -4,8 +4,8 @@
 
 tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses
 tools_CC:=gcc -c -MMD -O3 -Isrc $(tools_CCOPT) $(tools_CC_EXTRA)
-tools_LD:=gcc
-tools_LDPOST:=-lz -lm -lpthread
+tools_LD:=gcc $(tools_LD_EXTRA)
+tools_LDPOST:=-lz -lm -lpthread $(tools_LDPOST_EXTRA)
 
 tools_MIDDIR:=mid/tools
 tools_OUTDIR:=out/tools

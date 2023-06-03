@@ -327,6 +327,14 @@ static void _minsyn_pause_song(struct bigpc_synth_driver *driver,int pause) {
   }
 }
 
+/* Runtime examination.
+ */
+ 
+static int _minsyn_get_instrument_by_channel(struct bigpc_synth_driver *driver,uint8_t chid) {
+  if (chid>=16) return 0;
+  return DRIVER->instrument_by_chid[chid];
+}
+
 /* Type.
  */
  
@@ -342,4 +350,5 @@ const struct bigpc_synth_type bigpc_synth_type_minsyn={
   .play_song=_minsyn_play_song,
   .event=_minsyn_event,
   .pause_song=_minsyn_pause_song,
+  .get_instrument_by_channel=_minsyn_get_instrument_by_channel,
 };
