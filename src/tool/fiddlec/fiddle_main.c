@@ -80,6 +80,8 @@ static void fiddle_vumeter_update() {
 /* Setup inotify, some substitute for it, or nothing.
  */
  
+#if FMN_USE_inotify
+ 
 static int fiddle_inotify_make_complete(int status,const char *log,int logc,void *userdata) {
   fmn_datafile_reopen(fiddle.datafile);
   if (fiddle.synth) {
@@ -107,6 +109,8 @@ static int fiddle_cb_inotify(const char *path,void *userdata) {
 static int fiddle_cb_update_inotify(int fd,void *userdata) {
   return inotify_update(fiddle.inotify);
 }
+
+#endif
  
 static int fiddle_inotify_init() {
   #if FMN_USE_inotify

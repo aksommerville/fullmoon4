@@ -4,7 +4,8 @@
 macos_MIDDIR:=mid/macos
 macos_OUTDIR:=out/macos
 
-macos_OPT_ENABLE:=gl2 soft minsyn bigpc macos datafile png fmstore inmgr midi pcmprint macaudio machid macioc macwm
+#TODO reenable gl2, it should be present but optional at runtime
+macos_OPT_ENABLE:=soft minsyn bigpc macos datafile png fmstore inmgr midi pcmprint macaudio machid macioc macwm metal
 
 # TODO I guess the easier thing would be to make separate app bundles for Full and Demo.
 macos_ICONS_DIR:=src/opt/macos/appicon.iconset
@@ -31,7 +32,7 @@ macos_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses
   $(foreach U,$(macos_OPT_ENABLE),-DFMN_USE_$U=1)
 macos_OBJC:=$(macos_CC) -xobjective-c
 macos_LD:=gcc
-macos_LDPOST:=-lz -framework OpenGL -framework CoreGraphics -framework IOKit -framework AudioUnit -framework Cocoa -framework Quartz
+macos_LDPOST:=-lz -framework OpenGL -framework CoreGraphics -framework IOKit -framework AudioUnit -framework Cocoa -framework Quartz -framework MetalKit
 
 # Always filter instrument and sound (0 means no resources produced, if no synthesizers enabled; these resources always have a qualifier).
 macos_QFILTER:=instrument:0 sound:0

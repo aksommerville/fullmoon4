@@ -1,5 +1,6 @@
 #include "macwm.h"
 #include "opt/bigpc/bigpc_video.h"
+#include "opt/bigpc/bigpc_image.h"
 
 /* Instance definition.
  */
@@ -7,6 +8,8 @@
 struct bigpc_video_driver_macwm {
   struct bigpc_video_driver hdr;
   struct macwm *macwm;
+  struct bigpc_image *fb; // soft render only
+  int pixfmt;
 };
 
 #define DRIVER ((struct bigpc_video_driver_macwm*)driver)
@@ -33,12 +36,24 @@ static void _macwm_cb_resize(void *userdata,int w,int h) {
 
 static int _macwm_init(struct bigpc_video_driver *driver,const struct bigpc_video_config *config) {
 
-  // They have to ask for opengl2, or some superset of it.
+  // They have to ask for opengl2, metal, or soft.
+  int rendermode;
   switch (config->renderer) {
     case BIGPC_RENDERER_any:
-    case BIGPC_RENDERER_gx:
-    case BIGPC_RENDERER_opengl2:
-      break;
+    case BIGPC_RENDERER_gx: // TODO For "any" and "gx", can we detect whether Metal is supported, and use OpenGL if not?
+    case BIGPC_RENDERER_metal: {
+        rendermode=MACWM_RENDERMODE_METAL;
+        driver->renderer=BIGPC_RENDERER_metal;
+      } break;
+    case BIGPC_RENDERER_opengl2: {
+        rendermode=MACWM_RENDERMODE_OPENGL;
+        driver->renderer=BIGPC_RENDERER_opengl2;
+      } break;
+    case BIGPC_RENDERER_soft:
+    case BIGPC_RENDERER_rgb32: {
+        rendermode=MACWM_RENDERMODE_FRAMEBUFFER;
+        driver->renderer=BIGPC_RENDERER_rgb32;
+      } break;
     default: return -1;
   }
 
@@ -59,16 +74,21 @@ static int _macwm_init(struct bigpc_video_driver *driver,const struct bigpc_vide
     .h=config->w,
     .fullscreen=config->fullscreen,
     .title=config->title,
-    .rendermode=MACWM_RENDERMODE_OPENGL,//TODO Soft and Metal would be nice too.
+    .rendermode=rendermode,
     .fbw=config->fbw,
     .fbh=config->fbh,
   };
 
   if (!(DRIVER->macwm=macwm_new(&delegate,&setup))) return -1;
 
-  driver->renderer=BIGPC_RENDERER_opengl2;
   macwm_get_size(&driver->w,&driver->h,DRIVER->macwm);
   driver->fullscreen=macwm_get_fullscreen(DRIVER->macwm);
+  driver->fbw=config->fbw;
+  driver->fbh=config->fbh;
+  
+  if (driver->renderer==BIGPC_RENDERER_rgb32) {
+    if (!(DRIVER->fb=bigpc_image_new_alloc(driver->fbw,driver->fbh,BIGPC_IMAGE_STORAGE_32,DRIVER->pixfmt))) return -1;
+  }
   
   return 0;
 }
@@ -81,19 +101,30 @@ static int _macwm_update(struct bigpc_video_driver *driver) {
 }
 
 /* Render framing.
- * TODO permit soft render?
  */
+ 
+static struct bigpc_image *_macwm_begin_soft(struct bigpc_video_driver *driver) {
+  return DRIVER->fb;
+}
 
 static int _macwm_begin_gx(struct bigpc_video_driver *driver) {
+  if (DRIVER->fb) return -1;
   return macwm_render_begin(DRIVER->macwm);
 }
 
 static void _macwm_end(struct bigpc_video_driver *driver) {
-  macwm_render_end(DRIVER->macwm);
+  if (DRIVER->fb) {
+    macwm_send_framebuffer(DRIVER->macwm,DRIVER->fb->v);
+  } else {
+    macwm_render_end(DRIVER->macwm);
+  }
 }
 
 static void _macwm_cancel(struct bigpc_video_driver *driver) {
-  macwm_render_end(DRIVER->macwm);
+  if (DRIVER->fb) {
+  } else {
+    macwm_render_end(DRIVER->macwm);
+  }
 }
 
 /* Cursor, fullscreen.
@@ -119,9 +150,18 @@ const struct bigpc_video_type bigpc_video_type_macwm={
   .del=_macwm_del,
   .init=_macwm_init,
   .update=_macwm_update,
+  .begin_soft=_macwm_begin_soft,
   .begin_gx=_macwm_begin_gx,
   .end=_macwm_end,
   .cancel=_macwm_cancel,
   .show_cursor=_macwm_show_cursor,
   .set_fullscreen=_macwm_set_fullscreen,
 };
+
+/* Private, extra support for renderer.
+ */
+ 
+struct macwm *bigpc_video_get_macwm(struct bigpc_video_driver *driver) {
+  if (!driver||(driver->type!=&bigpc_video_type_macwm)) return 0;
+  return DRIVER->macwm;
+}

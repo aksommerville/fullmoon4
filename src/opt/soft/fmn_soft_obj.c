@@ -12,7 +12,7 @@ static void _soft_del(struct bigpc_render_driver *driver) {
  */
  
 static int _soft_init(struct bigpc_render_driver *driver,struct bigpc_video_driver *video) {
-  //fprintf(stderr,"%s:%d: TODO soft render\n",__FILE__,__LINE__);
+  fprintf(stderr,"%s:%d: TODO soft render\n",__FILE__,__LINE__);
   return -1;
 }
  

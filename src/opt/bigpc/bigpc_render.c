@@ -7,12 +7,16 @@
  **************************************************************/
  
 extern const struct bigpc_render_type bigpc_render_type_gl2;
+extern const struct bigpc_render_type bigpc_render_type_metal;
 extern const struct bigpc_render_type bigpc_render_type_soft;
 extern const struct bigpc_render_type bigpc_render_type_dummy;
 
 static const struct bigpc_render_type *bigpc_render_typev[]={
 #if FMN_USE_gl2
   &bigpc_render_type_gl2,
+#endif
+#if FMN_USE_metal
+  &bigpc_render_type_metal,
 #endif
 #if FMN_USE_soft
   &bigpc_render_type_soft,

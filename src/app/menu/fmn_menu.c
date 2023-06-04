@@ -1,4 +1,5 @@
 #include "fmn_menu_internal.h"
+#include <stdio.h>
 
 struct fmn_menu_global fmn_menu_global={0};
 

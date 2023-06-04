@@ -44,6 +44,7 @@
   switch (macwm->rendermode) {
     case MACWM_RENDERMODE_FRAMEBUFFER: self.contentView=[[AKFramebufferView alloc] initWithWidth:macwm->fbw height:macwm->fbh]; break;
     case MACWM_RENDERMODE_OPENGL: self.contentView=[[AKOpenGLView alloc] initWithWidth:macwm->w height:macwm->h]; break;
+    case MACWM_RENDERMODE_METAL: self.contentView=[[AKMetalView alloc] initWithWidth:macwm->w height:macwm->h]; break;
     default: fprintf(stderr,"Unsupported macwm.rendermode %d\n",macwm->rendermode);
   }
   if (!self.contentView) return 0;

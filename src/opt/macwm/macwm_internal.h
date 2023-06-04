@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <MetalKit/MetalKit.h>
 
 #define MACWM_KEY_LIMIT 16
 
@@ -34,6 +35,12 @@ void macwm_unregister_key(struct macwm *macwm,int keycode);
 @end
 
 @interface AKOpenGLView : NSOpenGLView
+-(id)initWithWidth:(int)width height:(int)height;
+-(void)beginFrame;
+-(void)endFrame;
+@end
+
+@interface AKMetalView : MTKView
 -(id)initWithWidth:(int)width height:(int)height;
 -(void)beginFrame;
 -(void)endFrame;

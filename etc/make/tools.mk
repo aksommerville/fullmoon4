@@ -2,7 +2,7 @@
 # Rules for building programs that might be used during the rest of the build.
 # Initially, all the build-time tools were written for Node and do not require building, but I'm getting away from that.
 
-tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses
+tools_CCOPT:=-Werror -Wimplicit -Wno-parentheses -Wno-comment
 tools_CC:=gcc -c -MMD -O3 -Isrc $(tools_CCOPT) $(tools_CC_EXTRA)
 tools_LD:=gcc $(tools_LD_EXTRA)
 tools_LDPOST:=-lz -lm -lpthread $(tools_LDPOST_EXTRA)
