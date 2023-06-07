@@ -8,6 +8,7 @@
 #define anchory menu->argv[4]
 #define line_color menu->argv[5]
 #define highlight_color menu->argv[6]
+#define bgcolor menu->argv[7]
 
 /* Dismiss.
  */
@@ -80,7 +81,7 @@ static void _chalk_render(struct fmn_menu *menu) {
   int16_t by=(menu->fbh>>1)-(bh>>1);
   
   // Black box.
-  struct fmn_draw_rect rect={bx,by,bw,bh,0x000000ff};
+  struct fmn_draw_rect rect={bx,by,bw,bh,bgcolor};
   fmn_draw_rect(&rect,1);
   
   // Lines.
@@ -144,6 +145,7 @@ void fmn_menu_init_CHALK(struct fmn_menu *menu) {
   anchorx=anchory=-1;
   line_color=fmn_video_pixel_from_rgba(0xffffffff);
   highlight_color=fmn_video_pixel_from_rgba(0xffff00ff);
+  bgcolor=fmn_video_pixel_from_rgba(0x000000ff);
 }
 
 /* Some shared chalk-drawing stuff.

@@ -1,5 +1,7 @@
 #include "fmn_menu_internal.h"
 
+#define bgcolor menu->argv[0]
+
 /* Dismiss.
  */
  
@@ -104,7 +106,7 @@ static void _pause_render(struct fmn_menu *menu) {
   
   // Solid black background.
   {
-    struct fmn_draw_rect vtx={x,y,w,h,0x000000ff};
+    struct fmn_draw_rect vtx={x,y,w,h,bgcolor};
     fmn_draw_rect(&vtx,1);
   }
   
@@ -180,4 +182,5 @@ static void _pause_render(struct fmn_menu *menu) {
 void fmn_menu_init_PAUSE(struct fmn_menu *menu) {
   menu->update=_pause_update;
   menu->render=_pause_render;
+  bgcolor=fmn_video_pixel_from_rgba(0x000000ff);
 }

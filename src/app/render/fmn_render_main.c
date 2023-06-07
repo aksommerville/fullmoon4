@@ -70,6 +70,15 @@ uint8_t fmn_render() {
     fmn_render_global.tilesize=fmn_render_global.fbw/FMN_COLC;
   }
   
+  // It's really dumb, but under soft render, the pixel format is not known until the first render starts.
+  if (!fmn_render_global.chalk_color) {
+    fmn_render_global.chalk_color=fmn_video_pixel_from_rgba(0xffffffff);
+    fmn_render_global.violin_line_color=fmn_video_pixel_from_rgba(0x886644ff);
+    fmn_render_global.violin_highlight_line_color=fmn_video_pixel_from_rgba(0xcc0000ff);
+    fmn_render_global.rain_color=fmn_video_pixel_from_rgba(0x00008880);
+    fmn_render_global.wind_color=fmn_video_pixel_from_rgba(0xccccccc0);
+  }
+  
   // Get the top menu, and if it is opaque, we can skip everything else.
   struct fmn_menu *menu=fmn_get_top_menu();
   if (!menu||!menu->opaque) {
@@ -117,7 +126,7 @@ uint8_t fmn_render() {
     
     // Menu blotter.
     if (menu) {
-      struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,0x000000c0};
+      struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,fmn_video_pixel_from_rgba(0x000000c0)};
       fmn_draw_rect(&vtx,1);
     }
   } else {
@@ -153,9 +162,4 @@ uint8_t fmn_render_transition_in_progress() {
  */
  
 void fmn_render_init() {
-  fmn_render_global.chalk_color=fmn_video_pixel_from_rgba(0xffffffff);
-  fmn_render_global.violin_line_color=fmn_video_pixel_from_rgba(0x886644ff);
-  fmn_render_global.violin_highlight_line_color=fmn_video_pixel_from_rgba(0xcc0000ff);
-  fmn_render_global.rain_color=fmn_video_pixel_from_rgba(0x00008880);
-  fmn_render_global.wind_color=fmn_video_pixel_from_rgba(0xccccccc0);
 }

@@ -17,16 +17,13 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
+- [x] Soft render
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
 - [ ] minsyn drums too loud
 - [ ] Native fiddle tool.
-- - [x] inotify helper
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
-- - [x] Show me which instruments are used by each song.
-- - [x] Possible to populate the instruments menu with the selected program on channel 14?
 - - [ ] Mysterious segfault. Refreshed browser while song running and fiddle C code had changed.
-- - [x] minsyn: Must detect and discard unused waves every so often.
 - [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
 - [ ] Is the panda too distracting, at Seamonster Pong?
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
@@ -35,7 +32,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Problem is the live game depends on that serial address to detect redundant requests.
 - - [ ] Can we move the redundant-song check up to the platform level, and make it undefined at the synth level?
 - - I want songs to continue playing across archive reloads, in fiddle. (in fact this is very important)
-- [ ] Firefox/Linux: bgbits sometimes vanishes. You get a black background with sprites on top.
+- [x] Firefox/Linux: bgbits sometimes vanishes. You get a black background with sprites on top.
+- - 2023-06-06: Upgraded to 114 and it doesn't seem to happen anymore.
 - [ ] Measure full memory usage after all songs and sound effects have played -- I'm concerned it might be too high for the Pi.
 
 ### Full Maps
@@ -73,7 +71,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] inmgr: Real input mapping.
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
 - [ ] UI for saved game management.
-- [ ] Soft render.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?
 - [ ] Data editor improvements.
 - - [ ] Home page

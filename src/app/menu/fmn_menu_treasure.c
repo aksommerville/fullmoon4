@@ -3,6 +3,7 @@
 
 #define itemid menu->argv[0]
 #define framec menu->argv[1]
+#define bgcolor menu->argv[2]
 #define clock menu->fv[0]
 
 // Timing in frames, fair to assume 60 Hz.
@@ -78,7 +79,7 @@ static void _treasure_render(struct fmn_menu *menu) {
   
   // Blackout.
   {
-    struct fmn_draw_rect vtx={0,0,menu->fbw,menu->fbh,0x000000ff};
+    struct fmn_draw_rect vtx={0,0,menu->fbw,menu->fbh,bgcolor};
     fmn_draw_rect(&vtx,1);
   }
   
@@ -144,4 +145,5 @@ void fmn_menu_init_TREASURE(struct fmn_menu *menu) {
   menu->update=_treasure_update;
   menu->render=_treasure_render;
   menu->opaque=1;
+  bgcolor=fmn_video_pixel_from_rgba(0x000000ff);
 }

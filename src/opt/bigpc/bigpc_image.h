@@ -31,7 +31,6 @@
 /* "pixfmt" refers to the content of a pixel after you've pulled it out of the image.
  * Channel names and sizes read big-endianly. (even if the pixels are stored little-endian).
  */
-//TODO we're not touching these yet. it's not too late to come to your senses and reduce this list a lot
 #define BIGPC_IMAGE_PIXFMT_RGBA      1
 #define BIGPC_IMAGE_PIXFMT_BGRA      2
 #define BIGPC_IMAGE_PIXFMT_ARGB      3

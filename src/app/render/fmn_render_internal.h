@@ -3,6 +3,7 @@
 
 #include "app/fmn_platform.h"
 #include "app/sprite/fmn_sprite.h"
+#include <stdio.h>
 
 #define FMN_RENDER_TRANSITION_FRAMEC 36
  

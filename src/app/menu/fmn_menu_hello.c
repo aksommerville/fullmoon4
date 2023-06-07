@@ -2,6 +2,7 @@
 
 #define titlecolor menu->argv[1]
 #define framec menu->argv[2]
+#define bgcolor menu->argv[3]
 #define clock menu->fv[0]
 
 /* Dismiss.
@@ -111,7 +112,7 @@ static uint32_t hello_title_get_color(float time) {
   uint8_t g=(a->g*aweight+b->g*bweight)>>8;
   uint8_t u=(a->b*aweight+b->b*bweight)>>8;
   uint8_t l=(a->a*aweight+b->a*bweight)>>8;
-  return (r<<24)|(g<<16)|(u<<8)|l;
+  return fmn_video_pixel_from_rgba((r<<24)|(g<<16)|(u<<8)|l);
 }
 
 /* Render.
@@ -123,7 +124,10 @@ static void _hello_render(struct fmn_menu *menu) {
   
   // Blackout.
   {
-    struct fmn_draw_rect vtx={0,0,menu->fbw,menu->fbh,0x000000ff};
+    // We, unlike other menus, can get created before the first render. Which can mean the renderer doesn't know its pixel format yet.
+    // TODO That's highly stupid. Make it know its own format.
+    if (!bgcolor) bgcolor=fmn_video_pixel_from_rgba(0x000000ff);
+    struct fmn_draw_rect vtx={0,0,menu->fbw,menu->fbh,bgcolor};
     fmn_draw_rect(&vtx,1);
   }
   
@@ -172,7 +176,7 @@ static void _hello_render(struct fmn_menu *menu) {
   
   // "Full Moon"
   {
-    int16_t srcw,srch;
+    int16_t srcw=0,srch=0;
     fmn_video_get_image_size(&srcw,&srch,18);
     if (srcw>0) {
       struct fmn_draw_recal vtx={

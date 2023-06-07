@@ -126,9 +126,8 @@ int bigpc_image_iterate(
   int minorc,majorc;
   if (dxminor) { minorc=w; majorc=h; }
   else { minorc=h; majorc=w; }
-  if (startx) startx=w; startx+=x;
-  if (starty) starty=h; starty+=y;
-  //TODO ^ I haven't phrased it like this before. Verify it transforms correctly.
+  if (startx) startx=w-1; startx+=x;
+  if (starty) starty=h-1; starty+=y;
   
   #define INITLRTB(pixelsize) { \
     iter->minor.p=pxv+starty*image->stride+((startx*pixelsize)>>3); \

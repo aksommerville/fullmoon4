@@ -129,6 +129,7 @@ const struct bigpc_render_type bigpc_render_type_metal={
   .name="metal",
   .desc="Video via Metal for MacOS. Recommended for Macs after 2013 or so.",
   .objlen=sizeof(struct bigpc_render_driver_metal),
+  .video_renderer_id=BIGPC_RENDERER_metal,
   .del=_metal_del,
   .init=_metal_init,
   .video_init=_metal_video_init,

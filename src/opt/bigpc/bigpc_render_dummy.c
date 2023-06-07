@@ -3,6 +3,7 @@
  */
  
 #include "bigpc_render.h"
+#include "bigpc_video.h"
 
 struct bigpc_render_driver_dummy {
   struct bigpc_render_driver hdr;
@@ -60,7 +61,7 @@ static void _dummy_draw_decal_swap(struct bigpc_render_driver *driver,const stru
 static void _dummy_draw_recal(struct bigpc_render_driver *driver,const struct fmn_draw_recal *v,int c,uint16_t srcimageid) {}
 static void _dummy_draw_recal_swap(struct bigpc_render_driver *driver,const struct fmn_draw_recal *v,int c,uint16_t srcimageid) {}
 
-static void _dummy_begin(struct bigpc_render_driver *driver) {}
+static void _dummy_begin(struct bigpc_render_driver *driver,struct bigpc_image *fb) {}
 static void _dummy_end(struct bigpc_render_driver *driver,uint8_t client_result) {}
 
 /* Type definition.
@@ -71,6 +72,7 @@ const struct bigpc_render_type bigpc_render_type_dummy={
   .desc="Fake renderer that does nothing.",
   .objlen=sizeof(struct bigpc_render_driver_dummy),
   .appointment_only=1,
+  .video_renderer_id=BIGPC_RENDERER_any,
   
   .video_init=_dummy_video_init,
   .video_get_framebuffer_size=_dummy_video_get_framebuffer_size,

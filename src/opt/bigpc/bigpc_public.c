@@ -137,7 +137,7 @@ int bigpc_update() {
   } else {
     if (bigpc_video_driver_begin_gx(bigpc.video)<0) return -1;
   }
-  bigpc.render->type->begin(bigpc.render);
+  bigpc.render->type->begin(bigpc.render,fb);
   uint8_t render_result=fmn_render();
   bigpc.render->type->end(bigpc.render,render_result);
   bigpc_video_driver_end(bigpc.video);

@@ -235,6 +235,18 @@ int bigpc_config_ready() {
   if (!bigpc.config.audio_chanc) bigpc.config.audio_chanc=1;
   if (!bigpc.config.audio_format) bigpc.config.audio_format=BIGPC_AUDIO_FORMAT_s16n;
   
+  // Choice of renderer is messy: Is it video's problem or is it its own thing?
+  // I didn't answer that question clearly at first, and have wobbled back and forth on it since.
+  // It's ok to leave (render_drivers) unset when (video_renderer) is set; we'll try everything and only accept the matching ones.
+  // But the opposite case -- (render_drivers) set but (video_renderer) unset -- we need to infer a value for video_renderer.
+  // And to make things worse, (render_drivers) is a list. We will proceed sensibly only if it's just one item.
+  if (bigpc.config.render_drivers&&!bigpc.config.video_renderer) {
+    const struct bigpc_render_type *type=bigpc_render_type_by_name(bigpc.config.render_drivers,-1);
+    if (type) {
+      bigpc.config.video_renderer=type->video_renderer_id;
+    }
+  }
+  
   return 0;
 }
 

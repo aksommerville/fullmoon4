@@ -43,6 +43,7 @@ struct bigpc_render_type {
   const char *desc;
   int objlen;
   int appointment_only;
+  int video_renderer_id; // BIGPC_RENDERER_*
   void (*del)(struct bigpc_render_driver *driver);
   int (*init)(struct bigpc_render_driver *driver,struct bigpc_video_driver *video);
   
@@ -76,7 +77,8 @@ struct bigpc_render_type {
   void (*draw_recal_swap)(struct bigpc_render_driver *driver,const struct fmn_draw_recal *v,int c,uint16_t srcimageid);
   
   // Extra fencing before and after fmn_render().
-  void (*begin)(struct bigpc_render_driver *driver);
+  // For begin, (fb) will be null in GX cases or the main framebuffer in soft-render cases.
+  void (*begin)(struct bigpc_render_driver *driver,struct bigpc_image *fb);
   void (*end)(struct bigpc_render_driver *driver,uint8_t client_result);
 };
 

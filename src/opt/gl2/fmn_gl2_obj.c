@@ -300,7 +300,7 @@ static void _gl2_draw_recal_swap(struct bigpc_render_driver *driver,const struct
   }
 }
 
-static void _gl2_begin(struct bigpc_render_driver *driver) {
+static void _gl2_begin(struct bigpc_render_driver *driver,struct bigpc_image *always_null) {
   fmn_gl2_framebuffer_use_object(driver,&DRIVER->mainfb);
 }
 
@@ -345,6 +345,7 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .name="gl2",
   .desc="OpenGL 2+. Recommended.",
   .objlen=sizeof(struct bigpc_render_driver_gl2),
+  .video_renderer_id=BIGPC_RENDERER_opengl2,
   .del=_gl2_del,
   .init=_gl2_init,
   .read_framebuffer=_gl2_read_framebuffer,

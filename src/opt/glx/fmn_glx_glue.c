@@ -6,6 +6,7 @@
 #include "fmn_glx.h"
 #include "opt/bigpc/bigpc_video.h"
 #include "opt/bigpc/bigpc_image.h"
+#include <stdio.h>
 
 struct bigpc_video_driver_glx {
   struct bigpc_video_driver hdr;

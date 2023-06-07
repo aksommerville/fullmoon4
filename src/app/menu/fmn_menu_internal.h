@@ -3,6 +3,7 @@
 
 #include "app/fmn_platform.h"
 #include "app/fmn_game.h"
+#include <stdio.h>
 
 /* I think there won't actually be more than one at a time, but not sure.
  */

@@ -22,7 +22,7 @@ void fmn_render_fade_out() {
       else if (alpha<0) alpha=0xff;
       else alpha=0xff-alpha;
       uint32_t rgba=alpha;
-      struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,rgba};
+      struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,fmn_video_pixel_from_rgba(rgba)};
       fmn_draw_rect(&vtx,1);
     }
   }
@@ -56,7 +56,7 @@ void fmn_render_darkness() {
       rgba=alpha;
     }
   }
-  struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,rgba};
+  struct fmn_draw_rect vtx={0,0,fmn_render_global.fbw,fmn_render_global.fbh,fmn_video_pixel_from_rgba(rgba)};
   fmn_draw_rect(&vtx,1);
 }
 
@@ -141,7 +141,7 @@ static void fmn_render_wind(float nx,float ny) {
 static void fmn_render_earthquake(int16_t dx) {
   int16_t fbw=fmn_render_global.fbw,fbh=fmn_render_global.fbh;
   if (fmn_draw_set_output(FMN_IMAGEID_SCRATCH)<0) return;
-  struct fmn_draw_rect rect={0,0,0,fbh,0x000000ff};
+  struct fmn_draw_rect rect={0,0,0,fbh,fmn_video_pixel_from_rgba(0x000000ff)};
   if (dx<0) {
     rect.x=fbw+dx;
     rect.w=-dx;
@@ -195,7 +195,7 @@ void fmn_render_idle_warning(int s) {
   const int16_t fullw=fmn_render_global.fbw;
   const int16_t fullh=fmn_render_global.fbh;
   
-  struct fmn_draw_rect rect={0,0,fullw,fullh,0xff000080};
+  struct fmn_draw_rect rect={0,0,fullw,fullh,fmn_video_pixel_from_rgba(0xff000080)};
   fmn_draw_rect(&rect,1);
 
   int16_t srcx=0,srcy=ts*12;
