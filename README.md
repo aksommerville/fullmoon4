@@ -23,8 +23,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
 - - [ ] Mysterious segfault. Refreshed browser while song running and fiddle C code had changed.
-- [ ] Can we move the rabbit? He teaches a song but users will not have the violin at that point.
-- [ ] Is the panda too distracting, at Seamonster Pong?
+- xxx Can we move the rabbit? He teaches a song but users will not have the violin at that point. meh
+- xxx Is the panda too distracting, at Seamonster Pong? meh
 - [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
 - - Also noticing in blood_for_silver, as i build up inotify. (no midi in, just data changes)
 - - These, and the segfault above, might be due to borrowed songs in minsyn:   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
