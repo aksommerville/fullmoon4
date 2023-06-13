@@ -384,7 +384,7 @@ static int midi_file_ticks_from_frames(struct midi_file *file,int framec,int *re
   if (framec<1) return 0;
   int tickc=(int)(framec/file->frames_per_tick);
   if (tickc<0) tickc=0;
-  if (remainder) {
+  else if (remainder&&(framec>0)) {
     *remainder=framec%file->frames_per_tick;
   }
   return tickc;

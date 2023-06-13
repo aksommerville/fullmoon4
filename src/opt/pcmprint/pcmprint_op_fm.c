@@ -32,6 +32,7 @@ static void _fm_update(float *v,int c,struct pcmprint_op *op) {
     OP->modp+=rate*OP->modrate;
     float crate=rate+rate*mod*range;
     float irate=crate*4294967296.0f;
+    if (irate<0.0f) irate+=4294967296.0f;
     OP->osc.update(v,1,&OP->osc,irate,irate);
   }
 }
