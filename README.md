@@ -17,7 +17,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - [ ] Scripts to analyze logs.
 - [ ] Metal
-- [x] Soft render
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
 - [ ] minsyn drums too loud
 - [ ] Native fiddle tool.
@@ -32,8 +31,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - Problem is the live game depends on that serial address to detect redundant requests.
 - - [ ] Can we move the redundant-song check up to the platform level, and make it undefined at the synth level?
 - - I want songs to continue playing across archive reloads, in fiddle. (in fact this is very important)
-- [x] Firefox/Linux: bgbits sometimes vanishes. You get a black background with sprites on top.
-- - 2023-06-06: Upgraded to 114 and it doesn't seem to happen anymore.
 - [ ] Measure full memory usage after all songs and sound effects have played -- I'm concerned it might be too high for the Pi.
 
 ### Full Maps
@@ -45,7 +42,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] desert: tiles for forest boundary
 - [ ] image steppe: Entirely temporary
 - [ ] steppe/beach boundary in blowback border
-- [x] Sea should be the same color everywhere, pick one. 21475d
 - [ ] Church: join path at welcome mat.
 
 #### Major areas
@@ -63,7 +59,6 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
-- [x] linux: PulseAudio
 - [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
 - [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
@@ -109,16 +104,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] C tests
 - - [ ] JS platform tests
 - [ ] Automation against headless native build.
-- [ ] Other platforms:
-- - [ ] Web wrapper eg Electron
-- - [ ] Windows
-- - [ ] Pippin. Doubtful but I have to know.
-- - [ ] PicoSystem
-- - [ ] Thumby
-- - [ ] PocketStar
-- - [ ] Playdate
-- - [ ] Wii
-- - [ ] Modern consoles?
+- [ ] Windows
 
 ### Disambiguation
 
