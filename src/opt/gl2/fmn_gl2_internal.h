@@ -28,6 +28,8 @@
 #if FMN_USE_bcm
   // a proxy for older raspberry pis, which need version 100
   #define FMN_GL2_GLSL_VERSION 100
+#elif FMN_USE_macos
+  #define FMN_GL2_GLSL_VERSION 120
 #else
   #define FMN_GL2_GLSL_VERSION 120
 #endif

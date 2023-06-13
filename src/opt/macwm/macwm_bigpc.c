@@ -41,10 +41,10 @@ static int _macwm_init(struct bigpc_video_driver *driver,const struct bigpc_vide
   switch (config->renderer) {
     case BIGPC_RENDERER_any:
     case BIGPC_RENDERER_gx: // TODO For "any" and "gx", can we detect whether Metal is supported, and use OpenGL if not?
-    case BIGPC_RENDERER_metal: {
+    /*case BIGPC_RENDERER_metal: {
         rendermode=MACWM_RENDERMODE_METAL;
         driver->renderer=BIGPC_RENDERER_metal;
-      } break;
+      } break;*/
     case BIGPC_RENDERER_opengl2: {
         rendermode=MACWM_RENDERMODE_OPENGL;
         driver->renderer=BIGPC_RENDERER_opengl2;
