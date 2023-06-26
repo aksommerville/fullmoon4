@@ -309,6 +309,28 @@ static void fmn_hero_attempt_valid_position() {
   fmn_hero.landing_pending=1;
 }
 
+/* After checking respawn point against the grid, and possibly forcing broom active,
+ * check for hazard sprites and cheat our way out of collisions with them.
+ */
+ 
+static int fmn_hero_force_escape_hazards_cb(struct fmn_sprite *hazard,void *userdata) {
+  // ok problemo. there isn't a "hazard" flag or anything like it. Hazardous sprites are effected thru their pressure callback.
+  // I guess we need to call any collision at all "invalid".
+  // We'll correct on the fly. So it's possible if more than one sprite collides, we don't fully resolve it. I don't think that's likely.
+  struct fmn_sprite *hero=fmn_hero.sprite;
+  if (hero==hazard) return 0;
+  float cx=0.0f,cy=0.0f;
+  if (!fmn_physics_check_sprites(&cx,&cy,hero,hazard)) return 0;
+  hero->x+=cx;
+  hero->y+=cy;
+  return 0;
+}
+ 
+static void fmn_hero_force_escape_hazards() {
+  struct fmn_sprite *hero=fmn_hero.sprite;
+  fmn_sprites_for_each(fmn_hero_force_escape_hazards_cb,0);
+}
+
 /* Return to map entry.
  * Right now this will only happen due to multiple injuries.
  */
@@ -327,6 +349,7 @@ void fmn_hero_return_to_map_entry() {
   fmn_hero_get_quantized_position(&dumx,&dumy);
   fmn_hero_walk_end();
   fmn_hero_attempt_valid_position();
+  fmn_hero_force_escape_hazards();
   fmn_global.damage_count++;
 }
 

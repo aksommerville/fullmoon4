@@ -57,7 +57,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### After GDEX
 
-- [ ] Spawn on hazard
+- [x] Spawn on hazard
 - [ ] Text on inventory menu
 - [ ] Horz/vert instead of spinwise/widdershins for turning puzzle.
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
@@ -76,6 +76,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Wind spell tutorial: The circle doesn't make sense, find something better.
 - [ ] Trick floor: Discrete movement somehow?
 - [ ] Trick floor: Timeout fires.
+- [ ] Trick floor: Shorter path, say 9 steps?
+- [ ] fmn_hero_return_to_map_entry: Make soulballs coalesce on the new position.
 - [ ] Pumpkins can get trapped near the wand. Maybe better to prevent pumpkins from leaving the village?
 - [ ] Seamonster should be ticklish (all monsters should).
 - [x] Extend forests to prevent flying around the island; eliminate the northern arc of the demo world.

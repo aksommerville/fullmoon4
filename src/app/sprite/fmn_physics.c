@@ -250,8 +250,6 @@ uint8_t fmn_physics_check_sprites(float *cx,float *cy,const struct fmn_sprite *a
   float by0=b->y-HB(n,b);
   if (ay1<=by0) return 0;
   
-  //TODO Consider colliding as circles instead of rectangles.
-  
   if (!cx||!cy) return 1;
   float el=ax1-bx0;
   float er=bx1-ax0;

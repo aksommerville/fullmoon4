@@ -62,7 +62,7 @@ struct fmn_sprite {
   uint8_t physics; // Bitfields, FMN_PHYSICS_*
   float velx,vely;
   float veldecay; // Linear velocity decay in m/s**2.
-  float radius; //TEMP currently [28] in sprite
+  float radius;
   float hbw,hbe,hbn,hbs; // hitbox edges relative to (x,y). (radius) overrides if >0
   uint8_t invmass; // 1/mass, 0 if infinite
   float pvx,pvy;
