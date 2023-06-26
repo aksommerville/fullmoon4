@@ -37,6 +37,7 @@ export class MapAllUi {
     this.worldMap = this.worldMapGenerator.generateWorldMap(
       this.resService.toc.filter(res => res.type === mapResType)
     );
+    this.session = null;
     
     this.element.addEventListener("mousemove", e => this.onMouseMove(e));
     this.lastTattleMapId = 0;
@@ -50,6 +51,19 @@ export class MapAllUi {
       this.window.clearTimeout(this.renderTimeout);
       this.renderTimeout = null;
     }
+  }
+  
+  /* Not for the main view; this is used by LogsUi to show session details geographically.
+   * Also an opportunity to re-check ResService.mapSet, though we do need a more universal solution for that.
+   */
+  rebuildWithSession(session) {
+    const mapResType = "map" + this.resService.mapSet;
+    this.worldMap = this.worldMapGenerator.generateWorldMap(
+      this.resService.toc.filter(res => res.type === mapResType)
+    );
+    this.session = session;
+    this.buildUi();
+    this.renderSoon();
   }
   
   buildUi() {
@@ -126,6 +140,45 @@ export class MapAllUi {
       0, 0, this.scratchCanvas.width, this.scratchCanvas.height,
       dstx, dsty, FullmoonMap.COLC * this.TILESIZE, FullmoonMap.ROWC * this.TILESIZE
     );
+    if (this.session) {
+      this.decorateScaledDownMap(
+        context,
+        dstx, dsty, FullmoonMap.COLC * this.TILESIZE, FullmoonMap.ROWC * this.TILESIZE,
+        map, this.session
+      );
+    }
+  }
+  
+  decorateScaledDownMap(context, dstx, dsty, dstw, dsth, map, session) {
+    // Overlay with a flat color based on visits to map.
+    const visit = session.maps?.find(m => m.mapid === map.id) || { duration: 0, count: 0 };
+    if (!visit.count) {
+      context.globalAlpha = 0.7;
+      context.fillStyle = "#888";
+      context.fillRect(dstx, dsty, dstw, dsth);
+      context.globalAlpha = 1;
+      context.strokeStyle = "#000";
+      context.strokeRect(dstx, dsty, dstw, dsth);
+    } else {
+      const maxDuration = Math.max(...session.maps.map(m => m.duration));
+      const normDuration = visit.duration / maxDuration;
+      context.globalAlpha = 0.2 + 0.6 * normDuration;
+      context.fillStyle = "#0f0";
+      context.fillRect(dstx, dsty, dstw, dsth);
+      context.globalAlpha = 1;
+    }
+    // Red bar if any injuries here.
+    const injuries = (session.injuries || []).filter(i => i.location[0] === map.id);
+    if (injuries.length > 0) {
+      const barx = dstx + 4;
+      const bary = dsty + 4;
+      const barh = 4;
+      const wlimit = dstw - 8;
+      let barw = 4 + injuries.length * 2;
+      if (barw > wlimit) barw = wlimit;
+      context.fillStyle = "#f00";
+      context.fillRect(barx, bary, barw, barh);
+    }
   }
   
   renderScratchMap(map, tilesheet) {

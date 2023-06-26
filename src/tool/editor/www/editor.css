@@ -495,3 +495,43 @@ body {
 .ChalkModal .buttonsTable td {
   text-align: center;
 }
+
+/* LogsUi.
+ ************************************************/
+ 
+.LogsUi {
+  display: flex;
+  flex-direction: column;
+}
+
+.LogsUi > .row {
+  flex: 1;
+  display: flex;
+}
+
+.LogsUi > .row > * {
+  flex: 1;
+}
+
+.LogsUi > .row.file {
+  flex: 0;
+}
+
+.LogsUi .sessionList {
+  flex-direction: column;
+  max-height: 300px;
+  overflow-y: scroll;
+  font-family: monospace;
+}
+
+.LogsUi .sessionList > .session {
+  cursor: pointer;
+}
+
+.LogsUi .sessionList > .session:hover {
+  background-color: #aaa;
+}
+
+.LogsUi .sessionList > .session.selected {
+  font-weight: bold;
+}

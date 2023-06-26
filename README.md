@@ -57,6 +57,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### After GDEX
 
+- [ ] fmn_game_load_map(): Try to get the correct hero position, right now it's reading randomly from the sprite list. (doesn't matter whether before or after the transition).
+- [ ] See paper notes from GDEX. Lots of bugs and improvements.
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
