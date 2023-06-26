@@ -15,7 +15,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- [ ] Scripts to analyze logs.
+- [x] Scripts to analyze logs.
 - [ ] Metal
 - [ ] Can I make rubber trees that you can squeeze between them by pushing?
 - [ ] minsyn drums too loud
@@ -57,8 +57,33 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 ### After GDEX
 
+- [ ] Spawn on hazard
+- [ ] Text on inventory menu
+- [ ] Horz/vert instead of spinwise/widdershins for turning puzzle.
+- [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
+- [ ] Minimum time at treasure menu, prevent accidental dismiss.
+- [ ] '' game over menu.
+- [ ] Chalk: clear all
+- [ ] Chalk: highlight active endpoints
+- [ ] More involved tutorial for violin?
+- [ ] Firewall at 720x400 visible aliasing. (texture filter?)
+- [ ] Show spell while encoding.
+- [ ] Make most animals pumpkinable, make a generic pumpkin.
+- [ ] Snow, when you use the snowglobe.
+- [ ] Rabbit: sync song to metronome
+- [ ] Violin: Fuzz playback? Look for matches that allow off-by-one somehow.
+- [ ] Visible rests in rabbit song. And graffiti song in the pub. (and anywhere else we teach a song)
+- [ ] Wind spell tutorial: The circle doesn't make sense, find something better.
+- [ ] Trick floor: Discrete movement somehow?
+- [ ] Trick floor: Timeout fires.
+- [ ] Pumpkins can get trapped near the wand. Maybe better to prevent pumpkins from leaving the village?
+- [ ] Seamonster should be ticklish (all monsters should).
+- [x] Extend forests to prevent flying around the island; eliminate the northern arc of the demo world.
+- [ ] Farmer: Tolerate other plant states. Esp pre-dug hole.
+- [ ] Bloom plants while on screen?
+- [ ] Ghost of plant when you dig it up.
 - [ ] fmn_game_load_map(): Try to get the correct hero position, right now it's reading randomly from the sprite list. (doesn't matter whether before or after the transition).
-- [ ] See paper notes from GDEX. Lots of bugs and improvements.
+- [x] See paper notes from GDEX. Lots of bugs and improvements.
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
