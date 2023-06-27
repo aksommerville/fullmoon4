@@ -140,6 +140,7 @@ static int16_t _pamcake_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: pamcake_sleep(sprite,1); break;
         case FMN_SPELLID_REVEILLE: pamcake_sleep(sprite,0); break;
+        case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: pamcake_sleep(sprite,0); break;
   }

@@ -403,6 +403,7 @@ static int16_t _seamonster_interact(struct fmn_sprite *sprite,uint8_t itemid,uin
             sleeping=0;
             seamonster_begin_LURK(sprite);
           } break;
+        case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: if (sleeping) {
         sleeping=0;

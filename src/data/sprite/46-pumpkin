@@ -1,0 +1,8 @@
+controller pumpkin
+image sprites
+tile 0xe9
+style tile
+layer 0x80
+physics edge sprites solid hole blowable
+radius 0.3
+invmass 0x80

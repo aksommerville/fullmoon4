@@ -124,6 +124,7 @@ static int16_t _rat_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qu
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: if (!sleeping) { sleeping=1; fmn_sprite_generate_zzz(sprite); } break;
         case FMN_SPELLID_REVEILLE: sleeping=0; break;
+        case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
   }

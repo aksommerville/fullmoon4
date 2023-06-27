@@ -203,6 +203,7 @@ static int16_t _lizard_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: lizard_sleep(sprite); break;
         case FMN_SPELLID_REVEILLE: lizard_wake(sprite); break;
+        case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: lizard_wake(sprite); break;
   }

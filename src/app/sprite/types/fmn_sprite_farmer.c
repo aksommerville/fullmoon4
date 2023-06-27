@@ -347,6 +347,7 @@ static int16_t _farmer_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: if (!sleeping&&(sprite->style!=FMN_SPRITE_STYLE_HIDDEN)) { sleeping=1; fmn_sprite_generate_zzz(sprite); } break;
         case FMN_SPELLID_REVEILLE: sleeping=0; break;
+        case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
   }

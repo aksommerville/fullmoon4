@@ -107,6 +107,7 @@ static int16_t _panda_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t 
             fmn_sprite_generate_zzz(sprite);
           } break;
         case FMN_SPELLID_REVEILLE: sleeping=0; break;
+        // Possibly too complicated for FMN_SPELLID_PUMPKIN?
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
   }

@@ -350,6 +350,14 @@ static int16_t _raccoon_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: raccoon_sleep(sprite); break;
         case FMN_SPELLID_REVEILLE: RACCOON_SET_HITBOX(UPRIGHT) sleeping=0; break;
+        case FMN_SPELLID_PUMPKIN: {
+            struct fmn_sprite *acorn=raccoon_find_acorn(sprite);
+            if (acorn) {
+              stage=RACCOON_STAGE_CHOOSE_DESTINATION;
+              fmn_sprite_kill(acorn);
+            }
+            fmn_sprite_pumpkinize(sprite);
+          } break;
       } break;
     case FMN_ITEM_BELL: RACCOON_SET_HITBOX(UPRIGHT) sleeping=0; break;
     case FMN_ITEM_FEATHER: if (!enchanted&&!sleeping) {

@@ -42,6 +42,7 @@ static int16_t _decoanimal_interact(struct fmn_sprite *sprite,uint8_t itemid,uin
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: decoanimal_sleep(sprite,1); break;
         case FMN_SPELLID_REVEILLE: decoanimal_sleep(sprite,0); break;
+        case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: decoanimal_sleep(sprite,0); break;
   }

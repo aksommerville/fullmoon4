@@ -13,8 +13,13 @@
 #define FMN_SPRITE_LIMIT 64
 
 /* The two lists both run to FMN_SPRITE_LIMIT but they are not necessarily parallel.
- * (fmn_spritev) may be sparse, with free slots indicated by (style==0) ie FMN_SPRITE_STYLE_HIDDEN.
+ * (fmn_spritev) may be sparse, with free slots indicated by (style==0), which is not a real style.
  * (fmn_spritepv) is always packed. This is what we assign to (fmn_global.spritev).
+ *
+ * A sprite can be valid in fmn_spritev but absent from fmn_spritepv.
+ * I call this condition "defunct", it's for holding a sprite temporarily frozen.
+ * The sprite's address does not change while defunct, and it can be "refuncted" any time.
+ * fmn_sprite_pumpkin uses this.
  */
 static struct fmn_sprite fmn_spritev[FMN_SPRITE_LIMIT]={0};
 static struct fmn_sprite *fmn_spritepv[FMN_SPRITE_LIMIT];
@@ -436,4 +441,29 @@ struct fmn_sprite *fmn_sprite_generate_toast(float x,float y,uint8_t imageid,uin
   struct fmn_sprite *sprite=fmn_sprite_spawn(x,y,0,cmdv,sizeof(cmdv),0,0);
   if (!sprite) return 0;
   return sprite;
+}
+
+/* Defunct/refunct.
+ */
+ 
+void fmn_sprite_defunct(struct fmn_sprite *sprite) {
+  int i=fmn_global.spritec;
+  while (i-->0) {
+    if (fmn_spritepv[i]==sprite) {
+      fmn_global.spritec--;
+      memmove(fmn_spritepv+i,fmn_spritepv+i+1,sizeof(void*)*(fmn_global.spritec-i));
+      return;
+    }
+  }
+}
+
+void fmn_sprite_refunct(struct fmn_sprite *sprite) {
+  // First confirm it currently has no funk:
+  int i=fmn_global.spritec;
+  while (i-->0) {
+    if (fmn_spritepv[i]==sprite) return;
+  }
+  // Add to list.
+  if (fmn_global.spritec>=FMN_SPRITE_LIMIT) return;
+  fmn_spritepv[fmn_global.spritec++]=sprite;
 }

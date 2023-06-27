@@ -466,6 +466,7 @@ static int16_t _werewolf_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: werewolf_sleep(sprite,1); break;
         case FMN_SPELLID_REVEILLE: werewolf_sleep(sprite,0); break;
+        case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: werewolf_sleep(sprite,0); break;
     case FMN_ITEM_FEATHER: werewolf_feather(sprite); break;

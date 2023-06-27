@@ -140,6 +140,10 @@ static int16_t _watchduck_interact(struct fmn_sprite *sprite,uint8_t itemid,uint
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_LULLABYE: break;
         case FMN_SPELLID_REVEILLE: break;
+        case FMN_SPELLID_PUMPKIN: {
+            watchduck_destroy_speech_bubble(sprite);
+            fmn_sprite_pumpkinize(sprite);
+          } break;
       } break;
     case FMN_ITEM_BELL: break;
   }

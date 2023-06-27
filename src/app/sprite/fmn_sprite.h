@@ -94,6 +94,11 @@ void fmn_sprites_sort_partial();
 
 void fmn_sprite_kill(struct fmn_sprite *sprite);
 
+/* A "defunct" sprite is frozen in memory but will not interact with the world, until refuncted.
+ */
+void fmn_sprite_defunct(struct fmn_sprite *sprite);
+void fmn_sprite_refunct(struct fmn_sprite *sprite);
+
 /* Sprite controllers.
  ***************************************************************/
 
@@ -150,6 +155,7 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_bittattle     49
 #define FMN_SPRCTL_panda         50
 #define FMN_SPRCTL_watchduck     51
+#define FMN_SPRCTL_pumpkin       52
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -203,7 +209,8 @@ void fmn_sprite_kill(struct fmn_sprite *sprite);
   _(magicdoor) \
   _(bittattle) \
   _(panda) \
-  _(watchduck)
+  _(watchduck) \
+  _(pumpkin)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
@@ -225,5 +232,10 @@ void fmn_sprite_generate_soulballs(float x,float y,uint8_t c);
 struct fmn_sprite *fmn_sprite_generate_zzz(struct fmn_sprite *source);
 struct fmn_sprite *fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y);
 struct fmn_sprite *fmn_sprite_generate_toast(float x,float y,uint8_t imageid,uint8_t tileid,uint8_t xform);
+
+/* Defuncts (victim) and creates a pumpkin in its place.
+ * Returns that pumpkin on success.
+ */
+struct fmn_sprite *fmn_sprite_pumpkinize(struct fmn_sprite *victim);
 
 #endif
