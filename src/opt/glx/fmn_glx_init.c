@@ -102,7 +102,7 @@ int fmn_glx_init_start(struct fmn_glx *fmn_glx,const struct fmn_glx_setup *setup
   // Caller usually doesn't specify a window size, and we default based on frambuffer and monitor.
   fmn_glx->w=setup->w;
   fmn_glx->h=setup->h;
-    int monw=0,monh=0;
+  int monw=0,monh=0;
   if ((fmn_glx->w<1)||(fmn_glx->h<1)) {
     fmn_glx_estimate_monitor_size(&monw,&monh,fmn_glx);
     if (fmn_glx->fbw) fmn_glx_size_window_for_framebuffer(fmn_glx,fmn_glx->fbw,fmn_glx->fbh,monw,monh);

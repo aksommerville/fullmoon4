@@ -66,7 +66,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Chalk: clear all
 - [x] Chalk: highlight active endpoints
 - [ ] More involved tutorial for violin?
-- [ ] Firewall at 720x400 visible aliasing. (texture filter?)
+- [x] Firewall at 720x400 visible aliasing. (texture filter?)
 - [ ] Show spell while encoding.
 - [ ] Make most animals pumpkinable, make a generic pumpkin.
 - [ ] Snow, when you use the snowglobe.

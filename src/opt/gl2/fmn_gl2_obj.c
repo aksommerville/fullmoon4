@@ -54,6 +54,15 @@ int fmn_gl2_rawvtxv_require(struct bigpc_render_driver *driver,int c) {
   return 0;
 }
 
+/* Change filter for main framebuffer texture.
+ */
+ 
+static void fmn_gl2_set_main_filter(struct bigpc_render_driver *driver,int filter) {
+  glBindTexture(GL_TEXTURE_2D,DRIVER->mainfb.texid);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,filter);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,filter);
+}
+
 /* Freshen output bounds if needed.
  */
  
@@ -62,6 +71,7 @@ static void fmn_gl2_require_output_bounds(struct bigpc_render_driver *driver) {
   int fbw=DRIVER->mainfb.w;
   int fbh=DRIVER->mainfb.h;
   
+  // Initial guess. Take the largest box in window that preserve's framebuffer's aspect ratio.
   int wforh=(fbw*driver->h)/fbh;
   if (wforh<=driver->w) {
     DRIVER->dstw=wforh;
@@ -70,10 +80,20 @@ static void fmn_gl2_require_output_bounds(struct bigpc_render_driver *driver) {
     DRIVER->dstw=driver->w;
     DRIVER->dsth=(fbh*driver->w)/fbw;
   }
+  int scale=DRIVER->dstw/fbw;
   
-  //TODO If it's close, snap to integers.
-  //TODO If it's close to full, and scaled a few times, snap to edges.
-  //TODO Or toggle interpolation depending on scale?
+  // If we ended up within 10 pixels below or 20 above an integer multiple, cheat it out and use nearest-neighbor filter.
+  // Otherwise, use linear interpolation below 4x and nearest-neighbor above.
+  int perfectw=fbw*scale;
+  if ((scale>0)&&(DRIVER->dstw>=perfectw-10)&&(DRIVER->dstw<=perfectw+20)) {
+    DRIVER->dstw=perfectw;
+    DRIVER->dsth=fbh*scale;
+    fmn_gl2_set_main_filter(driver,GL_NEAREST);
+  } else if (scale<4) {
+    fmn_gl2_set_main_filter(driver,GL_LINEAR);
+  } else {
+    fmn_gl2_set_main_filter(driver,GL_NEAREST);
+  }
   
   DRIVER->dstx=(driver->w>>1)-(DRIVER->dstw>>1);
   DRIVER->dsty=(driver->h>>1)-(DRIVER->dsth>>1);
