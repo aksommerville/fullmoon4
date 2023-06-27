@@ -25,8 +25,14 @@ static void chalk_dismiss(struct fmn_menu *menu) {
  */
  
 static void chalk_move(struct fmn_menu *menu,int dx,int dy) {
-  handx+=dx; if (handx<0) handx=2; else if (handx>2) handx=0;
-  handy+=dy; if (handy<0) handy=2; else if (handy>2) handy=0;
+  handx+=dx;
+  handy+=dy;
+  if ((handx==3)&&(handy==0)) {
+    // "clear all"
+  } else {
+    if (handx<0) handx=handy?2:3; else if (handx>2) handx=0;
+    if (handy<0) handy=2; else if (handy>2) handy=0;
+  }
   if ((anchorx==0)&&(handx==2)) handx=1;
   if ((anchorx==2)&&(handx==0)) handx=1;
   if ((anchory==0)&&(handy==2)) handy=1;
@@ -37,16 +43,23 @@ static void chalk_move(struct fmn_menu *menu,int dx,int dy) {
  */
  
 static void chalk_press(struct fmn_menu *menu) {
-  anchorx=handx;
-  anchory=handy;
+  if (handx==3) {
+    bitpic=0;
+    if (menu->cb) menu->cb(menu,FMN_MENU_MESSAGE_CHANGED);
+  } else {
+    anchorx=handx;
+    anchory=handy;
+  }
 }
 
 static void chalk_release(struct fmn_menu *menu) {
-  if ((anchorx!=handx)||(anchory!=handy)) {
-    uint32_t bit=fmn_chalk_bit_from_points((anchorx<<12)|(anchory<<8)|(handx<<4)|handy);
-    if (bit) {
-      bitpic^=bit;
-      if (menu->cb) menu->cb(menu,FMN_MENU_MESSAGE_CHANGED);
+  if (handx<3) {
+    if ((anchorx!=handx)||(anchory!=handy)) {
+      uint32_t bit=fmn_chalk_bit_from_points((anchorx<<12)|(anchory<<8)|(handx<<4)|handy);
+      if (bit) {
+        bitpic^=bit;
+        if (menu->cb) menu->cb(menu,FMN_MENU_MESSAGE_CHANGED);
+      }
     }
   }
   anchorx=anchory=-1;
@@ -79,10 +92,18 @@ static void _chalk_render(struct fmn_menu *menu) {
   int16_t bh=bw;
   int16_t bx=(menu->fbw>>1)-(bw>>1);
   int16_t by=(menu->fbh>>1)-(bh>>1);
+  int16_t clearw=tilesize<<1;
+  int16_t clearh=tilesize<<1;
+  int16_t clearx=bx+bw+1;
+  int16_t cleary=by;
   
-  // Black box.
-  struct fmn_draw_rect rect={bx,by,bw,bh,bgcolor};
-  fmn_draw_rect(&rect,1);
+  { // Black box.
+    struct fmn_draw_rect vtxv[]={
+      {bx,by,bw,bh,bgcolor},
+      {clearx,cleary,clearw,clearh,bgcolor},
+    };
+    fmn_draw_rect(vtxv,sizeof(vtxv)/sizeof(vtxv[0]));
+  }
   
   // Lines.
   struct fmn_draw_line vtxv[21]; // 20 possible lines, plus the focus line.
@@ -122,16 +143,44 @@ static void _chalk_render(struct fmn_menu *menu) {
       int row=0; for (;row<3;row++) {
         mvtx->x=bx+margin+spacing*col;
         mvtx->y=by+margin+spacing*row;
-        mvtx->tileid=0xc2;
+        if ((col==anchorx)&&(row==anchory)) mvtx->tileid=0xb4;
+        else if ((anchorx>=0)&&((col==handx)&&(row==handy))) mvtx->tileid=0xb4;
+        else mvtx->tileid=0xc2;
         mvtx->xform=0;
         mvtx++;
       }
     }
-    mvtx->x=bx+margin+spacing*handx+(tilesize>>1);
-    mvtx->y=by+margin+spacing*handy+(tilesize>>1);
+    if (handx<3) {
+      mvtx->x=bx+margin+spacing*handx+(tilesize>>1);
+      mvtx->y=by+margin+spacing*handy+(tilesize>>1);
+    } else {
+      mvtx->x=-100;
+      mvtx->y=-100;
+    }
     mvtx->tileid=0xc3;
     mvtx->xform=0;
     fmn_draw_mintile(mvtxv,10,2);
+  }
+  
+  { // Clear-all button.
+    uint8_t tileid=0xb5;
+    if (handx==3) {
+      if (bitpic) tileid=0xb6;
+      else tileid=0xb7;
+    }
+    struct fmn_draw_mintile vtxv[4]={
+      {clearx+(tilesize>>1),cleary+(tilesize>>1),tileid,0},
+      {0,tilesize,tileid,FMN_XFORM_YREV},
+      {tilesize,0,tileid,FMN_XFORM_XREV},
+      {tilesize,tilesize,tileid,FMN_XFORM_XREV|FMN_XFORM_YREV},
+    };
+    vtxv[1].x+=vtxv[0].x;
+    vtxv[1].y+=vtxv[0].y;
+    vtxv[2].x+=vtxv[0].x;
+    vtxv[2].y+=vtxv[0].y;
+    vtxv[3].x+=vtxv[0].x;
+    vtxv[3].y+=vtxv[0].y;
+    fmn_draw_mintile(vtxv,sizeof(vtxv)/sizeof(vtxv[0]),2);
   }
 }
 

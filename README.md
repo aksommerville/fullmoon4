@@ -63,8 +63,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
 - [x] Minimum time at treasure menu, prevent accidental dismiss.
 - [x] '' game over menu.
-- [ ] Chalk: clear all
-- [ ] Chalk: highlight active endpoints
+- [x] Chalk: clear all
+- [x] Chalk: highlight active endpoints
 - [ ] More involved tutorial for violin?
 - [ ] Firewall at 720x400 visible aliasing. (texture filter?)
 - [ ] Show spell while encoding.
@@ -84,6 +84,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Farmer: Tolerate other plant states. Esp pre-dug hole.
 - [ ] Bloom plants while on screen?
 - [ ] Ghost of plant when you dig it up.
+- [ ] Cow: Black vertical stripes over the eyes and a big pink nose, look it up.
 - [ ] Snowglobe: Minimum interval between strokes? Or at least between sound effects.
 - [ ] Hearts or something above blocks and raccoons when enchanted.
 - [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
