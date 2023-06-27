@@ -1,6 +1,11 @@
 #include "fmn_menu_internal.h"
 
 #define bgcolor menu->argv[0]
+#define labelid menu->argv[1]
+#define labelw menu->argv[2]
+#define labelh menu->argv[3]
+
+#define FMN_IMAGEID_ITEM_LABEL 306 /* must agree with fmn_render_internal.h */
 
 /* Dismiss.
  */
@@ -37,6 +42,55 @@ static void _pause_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
     if ((input&FMN_INPUT_DOWN)&&!(menu->pvinput&FMN_INPUT_DOWN)) pause_move(menu,0,1);
     menu->pvinput=input;
   }
+}
+
+/* Draw FMN_IMAGEID_ITEM_LABEL per labelid.
+ * This is only relevant if the item is possessed; no need to check.
+ */
+ 
+static void pause_draw_label(struct fmn_menu *menu) {
+  fmn_video_init_image(FMN_IMAGEID_ITEM_LABEL,labelw,labelh);
+  if (fmn_draw_set_output(FMN_IMAGEID_ITEM_LABEL)<0) return;
+  
+  { // Clear. We actually don't have a "clear to transparent", do we? Whatever.
+    struct fmn_draw_rect vtx={0,0,labelw,labelh,bgcolor};
+    fmn_draw_rect(&vtx,1);
+  }
+  
+  { // Text.
+    const int16_t glyphw=8,glyphh=8;
+    const char *src="???";
+    switch (labelid) {
+      case FMN_ITEM_SNOWGLOBE: src="Snowglobe"; break;
+      case FMN_ITEM_HAT: src="Hat"; break;
+      case FMN_ITEM_PITCHER: src="Pitcher"; break;
+      case FMN_ITEM_SEED: src="Seed"; break;
+      case FMN_ITEM_COIN: src="Coin"; break;
+      case FMN_ITEM_MATCH: src="Match"; break;
+      case FMN_ITEM_BROOM: src="Broom"; break;
+      case FMN_ITEM_WAND: src="Wand"; break;
+      case FMN_ITEM_UMBRELLA: src="Umbrella"; break;
+      case FMN_ITEM_FEATHER: src="Feather"; break;
+      case FMN_ITEM_SHOVEL: src="Shovel"; break;
+      case FMN_ITEM_COMPASS: src="Compass"; break;
+      case FMN_ITEM_VIOLIN: src="Violin"; break;
+      case FMN_ITEM_CHALK: src="Chalk"; break;
+      case FMN_ITEM_BELL: src="Bell"; break;
+      case FMN_ITEM_CHEESE: src="Cheese"; break;
+    }
+    int srcc=0; while (src[srcc]) srcc++;
+    int16_t fullw=glyphw*srcc;
+    int16_t dsty=labelh>>1;
+    int16_t dstx=(labelw>>1)-(fullw>>1)+(glyphw>>1);
+    struct fmn_draw_mintile vtxv[16];
+    int vtxc=0;
+    for (;srcc-->0;src++,dstx+=glyphw) {
+      vtxv[vtxc++]=(struct fmn_draw_mintile){dstx,dsty,*src,0};
+    }
+    fmn_draw_mintile(vtxv,vtxc,20);
+  }
+  
+  fmn_draw_set_output(0);
 }
 
 /* Draw one count for a depletable item.
@@ -101,13 +155,20 @@ static void _pause_render(struct fmn_menu *menu) {
   int16_t halfts=ts>>1;
   int16_t w=(marginx<<1)+colc*ts+spacingx*(colc-1);
   int16_t h=(marginy<<1)+rowc*ts+spacingy*(rowc-1);
+  int16_t textw=w;
+  int16_t texth=10;
   int16_t x=(menu->fbw>>1)-(w>>1);
-  int16_t y=(menu->fbh>>1)-(h>>1);
+  int16_t y=(menu->fbh>>1)-((h+1+texth)>>1);
+  int16_t textx=x;
+  int16_t texty=y+h+1;
   
-  // Solid black background.
+  // Solid black background. Two rectangles: selection zone and text zone.
   {
-    struct fmn_draw_rect vtx={x,y,w,h,bgcolor};
-    fmn_draw_rect(&vtx,1);
+    struct fmn_draw_rect vtxv[]={
+      {x,y,w,h,bgcolor},
+      {textx,texty,textw,texth,bgcolor},
+    };
+    fmn_draw_rect(vtxv,sizeof(vtxv)/sizeof(vtxv[0]));
   }
   
   struct fmn_draw_mintile vtxv[FMN_ITEM_COUNT+4+1]; // 4 for the indicator, 1 for the pitcher's content
@@ -174,6 +235,18 @@ static void _pause_render(struct fmn_menu *menu) {
   QUALIFIER(MATCH)
   QUALIFIER(CHEESE)
   #undef QUALIFIER
+  
+  // Text label if the selected item is possessed.
+  if (fmn_global.itemv[fmn_global.selected_item]) {
+    if (labelid!=fmn_global.selected_item) {
+      labelid=fmn_global.selected_item;
+      labelw=textw-2;
+      labelh=texth-2;
+      pause_draw_label(menu);
+    }
+    struct fmn_draw_decal vtx={textx+1,texty+1,labelw,labelh,0,0,labelw,labelh};
+    fmn_draw_decal(&vtx,1,FMN_IMAGEID_ITEM_LABEL);
+  }
 }
 
 /* Init.
@@ -183,4 +256,5 @@ void fmn_menu_init_PAUSE(struct fmn_menu *menu) {
   menu->update=_pause_update;
   menu->render=_pause_render;
   bgcolor=fmn_video_pixel_from_rgba(0x000000ff);
+  labelid=0xff;
 }

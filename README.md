@@ -58,7 +58,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 ### After GDEX
 
 - [x] Spawn on hazard
-- [ ] Text on inventory menu
+- [x] Text on inventory menu
 - [ ] Horz/vert instead of spinwise/widdershins for turning puzzle.
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
 - [ ] Minimum time at treasure menu, prevent accidental dismiss.
@@ -84,6 +84,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Farmer: Tolerate other plant states. Esp pre-dug hole.
 - [ ] Bloom plants while on screen?
 - [ ] Ghost of plant when you dig it up.
+- [ ] Snowglobe: Minimum interval between strokes? Or at least between sound effects.
 - [ ] fmn_game_load_map(): Try to get the correct hero position, right now it's reading randomly from the sprite list. (doesn't matter whether before or after the transition).
 - [x] See paper notes from GDEX. Lots of bugs and improvements.
 - [ ] Tree-shake resources when packing.
