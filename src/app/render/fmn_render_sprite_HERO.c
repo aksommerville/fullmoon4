@@ -1,4 +1,5 @@
 #include "fmn_render_internal.h"
+#include "app/hero/fmn_hero.h"
 
 /* Local context.
  * fmn_render_sprite_HERO() is non-re-entrant.
@@ -501,7 +502,7 @@ void fmn_render_hero_underlay(int16_t addx,int16_t addy) {
   }
 }
 
-/* Overlay.
+/* Compass overlay.
  */
  
 static void fmn_render_hero_overlay_compass() {
@@ -557,6 +558,9 @@ static void fmn_render_hero_overlay_compass() {
   fmn_draw_maxtile(&vtx,1,sprite->imageid);
 }
 
+/* Showoff-item overlay.
+ */
+
 static void fmn_render_hero_overlay_showoff() {
   if ((fmn_render_global.framec&7)<2) return;
   struct fmn_sprite *sprite=0;
@@ -573,12 +577,66 @@ static void fmn_render_hero_overlay_showoff() {
   }
   fmn_draw_mintile(&vtx,1,sprite->imageid);
 }
+
+/* Wand overlay (show spell in progress)
+ */
+ 
+/* The longest valid spell is 8 units, and our buffer goes up to 12.
+ * We'll display up to 10.
+ * Beyond that, we show 9 glyphs and an ellipsis in the first position.
+ */
+#define FMN_WAND_DISPLAY_LIMIT 10
+#define FMN_WAND_VERTEX_LIMIT (FMN_WAND_DISPLAY_LIMIT*2+2)
+ 
+static void fmn_render_hero_overlay_wand() {
+  struct fmn_draw_mintile vtxv[FMN_WAND_VERTEX_LIMIT];
+  int vtxc=0;
+  uint8_t spellv[20]; // >FMN_WAND_DISPLAY_LIMIT, also >FMN_HERO_SPELL_LIMIT, ensure we can capture the whole thing.
+  int spellc=fmn_hero_get_spell_in_progress(spellv,sizeof(spellv));
+  if ((spellc<0)||(spellc>sizeof(spellv))) spellc=0;
+  if (spellc>FMN_WAND_DISPLAY_LIMIT) {
+    int cropc=spellc-FMN_WAND_DISPLAY_LIMIT;
+    memmove(spellv,spellv+cropc,FMN_WAND_DISPLAY_LIMIT);
+    spellc=FMN_WAND_DISPLAY_LIMIT;
+    spellv[0]=0xff; // signal for ellipsis
+  }
+  
+  // TODO Top or bottom, whichever has more room.
+  // TODO Clamp to screen horizontally.
+  float herox,heroy;
+  fmn_hero_get_position(&herox,&heroy);
+  int16_t dsty=(heroy-1.0f)*fmn_render_global.tilesize;
+  int16_t dstx=herox*fmn_render_global.tilesize;
+  dstx-=3+((spellc*7)>>1);
+  
+  vtxv[vtxc++]=(struct fmn_draw_mintile){dstx,dsty,0xd7,0}; dstx+=7;
+  int i=0; for (;i<spellc;i++) {
+    uint8_t tileid=0xda,xform=0;
+    int16_t cheatx=0,cheaty=0;
+    switch (spellv[i]) {
+      case 0xff: tileid=0xdb; break;
+      case FMN_DIR_N: break;
+      case FMN_DIR_S: xform=FMN_XFORM_YREV; break;
+      case FMN_DIR_W: cheaty=-1; cheatx=1; xform=FMN_XFORM_SWAP; break;
+      case FMN_DIR_E: cheaty=-1; cheatx=-1; xform=FMN_XFORM_SWAP|FMN_XFORM_YREV; break;
+    }
+    vtxv[vtxc++]=(struct fmn_draw_mintile){dstx,dsty,0xd8,0};
+    vtxv[vtxc++]=(struct fmn_draw_mintile){dstx+cheatx,dsty+cheaty,tileid,xform};
+    dstx+=7;
+  }
+  vtxv[vtxc++]=(struct fmn_draw_mintile){dstx,dsty,0xd9,0};
+  fmn_draw_mintile(vtxv,vtxc,2);
+}
+
+/* Overlay dispatch.
+ */
  
 void fmn_render_hero_overlay(int16_t addx,int16_t addy) {
   if (addx||addy) return; // no overlay during transitions
   if (fmn_global.hero_dead) return;
   if (fmn_global.itemv[fmn_global.selected_item]) switch (fmn_global.selected_item) {
     case FMN_ITEM_COMPASS: fmn_render_hero_overlay_compass(); break;
+    case FMN_ITEM_WAND: if (fmn_global.active_item==FMN_ITEM_WAND) fmn_render_hero_overlay_wand(); break;
   }
   if (fmn_global.show_off_item_time) {
     fmn_render_hero_overlay_showoff();

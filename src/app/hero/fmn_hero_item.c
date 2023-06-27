@@ -504,7 +504,12 @@ static void fmn_hero_wand_motion(uint8_t bit,uint8_t value) {
   if (ndir==fmn_global.wand_dir) return;
   fmn_global.wand_dir=ndir;
   if (ndir) {
-    if (fmn_hero.spellc<FMN_HERO_SPELL_LIMIT) fmn_hero.spellv[fmn_hero.spellc]=ndir;
+    if (fmn_hero.spellc<FMN_HERO_SPELL_LIMIT) {
+      fmn_hero.spellv[fmn_hero.spellc]=ndir;
+    } else { // rotate to keep the end of the spell in buffer, for display purposes
+      memmove(fmn_hero.spellv,fmn_hero.spellv+1,sizeof(fmn_hero.spellv)-1);
+      fmn_hero.spellv[FMN_HERO_SPELL_LIMIT-1]=ndir;
+    }
     if (fmn_hero.spellc<0xff) fmn_hero.spellc++;
   }
 }

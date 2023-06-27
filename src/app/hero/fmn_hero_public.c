@@ -199,3 +199,14 @@ uint8_t fmn_hero_feet_on_ground() {
   if (fmn_global.active_item==FMN_ITEM_BROOM) return 0;
   return 1;
 }
+
+/* Get spell in progress.
+ */
+ 
+int fmn_hero_get_spell_in_progress(uint8_t *dst,int dsta) {
+  if (fmn_global.active_item!=FMN_ITEM_WAND) return 0;
+  int dstc=fmn_hero.spellc;
+  if (dstc>FMN_HERO_SPELL_LIMIT) dstc=FMN_HERO_SPELL_LIMIT;
+  if (dstc<=dsta) memcpy(dst,fmn_hero.spellv,dstc);
+  return dstc;
+}

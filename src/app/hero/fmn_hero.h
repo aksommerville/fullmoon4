@@ -42,4 +42,6 @@ void fmn_hero_cancel_item();
  */
 void fmn_hero_kill(struct fmn_sprite *assailant);
 
+int fmn_hero_get_spell_in_progress(uint8_t *dst,int dsta);
+
 #endif
