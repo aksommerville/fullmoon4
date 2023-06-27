@@ -60,7 +60,7 @@ export class FullmoonMap {
     this.neighbore = 0;
     this.neighborn = 0;
     this.neighbors = 0;
-    this.facedir_gsbit = [0, 0]; // [ccw, cw]
+    this.facedir_gsbit = [0, 0]; // [horz, vert]
   }
   
   _copy(src) {

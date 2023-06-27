@@ -86,15 +86,16 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
   fmn_hero_motion_input(state);
   
   if (facedir0!=fmn_global.facedir) {
-    switch (fmn_angle_from_dir_change(facedir0,fmn_global.facedir)) {
-      case 2: {
-          if (fmn_global.facedir_gsbit_cw) fmn_gs_set_bit(fmn_global.facedir_gsbit_cw,1);
-          if (fmn_global.facedir_gsbit_ccw) fmn_gs_set_bit(fmn_global.facedir_gsbit_ccw,0);
-        } break;
-      case 6: {
-          if (fmn_global.facedir_gsbit_cw) fmn_gs_set_bit(fmn_global.facedir_gsbit_cw,0);
-          if (fmn_global.facedir_gsbit_ccw) fmn_gs_set_bit(fmn_global.facedir_gsbit_ccw,1);
-        } break;
+    uint8_t pvhorz=((facedir0==FMN_DIR_W)||(facedir0==FMN_DIR_E));
+    uint8_t nxhorz=((fmn_global.facedir==FMN_DIR_W)||(fmn_global.facedir==FMN_DIR_E));
+    if (pvhorz!=nxhorz) {
+      if (nxhorz) {
+        if (fmn_global.facedir_gsbit_horz) fmn_gs_set_bit(fmn_global.facedir_gsbit_horz,1);
+        if (fmn_global.facedir_gsbit_vert) fmn_gs_set_bit(fmn_global.facedir_gsbit_vert,0);
+      } else {
+        if (fmn_global.facedir_gsbit_horz) fmn_gs_set_bit(fmn_global.facedir_gsbit_horz,0);
+        if (fmn_global.facedir_gsbit_vert) fmn_gs_set_bit(fmn_global.facedir_gsbit_vert,1);
+      }
     }
   }
 }

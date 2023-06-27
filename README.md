@@ -59,7 +59,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 
 - [x] Spawn on hazard
 - [x] Text on inventory menu
-- [ ] Horz/vert instead of spinwise/widdershins for turning puzzle.
+- [x] Horz/vert instead of spinwise/widdershins for turning puzzle.
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
 - [ ] Minimum time at treasure menu, prevent accidental dismiss.
 - [ ] '' game over menu.
@@ -85,6 +85,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Bloom plants while on screen?
 - [ ] Ghost of plant when you dig it up.
 - [ ] Snowglobe: Minimum interval between strokes? Or at least between sound effects.
+- [ ] Hearts or something above blocks and raccoons when enchanted.
+- [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
 - [ ] fmn_game_load_map(): Try to get the correct hero position, right now it's reading randomly from the sprite list. (doesn't matter whether before or after the transition).
 - [x] See paper notes from GDEX. Lots of bugs and improvements.
 - [ ] Tree-shake resources when packing.

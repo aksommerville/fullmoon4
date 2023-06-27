@@ -37,7 +37,7 @@ buried_door X Y GSBIT MAPID DSTX DSTY
 callback EVID CBID PARAM
 ancillary # Will not be targetted by crow guidance, and not participate in travel coverage.
 event_trigger X Y EVENTID # for fmn_game.h:fmn_game_event_listen. Not the same events as "callback".
-facedir GSBIT_COUNTERCLOCKWISE GSBIT_CLOCKWISE # Set a gsbit when the hero turns. Both go false on map entry.
+facedir GSBIT_HORZ GSBIT_VERT # Set a gsbit when the hero turns.
 ```
 
 Resource IDs may be name or number.
@@ -83,7 +83,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x62 (u8 cellp,u16 gsbit,u8 itemid) BURIED_TREASURE
 0x63 (u8 evid,u16 cbid,u8 param) CALLBACK
 0x64 (u8 cellp,u16 eventid,u8 unused) EVENT_TRIGGER
-0x65 (u16 gsbit_counterclockwise,u16 gsbit_clockwise) FACEDIR
+0x65 (u16 gsbit_horz,u16 gsbit_vert) FACEDIR
 
 0x80 (u8 cellp,u16 spriteid,u8 arg0,u8 arg1,u8 arg2) SPRITE
 0x81 (u8 cellp,u16 gsbit,u16 mapid,u8 dstp) BURIED_DOOR

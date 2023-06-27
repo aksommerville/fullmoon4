@@ -437,16 +437,16 @@ static int mkd_map_cmd_event_trigger(struct mkd_respath *respath,const char *src
   return 0;
 }
 
-/* facedir GSBIT_COUNTERCLOCKWISE GSBIT_CLOCKWISE
- * 0x65 (u16 gsbit_counterclockwise,u16 gsbit_clockwise) FACEDIR
+/* facedir GSBIT_HORZ GSBIT_VERT
+ * 0x65 (u16 gsbit_horz,u16 gsbit_vert) FACEDIR
  */
  
 static int mkd_map_cmd_facedir(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
   int argv[2];
   int err=evalparams(
     respath->path,lineno,src,srcc,argv,2,
-    "gsbit_counterclockwise",0,65535,"",
-    "gsbit_clockwise",0,65535,""
+    "gsbit_horz",0,65535,"",
+    "gsbit_vert",0,65535,""
   );
   if (err<0) return err;
   if (sr_encode_u8(&mkd.dst,0x65)<0) return -1;

@@ -393,8 +393,8 @@ extern struct fmn_global {
   uint8_t earthquake_dir;
   float earthquake_time;
   
-  uint16_t facedir_gsbit_ccw;
-  uint16_t facedir_gsbit_cw;
+  uint16_t facedir_gsbit_horz;
+  uint16_t facedir_gsbit_vert;
   
 } fmn_global;
 

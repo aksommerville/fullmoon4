@@ -82,8 +82,8 @@ int fmn_game_load_map(int mapid) {
   }
   fmn_log_event("map","%d",mapid);//TODO This logs the hero position wrong (randomly). Safe to move below fmn_hero_reset()?
   
-  if (fmn_global.facedir_gsbit_cw) fmn_gs_set_bit(fmn_global.facedir_gsbit_cw,0);
-  if (fmn_global.facedir_gsbit_ccw) fmn_gs_set_bit(fmn_global.facedir_gsbit_ccw,0);
+  if (fmn_global.facedir_gsbit_horz) fmn_gs_set_bit(fmn_global.facedir_gsbit_horz,((fmn_global.facedir==FMN_DIR_W)||(fmn_global.facedir==FMN_DIR_E))?1:0);
+  if (fmn_global.facedir_gsbit_vert) fmn_gs_set_bit(fmn_global.facedir_gsbit_vert,((fmn_global.facedir==FMN_DIR_N)||(fmn_global.facedir==FMN_DIR_S))?1:0);
   
   fmn_update_free_birds();
   if (fmn_hero_reset()<0) return -1;
