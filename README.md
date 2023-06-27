@@ -61,8 +61,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Text on inventory menu
 - [x] Horz/vert instead of spinwise/widdershins for turning puzzle.
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
-- [ ] Minimum time at treasure menu, prevent accidental dismiss.
-- [ ] '' game over menu.
+- [x] Minimum time at treasure menu, prevent accidental dismiss.
+- [x] '' game over menu.
 - [ ] Chalk: clear all
 - [ ] Chalk: highlight active endpoints
 - [ ] More involved tutorial for violin?

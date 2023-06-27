@@ -1,5 +1,9 @@
 #include "fmn_menu_internal.h"
 
+#define clock menu->fv[0]
+
+#define GAMEOVER_MIN_UPTIME 0.5f
+
 /* Dismiss.
  */
  
@@ -16,9 +20,12 @@ static void gameover_dismiss(struct fmn_menu *menu) {
  */
  
 static void _gameover_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
+  clock+=elapsed;
   if (input!=menu->pvinput) {
-    if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) { gameover_dismiss(menu); return; }
-    if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { gameover_dismiss(menu); return; }
+    if (clock>=GAMEOVER_MIN_UPTIME) {
+      if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) { gameover_dismiss(menu); return; }
+      if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { gameover_dismiss(menu); return; }
+    }
     menu->pvinput=input;
   }
 }

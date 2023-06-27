@@ -6,6 +6,9 @@
 #define FMN_IMAGEID_VICTORY_BITS 304 /* oops, these symbols are owned privately by fmn_render */
 
 #define bits_ready menu->argv[1]
+#define clock menu->fv[0]
+
+#define VICTORY_MIN_UPTIME 1.0f
 
 /* Dismiss.
  */
@@ -23,9 +26,12 @@ static void victory_dismiss(struct fmn_menu *menu) {
  */
  
 static void _victory_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
+  clock+=elapsed;
   if (input!=menu->pvinput) {
-    if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) { victory_dismiss(menu); return; }
-    if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { victory_dismiss(menu); return; }
+    if (clock>=VICTORY_MIN_UPTIME) {
+      if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) { victory_dismiss(menu); return; }
+      if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { victory_dismiss(menu); return; }
+    }
     menu->pvinput=input;
   }
 }

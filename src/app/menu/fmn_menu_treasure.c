@@ -6,6 +6,8 @@
 #define bgcolor menu->argv[2]
 #define clock menu->fv[0]
 
+#define TREASURE_MIN_UPTIME 0.5f
+
 // Timing in frames, fair to assume 60 Hz.
 #define TREASURE_SUSPENSE_TIME  30
 #define TREASURE_SLIDE_TIME     60
@@ -31,8 +33,10 @@ static void treasure_dismiss(struct fmn_menu *menu) {
 static void _treasure_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
   clock+=elapsed;
   if (input!=menu->pvinput) {
-    if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) { treasure_dismiss(menu); return; }
-    if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { treasure_dismiss(menu); return; }
+    if (clock>=TREASURE_MIN_UPTIME) {
+      if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) { treasure_dismiss(menu); return; }
+      if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { treasure_dismiss(menu); return; }
+    }
     menu->pvinput=input;
   }
 }
