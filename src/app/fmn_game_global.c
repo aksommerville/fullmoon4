@@ -377,6 +377,11 @@ static float fmn_weather_update(float elapsed) {
       fmn_wind_blow(fmn_global.wind_dir,adjusted,elapsed);
     }
   }
+  if (fmn_global.snow_time>0.0f) {
+    if ((fmn_global.snow_time-=elapsed)<=0.0f) {
+      fmn_global.snow_time=0.0f;
+    }
+  }
   if (fmn_global.invisibility_time>0.0f) {
     if ((fmn_global.invisibility_time-=adjusted)<=0.0f) {
       fmn_sound_effect(FMN_SFX_INVISIBILITY_END);
@@ -404,6 +409,7 @@ static float fmn_weather_update(float elapsed) {
  */
  
 void fmn_game_begin_earthquake(uint8_t dir) {
+  fmn_global.snow_time=2.0f;
   fmn_global.earthquake_time=1.0f;
   fmn_global.earthquake_dir=dir;
   fmn_sound_effect(FMN_SFX_EARTHQUAKE);

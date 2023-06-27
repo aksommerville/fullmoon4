@@ -132,6 +132,29 @@ static void fmn_render_wind(float nx,float ny) {
   fmn_draw_line(fmn_render_global.particlev,fmn_render_global.particlec);
 }
 
+/* Snow.
+ */
+ 
+static void fmn_render_snow() {
+  fmn_require_particles();
+  struct fmn_draw_line *particle=fmn_render_global.particlev;
+  int i=fmn_render_global.particlec;
+  for (;i-->0;particle++) {
+    particle->ax+=rand()%3-1;
+    if (fmn_global.snow_time>1.3f) {
+      particle->ay-=1;
+      if (particle->ay<0) particle->ay+=fmn_render_global.fbh;
+    } else {
+      particle->ay+=1;
+      if (particle->ay>=fmn_render_global.fbh) particle->ay-=fmn_render_global.fbh;
+    }
+    particle->bx=particle->ax+1;
+    particle->by=particle->ay;
+    particle->pixel=fmn_render_global.snow_color;
+  }
+  fmn_draw_line(fmn_render_global.particlev,fmn_render_global.particlec);
+}
+
 /* Earthquake: Shuffle the whole framebuffer left or right.
  * I'm taking the safe way, at heavy expense, and copying to a scratch buffer.
  * CanvasRenderingContext2D says it's fine to self-copy.
@@ -182,6 +205,8 @@ void fmn_render_weather() {
     case FMN_DIR_E: fmn_render_wind(WIND_NORM,0.0f); break;
   } else if (BLOWBACK_PRESENT) {
     fmn_render_wind(fmn_global.blowbackx,fmn_global.blowbacky);
+  } else if (fmn_global.snow_time>0.0f) {
+    fmn_render_snow();
   } else {
     fmn_render_global.particlec=0;
   }

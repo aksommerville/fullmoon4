@@ -77,6 +77,7 @@ uint8_t fmn_render() {
     fmn_render_global.violin_highlight_line_color=fmn_video_pixel_from_rgba(0xcc0000ff);
     fmn_render_global.rain_color=fmn_video_pixel_from_rgba(0x00008880);
     fmn_render_global.wind_color=fmn_video_pixel_from_rgba(0xccccccc0);
+    fmn_render_global.snow_color=fmn_video_pixel_from_rgba(0xe0e8f0ff);
   }
   
   // Get the top menu, and if it is opaque, we can skip everything else.

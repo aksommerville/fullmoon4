@@ -55,6 +55,7 @@ extern struct fmn_render_global {
   uint32_t violin_highlight_line_color;
   uint32_t rain_color;
   uint32_t wind_color;
+  uint32_t snow_color;
   
 } fmn_render_global;
 

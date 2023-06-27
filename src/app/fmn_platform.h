@@ -396,6 +396,8 @@ extern struct fmn_global {
   uint16_t facedir_gsbit_horz;
   uint16_t facedir_gsbit_vert;
   
+  float snow_time;
+  
 } fmn_global;
 
 /* App must implement these hooks for platform to call.

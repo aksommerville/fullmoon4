@@ -69,7 +69,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Firewall at 720x400 visible aliasing. (texture filter?)
 - [x] Show spell while encoding.
 - [x] Make most animals pumpkinable, make a generic pumpkin.
-- [ ] Snow, when you use the snowglobe.
+- [x] Snow, when you use the snowglobe.
 - [ ] Rabbit: sync song to metronome
 - [ ] Violin: Fuzz playback? Look for matches that allow off-by-one somehow.
 - [ ] Visible rests in rabbit song. And graffiti song in the pub. (and anywhere else we teach a song)
