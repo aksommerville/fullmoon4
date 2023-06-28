@@ -1,7 +1,7 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/hero/fmn_hero.h"
 
-#define RABBIT_BEAT_TIME 0.500f
+#define RABBIT_BEAT_TIME 0.250f
 
 static const uint8_t rabbit_song[]={
   FMN_DIR_W,
@@ -49,6 +49,9 @@ static void rabbit_play_note(struct fmn_sprite *sprite,uint8_t note) {
       case FMN_DIR_S: xform=FMN_XFORM_YREV; break;
     }
     struct fmn_sprite *toast=fmn_sprite_generate_toast(sprite->x,sprite->y-0.5f,sprite->imageid,tileid,xform);
+    if (toast) {
+      toast->fv[2]=-2.0f; // dy
+    }
   }
 }
 

@@ -70,10 +70,10 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Show spell while encoding.
 - [x] Make most animals pumpkinable, make a generic pumpkin.
 - [x] Snow, when you use the snowglobe.
-- [ ] Rabbit: sync song to metronome
+- [x] Rabbit: sync song to metronome ...he's actually sync'd already, but at half the tempo
 - [ ] Violin: Fuzz playback? Look for matches that allow off-by-one somehow.
-- [ ] Visible rests in rabbit song. And graffiti song in the pub. (and anywhere else we teach a song)
-- [ ] Wind spell tutorial: The circle doesn't make sense, find something better.
+- [x] Visible rests in rabbit song. And graffiti song in the pub. (and anywhere else we teach a song) ...i don't think we need it for the rabbit now
+- [x] Wind spell tutorial: The circle doesn't make sense, find something better.
 - [ ] Trick floor: Discrete movement somehow?
 - [ ] Trick floor: Timeout fires.
 - [ ] Trick floor: Shorter path, say 9 steps?
