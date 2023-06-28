@@ -84,7 +84,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Farmer: Tolerate other plant states. Esp pre-dug hole.
 - [ ] Bloom plants while on screen?
 - [ ] Ghost of plant when you dig it up.
-- [ ] Cow: Black vertical stripes over the eyes and a big pink nose, look it up.
+- [x] Cow: Black vertical stripes over the eyes and a big pink nose, look it up.
 - [ ] Snowglobe: Minimum interval between strokes? Or at least between sound effects.
 - [ ] Hearts or something above blocks and raccoons when enchanted.
 - [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
