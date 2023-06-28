@@ -1,6 +1,9 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/hero/fmn_hero.h"
 
+#define style0 sprite->bv[0]
+#define ttl sprite->fv[0] /* infinite if <=0 */
+
 static void _hazard_hero_collision(struct fmn_sprite *sprite,struct fmn_sprite *hero) {
   fmn_hero_injure(sprite->x,sprite->y,sprite);
 }
@@ -33,7 +36,23 @@ static int16_t _hazard_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t
   return 0;
 }
 
+static void _hazard_update(struct fmn_sprite *sprite,float elapsed) {
+  if (ttl>0.0f) {
+    if ((ttl-=elapsed)<=0.0f) {
+      fmn_sprite_kill(sprite);
+      return;
+    }
+    if (ttl<0.5f) {
+      if (sprite->style==FMN_SPRITE_STYLE_HIDDEN) sprite->style=style0;
+      else sprite->style=FMN_SPRITE_STYLE_HIDDEN;
+    } else {
+      style0=sprite->style;
+    }
+  }
+}
+
 const struct fmn_sprite_controller fmn_sprite_controller_hazard={
   .hero_collision=_hazard_hero_collision,
   .interact=_hazard_interact,
+  .update=_hazard_update,
 };

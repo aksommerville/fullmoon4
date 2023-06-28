@@ -5,7 +5,7 @@
 /* Static globals.
  */
  
-#define TRICKFLOOR_PATH_LIMIT 20
+#define TRICKFLOOR_PATH_LIMIT 9
  
 static uint8_t trickfloor_pathv[TRICKFLOOR_PATH_LIMIT];
 static uint8_t trickfloor_pathc=0;
@@ -15,6 +15,7 @@ static struct trickfloor_bounds {
 static uint8_t trickfloor_herox,trickfloor_heroy;
 static uint8_t trickfloor_herop=0xff; // current position in path
 static int8_t trickfloor_herod=0; // -1 or 1 if in the path
+static float trickfloor_nudge_blackout=0.0f;
 
 /* Manhattan distance between two cell positions.
  */
@@ -229,23 +230,35 @@ static void trickfloor_generate_hazard() {
   hazard->style=FMN_SPRITE_STYLE_FOURFRAME;
   hazard->layer=128;
   hazard->radius=0.5f;
+  hazard->fv[0]=2.5f; // ttl
 }
 
-/* EXPERIMENTAL. Nudge the hero gently toward the center of her cell.
+/* Nudge the hero gently toward the center of her cell.
  */
  
 static void trickfloor_nudge_to_center(float herox,float heroy,float elapsed) {
+  if (trickfloor_nudge_blackout>0.0f) {
+    trickfloor_nudge_blackout-=elapsed;
+    return;
+  }
   float dummy;
   float modx=modff(herox,&dummy);
   float mody=modff(heroy,&dummy);
-  const float nudge_rate=0.5f;
+  const float nudge_rate=1.5f;
   const float close_enough=0.02f;
   float dstx=herox,dsty=heroy;
+  uint8_t xok=0,yok=0;
   if (modx<0.5f-close_enough) dstx+=nudge_rate*elapsed;
   else if (modx>0.5f+close_enough) dstx-=nudge_rate*elapsed;
+  else xok=1;
   if (mody<0.5f-close_enough) dsty+=nudge_rate*elapsed;
   else if (mody>0.5f+close_enough) dsty-=nudge_rate*elapsed;
-  fmn_hero_set_position(dstx,dsty);
+  else yok=1;
+  if (xok&&yok) {
+    if (!fmn_global.walking) trickfloor_nudge_blackout=0.5f;
+  } else {
+    fmn_hero_set_position(dstx,dsty);
+  }
 }
 
 /* Track the hero's position, quantized to cells, and update things when she changes cell.
