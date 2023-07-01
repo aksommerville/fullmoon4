@@ -54,12 +54,6 @@ static void fmn_hero_bell_begin() {
 }
 
 static void fmn_hero_bell_update(float elapsed) {
-  // try to match animation; assume 60 Hz video.
-  uint8_t current=(uint8_t)((fmn_hero.item_active_time*60.0f)/32.0f);
-  if (current!=fmn_hero.bell_count) {
-    fmn_sound_effect(FMN_SFX_BELL);
-    fmn_hero.bell_count=current;
-  }
 }
 
 /* Seed.

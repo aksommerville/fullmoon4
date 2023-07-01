@@ -344,7 +344,7 @@ static void fmn_render_hero_item(uint8_t tileid,uint8_t xform) {
         }
       } break;
     
-    case FMN_ITEM_BELL: ALT if (ACTIVE) altlayout.tileid=(fmn_rh.itemtime&16)?0x14:0x24; break;
+    case FMN_ITEM_BELL: ALT if (ACTIVE) altlayout.tileid=(fmn_rh.itemtime>16)?0x14:0x24; break;
   }
   #undef ALT
   #undef ACTIVE

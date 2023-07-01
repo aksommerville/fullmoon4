@@ -12,7 +12,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] Can I make rubber trees that you can squeeze between them by pushing?
 - - Possible but I think not worth it, too much work and not consistent with existing physics.
 - [x] Wind should dissolve ghosts.
-- [ ] Bell: Don't auto-repeat.
+- [x] Bell: Don't auto-repeat.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
 - [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
