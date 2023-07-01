@@ -409,10 +409,15 @@ static float fmn_weather_update(float elapsed) {
  */
  
 void fmn_game_begin_earthquake(uint8_t dir) {
-  fmn_global.snow_time=2.0f;
-  fmn_global.earthquake_time=1.0f;
-  fmn_global.earthquake_dir=dir;
-  fmn_sound_effect(FMN_SFX_EARTHQUAKE);
+  if (fmn_global.earthquake_time>0.5f) {
+    // For the first half-second or so, we're not starting a new one, just alter the direction of the existing earthquake.
+    fmn_global.earthquake_dir=dir;
+  } else {
+    fmn_global.snow_time=2.0f;
+    fmn_global.earthquake_time=1.0f;
+    fmn_global.earthquake_dir=dir;
+    fmn_sound_effect(FMN_SFX_EARTHQUAKE);
+  }
 }
 
 /* Update.
