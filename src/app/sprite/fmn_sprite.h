@@ -232,6 +232,8 @@ void fmn_sprite_generate_soulballs(float x,float y,uint8_t c);
 struct fmn_sprite *fmn_sprite_generate_zzz(struct fmn_sprite *source);
 struct fmn_sprite *fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y);
 struct fmn_sprite *fmn_sprite_generate_toast(float x,float y,uint8_t imageid,uint8_t tileid,uint8_t xform);
+struct fmn_sprite *fmn_sprite_generate_enchantment(struct fmn_sprite *source,uint8_t persistent);
+void fmn_sprite_kill_enchantment(struct fmn_sprite *source);
 
 /* Defuncts (victim) and creates a pumpkin in its place.
  * Returns that pumpkin on success.

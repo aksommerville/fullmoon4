@@ -362,6 +362,7 @@ static int16_t _raccoon_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_
     case FMN_ITEM_BELL: RACCOON_SET_HITBOX(UPRIGHT) sleeping=0; break;
     case FMN_ITEM_FEATHER: if (!enchanted&&!sleeping) {
         fmn_log_event("enchant-raccoon","");
+        fmn_sprite_generate_enchantment(sprite,1);
         enchanted=1;
         fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);
       } break;

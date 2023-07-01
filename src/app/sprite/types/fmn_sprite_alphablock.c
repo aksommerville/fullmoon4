@@ -104,6 +104,7 @@ static void fmn_alphablock_check_lambda(struct fmn_sprite *sprite,float elapsed)
   fmn_hero_get_position(&herox,&heroy);
   if (fmn_alphablock_lambda_should_attract(sprite,herox,heroy)) {
     if (!lambda_attract) {
+      fmn_sprite_generate_enchantment(sprite,1);
       lambda_attract=1;
       fmn_alphablock_create_shadow(sprite);
     }
@@ -114,6 +115,7 @@ static void fmn_alphablock_check_lambda(struct fmn_sprite *sprite,float elapsed)
     }
   } else {
     if (lambda_attract) {
+      fmn_sprite_kill_enchantment(sprite);
       lambda_attract=0;
       fmn_alphablock_destroy_shadow(sprite);
       return;

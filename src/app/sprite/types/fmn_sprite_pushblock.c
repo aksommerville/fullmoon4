@@ -17,6 +17,7 @@
 #define presstime sprite->fv[0]
 #define slidetime sprite->fv[1]
 #define slidedst sprite->fv[2]
+#define time_since_charm_toast sprite->fv[3]
 
 /* Init.
  */
@@ -163,6 +164,10 @@ static void _pushblock_update(struct fmn_sprite *sprite,float elapsed) {
  
 static void pushblock_charm(struct fmn_sprite *sprite,uint8_t dir) {
   if (charmdir==dir) return;
+  // When the enchantment begins or changes, fire the toast immediately. Even if there's already one nearby.
+  fmn_sprite_kill_enchantment(sprite);
+  fmn_sprite_generate_enchantment(sprite,1);
+  time_since_charm_toast=0.0f;
   fmn_sound_effect(FMN_SFX_PUSHBLOCK_ENCHANT);
   charmdir=dir;
 }

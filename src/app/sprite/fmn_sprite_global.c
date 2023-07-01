@@ -443,6 +443,28 @@ struct fmn_sprite *fmn_sprite_generate_toast(float x,float y,uint8_t imageid,uin
   return sprite;
 }
 
+struct fmn_sprite *fmn_sprite_generate_enchantment(struct fmn_sprite *source,uint8_t persistent) {
+  if (!source) return 0;
+  struct fmn_sprite *toast=fmn_sprite_generate_toast(source->x,source->y-0.5f,3,0xed,0);
+  if (!toast) return 0;
+  toast->style=FMN_SPRITE_STYLE_TWOFRAME;
+  toast->fv[0]=toast->fv[3]=1.0f; // ttl. default 2 but that's too much
+  // fv[2] is (dy), default -1.0f
+  if (persistent) toast->pv[0]=source;
+  return toast;
+}
+
+static int fmn_sprite_kill_enchantment_cb(struct fmn_sprite *sprite,void *userdata) {
+  if (sprite->controller!=FMN_SPRCTL_toast) return 0;
+  if (sprite->pv[0]!=userdata) return 0;
+  fmn_sprite_kill(sprite);
+  return 0; // keep looking, maybe there's more than one
+}
+
+void fmn_sprite_kill_enchantment(struct fmn_sprite *source) {
+  fmn_sprites_for_each(fmn_sprite_kill_enchantment_cb,source);
+}
+
 /* Defunct/refunct.
  */
  
