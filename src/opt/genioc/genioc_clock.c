@@ -21,23 +21,6 @@ static int64_t genioc_now_cpu() {
   return (int64_t)tv.tv_sec*1000000ll+tv.tv_nsec/1000;
 }
 
-/* Report.
- */
- 
-void genioc_clock_report() {
-  if (genioc.framec<1) return;
-  double elapsed=(genioc.next_update_time-genioc.first_update_time)/1000000.0;
-  if (elapsed<1.0) return;
-  double average=genioc.framec/elapsed;
-  int64_t cpu_now=genioc_now_cpu();
-  double elapsed_cpu=(cpu_now-genioc.cpu_time_start)/1000000.0;
-  double load=elapsed_cpu/elapsed;
-  fprintf(stderr,
-    "%lld frames in %.03f s, average frame rate %.03f Hz. Average CPU load %.06f.\n",
-    (long long)genioc.framec,elapsed,average,load
-  );
-}
-
 /* Init.
  */
  

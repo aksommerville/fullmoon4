@@ -7,16 +7,6 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-## TODO Quick-n-easy, 1 July 2023
-
-- [x] Can I make rubber trees that you can squeeze between them by pushing?
-- - Possible but I think not worth it, too much work and not consistent with existing physics.
-- [x] Wind should dissolve ghosts.
-- [x] Bell: Don't auto-repeat.
-- [ ] MacOS: Build two independent app bundles. Demo and Full.
-- [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
-- [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
-
 ## TODO Platform and tooling, should complete before diving into full maps
 
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
@@ -76,6 +66,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Tree-shake resources when packing.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
+- [ ] MacOS: Build two independent app bundles. Demo and Full.
+- [ ] Metal
 - [ ] inmgr: Real input mapping.
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?
@@ -93,7 +85,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] JS platform tests
 - [ ] Automation against headless native build.
 - [ ] Windows
-- [ ] Metal
 - [ ] minsyn drums too loud
 - [ ] Native fiddle tool.
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.

@@ -25,9 +25,9 @@ extern struct genioc {
 
 /* Updating clock forces a delay if we seem to be running fast.
  * The plan is to tolerate both vsync-blocking and non-blocking clients.
+ * We keep enough data to make a sensible report at quit, but bigpc is also doing that so we stay quiet.
  */
 void genioc_clock_init();
 void genioc_clock_update();
-void genioc_clock_report();
 
 #endif

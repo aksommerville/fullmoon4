@@ -29,9 +29,7 @@ int main(int argc,char **argv) {
     }
     if (!err) break;
   }
-  genioc_clock_report();
   bigpc_quit();
-  fprintf(stderr,"Normal exit.\n");
   return 0;
 }
 
