@@ -420,12 +420,46 @@ void fmn_game_begin_earthquake(uint8_t dir) {
   }
 }
 
+/* Periodically check onscreen plants and bloom them when they mature.
+ * Platform takes care of this at map transitions, but i'd like to do it in real time too.
+ * "A watched pot never boils, and flower pots too" <-- that's stupid
+ */
+ 
+static float fmn_bloomage_clock=0.0f;
+ 
+static void fmn_update_bloomage(float elapsed) {
+
+  // I don't want to iterate all the plants every frame.
+  // (even though realistically, it won't be much, it just feels wrong).
+  // Check no more than once per second.
+  fmn_bloomage_clock+=elapsed;
+  if (fmn_bloomage_clock<1.0f) return;
+  fmn_bloomage_clock=0.0f;
+  
+  uint32_t now=fmn_game_get_platform_time_ms();
+  struct fmn_plant *plant=fmn_global.plantv;
+  int i=fmn_global.plantc,changed=0;
+  for (;i-->0;plant++) {
+    if (plant->state!=FMN_PLANT_STATE_GROW) continue;
+    if (plant->flower_time>now) continue;
+    plant->state=FMN_PLANT_STATE_FLOWER;
+    changed=1;
+    fmn_sprite_generate_soilballs(plant->x+0.5f,plant->y+0.5f);
+  }
+  if (changed) {
+    fmn_sound_effect(FMN_SFX_BLOOM);
+    fmn_map_dirty();
+  }
+}
+
 /* Update.
  */
  
 void fmn_game_update(float elapsed) {
 
   fmn_game_advance_play_time_ms(elapsed*1000.0f);
+  
+  fmn_update_bloomage(elapsed);
 
   if ((fmn_global.illumination_time-=elapsed)<=0.0f) {
     fmn_global.illumination_time=0.0f;

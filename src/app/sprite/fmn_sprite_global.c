@@ -415,6 +415,28 @@ void fmn_sprite_generate_soulballs(float x,float y,uint8_t c) {
   }
 }
  
+void fmn_sprite_generate_soilballs(float x,float y) {
+  uint8_t tileid=0x00; // 0x00,0x10,0x20,0x30
+  uint8_t cmdv[]={
+    0x20,24, // imageid
+    0x21,tileid,
+    0x26,0xf0, // layer
+    0x42,FMN_SPRCTL_soulball>>8,FMN_SPRCTL_soulball,
+  };
+  uint8_t c=5;
+  uint8_t argv[]={0,c};
+  while (c-->0) {
+    argv[0]=c;
+    tileid+=0x10;
+    if (tileid>=0x40) tileid-=0x40;
+    cmdv[3]=tileid;
+    struct fmn_sprite *sprite=fmn_sprite_spawn(x,y,0,cmdv,sizeof(cmdv),argv,sizeof(argv));
+    if (sprite) {
+      sprite->style=FMN_SPRITE_STYLE_TILE;
+    }
+  }
+}
+ 
 struct fmn_sprite *fmn_sprite_generate_zzz(struct fmn_sprite *source) {
   struct fmn_sprite *zzz=fmn_sprite_generate_noparam(FMN_SPRCTL_zzz,source->x,source->y-0.5f);
   if (zzz) {
