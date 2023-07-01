@@ -170,7 +170,7 @@ static void fmn_alphablock_check_contact_history(struct fmn_sprite *sprite) {
           (sprite->bv[4]==FMN_DIR_W)
         ) {
           fmn_sound_effect(FMN_SFX_BLOCK_EXPLODE);
-          fmn_sprite_generate_soulballs(sprite->x,sprite->y,5);
+          fmn_sprite_generate_soulballs(sprite->x,sprite->y,5,0);
           fmn_sprite_kill(sprite);
         }
       } break;

@@ -337,7 +337,7 @@ static void fmn_hero_force_escape_hazards() {
  
 void fmn_hero_return_to_map_entry() {
   struct fmn_sprite *hero=fmn_hero.sprite;
-  fmn_sprite_generate_soulballs(hero->x,hero->y,7);
+  fmn_sprite_generate_soulballs(hero->x,hero->y,7,1);
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
   fmn_hero_item_end();
   fmn_sound_effect(FMN_SFX_GRIEVOUS_INJURY);
@@ -380,7 +380,7 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   
   // Getting injured implicitly ends any action in flight (broom, in particular).
   // Player won't be able to restart it until the injury exposure is complete.
-  fmn_hero_item_end();
+  fmn_hero_cancel_item();
   
   // First nice and simple, apply a constant force in the opposite direction of the assailant.
   float dx=hero->x-x;
@@ -450,7 +450,7 @@ uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
   fmn_global.damage_count++;
   fmn_global.curse_time=FMN_HERO_CURSE_TIME;
   fmn_sound_effect(FMN_SFX_CURSE);
-  fmn_hero_item_end();
+  fmn_hero_cancel_item();
   return 1;
 }
 
@@ -462,12 +462,12 @@ void fmn_hero_kill(struct fmn_sprite *assailant) {
   fmn_log_event("hero-kill","%d",assailant?assailant->controller:0);
   struct fmn_sprite *hero=fmn_hero.sprite;
   fmn_hero_walk_end();
-  fmn_hero_item_end();
+  fmn_hero_cancel_item();
   fmn_hero_kill_velocity();
   fmn_global.damage_count++;
   fmn_global.hero_dead=1;
   fmn_global.terminate_time=5.0f;
-  fmn_sprite_generate_soulballs(hero->x,hero->y,7);
+  fmn_sprite_generate_soulballs(hero->x,hero->y,7,0);
   fmn_sound_effect(FMN_SFX_GRIEVOUS_INJURY);
   fmn_sprite_kill(hero);
 }

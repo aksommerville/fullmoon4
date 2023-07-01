@@ -65,7 +65,7 @@ static void moonsong_cast_spell(struct fmn_sprite *sprite) {
         float herox,heroy;
         fmn_hero_get_position(&herox,&heroy);
         fmn_global.transmogrification=1;
-        fmn_sprite_generate_soulballs(herox,heroy,7);
+        fmn_sprite_generate_soulballs(herox,heroy,7,0);
         fmn_sound_effect(FMN_SFX_PUMPKIN);
         fmn_hero_cancel_item();
         fmn_secrets_refresh_for_map();
@@ -215,13 +215,13 @@ static void moonsong_toggle_pumpkin(struct fmn_sprite *sprite) {
   if (pumpkinned) {
     pumpkinned=0;
     fmn_sound_effect(FMN_SFX_UNPUMPKIN);
-    fmn_sprite_generate_soulballs(sprite->x,sprite->y,3);
+    fmn_sprite_generate_soulballs(sprite->x,sprite->y,3,0);
     clock=0.0f;
     sprite->invmass=0;
   } else {
     pumpkinned=1;
     fmn_sound_effect(FMN_SFX_PUMPKIN);
-    fmn_sprite_generate_soulballs(sprite->x,sprite->y,3);
+    fmn_sprite_generate_soulballs(sprite->x,sprite->y,3,0);
     sprite->invmass=128;
   }
   if (gsbit) fmn_gs_set_bit(gsbit,pumpkinned);

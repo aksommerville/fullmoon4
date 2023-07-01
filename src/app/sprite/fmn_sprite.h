@@ -228,7 +228,7 @@ FMN_FOR_EACH_SPRCTL
 
 const struct fmn_sprite_controller *fmn_sprite_controller_by_id(uint16_t id);
 
-void fmn_sprite_generate_soulballs(float x,float y,uint8_t c);
+void fmn_sprite_generate_soulballs(float x,float y,uint8_t c,uint8_t return_to_sender);
 void fmn_sprite_generate_soilballs(float x,float y); // like soulballs but for plants
 struct fmn_sprite *fmn_sprite_generate_zzz(struct fmn_sprite *source);
 struct fmn_sprite *fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y);

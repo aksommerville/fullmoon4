@@ -77,8 +77,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Trick floor: Discrete movement somehow?
 - [x] Trick floor: Timeout fires.
 - [x] Trick floor: Shorter path, say 9 steps?
-- [ ] fmn_hero_return_to_map_entry: Make soulballs coalesce on the new position.
-- [ ] Pumpkins can get trapped near the wand. Maybe better to prevent pumpkins from leaving the village?
+- [x] fmn_hero_return_to_map_entry: Make soulballs coalesce on the new position.
+- [x] Pumpkins can get trapped near the wand. Maybe better to prevent pumpkins from leaving the village?
 - [ ] Seamonster should be ticklish (all monsters should).
 - [x] Extend forests to prevent flying around the island; eliminate the northern arc of the demo world.
 - [x] Farmer: Tolerate other plant states. Esp pre-dug hole.
@@ -89,6 +89,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Hearts or something above blocks and raccoons when enchanted.
 - [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
 - [ ] fmn_game_load_map(): Try to get the correct hero position, right now it's reading randomly from the sprite list. (doesn't matter whether before or after the transition).
+- - This bears on hero position being available during sprite init hooks too. See tolltroll, it's a problem.
 - [x] See paper notes from GDEX. Lots of bugs and improvements.
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.

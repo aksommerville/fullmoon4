@@ -16,6 +16,7 @@
 #define TOLLTROLL_DEMAND_DISTANCE 2.5f
 #define TOLLTROLL_TILEID_PAYMENT 0x6c
 #define TOLLTROLL_TILEID_RAGE 0x7c
+#define TOLLTROLL_TILEID_PUMPKIN 0xef
 
 #define sleeping sprite->bv[0]
 #define tileid0 sprite->bv[1]
@@ -23,6 +24,13 @@
 #define targetx sprite->fv[0]
 #define clock sprite->fv[1]
 #define gsbit sprite->argv[0]
+#define pumpkinproof sprite->argv[1]
+/* With (pumpkinproof) nonzero, we selfdestruct at init, unless the hero is a pumpkin.
+ * Use 1=right 2=left, which direction the hero is expected to be at.
+ * (since pumpkinproof trolls are an emergency measure, you should know this).
+ * We also selfdestruct if the hero manages to be on the wrong side.
+ * Allowing that there could be ways I didn't expect, to escape the pumpkin zone. (eg cast a teleport spell just as you're being transformed...)
+ */
 
 static void tolltroll_begin_COLLECT(struct fmn_sprite *sprite);
 static void tolltroll_begin_RETREAT(struct fmn_sprite *sprite);
@@ -36,6 +44,14 @@ static void _tolltroll_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
   stage=TOLLTROLL_STAGE_COLLECT;
   // Ignore gsbit for now -- wait until the first update, so we're sure we move the right direction.
+  
+  if (pumpkinproof) {
+    if (fmn_global.transmogrification!=1) {
+      fmn_sprite_kill(sprite);
+      return;
+    }
+    // I'd like to check hero's position here, but at init it isn't established yet. (TODO probably it ought to be)
+  }
 }
 
 /* Payment indicator.
@@ -52,7 +68,11 @@ static int tolltroll_find_dialogue_1(struct fmn_sprite *sprite,void *userdata) {
   struct tolltroll_find_dialogue_context *ctx=userdata;
   if (sprite->controller) return 0;
   if (sprite->imageid!=ctx->tolltroll->imageid) return 0;
-  if ((sprite->tileid!=TOLLTROLL_TILEID_PAYMENT)&&(sprite->tileid!=TOLLTROLL_TILEID_RAGE)) return 0;
+  if (
+    (sprite->tileid!=TOLLTROLL_TILEID_PAYMENT)&&
+    (sprite->tileid!=TOLLTROLL_TILEID_RAGE)&&
+    (sprite->tileid!=TOLLTROLL_TILEID_PUMPKIN)
+  ) return 0;
   if (sprite->x<ctx->tolltroll->x-1.0f) return 0;
   if (sprite->x>ctx->tolltroll->x+1.0f) return 0;
   if (sprite->y<ctx->tolltroll->y-2.0f) return 0;
@@ -73,13 +93,13 @@ static struct fmn_sprite *tolltroll_find_dialogue(struct fmn_sprite *sprite) {
 static void tolltroll_demand_payment(struct fmn_sprite *sprite) {
   struct fmn_sprite *dialogue=tolltroll_find_dialogue(sprite);
   if (dialogue) {
-    dialogue->tileid=TOLLTROLL_TILEID_PAYMENT;
+    dialogue->tileid=pumpkinproof?TOLLTROLL_TILEID_PUMPKIN:TOLLTROLL_TILEID_PAYMENT;
     return;
   }
   if (!(dialogue=fmn_sprite_generate_noparam(0,sprite->x,sprite->y-1.0f))) return;
   dialogue->imageid=sprite->imageid;
   dialogue->layer=150;
-  dialogue->tileid=TOLLTROLL_TILEID_PAYMENT;
+  dialogue->tileid=pumpkinproof?TOLLTROLL_TILEID_PUMPKIN:TOLLTROLL_TILEID_PAYMENT;
 }
 
 static void tolltroll_demand_nothing(struct fmn_sprite *sprite) {
@@ -101,8 +121,17 @@ static void tolltroll_update_COLLECT(struct fmn_sprite *sprite,float elapsed) {
   fmn_hero_get_position(&herox,&heroy);
   if (herox<sprite->x) {
     sprite->xform=0;
+    if (pumpkinproof==1) {
+      //TODO You can see the troll during scroll-in. We really need to check position at init. Fix the initial-hero-position thing.
+      fmn_sprite_kill(sprite);
+      return;
+    }
   } else {
     sprite->xform=FMN_XFORM_XREV;
+    if (pumpkinproof==2) {
+      fmn_sprite_kill(sprite);
+      return;
+    }
   }
   sprite->tileid=tileid0;
   

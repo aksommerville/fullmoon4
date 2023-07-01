@@ -824,6 +824,9 @@ void fmn_hero_item_end() {
 }
 
 void fmn_hero_cancel_item() {
+  fmn_hero.spellc=0; // poison the spell; you can't cast it in cancel cases.
+  memset(fmn_global.violin_song,0,sizeof(fmn_global.violin_song)); // ditto song
+  fmn_hero.violin_spellid=0;
   fmn_hero_item_end();
 }
 

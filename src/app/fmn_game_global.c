@@ -141,7 +141,7 @@ static void fmn_transmogrify(uint8_t mode,uint8_t state) {
   }
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
-  fmn_sprite_generate_soulballs(herox,heroy,7);
+  fmn_sprite_generate_soulballs(herox,heroy,7,0);
   fmn_secrets_refresh_for_map();
 }
 
