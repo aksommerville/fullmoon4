@@ -63,7 +63,13 @@ static void pause_draw_label(struct fmn_menu *menu) {
     switch (labelid) {
       case FMN_ITEM_SNOWGLOBE: src="Snowglobe"; break;
       case FMN_ITEM_HAT: src="Hat"; break;
-      case FMN_ITEM_PITCHER: src="Pitcher"; break;
+      case FMN_ITEM_PITCHER: switch (fmn_global.itemqv[FMN_ITEM_PITCHER]) {
+          case FMN_PITCHER_CONTENT_WATER: src="Water"; break;
+          case FMN_PITCHER_CONTENT_MILK: src="Milk"; break;
+          case FMN_PITCHER_CONTENT_SAP: src="Sap"; break;
+          case FMN_PITCHER_CONTENT_HONEY: src="Honey"; break;
+          default: src="Pitcher"; break;
+        } break;
       case FMN_ITEM_SEED: src="Seed"; break;
       case FMN_ITEM_COIN: src="Coin"; break;
       case FMN_ITEM_MATCH: src="Match"; break;
