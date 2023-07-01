@@ -18,6 +18,7 @@
 #define stage sprite->bv[2]
 #define tileextra sprite->bv[3] /* for the crown i wear after winning Seamonster Pong */
 #define defeated sprite->bv[4] /* nonzero after i lose Seamonster Pong */
+#define charmed sprite->bv[5]
 #define clock sprite->fv[0]
 #define swimdx sprite->fv[1]
 #define swimdy sprite->fv[2]
@@ -269,6 +270,12 @@ static void seamonster_begin_SURFACE(struct fmn_sprite *sprite) {
 
 static void seamonster_begin_SPIT(struct fmn_sprite *sprite) {
 
+  if (charmed) {
+    // Can we do something else here? Maybe give him a word bubble with a heart in it? (the same open-mouth tile we already have)
+    seamonster_begin_LURK(sprite);
+    return;
+  }
+
   // Proceed with spitting if hero is in the 90-degree cone. Don't change direction.
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
@@ -408,6 +415,11 @@ static int16_t _seamonster_interact(struct fmn_sprite *sprite,uint8_t itemid,uin
     case FMN_ITEM_BELL: if (sleeping) {
         sleeping=0;
         seamonster_begin_LURK(sprite);
+      } break;
+    case FMN_ITEM_FEATHER: if (!charmed) {
+        charmed=1;
+        fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);
+        fmn_sprite_generate_enchantment(sprite,1);
       } break;
   }
   return 0;

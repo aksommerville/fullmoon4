@@ -11,6 +11,7 @@
 #define sleeping sprite->bv[0]
 #define tileid0 sprite->bv[1]
 #define stage sprite->bv[2]
+#define charmed sprite->bv[3]
 #define animclock sprite->fv[0]
 #define rundx sprite->fv[1]
 #define rundy sprite->fv[2]
@@ -80,6 +81,30 @@ static void rat_charge(struct fmn_sprite *sprite,float elapsed) {
   }
 }
 
+/* Charmed.
+ */
+ 
+static void rat_update_CHARM(struct fmn_sprite *sprite,float elapsed) {
+  float dx=0.0f,dy=0.0f;
+  if (fmn_global.active_item==FMN_ITEM_FEATHER) switch (fmn_global.facedir) {
+    case FMN_DIR_N: dy=-1.0f; break;
+    case FMN_DIR_S: dy=1.0f; break;
+    case FMN_DIR_W: dx=-1.0f; sprite->xform=0; break;
+    case FMN_DIR_E: dx=1.0f; sprite->xform=FMN_XFORM_XREV; break;
+  }
+  if ((dx==0.0f)&&(dy==0.0f)) {
+    sprite->tileid=tileid0;
+    return;
+  }
+  animclock+=elapsed;
+  if (animclock>=0.7f) {
+    animclock-=0.7f;
+  }
+  sprite->tileid=tileid0+((animclock>=0.35f)?0x10:0);
+  sprite->x+=dx*RAT_CHARGE_SPEED*elapsed;
+  sprite->y+=dy*RAT_CHARGE_SPEED*elapsed;
+}
+
 /* Update.
  */
  
@@ -87,6 +112,12 @@ static void _rat_update(struct fmn_sprite *sprite,float elapsed) {
   if (sleeping) {
     sprite->tileid=tileid0+0x20;
     animclock=0.0f;
+    return;
+  }
+  
+  // If charmed, we move based on the feather, and nothing else.
+  if (charmed) {
+    rat_update_CHARM(sprite,elapsed);
     return;
   }
   
@@ -127,6 +158,11 @@ static int16_t _rat_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qu
         case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
+    case FMN_ITEM_FEATHER: if (!charmed) {
+        charmed=1;
+        fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);
+        fmn_sprite_generate_enchantment(sprite,1);
+      } break;
   }
   return 0;
 }

@@ -13,6 +13,7 @@
 #define tileid0 sprite->bv[0]
 #define stage sprite->bv[1]
 #define sleeping sprite->bv[2]
+#define charmed sprite->bv[3]
 #define animclock sprite->fv[0]
 #define stageclock sprite->fv[1] /* counts down */
 #define scurrydx sprite->fv[2]
@@ -84,6 +85,21 @@ static void lobster_update_SCURRY(struct fmn_sprite *sprite,float elapsed) {
   sprite->y+=scurrydy*elapsed;
 }
 
+/* Charmed: Same as raccoon, walk in the direction of the wagging feather, or sit still.
+ */
+ 
+static void lobster_update_CHARMED(struct fmn_sprite *sprite,float elapsed) {
+  float dx=0.0f,dy=0.0f;
+  if (fmn_global.active_item==FMN_ITEM_FEATHER) switch (fmn_global.facedir) {
+    case FMN_DIR_N: dy=-1.0f; break;
+    case FMN_DIR_S: dy=1.0f; break;
+    case FMN_DIR_W: dx=-1.0f; break;
+    case FMN_DIR_E: dx=1.0f; break;
+  }
+  sprite->x+=dx*LOBSTER_SCURRY_SPEED*elapsed;
+  sprite->y+=dy*LOBSTER_SCURRY_SPEED*elapsed;
+}
+
 /* Init.
  */
  
@@ -104,7 +120,9 @@ static void _lobster_update(struct fmn_sprite *sprite,float elapsed) {
   if (animclock>=0.8f) animclock-=0.8f;
   if (animclock>=0.4f) sprite->tileid=tileid0+1;
   else sprite->tileid=tileid0;
-  if ((stageclock-=elapsed)<=0.0f) switch (stage) {
+  if (charmed) {
+    lobster_update_CHARMED(sprite,elapsed);
+  } else if ((stageclock-=elapsed)<=0.0f) switch (stage) {
     case LOBSTER_STAGE_CHILL: lobster_begin_SCURRY(sprite); break;
     case LOBSTER_STAGE_SCURRY: lobster_begin_CHILL(sprite); break;
   } else switch (stage) {
@@ -132,6 +150,11 @@ static int16_t _lobster_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_
         case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
+    case FMN_ITEM_FEATHER: if (!charmed) {
+        charmed=1;
+        fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);
+        fmn_sprite_generate_enchantment(sprite,1);
+      } break;
   }
   return 0;
 }

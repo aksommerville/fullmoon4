@@ -198,7 +198,11 @@ static int16_t _duck_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t q
         case FMN_SPELLID_PUMPKIN: fmn_sprite_pumpkinize(sprite); break;
       } break;
     case FMN_ITEM_BELL: sleeping=0; break;
-    case FMN_ITEM_FEATHER: if (!charmed) { charmed=1; fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL); } break;
+    case FMN_ITEM_FEATHER: if (!charmed) {
+        charmed=1;
+        fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);
+        fmn_sprite_generate_enchantment(sprite,1);
+      } break;
   }
   return 0;
 }

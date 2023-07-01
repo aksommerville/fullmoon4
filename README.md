@@ -79,7 +79,11 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [x] Trick floor: Shorter path, say 9 steps?
 - [x] fmn_hero_return_to_map_entry: Make soulballs coalesce on the new position.
 - [x] Pumpkins can get trapped near the wand. Maybe better to prevent pumpkins from leaving the village?
-- [ ] Seamonster should be ticklish (all monsters should).
+- [x] Seamonster should be ticklish (all monsters should, in general).
+- - Seamonster
+- - Lobster
+- - Rat
+- - Duck
 - [x] Extend forests to prevent flying around the island; eliminate the northern arc of the demo world.
 - [x] Farmer: Tolerate other plant states. Esp pre-dug hole.
 - [x] Bloom plants while on screen?
@@ -91,6 +95,8 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] fmn_game_load_map(): Try to get the correct hero position, right now it's reading randomly from the sprite list. (doesn't matter whether before or after the transition).
 - - This bears on hero position being available during sprite init hooks too. See tolltroll, it's a problem.
 - [x] See paper notes from GDEX. Lots of bugs and improvements.
+- [ ] Wind should dissolve ghosts.
+- [ ] Bell: Don't auto-repeat.
 - [ ] Tree-shake resources when packing.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
