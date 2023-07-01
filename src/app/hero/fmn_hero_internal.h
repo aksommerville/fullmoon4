@@ -32,7 +32,6 @@ extern struct fmn_hero {
   float walkaccel; // always positive
   int8_t cellx,celly; // quantized position
   float enterx,entery; // position at map entry
-  uint8_t recent_reset; // signal to fmn_hero_update that we have just reset
   
   float walkforce;
   float velx,vely; // to cache across sprite rebuilds

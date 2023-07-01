@@ -65,22 +65,24 @@ void fmn_game_map_callback(uint16_t cbid,uint8_t param,void *userdata) {
 }
 
 /* Load map.
- * This DOES NOT trigger FMN_MAP_EVID_LOADED, but the caller should. Update hero position first.
+ * This DOES NOT trigger FMN_MAP_EVID_LOADED, but the caller should.
  */
  
-int fmn_game_load_map(int mapid) {
+int fmn_game_load_map(int mapid,float herox,float heroy) {
   fmn_map_callbacks(FMN_MAP_EVID_UNLOAD,fmn_game_map_callback,0);
   fmn_sprites_clear();
   fmn_gs_drop_listeners();
   fmn_game_event_unlisten_all();
   fmn_game_drop_map_singletons();
+  if (herox>=0.0f) fmn_hero_force_position_before_transition(herox,heroy);
   int err=fmn_load_map(mapid,cb_spawn);
   if (err<=0) {
     fmn_log("map:%d not found",mapid);
     fmn_log_event("map-not-found","%d",mapid);
     return err;
   }
-  fmn_log_event("map","%d",mapid);//TODO This logs the hero position wrong (randomly). Safe to move below fmn_hero_reset()?
+  if (herox<0.0f) fmn_hero_force_position_before_transition(fmn_global.herostartp%FMN_COLC+0.5f,fmn_global.herostartp/FMN_COLC+0.5f);
+  fmn_log_event("map","%d",mapid);
   
   if (fmn_global.facedir_gsbit_horz) fmn_gs_set_bit(fmn_global.facedir_gsbit_horz,((fmn_global.facedir==FMN_DIR_W)||(fmn_global.facedir==FMN_DIR_E))?1:0);
   if (fmn_global.facedir_gsbit_vert) fmn_gs_set_bit(fmn_global.facedir_gsbit_vert,((fmn_global.facedir==FMN_DIR_N)||(fmn_global.facedir==FMN_DIR_S))?1:0);
@@ -117,11 +119,10 @@ static void fmn_game_navigate(int8_t dx,int8_t dy) {
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   fmn_prepare_transition(transition);
-  if (fmn_game_load_map(mapid)<1) {
+  if (fmn_game_load_map(mapid,herox-dx*FMN_COLC,heroy-dy*FMN_ROWC)<1) {
     fmn_cancel_transition();
     return;
   }
-  fmn_hero_set_position(herox-dx*FMN_COLC,heroy-dy*FMN_ROWC);
   // Preserve velocity on these neighbor transitions.
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
   fmn_commit_transition();
@@ -175,7 +176,7 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
     float dstx=door->dstx+0.5f;
     float dsty=door->dsty+0.5f;
     fmn_prepare_transition(FMN_TRANSITION_DOOR);
-    if (fmn_game_load_map(door->mapid)<1) {
+    if (fmn_game_load_map(door->mapid,dstx,dsty)<1) {
       fmn_cancel_transition();
       continue;
     }
@@ -183,7 +184,6 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
     // After placing the hero, pump its quantized position once to ignore whatever it landed on.
     // (typically, that's the other end of this door).
     // Also kill velocity.
-    fmn_hero_set_position(dstx,dsty);
     int8_t dumx,dumy;
     fmn_hero_get_quantized_position(&dumx,&dumy);
     fmn_hero_kill_velocity();
@@ -527,7 +527,7 @@ static void fmn_bloom_plants() {
  
 static void fmn_teleport(uint16_t mapid) {
   fmn_prepare_transition(FMN_TRANSITION_WARP);
-  if (fmn_game_load_map(mapid)<1) {
+  if (fmn_game_load_map(mapid,-1.0f,-1.0f)<1) {
     fmn_cancel_transition();
     return;
   }

@@ -50,7 +50,15 @@ static void _tolltroll_init(struct fmn_sprite *sprite) {
       fmn_sprite_kill(sprite);
       return;
     }
-    // I'd like to check hero's position here, but at init it isn't established yet. (TODO probably it ought to be)
+    float herox,heroy;
+    fmn_hero_get_position(&herox,&heroy);
+    if (
+      ((herox<sprite->x)&&(pumpkinproof==1))||
+      ((herox>sprite->x)&&(pumpkinproof==2))
+    ) {
+      fmn_sprite_kill(sprite);
+      return;
+    }
   }
 }
 
@@ -122,7 +130,6 @@ static void tolltroll_update_COLLECT(struct fmn_sprite *sprite,float elapsed) {
   if (herox<sprite->x) {
     sprite->xform=0;
     if (pumpkinproof==1) {
-      //TODO You can see the troll during scroll-in. We really need to check position at init. Fix the initial-hero-position thing.
       fmn_sprite_kill(sprite);
       return;
     }

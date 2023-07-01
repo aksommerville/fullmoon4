@@ -23,9 +23,7 @@ int fmn_hero_reset() {
   fmn_global.hero_dead=0;
   if (fmn_sprites_for_each(fmn_hero_cb_find,0)<1) {
   
-    uint8_t col=fmn_global.herostartp%FMN_COLC;
-    uint8_t row=fmn_global.herostartp/FMN_COLC;
-    if (!(fmn_hero.sprite=fmn_sprite_spawn(col+0.5f,row+0.5f,0,0,0,0,0))) return -1;
+    if (!(fmn_hero.sprite=fmn_sprite_spawn(fmn_hero.enterx,fmn_hero.entery,0,0,0,0,0))) return -1;
     fmn_hero.sprite->update=0;
     fmn_hero.sprite->static_pressure=fmn_hero_static_pressure;
     fmn_hero.sprite->style=FMN_SPRITE_STYLE_HERO;
@@ -48,10 +46,6 @@ int fmn_hero_reset() {
   
   fmn_hero.cellx=-128;
   fmn_hero.celly=-128;
-  
-  fmn_hero.enterx=fmn_hero.sprite->x;
-  fmn_hero.entery=fmn_hero.sprite->y;
-  fmn_hero.recent_reset=1;
   
   if (!fmn_global.facedir) fmn_global.facedir=FMN_DIR_S;
   
@@ -105,12 +99,6 @@ void fmn_hero_input(uint8_t bit,uint8_t value,uint8_t state) {
  
 void fmn_hero_update(float elapsed) {
   if (fmn_global.hero_dead) return;
-
-  if (fmn_hero.recent_reset) {
-    fmn_hero.enterx=fmn_hero.sprite->x;
-    fmn_hero.entery=fmn_hero.sprite->y;
-    fmn_hero.recent_reset=0;
-  }
 
   fmn_hero_motion_update(elapsed);
   fmn_hero_item_update(elapsed);
@@ -166,7 +154,10 @@ uint8_t fmn_hero_get_quantized_position(int8_t *x,int8_t *y) {
  */
  
 void fmn_hero_get_position(float *x,float *y) {
-  if (fmn_global.hero_dead||!fmn_hero.sprite) {
+  if (!fmn_hero.sprite) {
+    *x=fmn_hero.enterx;
+    *y=fmn_hero.entery;
+  } else if (fmn_global.hero_dead) {
     *x=*y=0.0f;
   } else {
     *x=fmn_hero.sprite->x;
@@ -175,9 +166,20 @@ void fmn_hero_get_position(float *x,float *y) {
 }
 
 void fmn_hero_set_position(float x,float y) {
+  if (!fmn_hero.sprite) {
+    fmn_hero.enterx=x;
+    fmn_hero.entery=y;
+    return;
+  }
   if (fmn_global.hero_dead) return;
   fmn_hero.sprite->x=x;
   fmn_hero.sprite->y=y;
+}
+
+void fmn_hero_force_position_before_transition(float x,float y) {
+  fmn_hero.sprite=0;
+  fmn_hero.enterx=x;
+  fmn_hero.entery=y;
 }
 
 void fmn_hero_kill_velocity() {

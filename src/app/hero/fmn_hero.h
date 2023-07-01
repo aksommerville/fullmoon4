@@ -24,6 +24,12 @@ void fmn_hero_get_position(float *x,float *y);
 void fmn_hero_set_position(float x,float y);
 void fmn_hero_kill_velocity();
 
+/* Drops our connection to the sprite and records (x,y) as the position to create the new one, at the next fmn_hero_reset().
+ * Do this before loading a new map.
+ * get_position/set_position will continue to work as expected while we're in that transient spriteless state.
+ */
+void fmn_hero_force_position_before_transition(float x,float y);
+
 /* Begin an injury, focussed at (x,y), typically (assailant)'s location.
  * (assailant) is optional.
  * Nonzero if an injury happened.
