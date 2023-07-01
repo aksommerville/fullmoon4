@@ -248,6 +248,7 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
   { struct fmn_plant *already=fmn_global.plantv;
     int i=fmn_global.plantc;
     for (;i-->0;already++) {
+      if (already->state==FMN_PLANT_STATE_NONE) continue;
       if (already->x!=x) continue;
       if (already->y!=y) continue;
       return -1;

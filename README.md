@@ -81,7 +81,7 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Pumpkins can get trapped near the wand. Maybe better to prevent pumpkins from leaving the village?
 - [ ] Seamonster should be ticklish (all monsters should).
 - [x] Extend forests to prevent flying around the island; eliminate the northern arc of the demo world.
-- [ ] Farmer: Tolerate other plant states. Esp pre-dug hole.
+- [x] Farmer: Tolerate other plant states. Esp pre-dug hole.
 - [ ] Bloom plants while on screen?
 - [x] Ghost of plant when you dig it up.
 - [x] Cow: Black vertical stripes over the eyes and a big pink nose, look it up.
