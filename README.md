@@ -5,33 +5,45 @@ Non-violent adventure game where the witch has to find and kill the werewolf.
 I mean "non-violent" in a pretty loose sense.
 Because there is definitely a werewolf-slaying involved.
 
-## TODO
+Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-I want this thing ready to show off at GDEX 2023. Anything not necessary for demoing there can wait.
+## TODO Quick-n-easy, 1 July 2023
 
-And tentatively aiming for full release 29 September 2023, the first full moon of autumn.
+- [x] Can I make rubber trees that you can squeeze between them by pushing?
+- - Possible but I think not worth it, too much work and not consistent with existing physics.
+- [x] Wind should dissolve ghosts.
+- [ ] Bell: Don't auto-repeat.
+- [ ] MacOS: Build two independent app bundles. Demo and Full.
+- [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
+- [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 
-### May
+## TODO Platform and tooling, should complete before diving into full maps
 
 - [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- [x] Scripts to analyze logs.
-- [ ] Metal
-- [ ] Can I make rubber trees that you can squeeze between them by pushing?
-- [ ] minsyn drums too loud
-- [ ] Native fiddle tool.
-- - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
-- - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
-- - [ ] Mysterious segfault. Refreshed browser while song running and fiddle C code had changed.
-- xxx Can we move the rabbit? He teaches a song but users will not have the violin at that point. meh
-- xxx Is the panda too distracting, at Seamonster Pong? meh
-- [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
-- - Also noticing in blood_for_silver, as i build up inotify. (no midi in, just data changes)
-- - These, and the segfault above, might be due to borrowed songs in minsyn:   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
-- - Problem is the live game depends on that serial address to detect redundant requests.
-- - [ ] Can we move the redundant-song check up to the platform level, and make it undefined at the synth level?
-- - I want songs to continue playing across archive reloads, in fiddle. (in fact this is very important)
-- [ ] Measure full memory usage after all songs and sound effects have played -- I'm concerned it might be too high for the Pi.
+- [ ] UI for saved game management. And everything else re saved games.
+- [ ] Data editor improvements.
+- - [ ] Home page
+- - [ ] MapAllUi: Point out neighbor mismatches.
+- - [ ] Delete maps (and resources in general)
+- [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
+- [ ] Rekajigger Constants.js, use actual inlinable constants.
+- [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
+- [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
+- [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
+- [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
+- [ ] verify: Song channel 14 reserved for violin, songs must not use.
+- [ ] verify: Teleport targets must set song.
+- [ ] verify: Firewall must be on edge, with at least two vacant cells, and a solid on both ends.
+- [ ] verify: Chalk duplicates
+- [ ] verify: Resources named by sprite config, eg chalkguard strings
+- [ ] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
+- [ ] verify: buried_treasure and buried_door. shovellable, etc
+- [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
+- [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
+- [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
+- [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
+- [ ] Translation.
 
 ### Full Maps
 
@@ -55,84 +67,20 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - [ ] Desert E -- blood_for_silver
 - [ ] Mountains NW -- A Stone to Take My Place?
 
-### After GDEX
+### TODO: Miscellaneous
 
-- [x] Spawn on hazard
-- [x] Text on inventory menu
-- [x] Horz/vert instead of spinwise/widdershins for turning puzzle.
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
-- [x] Minimum time at treasure menu, prevent accidental dismiss.
-- [x] '' game over menu.
-- [x] Chalk: clear all
-- [x] Chalk: highlight active endpoints
 - [ ] More involved tutorial for violin?
-- [x] Firewall at 720x400 visible aliasing. (texture filter?)
-- [x] Show spell while encoding.
-- [x] Make most animals pumpkinable, make a generic pumpkin.
-- [x] Snow, when you use the snowglobe.
-- [x] Rabbit: sync song to metronome ...he's actually sync'd already, but at half the tempo
 - [ ] Violin: Fuzz playback? Look for matches that allow off-by-one somehow.
-- [x] Visible rests in rabbit song. And graffiti song in the pub. (and anywhere else we teach a song) ...i don't think we need it for the rabbit now
-- [x] Wind spell tutorial: The circle doesn't make sense, find something better.
-- [x] Trick floor: Discrete movement somehow?
-- [x] Trick floor: Timeout fires.
-- [x] Trick floor: Shorter path, say 9 steps?
-- [x] fmn_hero_return_to_map_entry: Make soulballs coalesce on the new position.
-- [x] Pumpkins can get trapped near the wand. Maybe better to prevent pumpkins from leaving the village?
-- [x] Seamonster should be ticklish (all monsters should, in general).
-- - Seamonster
-- - Lobster
-- - Rat
-- - Duck
-- [x] Extend forests to prevent flying around the island; eliminate the northern arc of the demo world.
-- [x] Farmer: Tolerate other plant states. Esp pre-dug hole.
-- [x] Bloom plants while on screen?
-- [x] Ghost of plant when you dig it up.
-- [x] Cow: Black vertical stripes over the eyes and a big pink nose, look it up.
-- [x] Snowglobe: Minimum interval between strokes? Or at least between sound effects.
-- [x] Hearts or something above blocks and raccoons when enchanted.
 - [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
-- [x] fmn_game_load_map(): Try to get the correct hero position, right now it's reading randomly from the sprite list. (doesn't matter whether before or after the transition).
-- - This bears on hero position being available during sprite init hooks too. See tolltroll, it's a problem.
-- [x] See paper notes from GDEX. Lots of bugs and improvements.
-- [ ] Wind should dissolve ghosts.
-- [ ] Bell: Don't auto-repeat.
 - [ ] Tree-shake resources when packing.
-- [ ] MacOS: Build two independent app bundles. Demo and Full.
-- [ ] genioc: Moved CPU load reporting to bigpc, we can drop it from genioc I think.
-- [ ] Dismissing Hello menu (bigpc and web), we assume to switch to song 3. That won't be true forever. Use the map's song.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] inmgr: Real input mapping.
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
-- [ ] UI for saved game management.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?
-- [ ] Data editor improvements.
-- - [ ] Home page
-- - [ ] MapAllUi: Point out neighbor mismatches.
-- - [ ] Delete maps (and resources in general)
-- [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
-- [ ] Rekajigger Constants.js, use actual inlinable constants.
-- [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
-- [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
-- [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
-- [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
-- [ ] verify: Song channel 14 reserved for violin, songs must not use.
-- [ ] verify: Teleport targets must set song.
-- [ ] verify: Firewall must be on edge, with at least two vacant cells, and a solid on both ends.
-- [ ] verify: Chalk duplicates
-- [ ] verify: Resources named by sprite config, eg chalkguard strings
-- [ ] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
-- [ ] verify: buried_treasure and buried_door. shovellable, etc
-- [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
-- [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
-- [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Summoning the crow potentially examines every command in every map, every time. Can we pre-index all that by itemid?
-- [ ] Maps for full game.
-- [ ] Pumpkin protection: Ensure she can't travel too far as a pumpkin, and can't get trapped in the reachable area.
 - [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
-- [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
-- [ ] Translation.
 - [ ] Touch input.
 - [ ] Input configuration.
 - - [ ] UI for mapping.
@@ -145,6 +93,19 @@ And tentatively aiming for full release 29 September 2023, the first full moon o
 - - [ ] JS platform tests
 - [ ] Automation against headless native build.
 - [ ] Windows
+- [ ] Metal
+- [ ] minsyn drums too loud
+- [ ] Native fiddle tool.
+- - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
+- - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
+- - [ ] Mysterious segfault. Refreshed browser while song running and fiddle C code had changed.
+- [ ] Playing first_frost via fiddle, with screwing around on ch 14, the bells timing is off.
+- - Also noticing in blood_for_silver, as i build up inotify. (no midi in, just data changes)
+- - These, and the segfault above, might be due to borrowed songs in minsyn:   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
+- - Problem is the live game depends on that serial address to detect redundant requests.
+- - [ ] Can we move the redundant-song check up to the platform level, and make it undefined at the synth level?
+- - I want songs to continue playing across archive reloads, in fiddle. (in fact this is very important)
+- [ ] Measure full memory usage after all songs and sound effects have played -- I'm concerned it might be too high for the Pi.
 
 ### Disambiguation
 

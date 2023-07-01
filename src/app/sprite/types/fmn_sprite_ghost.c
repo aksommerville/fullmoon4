@@ -23,6 +23,7 @@
 #define retreatdy sprite->fv[1]
 #define clock sprite->fv[2]
 #define approachmd sprite->fv[3]
+#define dissolveclock sprite->fv[4] /* dissolving if nonzero */
 
 /* Global controller.
  * The global's only job is to detect proximity among ghosts, and gently nudge them apart.
@@ -218,6 +219,22 @@ static void _ghost_update(struct fmn_sprite *sprite,float elapsed) {
     case GHOST_STAGE_RETREAT: ghost_update_RETREAT(sprite,elapsed); break;
     case GHOST_STAGE_PANIC: ghost_update_PANIC(sprite,elapsed); break;
   }
+  if (dissolveclock>0.0f) {
+    sprite->style=FMN_SPRITE_STYLE_TILE;
+    dissolveclock+=elapsed;
+         if (dissolveclock>=2.0f) fmn_sprite_kill(sprite);
+    else if (dissolveclock>=1.6f) sprite->tileid=0xfe;
+    else if (dissolveclock>=1.2f) sprite->tileid=0xfd;
+    else if (dissolveclock>=0.8f) sprite->tileid=0xfc;
+    else if (dissolveclock>=0.4f) sprite->tileid=0xfb;
+  }
+}
+
+/* React to wind.
+ */
+ 
+static void ghost_wind(struct fmn_sprite *sprite,int8_t dx,int8_t dy) {
+  if (dissolveclock<=0.0f) dissolveclock=0.01f;
 }
 
 /* Interact.
@@ -225,6 +242,12 @@ static void _ghost_update(struct fmn_sprite *sprite,float elapsed) {
  
 static int16_t _ghost_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {
   switch (itemid) {
+    case FMN_ITEM_WAND: switch (qualifier) {
+        case FMN_SPELLID_WIND_W: ghost_wind(sprite,-1,0); break;
+        case FMN_SPELLID_WIND_E: ghost_wind(sprite,1,0); break;
+        case FMN_SPELLID_WIND_N: ghost_wind(sprite,0,-1); break;
+        case FMN_SPELLID_WIND_S: ghost_wind(sprite,0,1); break;
+      } break;
   }
   return 0;
 }
