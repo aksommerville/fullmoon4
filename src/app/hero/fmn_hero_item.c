@@ -312,6 +312,10 @@ static void fmn_hero_shovel_begin() {
       for (;i-->0;plant++) {
         if (plant->x!=fmn_global.shovelx) continue;
         if (plant->y!=fmn_global.shovely) continue;
+        struct fmn_sprite *goast=fmn_sprite_generate_toast(plant->x+0.5f,plant->y,3,0xf9,0);
+        if (goast) {
+          goast->style=FMN_SPRITE_STYLE_TWOFRAME;
+        }
         plant->state=FMN_PLANT_STATE_NONE;
         fmn_map_dirty();
         break;
