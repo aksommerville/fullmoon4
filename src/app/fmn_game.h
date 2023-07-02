@@ -18,6 +18,8 @@
 extern const uint8_t fmn_item_default_quantities[FMN_ITEM_COUNT];
 
 int fmn_game_init();
+int fmn_game_has_saved_game();
+int fmn_game_load_saved_game();
 int fmn_game_load_map(int mapid,float herox,float heroy); // (herox<0) for default, in teleport and restart cases.
 void fmn_game_input(uint8_t bit,uint8_t value,uint8_t state);
 void fmn_game_update(float elapsed);
@@ -173,6 +175,7 @@ struct fmn_menu *fmn_begin_menu(int menuid,int arg0);
 #define FMN_MENU_VICTORY 4
 #define FMN_MENU_GAMEOVER 5
 #define FMN_MENU_HELLO 6
+#define FMN_MENU_SETTINGS 7
 
 #define FMN_MENU_MESSAGE_CANCEL 1
 #define FMN_MENU_MESSAGE_SUBMIT 2

@@ -21,6 +21,7 @@ struct fmn_menu *fmn_begin_menu(int menuid,int arg0) {
     case FMN_MENU_VICTORY: fmn_menu_init_VICTORY(menu); break;
     case FMN_MENU_GAMEOVER: fmn_menu_init_GAMEOVER(menu); break;
     case FMN_MENU_HELLO: fmn_menu_init_HELLO(menu); break;
+    case FMN_MENU_SETTINGS: fmn_menu_init_SETTINGS(menu); break;
   }
   return menu;
 }

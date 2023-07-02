@@ -214,6 +214,11 @@ static int8_t _gl2_draw_set_output(struct bigpc_render_driver *driver,uint16_t i
 /* Render ops.
  */
  
+static void _gl2_draw_clear(struct bigpc_render_driver *driver) {
+  glClearColor(0.0f,0.0f,0.0f,0.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+}
+ 
 static void _gl2_draw_line(struct bigpc_render_driver *driver,const struct fmn_draw_line *v,int c) {
   fmn_gl2_program_use(driver,&DRIVER->program_raw);
   int vtxc=c<<1;
@@ -378,6 +383,7 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .video_init_image=_gl2_video_init_image,
   .video_get_image_size=_gl2_video_get_image_size,
   .draw_set_output=_gl2_draw_set_output,
+  .draw_clear=_gl2_draw_clear,
   .draw_line=_gl2_draw_line,
   .draw_rect=_gl2_draw_rect,
   .draw_mintile=_gl2_draw_mintile,

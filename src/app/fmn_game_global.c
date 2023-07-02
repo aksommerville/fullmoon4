@@ -94,6 +94,23 @@ int fmn_game_load_map(int mapid,float herox,float heroy) {
   return 1;
 }
 
+/* Saved game.
+ */
+ 
+int fmn_game_has_saved_game() {
+  /**/
+  fmn_log("TODO %s, saying 'no'",__func__);
+  return 0;
+  /**/
+  fmn_log("TODO %s, saying 'yes'",__func__);
+  return 1;
+}
+
+int fmn_game_load_saved_game() {
+  fmn_log("TODO %s",__func__);
+  return -1;
+}
+
 /* Input event.
  */
  

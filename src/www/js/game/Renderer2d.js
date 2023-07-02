@@ -93,8 +93,8 @@ export class Renderer2d {
   fmn_video_get_image_size(wv, hv, imageid) {
     const image = this.getImage(imageid);
     if (image) {
-      this.globals.memS16[wv >> 1] = image.naturalWidth;
-      this.globals.memS16[hv >> 1] = image.naturalHeight;
+      this.globals.memS16[wv >> 1] = image.naturalWidth || image.width;
+      this.globals.memS16[hv >> 1] = image.naturalHeight || image.height;
     } else {
       this.globals.memS16[wv >> 1] = 0;
       this.globals.memS16[hv >> 1] = 0;
@@ -121,7 +121,7 @@ export class Renderer2d {
     }
     const r = this.images[imageid];
     if (!r.ctx) {
-      r.ctx = r.image.getContext("2d", { alpha: false });
+      r.ctx = r.image.getContext("2d", { alpha: imageid !== 0 }); // Image zero is opaque. Others, we can't assume.
     }
     this.dstimage = r.image;
     this.ctx = r.ctx;
@@ -130,6 +130,11 @@ export class Renderer2d {
   
   /* Public rendering API.
    ******************************************************************************/
+   
+  fmn_draw_clear() {
+    if (!this.ctx) return;
+    this.ctx.clearRect(0, 0, this.dstimage.width, this.dstimage.height);
+  }
 
   fmn_draw_line(v, c) {
     if (!this.ctx) return;

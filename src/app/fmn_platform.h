@@ -448,8 +448,12 @@ void fmn_cancel_transition();
 // For debugging. Logs to JS console.
 void fmn_log(const char *fmt,...);
 
-// Hard stop. No further app calls will be made, and user will see an unfriendly error.
+/* abort = Hard stop. No further app calls will be made, and user will see an unfriendly error. Always available.
+ * quit = Soft stop. Available only if it makes sense for the platform. (fails if not)
+ */
 void fmn_abort();
+int8_t fmn_quit();
+uint8_t fmn_can_quit();
 
 /* Notify backend that the game is fully restarting.
  * This will trigger fmn_init() again.
@@ -586,6 +590,8 @@ void fmn_video_init_image(uint16_t imageid,int16_t w,int16_t h);
  * imageid zero is the main framebuffer, and is always selected initially.
  */
 int8_t fmn_draw_set_output(uint16_t imageid);
+
+void fmn_draw_clear();
 
 /* Skinny straight lines.
  */

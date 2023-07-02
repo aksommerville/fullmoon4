@@ -12,6 +12,15 @@ void fmn_abort() {
   bigpc.sigc++;
 }
 
+int8_t fmn_quit() {
+  bigpc.sigc++;
+  return 0;
+}
+
+uint8_t fmn_can_quit() {
+  return 1;
+}
+
 /* Reset, eg after the victory menu.
  */
  

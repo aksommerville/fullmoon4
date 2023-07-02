@@ -49,54 +49,33 @@ static void _pause_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
  */
  
 static void pause_draw_label(struct fmn_menu *menu) {
-  fmn_video_init_image(FMN_IMAGEID_ITEM_LABEL,labelw,labelh);
-  if (fmn_draw_set_output(FMN_IMAGEID_ITEM_LABEL)<0) return;
-  
-  { // Clear. We actually don't have a "clear to transparent", do we? Whatever.
-    struct fmn_draw_rect vtx={0,0,labelw,labelh,bgcolor};
-    fmn_draw_rect(&vtx,1);
+  const char *src="???";
+  //TODO use string resources for item names. they will need to translate
+  switch (labelid) {
+    case FMN_ITEM_SNOWGLOBE: src="Snowglobe"; break;
+    case FMN_ITEM_HAT: src="Hat"; break;
+    case FMN_ITEM_PITCHER: switch (fmn_global.itemqv[FMN_ITEM_PITCHER]) {
+        case FMN_PITCHER_CONTENT_WATER: src="Water"; break;
+        case FMN_PITCHER_CONTENT_MILK: src="Milk"; break;
+        case FMN_PITCHER_CONTENT_SAP: src="Sap"; break;
+        case FMN_PITCHER_CONTENT_HONEY: src="Honey"; break;
+        default: src="Pitcher"; break;
+      } break;
+    case FMN_ITEM_SEED: src="Seed"; break;
+    case FMN_ITEM_COIN: src="Coin"; break;
+    case FMN_ITEM_MATCH: src="Match"; break;
+    case FMN_ITEM_BROOM: src="Broom"; break;
+    case FMN_ITEM_WAND: src="Wand"; break;
+    case FMN_ITEM_UMBRELLA: src="Umbrella"; break;
+    case FMN_ITEM_FEATHER: src="Feather"; break;
+    case FMN_ITEM_SHOVEL: src="Shovel"; break;
+    case FMN_ITEM_COMPASS: src="Compass"; break;
+    case FMN_ITEM_VIOLIN: src="Violin"; break;
+    case FMN_ITEM_CHALK: src="Chalk"; break;
+    case FMN_ITEM_BELL: src="Bell"; break;
+    case FMN_ITEM_CHEESE: src="Cheese"; break;
   }
-  
-  { // Text.
-    const int16_t glyphw=8,glyphh=8;
-    const char *src="???";
-    switch (labelid) {
-      case FMN_ITEM_SNOWGLOBE: src="Snowglobe"; break;
-      case FMN_ITEM_HAT: src="Hat"; break;
-      case FMN_ITEM_PITCHER: switch (fmn_global.itemqv[FMN_ITEM_PITCHER]) {
-          case FMN_PITCHER_CONTENT_WATER: src="Water"; break;
-          case FMN_PITCHER_CONTENT_MILK: src="Milk"; break;
-          case FMN_PITCHER_CONTENT_SAP: src="Sap"; break;
-          case FMN_PITCHER_CONTENT_HONEY: src="Honey"; break;
-          default: src="Pitcher"; break;
-        } break;
-      case FMN_ITEM_SEED: src="Seed"; break;
-      case FMN_ITEM_COIN: src="Coin"; break;
-      case FMN_ITEM_MATCH: src="Match"; break;
-      case FMN_ITEM_BROOM: src="Broom"; break;
-      case FMN_ITEM_WAND: src="Wand"; break;
-      case FMN_ITEM_UMBRELLA: src="Umbrella"; break;
-      case FMN_ITEM_FEATHER: src="Feather"; break;
-      case FMN_ITEM_SHOVEL: src="Shovel"; break;
-      case FMN_ITEM_COMPASS: src="Compass"; break;
-      case FMN_ITEM_VIOLIN: src="Violin"; break;
-      case FMN_ITEM_CHALK: src="Chalk"; break;
-      case FMN_ITEM_BELL: src="Bell"; break;
-      case FMN_ITEM_CHEESE: src="Cheese"; break;
-    }
-    int srcc=0; while (src[srcc]) srcc++;
-    int16_t fullw=glyphw*srcc;
-    int16_t dsty=labelh>>1;
-    int16_t dstx=(labelw>>1)-(fullw>>1)+(glyphw>>1);
-    struct fmn_draw_mintile vtxv[16];
-    int vtxc=0;
-    for (;srcc-->0;src++,dstx+=glyphw) {
-      vtxv[vtxc++]=(struct fmn_draw_mintile){dstx,dsty,*src,0};
-    }
-    fmn_draw_mintile(vtxv,vtxc,20);
-  }
-  
-  fmn_draw_set_output(0);
+  fmn_generate_text_image(FMN_IMAGEID_ITEM_LABEL,src,-1,labelw,labelh);
 }
 
 /* Draw one count for a depletable item.

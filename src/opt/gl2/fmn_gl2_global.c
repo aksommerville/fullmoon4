@@ -187,8 +187,11 @@ int fmn_gl2_texture_use_object(struct bigpc_render_driver *driver,struct fmn_gl2
  
 int fmn_gl2_framebuffer_use_object(struct bigpc_render_driver *driver,struct fmn_gl2_texture *framebuffer) {
   if (framebuffer==DRIVER->framebuffer) return 0;
+  DRIVER->texture=0;
   if (framebuffer) {
-    if (!framebuffer->fbid&&(fmn_gl2_texture_require_framebuffer(framebuffer)<0)) return -1;
+    if (!framebuffer->fbid) {
+      if (fmn_gl2_texture_require_framebuffer(framebuffer)<0) return -1;
+    }
     glBindFramebuffer(GL_FRAMEBUFFER,framebuffer->fbid);
     if (DRIVER->program) {
       glUniform2f(DRIVER->program->loc_screensize,framebuffer->w,framebuffer->h);

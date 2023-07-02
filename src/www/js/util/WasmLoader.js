@@ -29,6 +29,7 @@ export class WasmLoader {
       roundf: x => Math.round(x),
       atan2f: (x, y) => Math.atan2(x, y),
       modff: (x, yp) => { const fract = x % 1; this.memF32[yp >> 2] = x - fract; return fract; },
+      fmodf: (x, y) => x % y,
     };
   }
   

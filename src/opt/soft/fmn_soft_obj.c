@@ -213,6 +213,11 @@ static int8_t _soft_draw_set_output(struct bigpc_render_driver *driver,uint16_t 
 /* Render, public entry points.
  */
  
+static void _soft_draw_clear(struct bigpc_render_driver *driver) {
+  if (!DRIVER->output) return;
+  bigpc_image_fill_rect(DRIVER->output,0,0,DRIVER->output->w,DRIVER->output->h,0);
+}
+ 
 static void _soft_draw_line(struct bigpc_render_driver *driver,const struct fmn_draw_line *v,int c) {
   if (!DRIVER->output) return;
   for (;c-->0;v++) {
@@ -351,6 +356,7 @@ const struct bigpc_render_type bigpc_render_type_soft={
   .video_init_image=_soft_video_init_image,
   .video_get_image_size=_soft_video_get_image_size,
   .draw_set_output=_soft_draw_set_output,
+  .draw_clear=_soft_draw_clear,
   .draw_line=_soft_draw_line,
   .draw_rect=_soft_draw_rect,
   .draw_mintile=_soft_draw_mintile,

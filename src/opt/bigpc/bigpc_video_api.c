@@ -42,6 +42,10 @@ int8_t fmn_draw_set_output(uint16_t imageid) {
   return bigpc.render->type->draw_set_output(bigpc.render,imageid);
 }
 
+void fmn_draw_clear() {
+  bigpc.render->type->draw_clear(bigpc.render);
+}
+
 void fmn_draw_line(const struct fmn_draw_line *v,int c) {
   bigpc.render->type->draw_line(bigpc.render,v,c);
 }

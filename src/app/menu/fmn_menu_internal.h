@@ -20,5 +20,11 @@ void fmn_menu_init_TREASURE(struct fmn_menu *menu);
 void fmn_menu_init_VICTORY(struct fmn_menu *menu);
 void fmn_menu_init_GAMEOVER(struct fmn_menu *menu);
 void fmn_menu_init_HELLO(struct fmn_menu *menu);
+void fmn_menu_init_SETTINGS(struct fmn_menu *menu);
+
+/* Replace image content with a single line of text.
+ * (forcew,forceh) (0,0) to use the minimum.
+ */
+void fmn_generate_text_image(uint16_t imageid,const char *src,int srcc,int16_t forcew,int16_t forceh);
 
 #endif

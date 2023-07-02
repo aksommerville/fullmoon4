@@ -51,6 +51,8 @@ export class Runtime {
     
     this.wasmLoader.env.fmn_web_log = p => this.window.console.log(`[wasm] ${this.wasmLoader.zstringFromMemory(p)}`);
     this.wasmLoader.env.fmn_abort = () => this.dropAllState();
+    this.wasmLoader.env.fmn_quit = () => -1;
+    this.wasmLoader.env.fmn_can_quit = () => 0;
     this.wasmLoader.env.fmn_reset = () => this.reset();
     this.wasmLoader.env.fmn_load_map = (mapId, cbSpawn) => this.loadMap(mapId, cbSpawn);
     this.wasmLoader.env.fmn_add_plant = (x, y) => this.addPlant(x, y);
@@ -73,6 +75,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_video_get_image_size = (wv, hv, imageid) => this.renderer.fmn_video_get_image_size(wv, hv, imageid);
     this.wasmLoader.env.fmn_video_init_image = (imageid, w, h) => this.renderer.fmn_video_init_image(imageid, w, h);
     this.wasmLoader.env.fmn_draw_set_output = (imageid) => this.renderer.fmn_draw_set_output(imageid);
+    this.wasmLoader.env.fmn_draw_clear = () => this.renderer.fmn_draw_clear();
     this.wasmLoader.env.fmn_draw_line = (v, c) => this.renderer.fmn_draw_line(v, c);
     this.wasmLoader.env.fmn_draw_rect = (v, c) => this.renderer.fmn_draw_rect(v, c);
     this.wasmLoader.env.fmn_draw_mintile = (v, c, imageid) => this.renderer.fmn_draw_mintile(v, c, imageid);
