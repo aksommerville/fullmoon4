@@ -114,10 +114,12 @@ int8_t fmn_for_each_sketch_word(int8_t (*cb)(const char *src,uint8_t srcc,void *
  */
 void fmn_game_map_callback(uint16_t cbid,uint8_t param,void *userdata);
 
-#define FMN_MAP_CALLBACK_kill_top_pushblock_if_pumpkin_at_nw       1
+#define FMN_MAP_CALLBACK_kill_top_pushblock_if_pumpkin_at_nw 1
+#define FMN_MAP_CALLBACK_set_gsbit_00xx 2
 
 #define FMN_FOR_EACH_MAP_CALLBACK \
-  _(kill_top_pushblock_if_pumpkin_at_nw)
+  _(kill_top_pushblock_if_pumpkin_at_nw) \
+  _(set_gsbit_00xx)
   
 #define _(tag) void fmn_map_callback_##tag(uint8_t param,void *userdata);
 FMN_FOR_EACH_MAP_CALLBACK

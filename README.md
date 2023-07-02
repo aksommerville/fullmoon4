@@ -9,8 +9,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ## TODO Platform and tooling, should complete before diving into full maps
 
-- [ ] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
+- [x] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
+- - No travel record: If we did record that, we would also need to persist it. Would be kind of heavy. Prefer gsbit.
+- - `callback ev:LOADED cb:set_gsbit_00xx 12` bits 0..255. We can add another callback, for each further block of 256 bits.
 - [ ] UI for saved game management. And everything else re saved games.
 - [ ] Data editor improvements.
 - - [ ] Home page

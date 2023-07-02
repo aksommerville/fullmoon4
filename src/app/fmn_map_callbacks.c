@@ -21,3 +21,7 @@ void fmn_map_callback_kill_top_pushblock_if_pumpkin_at_nw(uint8_t param,void *us
   if (heroy>=pushblock->y) return;
   fmn_sprite_kill(pushblock);
 }
+
+void fmn_map_callback_set_gsbit_00xx(uint8_t param,void *userdata) {
+  fmn_gs_set_bit(0x0000|param,1);
+}
