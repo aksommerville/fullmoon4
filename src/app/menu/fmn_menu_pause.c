@@ -49,33 +49,11 @@ static void _pause_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
  */
  
 static void pause_draw_label(struct fmn_menu *menu) {
-  const char *src="???";
-  //TODO use string resources for item names. they will need to translate
-  switch (labelid) {
-    case FMN_ITEM_SNOWGLOBE: src="Snowglobe"; break;
-    case FMN_ITEM_HAT: src="Hat"; break;
-    case FMN_ITEM_PITCHER: switch (fmn_global.itemqv[FMN_ITEM_PITCHER]) {
-        case FMN_PITCHER_CONTENT_WATER: src="Water"; break;
-        case FMN_PITCHER_CONTENT_MILK: src="Milk"; break;
-        case FMN_PITCHER_CONTENT_SAP: src="Sap"; break;
-        case FMN_PITCHER_CONTENT_HONEY: src="Honey"; break;
-        default: src="Pitcher"; break;
-      } break;
-    case FMN_ITEM_SEED: src="Seed"; break;
-    case FMN_ITEM_COIN: src="Coin"; break;
-    case FMN_ITEM_MATCH: src="Match"; break;
-    case FMN_ITEM_BROOM: src="Broom"; break;
-    case FMN_ITEM_WAND: src="Wand"; break;
-    case FMN_ITEM_UMBRELLA: src="Umbrella"; break;
-    case FMN_ITEM_FEATHER: src="Feather"; break;
-    case FMN_ITEM_SHOVEL: src="Shovel"; break;
-    case FMN_ITEM_COMPASS: src="Compass"; break;
-    case FMN_ITEM_VIOLIN: src="Violin"; break;
-    case FMN_ITEM_CHALK: src="Chalk"; break;
-    case FMN_ITEM_BELL: src="Bell"; break;
-    case FMN_ITEM_CHEESE: src="Cheese"; break;
+  if ((labelid==FMN_ITEM_PITCHER)&&(fmn_global.itemqv[FMN_ITEM_PITCHER]>0)&&(fmn_global.itemqv[FMN_ITEM_PITCHER]<=4)) {
+    fmn_generate_string_image(FMN_IMAGEID_ITEM_LABEL,23+fmn_global.itemqv[FMN_ITEM_PITCHER],labelw,labelh);
+  } else {
+    fmn_generate_string_image(FMN_IMAGEID_ITEM_LABEL,8+labelid,labelw,labelh);
   }
-  fmn_generate_text_image(FMN_IMAGEID_ITEM_LABEL,src,-1,labelw,labelh);
 }
 
 /* Draw one count for a depletable item.

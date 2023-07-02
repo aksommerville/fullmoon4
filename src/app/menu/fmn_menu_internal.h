@@ -26,5 +26,6 @@ void fmn_menu_init_SETTINGS(struct fmn_menu *menu);
  * (forcew,forceh) (0,0) to use the minimum.
  */
 void fmn_generate_text_image(uint16_t imageid,const char *src,int srcc,int16_t forcew,int16_t forceh);
+void fmn_generate_string_image(uint16_t imageid,uint16_t stringid,int16_t forcew,int16_t forceh);
 
 #endif

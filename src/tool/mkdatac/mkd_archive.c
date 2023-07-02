@@ -259,6 +259,7 @@ static int mkd_archive_add_strings(struct mkd_ar *ar,struct mkd_respath *respath
     while (linec&&((unsigned char)line[linec-1]<=0x20)) linec--;
     while ((linep<linec)&&((unsigned char)line[linep]<=0x20)) linep++;
     if (linep>=linec) continue;
+    if (line[linep]=='#') continue;
     while ((linep<linec)&&((unsigned char)line[linep]>0x20)) {
       if ((line[linep]<'0')||(line[linep]>'9')) { id=0; break; }
       id*=10;

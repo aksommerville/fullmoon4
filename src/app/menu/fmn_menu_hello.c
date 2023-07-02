@@ -294,11 +294,10 @@ static void _hello_render(struct fmn_menu *menu) {
   // (selp==0xff) is our signal that we're not fully initialized yet. (have to wait until now to ensure the renderer is fully up).
   // The images persist for the program's life but we redraw every time this menu starts up. Not a big deal.
   if (selp==0xff) {
-    //TODO use string resources for labels
-    fmn_generate_text_image(FMN_IMAGEID_LABEL_CONTINUE,"Continue",-1,0,0);
-    fmn_generate_text_image(FMN_IMAGEID_LABEL_NEW,"New",-1,0,0);
-    fmn_generate_text_image(FMN_IMAGEID_LABEL_SETTINGS,"Settings",-1,0,0);
-    fmn_generate_text_image(FMN_IMAGEID_LABEL_QUIT,"Quit",-1,0,0);
+    fmn_generate_string_image(FMN_IMAGEID_LABEL_CONTINUE,3,0,0);
+    fmn_generate_string_image(FMN_IMAGEID_LABEL_NEW,4,0,0);
+    fmn_generate_string_image(FMN_IMAGEID_LABEL_SETTINGS,5,0,0);
+    fmn_generate_string_image(FMN_IMAGEID_LABEL_QUIT,6,0,0);
     selp=(opt_available&1)?0:1; // "Continue" if available, otherwise "New".
   }
   

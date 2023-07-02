@@ -34,3 +34,10 @@ void fmn_generate_text_image(uint16_t imageid,const char *src,int srcc,int16_t f
   fmn_draw_set_output(0);
   #undef vtxa
 }
+
+void fmn_generate_string_image(uint16_t imageid,uint16_t stringid,int16_t forcew,int16_t forceh) {
+  char tmp[128];
+  int tmpc=fmn_get_string(tmp,sizeof(tmp),stringid);
+  if ((tmpc<1)||(tmpc>sizeof(tmp))) tmpc=0;
+  fmn_generate_text_image(imageid,tmp,tmpc,forcew,forceh);
+}

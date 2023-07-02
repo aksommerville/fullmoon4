@@ -16,7 +16,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] UI for saved game management. And everything else re saved games.
 - [ ] "End game" and "Settings" from pause menu.
 - [ ] Settings menu.
-- [ ] Menu text as strings, currently hard-coded.
+- [x] Menu text as strings, currently hard-coded.
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.

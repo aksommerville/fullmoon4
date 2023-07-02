@@ -237,3 +237,35 @@ static int fmn_datafile_get_any_cb(uint16_t type,uint16_t qualifier,uint32_t id,
 int fmn_datafile_get_any(void *dstpp,struct fmn_datafile *file,uint16_t type,uint32_t id) {
   return fmn_datafile_for_each_of_id(file,type,id,fmn_datafile_get_any_cb,dstpp);
 }
+
+struct fmn_datafile_get_qualified_context {
+  void *dstpp;
+  int dstc;
+  uint16_t qualifier;
+  void *alt;
+  int altc;
+};
+
+static int fmn_datafile_get_qualified_cb(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  struct fmn_datafile_get_qualified_context *ctx=userdata;
+  if (qualifier==ctx->qualifier) {
+    *(const void**)ctx->dstpp=v;
+    ctx->dstc=c;
+    return 1;
+  }
+  if (!qualifier||!ctx->alt) {
+    ctx->alt=(void*)v;
+    ctx->altc=c;
+  }
+  return 0;
+}
+
+int fmn_datafile_get_qualified(void *dstpp,struct fmn_datafile *file,uint16_t type,uint16_t qualifier,uint32_t id) {
+  struct fmn_datafile_get_qualified_context ctx={
+    .dstpp=dstpp,
+    .qualifier=qualifier,
+  };
+  if (fmn_datafile_for_each_of_id(file,type,id,fmn_datafile_get_qualified_cb,&ctx)>0) return ctx.dstc;
+  *(void**)dstpp=ctx.alt;
+  return ctx.altc;
+}

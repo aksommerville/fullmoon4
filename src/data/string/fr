@@ -1,2 +1,37 @@
+# Password puzzle: Do not translate
 1 FISH
 2 WORM
+
+# The remaining text might look French but don't trust it. Just making things up so I can test language switching. -AK
+
+# We currently only support ASCII text. Translator: How important are diacritic marks? We can add glyphs if need be.
+
+# Hello, pause
+3 Continuer
+4 Nouveau
+5 Parametres
+6 Quitter
+7 Terminer
+
+# Items
+8 Balneige
+9 Chapeau
+10 Cruche
+11 Pepins
+12 Pieces
+13 Incindies
+14 Balai
+15 Baton
+16 Parapluie
+17 Plume
+18 Pelle
+19 Boussole
+20 Violon
+21 Craie
+22 Clochette
+23 Fromage
+24 Eau
+25 Lait
+26 Miele
+27 Seve
+
