@@ -241,4 +241,6 @@ void fmn_sprite_kill_enchantment(struct fmn_sprite *source);
  */
 struct fmn_sprite *fmn_sprite_pumpkinize(struct fmn_sprite *victim);
 
+void fmn_sprite_force_unpumpkin(struct fmn_sprite *victim);
+
 #endif

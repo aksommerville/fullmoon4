@@ -3,6 +3,7 @@
 #include "app/hero/fmn_hero.h"
 
 #define tileid0 sprite->bv[0]
+#define pass_thru_interact sprite->bv[1] /* caller may set directly */
 #define animclock sprite->fv[0]
 #define blinktime sprite->fv[1]
 #define restore_sprite sprite->pv[0]
@@ -53,8 +54,12 @@ static void _pumpkin_update(struct fmn_sprite *sprite,float elapsed) {
  
 static void pumpkin_reanimate(struct fmn_sprite *sprite) {
   if (!restore_sprite) return;
+  struct fmn_sprite *original=restore_sprite;
   fmn_sound_effect(FMN_SFX_UNPUMPKIN);
-  fmn_sprite_refunct(restore_sprite);
+  if (pass_thru_interact&&original->interact) {
+    original->interact(original,FMN_ITEM_WAND|0x80,FMN_SPELLID_PUMPKIN);
+  }
+  fmn_sprite_refunct(original);
   fmn_sprite_kill(sprite);
 }
 
@@ -65,7 +70,11 @@ static int16_t _pumpkin_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_
   switch (itemid) {
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_PUMPKIN: pumpkin_reanimate(sprite); break;
-      } break;
+      } return 0;
+  }
+  if (pass_thru_interact&&restore_sprite) {
+    struct fmn_sprite *original=restore_sprite;
+    if (original->interact) return original->interact(original,itemid,qualifier);
   }
   return 0;
 }
@@ -114,4 +123,20 @@ struct fmn_sprite *fmn_sprite_pumpkinize(struct fmn_sprite *victim) {
   
   fmn_sound_effect(FMN_SFX_PUMPKIN);
   return sprite;
+}
+
+/* Unpumpkinize a sprite, if its pumpkin can identify it.
+ */
+ 
+static int fmn_sprite_force_unpumpkin_cb(struct fmn_sprite *sprite,void *userdata) {
+  struct fmn_sprite *victim=userdata;
+  if (sprite->controller!=FMN_SPRCTL_pumpkin) return 0;
+  if (restore_sprite!=userdata) return 0;
+  fmn_sprite_refunct(victim);
+  fmn_sprite_kill(sprite);
+  return 1;
+}
+ 
+void fmn_sprite_force_unpumpkin(struct fmn_sprite *victim) {
+  fmn_sprites_for_each(fmn_sprite_force_unpumpkin_cb,victim);
 }
