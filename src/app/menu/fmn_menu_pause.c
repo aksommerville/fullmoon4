@@ -4,8 +4,13 @@
 #define labelid menu->argv[1]
 #define labelw menu->argv[2]
 #define labelh menu->argv[3]
+#define fgcolor menu->argv[4]
+#define highlightcolor menu->argv[5]
+#define listselection menu->argv[6] /* <0 if ui active in item grid; >=0 in options list */
 
 #define FMN_IMAGEID_ITEM_LABEL 306 /* must agree with fmn_render_internal.h */
+#define FMN_IMAGEID_LABEL_SETTINGS 309 /* fmn_menu_hello preps SETTINGS and END_GAME for us */
+#define FMN_IMAGEID_LABEL_END_GAME 311
 
 /* Dismiss.
  */
@@ -22,6 +27,36 @@ static void pause_dismiss(struct fmn_menu *menu) {
  */
  
 static void pause_move(struct fmn_menu *menu,int dx,int dy) {
+
+  // Focus in options list. Horz shifts focus back to items grid, either 0 or 3.
+  // Vert moves in the list as you'd expect.
+  if (listselection>=0) {
+    if (dx<0) {
+      listselection=-1;
+      fmn_global.selected_item=3;
+      return;
+    }
+    if (dx>0) {
+      listselection=-1;
+      fmn_global.selected_item=0;
+      return;
+    }
+    listselection+=dy;
+    if (listselection<0) listselection=1;
+    else if (listselection>=2) listselection=0;
+    return;
+  }
+
+  // In the top row, going horz off an edge moves focus into the options list.
+  if (
+    ((dx==-1)&&(fmn_global.selected_item==0))||
+    ((dx==1)&&(fmn_global.selected_item==3))
+  ) {
+    listselection=0;
+    return;
+  }
+
+  // Anything else is an unsurprising 2d wrap.
   int x=fmn_global.selected_item&3;
   int y=fmn_global.selected_item>>2;
   x+=dx; x&=3;
@@ -29,12 +64,32 @@ static void pause_move(struct fmn_menu *menu,int dx,int dy) {
   fmn_global.selected_item=(y<<2)|x;
 }
 
+/* Activate. Equivalent to dismiss if the items grid is focussed.
+ */
+ 
+static void pause_activate(struct fmn_menu *menu) {
+  switch (listselection) {
+    case 0: { // Settings
+        fmn_begin_menu(FMN_MENU_SETTINGS,0);
+      } return;
+    case 1: { // End Game
+        fmn_dismiss_menu(menu);
+        fmn_reset();
+      } return;
+    default: pause_dismiss(menu);
+  }
+}
+
 /* Update.
  */
  
 static void _pause_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
   if (input!=menu->pvinput) {
-    if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) { pause_dismiss(menu); return; }
+    if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) {
+      menu->pvinput=0xff;
+      pause_activate(menu);
+      return;
+    }
     if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { pause_dismiss(menu); return; }
     if ((input&FMN_INPUT_LEFT)&&!(menu->pvinput&FMN_INPUT_LEFT)) pause_move(menu,-1,0);
     if ((input&FMN_INPUT_RIGHT)&&!(menu->pvinput&FMN_INPUT_RIGHT)) pause_move(menu,1,0);
@@ -138,7 +193,7 @@ static void _pause_render(struct fmn_menu *menu) {
   int vtxc=0;
   
   // Indicator takes four tiles.
-  {
+  if (listselection<0) {
     int selx=fmn_global.selected_item&3;
     int sely=fmn_global.selected_item>>2;
     struct fmn_draw_mintile *vtx=vtxv+vtxc;
@@ -210,6 +265,23 @@ static void _pause_render(struct fmn_menu *menu) {
     struct fmn_draw_decal vtx={textx+1,texty+1,labelw,labelh,0,0,labelw,labelh};
     fmn_draw_decal(&vtx,1,FMN_IMAGEID_ITEM_LABEL);
   }
+  
+  // "Settings" and "End Game" options on the side.
+  {
+    int16_t imgw1,imgh1,imgw2,imgh2;
+    fmn_video_get_image_size(&imgw1,&imgh1,FMN_IMAGEID_LABEL_SETTINGS);
+    fmn_video_get_image_size(&imgw2,&imgh2,FMN_IMAGEID_LABEL_END_GAME);
+    int16_t boxx=x+w+1;
+    int16_t boxy=y;
+    int16_t boxw=((imgw1>imgw2)?imgw1:imgw2)+1;
+    int16_t boxh=imgh1+imgh2+1;
+    struct fmn_draw_rect rect={boxx,boxy,boxw,boxh,bgcolor};
+    fmn_draw_rect(&rect,1);
+    struct fmn_draw_recal recal={boxx+1,boxy+1,imgw1,imgh1,0,0,imgw1,imgh1,(listselection==0)?highlightcolor:fgcolor};
+    fmn_draw_recal(&recal,1,FMN_IMAGEID_LABEL_SETTINGS);
+    recal=(struct fmn_draw_recal){boxx+1,boxy+1+imgh1,imgw2,imgh2,0,0,imgw2,imgh2,(listselection==1)?highlightcolor:fgcolor};
+    fmn_draw_recal(&recal,1,FMN_IMAGEID_LABEL_END_GAME);
+  }
 }
 
 /* Init.
@@ -219,5 +291,8 @@ void fmn_menu_init_PAUSE(struct fmn_menu *menu) {
   menu->update=_pause_update;
   menu->render=_pause_render;
   bgcolor=fmn_video_pixel_from_rgba(0x000000ff);
+  fgcolor=fmn_video_pixel_from_rgba(0xc0c0c0ff);
+  highlightcolor=fmn_video_pixel_from_rgba(0xffff00ff);
   labelid=0xff;
+  listselection=-1;
 }

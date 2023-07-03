@@ -12,6 +12,7 @@
 #define FMN_IMAGEID_LABEL_NEW 308
 #define FMN_IMAGEID_LABEL_SETTINGS 309
 #define FMN_IMAGEID_LABEL_QUIT 310
+#define FMN_IMAGEID_LABEL_END_GAME 311 /* we don't use this one, but we prep for pause menu */
 
 static uint32_t color_selected=0,color_enabled=0,color_disabled=0;
 
@@ -298,6 +299,7 @@ static void _hello_render(struct fmn_menu *menu) {
     fmn_generate_string_image(FMN_IMAGEID_LABEL_NEW,4,0,0);
     fmn_generate_string_image(FMN_IMAGEID_LABEL_SETTINGS,5,0,0);
     fmn_generate_string_image(FMN_IMAGEID_LABEL_QUIT,6,0,0);
+    fmn_generate_string_image(FMN_IMAGEID_LABEL_END_GAME,7,0,0);
     selp=(opt_available&1)?0:1; // "Continue" if available, otherwise "New".
   }
   
