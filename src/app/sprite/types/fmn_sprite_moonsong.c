@@ -69,6 +69,7 @@ static void moonsong_cast_spell(struct fmn_sprite *sprite) {
         fmn_sound_effect(FMN_SFX_PUMPKIN);
         fmn_hero_cancel_item();
         fmn_secrets_refresh_for_map();
+        fmn_saved_game_dirty();
       } break;
   }
 }

@@ -26,6 +26,7 @@ uint8_t fmn_can_quit() {
  
 void fmn_reset() {
 
+  bigpc.savedgame_suppress=1;
   memset(&fmn_global,0,sizeof(fmn_global));
   fmstore_del(bigpc.fmstore);
   bigpc.fmstore=fmstore_new();
@@ -36,6 +37,7 @@ void fmn_reset() {
     return;
   }
   bigpc_clock_reset(&bigpc.clock);
+  bigpc_savedgame_dirty();
 }
 
 /* Map load helpers.
@@ -58,6 +60,7 @@ static void bigpc_clear_map_commands() {
   fmn_global.wind_dir=0;
   fmn_global.facedir_gsbit_horz=0;
   fmn_global.facedir_gsbit_vert=0;
+  fmn_global.saveto=0;
   
   bigpc.map_callbackc=0;
 }
@@ -175,7 +178,7 @@ static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,vo
           fmn_global.maptsid=arg[0]; 
           bigpc_load_cellphysics();
         } break;
-      case 0x22: fmn_global.herostartp=arg[0]; break;
+      case 0x22: bigpc.saveto_recent=fmn_global.saveto=arg[0]; break;
       case 0x23: if (fmn_global.wind_dir=arg[0]) fmn_global.wind_time=86400.0f; else fmn_global.wind_time=0.0f; break;
       
       case 0x40: fmn_global.neighborw=(arg[0]<<8)|arg[1]; break;
@@ -183,6 +186,7 @@ static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,vo
       case 0x42: fmn_global.neighborn=(arg[0]<<8)|arg[1]; break;
       case 0x43: fmn_global.neighbors=(arg[0]<<8)|arg[1]; break;
       case 0x44: bigpc_add_transmogrify(arg[0],arg[1]); break;
+      case 0x45: fmn_global.herostartp=arg[0]; if (arg[1]) bigpc.saveto_recent=arg[1]; break;
       
       case 0x60: bigpc_add_door(arg[0],0,(arg[1]<<8)|arg[2],arg[3]%FMN_COLC,arg[3]/FMN_COLC); break;
       case 0x61: if (ctx->use_initial_sketches) bigpc_add_sketch(arg[0],(arg[1]<<16)|(arg[2]<<8)|arg[3]); break;
@@ -217,6 +221,7 @@ int8_t fmn_load_map(
     const uint8_t *cmdv,uint16_t cmdc
   )
 ) {
+  bigpc.savedgame_suppress=0;
   
   const uint8_t *serial=0;
   int serialc=fmn_datafile_get_any(&serial,bigpc.datafile,FMN_RESTYPE_MAP,mapid);
@@ -242,6 +247,9 @@ int8_t fmn_load_map(
   fmn_map_for_each_command(serial,serialc,fmn_load_map_cb_command,&ctx);
   
   if (!fmn_global.indoors) bigpc_autobloom_plants();
+  
+  bigpc_savedgame_dirty();
+  
   return 1;
 }
 
@@ -291,6 +299,9 @@ int8_t fmn_add_plant(uint16_t x,uint16_t y) {
   plant->flower_time=0;
   
   fmstore_read_plants_from_globals(bigpc.fmstore,bigpc.mapid);
+  
+  bigpc_savedgame_dirty();
+  
   return 0;
 }
 
@@ -393,6 +404,36 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
     if (reg->evid!=evid) continue;
     cb(reg->cbid,reg->param,userdata);
   }
+}
+
+/* Saved game.
+ */
+ 
+uint8_t fmn_has_saved_game() {
+  // We'll have read it already, at bigpc_savedgame_init.
+  if (bigpc.savedgame_serialc) return 1;
+  return 0;
+}
+
+void fmn_delete_saved_game() {
+  bigpc_savedgame_delete();
+}
+
+void fmn_saved_game_dirty() {
+  bigpc_savedgame_dirty();
+}
+
+/* Load saved game.
+ */
+
+uint16_t fmn_load_saved_game() {
+  if (!bigpc.savedgame_serialc) return 0;
+  if (bigpc_savedgame_validate(bigpc.savedgame_serial,bigpc.savedgame_serialc)<0) {
+    fprintf(stderr,"%s: Have %d-byte saved game, but it failed validation!\n",bigpc.savedgame_path,bigpc.savedgame_serialc);
+    return 0;
+  }
+  bigpc.savedgame_dirty=0;
+  return bigpc_savedgame_load(bigpc.savedgame_serial,bigpc.savedgame_serialc);
 }
 
 /* fmn_find_map_command, fmn_find_direction_to_item, fmn_find_direction_to_map

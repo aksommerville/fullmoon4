@@ -26,7 +26,8 @@ neighbors MAPID
 door X Y MAPID DSTX DSTY
 sprite X Y SPRITEID ARG0 ARG1 ARG2
 dark
-hero X Y
+hero X Y SPELLID
+saveto SPELLID # refers to some other map with a 'hero' command
 transmogrify X Y MODE STATE # STATE=[1:pumpkin], MODE=[to,from,toggle]
 indoors
 wind N|E|S|W # direction it blows *to*, opposite the meterological convention
@@ -69,7 +70,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 
 0x20 (u8 songid) SONG
 0x21 (u8 imageid) TILESHEET
-0x22 (u8 cellp) HERO
+0x22 (u8 spellid) SAVETO
 0x23 (u8 dir) WIND
 
 0x40 (u16 mapid) NEIGHBORW
@@ -77,6 +78,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x42 (u16 mapid) NEIGHBORN
 0x43 (u16 mapid) NEIGHBORS
 0x44 (u8 cellp,u8 0x80:to 0x40:from 0x3f:state) TRANSMOGRIFY
+0x45 (u8 cellp,u8 spellid) HERO
 
 0x60 (u8 cellp,u16 mapid,u8 dstcellp) DOOR
 0x61 (u8 cellp,u24 bits) SKETCH

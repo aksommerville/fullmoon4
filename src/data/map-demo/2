@@ -20,3 +20,4 @@ sprite 13 1 seamonster 0 0 0
 sprite 9 1 pushblock 0 0 0
 sprite 8 4 saw 0 0 0
 sprite 7 3 firenozzle_e 3 30 0
+saveto spell:HOME

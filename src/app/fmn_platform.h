@@ -315,7 +315,7 @@ extern struct fmn_global {
   uint8_t mapdark;
   uint8_t indoors;
   uint16_t pad2;
-  uint8_t pad1;
+  uint8_t saveto; // spellid
   uint8_t herostartp;
   uint8_t cellphysics[256];
   uint8_t sprite_storage[FMN_SPRITE_STORAGE_SIZE];
@@ -371,7 +371,7 @@ extern struct fmn_global {
   
   // General-purpose global state.
   // The whole thing gets persisted on saves.
-  // Don't modify directly. There are helpers to toggle values, which will notify subscribers. (TODO)
+  // Don't modify directly. There are helpers to toggle values, which will notify subscribers.
   uint8_t gs[FMN_GS_SIZE];
   
   uint8_t violin_song[FMN_VIOLIN_SONG_LENGTH];
@@ -405,6 +405,10 @@ extern struct fmn_global {
  
 // Called once, during startup. <0 to abort.
 int fmn_init();
+
+/* Platform will call when it adjusts time artificially, eg loading a saved game.
+ */
+void fmn_reset_clock(uint32_t timems);
 
 /* Called often, when the game is running without any modal platform-managed interaction.
  * (ie normal play cases).
@@ -520,6 +524,22 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
  * Capture business events to a machine-readable log I can examine later.
  */
 void fmn_log_event(const char *key,const char *fmt,...);
+
+/* Platform should attach automatically to a saved game file, or some other persistence mechanism.
+ * I believe the platform is capable of saving on its own. Should do at each map transition.
+ * fmn_load_saved_game() returns mapid on success, or zero on error.
+ * Caller should follow immediately with fmn_load_map().
+ * Not currently planning to use fmn_delete_saved_game. It implicitly overwrites any time you start a new one.
+ *
+ * Platform doesn't implicitly notice a few important things, and app should fmn_saved_game_dirty() liberally:
+ *  - Changes to itemv, itemqv, transmogrification, selected_item, damage_count
+ *  - Sketch changes. (no sense in the platform doing it at fmn_add_sketch; they're blank initially)
+ * If you forget, it's not the end of the world, platform dirties at least on every map transition.
+ */
+uint8_t fmn_has_saved_game();
+uint16_t fmn_load_saved_game();
+void fmn_delete_saved_game();
+void fmn_saved_game_dirty();
 
 /* Rendering API.
  * Everything named "fmn_draw_*" is only valid during fmn_render.

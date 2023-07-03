@@ -119,6 +119,7 @@ static void fmn_hero_seed_begin() {
   }
   fmn_sound_effect(FMN_SFX_SEED_DROP);
   fmn_log_event("seed-drop","%d,%d",fmn_global.shovelx,fmn_global.shovely);
+  fmn_saved_game_dirty();
 }
 
 /* Coin.
@@ -162,7 +163,10 @@ static void fmn_hero_coin_begin() {
   // Anything that collects coins might do so via collision with the missile, but we'll also fire it as an interaction.
   // This is important because we're going to reject coin toss if it collides initially.
   // And we'd like to encourage the witch to politely hand coins to merchants instead of throwing them.
-  if (fmn_hero_interact_locally(FMN_ITEM_COIN,0)) return;
+  if (fmn_hero_interact_locally(FMN_ITEM_COIN,0)) {
+    fmn_saved_game_dirty();
+    return;
+  }
   
   float dx,dy;
   fmn_vector_from_dir(&dx,&dy,fmn_global.facedir);
@@ -192,6 +196,7 @@ static void fmn_hero_coin_begin() {
     fmn_global.itemqv[FMN_ITEM_COIN]++;
     return;
   }
+  fmn_saved_game_dirty();
 }
 
 /* Cheese.
@@ -207,6 +212,7 @@ static void fmn_hero_cheese_begin() {
   fmn_global.itemqv[FMN_ITEM_CHEESE]--;
   fmn_hero.cheesetime+=FMN_HERO_CHEESE_TIME;
   fmn_global.cheesing=1;
+  fmn_saved_game_dirty();
 }
 
 /* Pitcher.
@@ -264,6 +270,7 @@ static void fmn_hero_pitcher_begin() {
       fmn_sound_effect(FMN_SFX_PITCHER_PICKUP);
       fmn_global.show_off_item=FMN_ITEM_PITCHER|(fmn_global.itemqv[FMN_ITEM_PITCHER]<<4);
       fmn_global.show_off_item_time=0xff;
+      fmn_saved_game_dirty();
     } else {
       fmn_sound_effect(FMN_SFX_PITCHER_NO_PICKUP);
     }
@@ -274,6 +281,7 @@ static void fmn_hero_pitcher_begin() {
     fmn_hero_interact_locally(FMN_ITEM_PITCHER,content);
     fmn_global.wand_dir=content;
     fmn_hero_water_plants(content);
+    fmn_saved_game_dirty();
   }
 }
 
@@ -288,6 +296,7 @@ static void fmn_hero_match_begin() {
   fmn_global.match_illumination_time+=FMN_HERO_MATCH_ILLUMINATION_TIME;
   fmn_global.itemqv[FMN_ITEM_MATCH]--;
   fmn_sound_effect(FMN_SFX_MATCH);
+  fmn_saved_game_dirty();
 }
 
 /* Shovel.
@@ -315,6 +324,7 @@ static void fmn_hero_shovel_begin() {
         }
         plant->state=FMN_PLANT_STATE_NONE;
         fmn_map_dirty();
+        fmn_saved_game_dirty();
         break;
       }
       
@@ -337,6 +347,7 @@ static void fmn_hero_shovel_begin() {
           fmn_map_dirty();
           fmn_sound_effect(FMN_SFX_UNBURY_DOOR);
           fmn_secrets_refresh_for_map();
+          fmn_saved_game_dirty();
           return;
         } else {
           if (door->dstx==0x30) { // buried treasure
@@ -655,6 +666,7 @@ static void fmn_hero_chalk_cb(struct fmn_menu *menu,uint8_t message) {
           if (sketch->y!=fmn_hero_sketchy) continue;
           sketch->bits=menu->argv[0];
           fmn_map_dirty();
+          fmn_saved_game_dirty();
           break;
         }
       } break;

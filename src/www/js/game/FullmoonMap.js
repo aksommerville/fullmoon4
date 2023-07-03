@@ -29,8 +29,8 @@ export class FullmoonMap {
       case 0x42: return [10, 6 - 12];
       case 0x43: return [10, 6 + 12];
       // Every positioned command so far stores its position packed in the first byte:
-      case 0x22: // HERO
       case 0x44: // TRANSMOGRIFY
+      case 0x45: // HERO
       case 0x60: // DOOR
       case 0x61: // SKETCH
       case 0x80: // SPRITE
@@ -54,6 +54,7 @@ export class FullmoonMap {
     this.ancillary = 0;
     this.wind = 0;
     this.herostartp = (constants.ROWC >> 1) * constants.COLC + (constants.COLC >> 1);
+    this.spellid = 0;
     this.songId = 0;
     this.bgImageId = 0;
     this.neighborw = 0;
@@ -61,6 +62,7 @@ export class FullmoonMap {
     this.neighborn = 0;
     this.neighbors = 0;
     this.facedir_gsbit = [0, 0]; // [horz, vert]
+    this.saveto = 0;
   }
   
   _copy(src) {
@@ -77,6 +79,7 @@ export class FullmoonMap {
     this.ancillary = src.ancillary;
     this.wind = src.wind;
     this.herostartp = src.herostartp;
+    this.spellid = src.spellid;
     this.songId = src.songId;
     this.bgImageId = src.bgImageId;
     this.neighborw = src.neighborw;
@@ -84,6 +87,7 @@ export class FullmoonMap {
     this.neighborn = src.neighborn;
     this.neighbors = src.neighbors;
     this.facedir_gsbit = [...src.facedir_gsbit];
+    this.saveto = src.saveto;
   }
   
   _decode(src, constants) {
@@ -105,12 +109,13 @@ export class FullmoonMap {
         case 0x04: this.ancillary = 1; break;
         case 0x20: this.songId = v[argp]; break;
         case 0x21: this.bgImageId = v[argp]; break;
-        case 0x22: this.herostartp = v[argp]; break;
+        case 0x22: this.saveto = v[argp]; break;
         case 0x23: this.wind = v[argp]; break;
         case 0x40: this.neighborw = (v[argp] << 8) | v[argp + 1]; break;
         case 0x41: this.neighbore = (v[argp] << 8) | v[argp + 1]; break;
         case 0x42: this.neighborn = (v[argp] << 8) | v[argp + 1]; break;
         case 0x43: this.neighbors = (v[argp] << 8) | v[argp + 1]; break;
+        case 0x45: this.herostartp = v[argp]; this.spellid = v[argp + 1]; break;
         
         case 0x44: this.doors.push({ // transmogrify
             x: v[argp] % constants.COLC,

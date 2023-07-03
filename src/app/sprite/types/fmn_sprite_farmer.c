@@ -76,6 +76,7 @@ static uint8_t farmer_water_plant(struct fmn_sprite *sprite,struct fmn_plant *pl
   plant->fruit=FMN_PLANT_FRUIT_SEED;
   plant->flower_time=fmn_game_get_platform_time_ms()+FMN_FLOWER_TIME_MS;
   fmn_map_dirty();
+  fmn_saved_game_dirty();
   return 1;
 }
 

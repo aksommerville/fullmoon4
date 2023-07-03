@@ -13,7 +13,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
 - - No travel record: If we did record that, we would also need to persist it. Would be kind of heavy. Prefer gsbit.
 - - `callback ev:LOADED cb:set_gsbit_00xx 12` bits 0..255. We can add another callback, for each further block of 256 bits.
-- [ ] UI for saved game management. And everything else re saved games.
+- [x] UI for saved game management. And everything else re saved games.
+- [ ] web saved games, see stubs in Runtime.js
 - [x] "End game" and "Settings" from pause menu.
 - [ ] Settings menu.
 - [x] Menu text as strings, currently hard-coded.
@@ -36,9 +37,13 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
 - [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
+- [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
+- - Otherwise there's a map that could save to two different places depending on history.
 - [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Translation.
+- [ ] Once saving works: Consider "Are you sure?" for New Game when a save file exists.
+- [ ] bigpc: Drop "-drivers" from config keys. Just "--video=glx,drm" etc should do. (check all makefiles)
 
 ### Full Maps
 
@@ -64,6 +69,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Miscellaneous
 
+- [ ] Sound effect for coin toss
 - [ ] web: Sound effects too quiet relative to music.
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
 - [ ] More involved tutorial for violin?

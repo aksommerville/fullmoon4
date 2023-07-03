@@ -601,3 +601,11 @@ int assist_get_gsbit_by_name(const char *name,int namec) {
 int assist_get_instrument_name(void *dstpp,int id) {
   return 0;
 }
+
+int assist_get_spell_id_by_name(const char *name,int namec) {
+  if (!name) return -1;
+  if (namec<0) { namec=0; while (name[namec]) namec++; }
+  struct assist_namefile *namefile=assist_namefile_get(ASSIST_NAMEFILE_PLATFORM);
+  if (!namefile) return -1;
+  return assist_id_by_cat_name(namefile,ASSIST_CAT_SPELLID,name,namec);
+}

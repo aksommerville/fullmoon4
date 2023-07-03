@@ -61,6 +61,7 @@ struct bigpc_config {
   
   char *data_path;
   char *log_path;
+  char *savedgame_path; // per user. The one we actually use is (bigpc.savedgame_path).
 };
 
 extern struct bigpc {
@@ -86,6 +87,7 @@ extern struct bigpc {
   int devid_keyboard;
   
   uint16_t mapid;
+  uint8_t saveto_recent; // last observed 'saveto', never zero
   struct bigpc_map_callback {
     uint8_t evid,param;
     uint16_t cbid;
@@ -101,6 +103,14 @@ extern struct bigpc {
   int sound_blackoutc,sound_blackouta;
   
   FILE *logfile;
+  
+  char *savedgame_path;
+  void *savedgame_serial; // matches file
+  int savedgame_serialc,savedgame_seriala;
+  int savedgame_dirty; // nonzero to reencode and save
+  int64_t savedgame_update_time; // timeout after setting dirty before committing. compare to bigpc.clock.last_real_time_us
+  int savedgame_suppress; // nonzero after a reset, eg manually return to menu. to prevent unintentionally saving a wiped state.
+  
 } bigpc;
 
 void bigpc_config_cleanup(struct bigpc_config *config);
@@ -144,5 +154,12 @@ void bigpc_cb_state_change(void *userdata,uint8_t playerid,uint16_t btnid,uint8_
 void bigpc_cb_action(void *userdata,uint8_t playerid,uint16_t actionid);
 
 void bigpc_cap_screen();
+
+void bigpc_savedgame_init();
+void bigpc_savedgame_delete();
+int bigpc_savedgame_validate(const void *src,int srcc); // idempotent
+uint16_t bigpc_savedgame_load(const void *src,int srcc); // Validate first, otherwise we might fail midway.
+void bigpc_savedgame_dirty(); // call liberally to set dirty flag and timeout if warranted
+void bigpc_savedgame_update(); // call liberally to check dirty timeout and save when it expires
 
 #endif

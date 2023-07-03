@@ -98,17 +98,17 @@ int fmn_game_load_map(int mapid,float herox,float heroy) {
  */
  
 int fmn_game_has_saved_game() {
-  /**/
-  fmn_log("TODO %s, saying 'no'",__func__);
-  return 0;
-  /**/
-  fmn_log("TODO %s, saying 'yes'",__func__);
-  return 1;
+  return fmn_has_saved_game();
 }
 
 int fmn_game_load_saved_game() {
-  fmn_log("TODO %s",__func__);
-  return -1;
+  uint16_t mapid=fmn_load_saved_game();
+  if (!mapid) {
+    fmn_log("Failed to load saved game!");
+    return -1;
+  }
+  if (fmn_game_load_map(mapid,-1.0f,-1.0f)<0) return -1;
+  return 0;
 }
 
 /* Input event.
@@ -161,6 +161,7 @@ static void fmn_transmogrify(uint8_t mode,uint8_t state) {
   fmn_hero_get_position(&herox,&heroy);
   fmn_sprite_generate_soulballs(herox,heroy,7,0);
   fmn_secrets_refresh_for_map();
+  fmn_saved_game_dirty();
 }
 
 static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
@@ -258,6 +259,7 @@ uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity) {
   }
   
   fmn_secrets_refresh_for_map();
+  fmn_saved_game_dirty();
   return 1;
 }
 
@@ -466,6 +468,7 @@ static void fmn_update_bloomage(float elapsed) {
   if (changed) {
     fmn_sound_effect(FMN_SFX_BLOOM);
     fmn_map_dirty();
+    fmn_saved_game_dirty();
   }
 }
 
@@ -536,6 +539,7 @@ static void fmn_bloom_plants() {
   if (changed) {
     fmn_sound_effect(FMN_SFX_BLOOM);
     fmn_map_dirty();
+    fmn_saved_game_dirty();
   }
 }
 
@@ -782,6 +786,7 @@ void fmn_gs_set_bit(uint16_t p,uint8_t v) {
     if (listener->p!=p) continue;
     listener->cb(listener->userdata,p,v);
   }
+  fmn_saved_game_dirty();
 }
 
 /* Game events.

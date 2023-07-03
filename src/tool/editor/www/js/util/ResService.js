@@ -224,6 +224,7 @@ export class ResService {
       textp = nlp + 1;
       const words = line.split(/\s+/).filter(v => v);
       if (words.length < 1) continue;
+      if (words[0].startsWith("#")) continue;
       const id = +words[0];
       if (isNaN(id) || (id < 1) || (id > 65535)) {
         throw new Error(`${path}:${lineno}: Invalid string ID ${id}`);

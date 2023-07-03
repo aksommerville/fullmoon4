@@ -61,6 +61,8 @@ static int evalparams(
       if ((dst[dstc]=assist_get_map_event_by_name(token+3,tokenc-3))<0) return faileval(path,lineno,token,tokenc,"map event name");
     } else if ((tokenc>=3)&&!memcmp(token,"cb:",3)) {
       if ((dst[dstc]=assist_get_map_callback_by_name(token+3,tokenc-3))<0) return faileval(path,lineno,token,tokenc,"map callback name");
+    } else if ((tokenc>=6)&&!memcmp(token,"spell:",6)) {
+      if ((dst[dstc]=assist_get_spell_id_by_name(token+6,tokenc-6))<0) return faileval(path,lineno,token,tokenc,"spell name");
       
     // If a resource type was suggested, try it.
     } else if (restype&&restype[0]&&((dst[dstc]=assist_get_resource_id_by_name(restype,token,tokenc))>0)) {
@@ -225,20 +227,38 @@ static int mkd_map_cmd_dark(struct mkd_respath *respath,const char *src,int srcc
   return 0;
 }
 
-/* hero X Y
- * 0x22 (u8 cellp) HERO
+/* hero X Y SPELLID
+ * 0x45 (u8 cellp,u8 spellid) HERO
  */
  
 static int mkd_map_cmd_hero(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
-  int argv[2];
+  int argv[3];
   int err=evalparams(
-    respath->path,lineno,src,srcc,argv,2,
+    respath->path,lineno,src,srcc,argv,3,
     "x",0,FMN_COLC-1,"",
-    "y",0,FMN_ROWC-1,""
+    "y",0,FMN_ROWC-1,"",
+    "spellid",0,255,""
+  );
+  if (err<0) return err;
+  if (sr_encode_u8(&mkd.dst,0x45)<0) return -1;
+  if (sr_encode_u8(&mkd.dst,argv[1]*FMN_COLC+argv[0])<0) return -1;
+  if (sr_encode_u8(&mkd.dst,argv[2])<0) return -1;
+  return 0;
+}
+
+/* saveto SPELLID
+ * 0x22 (u8 spellid) SAVETO
+ */
+ 
+static int mkd_map_cmd_saveto(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
+  int argv[1];
+  int err=evalparams(
+    respath->path,lineno,src,srcc,argv,1,
+    "spellid",0,255,""
   );
   if (err<0) return err;
   if (sr_encode_u8(&mkd.dst,0x22)<0) return -1;
-  if (sr_encode_u8(&mkd.dst,argv[1]*FMN_COLC+argv[0])<0) return -1;
+  if (sr_encode_u8(&mkd.dst,argv[0])<0) return -1;
   return 0;
 }
 
@@ -523,6 +543,7 @@ int mkd_compile_map(struct mkd_respath *respath) {
     _(sprite)
     _(dark)
     _(hero)
+    _(saveto)
     _(transmogrify)
     _(indoors)
     _(wind)

@@ -238,3 +238,55 @@ void fmstore_read_sketches_from_globals(struct fmstore *fmstore,uint16_t mapid) 
   }
   fmstore_drop_unvisited_sketches(fmstore,mapid);
 }
+
+/* Simple iterators.
+ */
+ 
+int fmstore_for_each_plant(
+  struct fmstore *fmstore,
+  int (*cb)(uint16_t mapid,struct fmn_plant *plant,void *userdata),
+  void *userdata
+) {
+  int err,i=fmstore->plantc;
+  struct fmstore_plant *plant=fmstore->plantv;
+  for (;i-->0;plant++) {
+    if (err=cb(plant->mapid,&plant->plant,userdata)) return err;
+  }
+  return 0;
+}
+
+int fmstore_for_each_sketch(
+  struct fmstore *fmstore,
+  int (*cb)(uint16_t mapid,struct fmn_sketch *sketch,void *userdata),
+  void *userdata
+) {
+  int err,i=fmstore->sketchc;
+  struct fmstore_sketch *sketch=fmstore->sketchv;
+  for (;i-->0;sketch++) {
+    if (err=cb(sketch->mapid,&sketch->sketch,userdata)) return err;
+  }
+  return 0;
+}
+
+/* Direct public access to plant and sketch lists.
+ */
+ 
+void fmstore_clear_plants(struct fmstore *fmstore) {
+  fmstore->plantc=0;
+}
+
+void fmstore_clear_sketches(struct fmstore *fmstore) {
+  fmstore->sketchc=0;
+}
+
+struct fmn_plant *fmstore_add_plant(struct fmstore *fmstore,uint16_t mapid,uint8_t x,uint8_t y) {
+  struct fmstore_plant *plant=fmstore_plant_upsert(fmstore,mapid,x,y);
+  if (!plant) return 0;
+  return &plant->plant;
+}
+
+struct fmn_sketch *fmstore_add_sketch(struct fmstore *fmstore,uint16_t mapid,uint8_t x,uint8_t y) {
+  struct fmstore_sketch *sketch=fmstore_sketch_upsert(fmstore,mapid,x,y);
+  if (!sketch) return 0;
+  return &sketch->sketch;
+}

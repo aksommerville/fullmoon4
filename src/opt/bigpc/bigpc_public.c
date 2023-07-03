@@ -35,6 +35,8 @@ void bigpc_quit() {
   if (bigpc.map_callbackv) free(bigpc.map_callbackv);
   if (bigpc.sound_blackoutv) free(bigpc.sound_blackoutv);
   if (bigpc.logfile) fclose(bigpc.logfile);
+  if (bigpc.savedgame_path) free(bigpc.savedgame_path);
+  if (bigpc.savedgame_serial) free(bigpc.savedgame_serial);
   
   memset(&bigpc,0,sizeof(struct bigpc));
   bigpc.exename="fullmoon";
@@ -67,6 +69,7 @@ int bigpc_init(int argc,char **argv) {
   if ((err=bigpc_video_init())<0) return err;
   if ((err=bigpc_audio_init())<0) return err;
   if ((err=bigpc_input_init())<0) return err;
+  bigpc_savedgame_init();
   
   // With video and input both online, check whether we need to map the System Keyboard.
   if (bigpc.video->type->has_wm) {
@@ -119,6 +122,7 @@ int bigpc_update() {
   while (i-->0) {
     if (bigpc_input_driver_update(bigpc.inputv[i])<0) return -1;
   }
+  bigpc_savedgame_update();
   
   // Miscellaneous high-level business logic that had to live here.
   bigpc_check_violin();

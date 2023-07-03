@@ -351,6 +351,7 @@ void fmn_hero_return_to_map_entry() {
   fmn_hero_attempt_valid_position();
   fmn_hero_force_escape_hazards();
   fmn_global.damage_count++;
+  fmn_saved_game_dirty();
 }
 
 /* Begin injury.
@@ -436,6 +437,7 @@ uint8_t fmn_hero_injure(float x,float y,struct fmn_sprite *assailant) {
   fmn_global.injury_time=FMN_HERO_INJURY_TIME;
 
   fmn_sound_effect(FMN_SFX_HURT);
+  fmn_saved_game_dirty();
   return 1;
 }
 
@@ -451,6 +453,7 @@ uint8_t fmn_hero_curse(struct fmn_sprite *assailant) {
   fmn_global.curse_time=FMN_HERO_CURSE_TIME;
   fmn_sound_effect(FMN_SFX_CURSE);
   fmn_hero_cancel_item();
+  fmn_saved_game_dirty();
   return 1;
 }
 
@@ -470,6 +473,7 @@ void fmn_hero_kill(struct fmn_sprite *assailant) {
   fmn_sprite_generate_soulballs(hero->x,hero->y,7,0);
   fmn_sound_effect(FMN_SFX_GRIEVOUS_INJURY);
   fmn_sprite_kill(hero);
+  fmn_saved_game_dirty();
 }
 
 /* Static pressure.

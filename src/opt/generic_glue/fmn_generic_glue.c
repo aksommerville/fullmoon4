@@ -10,6 +10,14 @@ void fmn_log(const char *fmt,...) {
 void fmn_abort() {
 }
 
+int8_t fmn_quit() {
+  return -1;
+}
+
+uint8_t fmn_can_quit() {
+  return 0;
+}
+
 void fmn_reset() {
   fmn_init();
 }
@@ -68,6 +76,20 @@ void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void 
 }
 
 void fmn_log_event(const char *key,const char *fmt,...) {
+}
+
+uint8_t fmn_has_saved_game() {
+  return 0;
+}
+
+uint16_t fmn_load_saved_game() {
+  return 0;
+}
+
+void fmn_delete_saved_game() {
+}
+
+void fmn_saved_game_dirty() {
 }
 
 /* Render API.
@@ -130,6 +152,7 @@ void fmn_video_upload_image(
 void fmn_video_init_image(uint16_t imageid,int16_t w,int16_t h) {}
 int8_t fmn_draw_set_output(uint16_t imageid) { return 0; }
 
+void fmn_draw_clear() {}
 void fmn_draw_line(const struct fmn_draw_line *v,int c) {}
 void fmn_draw_rect(const struct fmn_draw_rect *v,int c) {}
 void fmn_draw_mintile(const struct fmn_draw_mintile *v,int c,uint16_t srcimageid) {}

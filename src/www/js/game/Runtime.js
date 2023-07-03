@@ -66,6 +66,10 @@ export class Runtime {
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     this.wasmLoader.env.fmn_web_log_event = p => this.logBusinessEvent(this.wasmLoader.zstringFromMemory(p));
+    this.wasmLoader.env.fmn_has_saved_game = () => this.hasSavedGame();
+    this.wasmLoader.env.fmn_load_saved_game = () => this.loadSavedGame();
+    this.wasmLoader.env.fmn_delete_saved_game = () => this.deleteSavedGame();
+    this.wasmLoader.env.fmn_saved_game_dirty = () => this.savedGameDirty();
     
     this.wasmLoader.env.fmn_video_init = (wmin, wmax, hmin, hmax, pixfmt) => this.renderer.fmn_video_init(wmin, wmax, hmin, hmax, pixfmt);
     this.wasmLoader.env.fmn_video_get_framebuffer_size = (wv, hv) => this.renderer.fmn_video_get_framebuffer_size(wv, hv);
@@ -505,6 +509,22 @@ export class Runtime {
     */
     // Our logs are formatted a little different.
     this.document._fmn_business_log.text += `${this.clock.lastGameTime}@${this.mapId} ${text}\n`;
+  }
+  
+  hasSavedGame() {
+    return 0;//TODO
+  }
+  
+  loadSavedGame() {
+    return 0;//TODO mapid on success
+  }
+  
+  deleteSavedGame() {
+    //TODO
+  }
+  
+  savedGameDirty() {
+    //TODO
   }
 }
 

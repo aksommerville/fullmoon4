@@ -23,4 +23,23 @@ void fmstore_write_sketches_to_globals(struct fmstore *fmstore,uint16_t mapid);
 void fmstore_read_plants_from_globals(struct fmstore *fmstore,uint16_t mapid);
 void fmstore_read_sketches_from_globals(struct fmstore *fmstore,uint16_t mapid);
 
+int fmstore_for_each_plant(
+  struct fmstore *fmstore,
+  int (*cb)(uint16_t mapid,struct fmn_plant *plant,void *userdata),
+  void *userdata
+);
+int fmstore_for_each_sketch(
+  struct fmstore *fmstore,
+  int (*cb)(uint16_t mapid,struct fmn_sketch *sketch,void *userdata),
+  void *userdata
+);
+
+/* This interface should only be used at load/save, not during regular play.
+ * "write to globals" or "read from globals" during play.
+ */
+void fmstore_clear_plants(struct fmstore *fmstore);
+void fmstore_clear_sketches(struct fmstore *fmstore);
+struct fmn_plant *fmstore_add_plant(struct fmstore *fmstore,uint16_t mapid,uint8_t x,uint8_t y);
+struct fmn_sketch *fmstore_add_sketch(struct fmstore *fmstore,uint16_t mapid,uint8_t x,uint8_t y);
+
 #endif

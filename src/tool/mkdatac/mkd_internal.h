@@ -96,5 +96,6 @@ int assist_get_map_event_by_name(const char *name,int namec);
 int assist_get_map_callback_by_name(const char *name,int namec);
 int assist_get_resource_id_by_name(const char *tname,const char *rname,int rnamec);
 int assist_get_gsbit_by_name(const char *name,int namec);
+int assist_get_spell_id_by_name(const char *name,int namec);
 
 #endif

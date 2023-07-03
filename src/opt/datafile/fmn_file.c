@@ -128,3 +128,11 @@ char fmn_file_get_type(const char *path) {
   if (S_ISSOCK(st.st_mode)) return 's';
   return '?';
 }
+
+/* Delete file.
+ */
+ 
+void fmn_file_delete(const char *path) {
+  if (!path||!path[0]) return;
+  unlink(path);
+}

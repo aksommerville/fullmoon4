@@ -12,7 +12,7 @@
 262627010200252627010002002a2d1b1c252626
 tilesheet forest
 song toil_and_trouble
-hero 13 4
+hero 13 4 spell:HOME
 neighborw 2
 neighbore 6
 neighborn 11

@@ -56,6 +56,13 @@ int fmn_get_idle_warning_time_s() {
   return (int)(FMN_IDLE_RESTART_TIME-idle_time);
 }
 
+void fmn_reset_clock(uint32_t timems) {
+  platform_game_time=timems;
+  last_update_time=timems-1;
+  fmn_game_reset_play_time();
+  fmn_game_advance_play_time_ms(timems);
+}
+
 void fmn_update(uint32_t timems,uint8_t input) {
 
   platform_game_time=timems;
