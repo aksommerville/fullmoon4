@@ -152,7 +152,7 @@ export class ToolbarUi {
   }
   
   onMapSetSelected() {
-    this.resService.mapSet = this.element.querySelector(".mapSet").value;
+    this.resService.changeMapSet(this.element.querySelector(".mapSet").value);
   }
   
   /* Palette.

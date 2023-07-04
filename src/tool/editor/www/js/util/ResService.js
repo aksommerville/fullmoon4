@@ -22,7 +22,7 @@ export class ResService {
     this.toc = []; // {type, id, name, q, lang, path, serial, object}
     this.dirties = []; // {type, id} The named TOC entries should have a fresh (object) and no (serial).
     this.dirtyDebounce = null;
-    this.mapSet = "-demo"; // "-demo" or "-full" //TODO Add UI for toggling this.
+    this.mapSet = "-demo"; // "-demo" or "-full"
     
     this.reloadAll();
     
@@ -59,6 +59,9 @@ export class ResService {
    *   error: any
    * } or {
    *   type: "saved"
+   * } or {
+   *   type: "mapSet"
+   *   mapSet: "-demo" | "-full"
    * }
    */
   listen(cb) {
@@ -95,6 +98,21 @@ export class ResService {
     const res = this.toc.find(r => r.type === type && r.id === id);
     if (!res) return "";
     return res.name || "";
+  }
+  
+  changeMapSet(mapSet) {
+    switch (mapSet) {
+      case "-demo":
+      case "-full":
+        break;
+      default: {
+          console.log(`Invalid map set: ${JSON.stringify(mapSet)}`);
+          return;
+        }
+    }
+    if (mapSet === this.mapSet) return;
+    this.mapSet = mapSet;
+    this.broadcast({ type: "mapSet", mapSet });
   }
   
   /* Fetch.

@@ -10,10 +10,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ## TODO Platform and tooling, should complete before diving into full maps
 
 - [ ] Settings menu.
-- [ ] Data editor improvements.
+- [x] Data editor improvements.
 - - [x] Home page ...Shortcuts menu does everything we need.
 - - [x] MapAllUi: Point out neighbor mismatches.
-- - [ ] MapAllUi: React to Demo/Full switch.
+- - [x] MapAllUi: React to Demo/Full switch.
 - - [x] Delete maps (and resources in general) ...whatever, deleting them from your terminal is not so painful
 - [x] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one. ...wise, but at this point why bother
 - [x] Rekajigger Constants.js, use actual inlinable constants.

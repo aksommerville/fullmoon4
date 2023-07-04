@@ -33,11 +33,21 @@ export class MapAllUi {
     this.scratchCanvas.width = FullmoonMap.COLC * this.NATURAL_TILESIZE;
     this.scratchCanvas.height = FullmoonMap.ROWC * this.NATURAL_TILESIZE;
     
-    const mapResType = "map" + this.resService.mapSet;
+    let mapResType = "map" + this.resService.mapSet;
     this.worldMap = this.worldMapGenerator.generateWorldMap(
       this.resService.toc.filter(res => res.type === mapResType)
     );
     this.session = null;
+    
+    this.resServiceListener = this.resService.listen(event => {
+      if (event.type === "mapSet") {
+        mapResType = "map" + this.resService.mapSet;
+        this.worldMap = this.worldMapGenerator.generateWorldMap(
+          this.resService.toc.filter(res => res.type === mapResType)
+        );
+        this.renderSoon();
+      }
+    });
     
     this.element.addEventListener("mousemove", e => this.onMouseMove(e));
     this.lastTattleMapId = 0;
@@ -51,6 +61,7 @@ export class MapAllUi {
       this.window.clearTimeout(this.renderTimeout);
       this.renderTimeout = null;
     }
+    this.resService.unlisten(this.resServiceListener);
   }
   
   /* Not for the main view; this is used by LogsUi to show session details geographically.
