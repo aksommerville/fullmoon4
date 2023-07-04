@@ -11,10 +11,11 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [ ] Settings menu.
 - [ ] Data editor improvements.
-- - [ ] Home page
-- - [ ] MapAllUi: Point out neighbor mismatches.
-- - [ ] Delete maps (and resources in general)
-- [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
+- - [x] Home page ...Shortcuts menu does everything we need.
+- - [x] MapAllUi: Point out neighbor mismatches.
+- - [ ] MapAllUi: React to Demo/Full switch.
+- - [x] Delete maps (and resources in general) ...whatever, deleting them from your terminal is not so painful
+- [x] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one. ...wise, but at this point why bother
 - [x] Rekajigger Constants.js, use actual inlinable constants.
 - [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point

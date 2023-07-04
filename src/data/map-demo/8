@@ -18,6 +18,5 @@ neighborw 4
 door 16 3 29 7 9
 door 4 3 30 9 9
 transmogrify 10 2 from 1
-neighborn 53
 sprite 14 5 pamcake 0 0 0
 saveto spell:TELE1

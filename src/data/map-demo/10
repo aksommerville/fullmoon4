@@ -16,6 +16,4 @@ neighbore 9
 neighbors 26
 sprite 2 6 treasure item:CHALK 0 0
 sprite 9 3 skyleton 0 0 0
-neighborw 47
-neighborn 49
 door 2 1 67 10 9

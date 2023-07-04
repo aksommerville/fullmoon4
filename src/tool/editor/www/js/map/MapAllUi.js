@@ -146,6 +146,35 @@ export class MapAllUi {
         dstx, dsty, FullmoonMap.COLC * this.TILESIZE, FullmoonMap.ROWC * this.TILESIZE,
         map, this.session
       );
+    } else {
+      this.decorateScaledDownMapForEditor(
+        context,
+        dstx, dsty, FullmoonMap.COLC * this.TILESIZE, FullmoonMap.ROWC * this.TILESIZE,
+        map
+      );
+    }
+  }
+  
+  decorateScaledDownMapForEditor(context, dstx, dsty, dstw, dsth, map) {
+    const p = this.worldMap.maps.indexOf(map);
+    if (p >= 0) {
+      const col = p % this.worldMap.w;
+      const row = Math.floor(p / this.worldMap.h);
+      const expectN = this.worldMap.maps[p - this.worldMap.w]?.id || 0;
+      const expectS = this.worldMap.maps[p + this.worldMap.w]?.id || 0;
+      const expectW = (col <= 0) ? 0 : (this.worldMap.maps[p - 1]?.id || 0);
+      const expectE = (col >= this.worldMap.w - 1) ? 0 : (this.worldMap.maps[p + 1]?.id || 0);
+      if (
+        (expectN !== map.getIntCommand("neighborn")) ||
+        (expectS !== map.getIntCommand("neighbors")) ||
+        (expectW !== map.getIntCommand("neighborw")) ||
+        (expectE !== map.getIntCommand("neighbore")) ||
+      0) {
+        context.fillStyle = "#f00";
+        context.globalAlpha = 0.6;
+        context.fillRect(dstx, dsty, dstw, dsth);
+        context.globalAlpha = 1;
+      }
     }
   }
   

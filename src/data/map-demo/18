@@ -23,4 +23,3 @@ sprite 9 1 gate gs:wandgate3 0 0
 sprite 13 5 treadle gs:wandgate1 0 0
 sprite 15 8 treadle gs:wandgate2 0 0
 sprite 12 3 stompbox gs:wandgate3 0 0
-neighbore 58
