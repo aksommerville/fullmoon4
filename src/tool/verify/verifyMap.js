@@ -21,6 +21,7 @@ function readCommands(src, cb/*(lead,payp)*/) {
  
 module.exports = function(src, id, resources, ref/*(type,id)*/) {
   if (src.length < 20 * 12) throw new Error(`Minimum length 20 * 12 = 240, found ${src.length}`);
+  let songId = 0;
   for (let srcp=20*12; srcp<src.length; ) {
   
     // Verify command length generically.
@@ -39,7 +40,7 @@ module.exports = function(src, id, resources, ref/*(type,id)*/) {
     
     // Check specific commands.
     switch (lead) {
-      case 0x20: ref(0x02, src[srcp]); break; // SONG
+      case 0x20: ref(0x02, src[srcp]); songId = src[srcp]; break; // SONG
       case 0x21: ref(0x01, src[srcp]); ref(0x04, src[srcp]); break; // IMAGE (image + tileprops)
       
       case 0x40:
@@ -70,24 +71,36 @@ module.exports = function(src, id, resources, ref/*(type,id)*/) {
           if (!otherRes) throw new Error(`Door to neighbor map ${mapid}, map not found.`);
           const other = otherRes.serial;
           let found = false;
+          let hasWerewolf = false;
           readCommands(other, (lead, payp) => {
-            if (lead === 0x60) {
+            if (lead === 0x60) { // DOOR
               const backref = (other[payp+1] << 8) | other[payp+2];
               if (backref === id) {
                 found = true;
-                const ocellp = other[payp];
-                const odstcellp = other[payp+3];
-                if ((cellp !== odstcellp) || (dstcellp !== ocellp)) {
-                  // This certainly doesn't need to be an error. But for now, I think doors will always land you exactly on the remote door.
-                  throw new Error(`Door between ${id} and ${mapid}, entrances and exits are not in sync.`);
-                }
+                // We used to check that doors point to where their countpart lives.
+                // That breaks at double-wide doors (eg church and castle).
+                // Also I think no point checking: It's easy to see that mismatch in the editor.
               }
+            } else if (lead === 0x81) { // BURIED_DOOR
+              const backref = (other[payp+3] << 8) | other[payp+4];
+              if (backref === id) {
+                found = true;
+              }
+            } else if (lead === 0x80) { // SPRITE
+              const spriteId = (other[payp+1] << 8) | other[payp+2];
+              if (spriteId === 38) hasWerewolf = true;
             }
           });
           if (!found) {
             // Doesn't have to be an error. Maybe the "door" is a hole in the floor you fall thru? Or some other one-way thing?
-            // But we're not doing any of that yet, nor planning to.
-            throw new Error(`Door from ${id} to ${mapid} has no return door.`);
+            if (hasWerewolf) {
+              // Entering the werewolf's room is supposed to be one-way, all good here.
+            } else if (songId === 9) {
+              // Map with the dangling reference has song "choose_a_door"; it's the warp zone.
+              // Note that this requires "song" to appear before "door" in the map's commands.
+            } else {
+              throw new Error(`Door from ${id} to ${mapid} has no return door.`);
+            }
           }
         } break;
         

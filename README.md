@@ -25,7 +25,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history.
-- [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
+- [ ] verify: I believe this is only looking at demo maps? Need it to run against both sets, separately.
+- [x] Filter resources by qualifier, see src/tool/mkdata/packArchive.js ...already exists, see "qfilter" in mkdatac
 - [x] Translation.
 - [x] Once saving works: Consider "Are you sure?" for New Game when a save file exists. ...not worth the trouble
 - [x] bigpc: Drop "-drivers" from config keys. Just "--video=glx,drm" etc should do. (check all makefiles)

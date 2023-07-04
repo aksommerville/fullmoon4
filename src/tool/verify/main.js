@@ -38,7 +38,7 @@ function resTypeRepr(t) {
   return t.toString();
 }
 function resRepr(res) {
-  return `${resTypeRepr(res)}:${res.qualifier}:${res.id}`;
+  return `${resTypeRepr(res.type)}:${res.qualifier}:${res.id}`;
 }
  
 let archivePath = "";
