@@ -2,6 +2,8 @@
  * Structured decoder for binary data.
  */
  
+import { base64ToBytes } from "./typedArrayBase64.js";
+ 
 export class Decoder {
   constructor(src) {
     this.v = null; // Uint8Array
@@ -13,6 +15,10 @@ export class Decoder {
     else if (typeof(src) === "string") this.initString(src);
     else if (Array.isArray(src)) this.initArray(src);
     else throw new Error(`Invalid input type for Decoder`);
+  }
+  
+  static fromBase64(base64string) {
+    return new Decoder(base64ToBytes(base64string));
   }
   
   initDecoder(src) {
@@ -81,6 +87,13 @@ export class Decoder {
     const n = (this.v[this.p] << 8) | this.v[this.p + 1];
     this.p += 2;
     return this.signed(n, 0x7fff);
+  }
+  
+  u24be() {
+    this.require(3);
+    const n = (this.v[this.p] << 16) | (this.v[this.p + 1] << 8) | this.v[this.p + 2];
+    this.p += 3;
+    return n;
   }
   
   u32be() {

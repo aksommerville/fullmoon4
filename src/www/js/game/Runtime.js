@@ -13,19 +13,20 @@ import { Globals } from "./Globals.js";
 import { FullmoonMap } from "./FullmoonMap.js";
 import { Synthesizer } from "../synth/Synthesizer.js";
 import { SoundEffects } from "../synth/SoundEffects.js";
+import { SavedGameStore } from "./SavedGameStore.js";
  
 export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
       Renderer2d, /*RendererGl,*/ Clock, Constants, Globals,
-      Synthesizer, SoundEffects, Document
+      Synthesizer, SoundEffects, Document, SavedGameStore
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
     renderer2d, /*rendererGl,*/ clock, constants, globals,
-    synthesizer, soundEffects, document
+    synthesizer, soundEffects, document, savedGameStore
   ) {
     this.wasmLoader = wasmLoader;
     this.dataService = dataService;
@@ -38,6 +39,7 @@ export class Runtime {
     this.synthesizer = synthesizer;
     this.soundEffects = soundEffects;
     this.document = document;
+    this.savedGameStore = savedGameStore;
     
     this.onError = e => console.error(e); // RootUi should replace.
     this.onForcedPause = () => {}; // ''
@@ -67,10 +69,10 @@ export class Runtime {
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     this.wasmLoader.env.fmn_web_log_event = p => this.logBusinessEvent(this.wasmLoader.zstringFromMemory(p));
-    this.wasmLoader.env.fmn_has_saved_game = () => this.hasSavedGame();
-    this.wasmLoader.env.fmn_load_saved_game = () => this.loadSavedGame();
-    this.wasmLoader.env.fmn_delete_saved_game = () => this.deleteSavedGame();
-    this.wasmLoader.env.fmn_saved_game_dirty = () => this.savedGameDirty();
+    this.wasmLoader.env.fmn_has_saved_game = () => this.savedGameStore.hasSavedGame();
+    this.wasmLoader.env.fmn_load_saved_game = () => this.savedGameStore.loadSavedGame();
+    this.wasmLoader.env.fmn_delete_saved_game = () => this.savedGameStore.deleteSavedGame();
+    this.wasmLoader.env.fmn_saved_game_dirty = () => this.savedGameStore.setDirty();
     
     this.wasmLoader.env.fmn_video_init = (wmin, wmax, hmin, hmax, pixfmt) => this.renderer.fmn_video_init(wmin, wmax, hmin, hmax, pixfmt);
     this.wasmLoader.env.fmn_video_get_framebuffer_size = (wv, hv) => this.renderer.fmn_video_get_framebuffer_size(wv, hv);
@@ -126,7 +128,6 @@ export class Runtime {
     this.inputManager.clearState();
     this.clock.reset(0);
     this.synthesizer.reset();
-    this.dataService.dropSavedGame();
     this.dataService.dropGameState();
     this.map = null;
     this.mapId = 0;
@@ -185,6 +186,7 @@ export class Runtime {
           updated = false;
         }
         if (!this.running) return;
+        this.savedGameStore.update(time, () => this._persistPlants());
       } else {
         this.clock.skip();
         //TODO Should we still render in this case?
@@ -217,6 +219,7 @@ export class Runtime {
       const song = this.dataService.getSong(map.songId);
       this.synthesizer.playSong(song);
     }
+    this.savedGameStore.setDirty();
     return 1;
   }
   
@@ -281,6 +284,7 @@ export class Runtime {
       mapId: this.mapId,
     });
     this.globals.g_map[y * this.constants.COLC + x] = 0x00;
+    this.savedGameStore.setDirty();
     return 0;
   }
   
@@ -518,22 +522,6 @@ export class Runtime {
     */
     // Our logs are formatted a little different.
     this.document._fmn_business_log.text += `${this.clock.lastGameTime}@${this.mapId} ${text}\n`;
-  }
-  
-  hasSavedGame() {
-    return 0;//TODO
-  }
-  
-  loadSavedGame() {
-    return 0;//TODO mapid on success
-  }
-  
-  deleteSavedGame() {
-    //TODO
-  }
-  
-  savedGameDirty() {
-    //TODO
   }
 }
 

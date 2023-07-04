@@ -2,6 +2,8 @@
  * Packs binary data into an ArrayBuffer.
  */
  
+import { bytesToBase64 } from "./typedArrayBase64.js";
+ 
 export class Encoder {
   constructor() {
     this.v = new Uint8Array(256);
@@ -17,6 +19,11 @@ export class Encoder {
     const srcView = new Uint8Array(this.v.buffer, 0, this.c);
     dst.set(srcView);
     return dst.buffer;
+  }
+  
+  finishBase64() {
+    const serial = this.finish();
+    return bytesToBase64(new Uint8Array(serial));
   }
   
   require(addc) {
@@ -49,6 +56,13 @@ export class Encoder {
     this.v[this.c++] = v;
   }
   
+  u24be(v) {
+    this.require(3);
+    this.v[this.c++] = v >> 16;
+    this.v[this.c++] = v >> 8;
+    this.v[this.c++] = v;
+  }
+  
   u32be(v) {
     this.require(4);
     this.v[this.c++] = v >> 24;
@@ -61,6 +75,13 @@ export class Encoder {
     this.require(2);
     this.v[this.c++] = v;
     this.v[this.c++] = v >> 8;
+  }
+  
+  u24le(v) {
+    this.require(3);
+    this.v[this.c++] = v;
+    this.v[this.c++] = v >> 8;
+    this.v[this.c++] = v >> 16;
   }
   
   u32le(v) {

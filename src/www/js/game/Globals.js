@@ -23,11 +23,13 @@ export class Globals {
     this.memS16 = null;
     this.memU32 = null;
     this.memF32 = null;
+    this.recentSpellId = 8; // tracks spell declared by 'hero' and 'saveto' commands, as maps get loaded.
   }
   
   /* Call whenever wasmLoader reloads.
    */
   refresh() {
+    this.recentSpellId = 8;
     
     // Yoink a few things straight off WasmLoader.
     this.p_fmn_global = this.wasmLoader.instance.exports.fmn_global.value;
@@ -170,6 +172,10 @@ export class Globals {
   }
   
   setMap(map, now) {
+  
+    if (map.spellid) this.recentSpellId = map.spellid;
+    else if (map.saveto) this.recentSpellId = map.saveto;
+  
     this.g_map.set(map.cells);
     this.g_maptsid[0] = map.bgImageId;
     this.g_songid[0] = map.songId;

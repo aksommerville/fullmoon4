@@ -1,36 +1,7 @@
 /* DataService.js
- * Provides static assets and saved state.
- * Similar to saved state, we are also the live global repository for plants and sketches.
+ * Provides static assets and certain global state.
+ * We are the live global repository for plants and sketches.
  * (the game proper is only aware of plants and sketches on screen).
- *
- * Saved game:
- * null is valid, meaning no save file select.
- * The empty object is valid, and should mean the initial state.
- * It's stored in localStorage as base64-encoded JSON.
- * {
- *   time: u32 // active play time in ms, overflows every 1200 hours or so
- *   timeOverflow: boolean // if true, (time) is still valid, but should represent saturated eg "999:59:59"
- *   items: u8[] // value is FMN_ITEM_*, which ones we have
- *   itemQualifiers: u8[] // indexed by FMN_ITEM_*
- *   plants: [mapid,x,y,flowerTime,state,fruit][]
- *   sketches: [mapid,x,y,bits,time][]
- *   pos: [mapid,x,y] // hero's position
- *   selectedItem: u8
- *   TODO gs
- * }
- *
- * map: {
- *   cells: Uint8Array(COLC * ROWC)
- *   bgImageId
- *   songId
- *   neighborw
- *   neighbore
- *   neighborn
- *   neighbors
- *   doors: {x,y,mapId,dstx,dsty}[]
- *   sprites: {x,y,spriteId,arg0,arg1,arg2}[]
- *   cellphysics: Uint8Array(256) | null
- * }
  */
  
 import { Constants } from "./Constants.js";
@@ -58,8 +29,6 @@ export class DataService {
     
     this.textDecoder = new this.window.TextDecoder("utf-8");
     this.toc = null; // null, Array, Promise, or Error. Array: { type, id, q, ser, obj }
-    this.savedGame = null;
-    this.savedGameId = null;
     this.plants = [];
     this.sketches = [];
   }
@@ -282,74 +251,6 @@ export class DataService {
   
   _decodeSound(src, id) {
     return new Sound(src, id, this.constants.AUDIO_FRAME_RATE);
-  }
-  
-  /* Saved game.
-   *********************************************************/
-   
-  // Resolves when loaded. For now it's synchronous but I don't expect that to remain true forever.
-  loadSavedGame(id) {
-    this.savedGameId = id;
-    if (!id) {
-      this.savedGame = {};
-      return Promise.resolve();
-    }
-    this.savedGame = null;
-    const key = this.localStorageKeyFromSavedGameId(id);
-    const serial = this.window.localStorage.getItem(key);
-    if (serial) {
-      try {
-        this.savedGame = JSON.parse(atob(serial));
-      } catch (error) {
-        console.error(`Failed to decode saved game ${id}`, { serial, error, key });
-        this.savedGame = {};
-      }
-    } else {
-      this.savedGame = {};
-    }
-    return Promise.resolve();
-  }
-  
-  storeSavedGame(id) {
-    if (!id) {
-      id = this.savedGameId;
-      if (!id) return Promise.reject("Saved game ID required");
-    }
-    if (!this.savedGame) this.savedGame = {};
-    this.savedGameId = id;
-    return new Promise((resolve, reject) => {
-      try {
-        const key = this.localStorageKeyFromSavedGameId(id);
-        const serial = btoa(JSON.stringify(this.savedGame));
-        this.window.localStorage.setItem(key, serial);
-      } catch (e) {
-        reject(e);
-        return;
-      }
-      resolve();
-    });
-  }
-  
-  localStorageKeyFromSavedGameId(id) {
-    if (!id) throw new Error("Invalid saved game ID");
-    return `savedGame[${id}]`;
-  }
-  
-  listSavedGames() {
-    const ids = new Set();
-    for (let i=this.window.localStorage.length; i-->0; ) {
-      const key = this.window.localStorage.key(i);
-      const match = key.match(/^savedGame[(.*)]$/);
-      if (!match) continue;
-      if (!match[1]) continue;
-      ids.add(match[1]);
-    }
-    return Promise.resolve(Array.from(ids));
-  }
-  
-  dropSavedGame() {
-    this.savedGame = null;
-    this.savedGameId = null;
   }
   
   /* Plants and sketches.

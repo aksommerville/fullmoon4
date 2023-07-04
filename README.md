@@ -14,7 +14,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - No travel record: If we did record that, we would also need to persist it. Would be kind of heavy. Prefer gsbit.
 - - `callback ev:LOADED cb:set_gsbit_00xx 12` bits 0..255. We can add another callback, for each further block of 256 bits.
 - [x] UI for saved game management. And everything else re saved games.
-- [ ] web saved games, see stubs in Runtime.js
+- [x] web saved games, see stubs in Runtime.js
 - [x] "End game" and "Settings" from pause menu.
 - [ ] Settings menu.
 - [x] Menu text as strings, currently hard-coded.
