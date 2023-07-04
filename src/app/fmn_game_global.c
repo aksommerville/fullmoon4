@@ -649,6 +649,7 @@ static void fmn_cast_revelations() {
  */
  
 static void fmn_open_magic_doors() {
+  const uint16_t mapid=51;
   const uint32_t door_bits=0x0d0a04;
   uint8_t changed=0;
   struct fmn_sketch *sketch=fmn_global.sketchv;
@@ -662,7 +663,7 @@ static void fmn_open_magic_doors() {
         door->x=sketch->x;
         door->y=sketch->y;
         door->extra=0;
-        door->mapid=66;
+        door->mapid=mapid;
         door->dstx=10;
         door->dsty=6;
         struct fmn_sprite *sprite=fmn_sprite_generate_noparam(FMN_SPRCTL_magicdoor,door->x+0.5f,door->y+0.5f);

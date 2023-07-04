@@ -109,6 +109,11 @@ module.exports = function(src, id, resources, ref/*(type,id)*/) {
           ref(0x05, spriteid);
           // Opportunity to validate sprite args, if we ever feel a need.
         } break;
+        
+      case 0x81: { // BURIED_DOOR
+          const mapid = (src[srcp+3] << 8) | src[srcp+4];
+          ref(0x03, mapid);
+        } break;
     }
     
     srcp += paylen;

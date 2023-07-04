@@ -187,7 +187,7 @@ static uint32_t hello_title_get_color(float time) {
   return fmn_video_pixel_from_rgba((r<<24)|(g<<16)|(u<<8)|l);
 }
 
-/* Choose a tile (image 25) for the cursor.
+/* Choose a tile (image 16) for the cursor.
  */
  
 static uint8_t hello_select_cursor_tile(struct fmn_menu *menu) {
@@ -330,7 +330,7 @@ static void _hello_render(struct fmn_menu *menu) {
   
   { // Draw an indicator left of the selected text label.
     struct fmn_draw_mintile vtx={cursorx,cursory,hello_select_cursor_tile(menu),0};
-    fmn_draw_mintile(&vtx,1,25);
+    fmn_draw_mintile(&vtx,1,16);
   }
 }
 

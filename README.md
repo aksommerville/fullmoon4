@@ -10,7 +10,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ## TODO Platform and tooling, should complete before diving into full maps
 
 - [ ] Settings menu.
-- [x] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
 - [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
@@ -25,11 +24,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history.
-- [ ] verify: I believe this is only looking at demo maps? Need it to run against both sets, separately.
-- [x] Filter resources by qualifier, see src/tool/mkdata/packArchive.js ...already exists, see "qfilter" in mkdatac
-- [x] Translation.
-- [x] Once saving works: Consider "Are you sure?" for New Game when a save file exists. ...not worth the trouble
-- [x] bigpc: Drop "-drivers" from config keys. Just "--video=glx,drm" etc should do. (check all makefiles)
+- [x] verify: I believe this is only looking at demo maps? Need it to run against both sets, separately.
+- [x] verify: Add hard-coded resources. ...this will be an ongoing effort.
+- [ ] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
 
 ### Full Maps
 

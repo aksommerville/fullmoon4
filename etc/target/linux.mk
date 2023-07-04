@@ -63,3 +63,7 @@ $(eval $(call SINGLE_DATA_ARCHIVE,linux,$(linux_DATA_FULL),$(linux_DATA_DEMO),$(
 linux-run-full:$(linux_EXE) $(linux_DATA_FULL);$(linux_EXE) --data=$(linux_DATA_FULL) $(linux_RUN_ARGS)
 linux-run-demo:$(linux_EXE) $(linux_DATA_DEMO);$(linux_EXE) --data=$(linux_DATA_DEMO) $(linux_RUN_ARGS)
 linux-run:linux-run-demo
+
+linux-verify:$(linux_DATA_FULL) $(linux_DATA_DEMO); \
+  $(NODE) src/tool/verify/main.js --archive=$(linux_DATA_FULL) --dir=src/data && \
+  $(NODE) src/tool/verify/main.js --archive=$(linux_DATA_DEMO) --dir=src/data

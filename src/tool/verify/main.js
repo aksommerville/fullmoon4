@@ -11,6 +11,8 @@ const verifySprite = require("./verifySprite.js");
 const verifyString = require("./verifyString.js");
 const verifyWebAudioInstrument = require("./verifyWebAudioInstrument.js");
 const verifyWebAudioSound = require("./verifyWebAudioSound.js");
+const verifyMinsynInstrument = require("./verifyMinsynInstrument.js");
+const verifyMinsynSound = require("./verifyMinsynSound.js");
 
 const HIGHEST_DEFINED_SOUND_ID = 34; // UNPUMPKIN
 // 35..56 (arguably 81) are GM, then sound effects will resume. Think on how we want to track all those.
@@ -209,10 +211,12 @@ for (const res of resources) {
       case 0x06: warningCount += verifyString(serial, qualifier); break;
       case 0x07: switch (qualifier) {
           case 0x01: warningCount += verifyWebAudioInstrument(serial); break;
+          case 0x02: warningCount += verifyMinsynInstrument(serial); break;
           default: throw new Error(`Unknown instrument qualifier`);
         } break;
       case 0x08: switch (qualifier) {
           case 0x01: warningCount += verifyWebAudioSound(serial); break;
+          case 0x02: warningCount += verifyMinsynSound(serial); break;
           default: throw new Error(`Unknown sound qualifier`);
         } break;
       default: throw new Error(`Unknown type`);
@@ -269,8 +273,19 @@ function reachable(type, id) {
 
 // Resources known to be referred in code:
 reachable(RESTYPE_MAP, 1); // initial map
+reachable(RESTYPE_MAP, 51); // choose_a_door, demo. TODO Specific to demo, should allow a different ID in full maps, and I'd like to not hard-code it.
 reachable(RESTYPE_IMAGE, 2); // hero
 reachable(RESTYPE_IMAGE, 4); // items splash
+reachable(RESTYPE_IMAGE, 14); // menu bits
+reachable(RESTYPE_IMAGE, 16); // uitiles (eg hello menu cursor)
+reachable(RESTYPE_IMAGE, 17); // spotlight (door transitions)
+reachable(RESTYPE_IMAGE, 18); // logo
+reachable(RESTYPE_IMAGE, 19); // logo overlay
+reachable(RESTYPE_IMAGE, 20); // font
+reachable(RESTYPE_SONG, 1); // tangled_vine (hello menu)
+reachable(RESTYPE_SONG, 6); // truffles_in_forbidden_sauce (gameover menu)
+reachable(RESTYPE_SONG, 7); // seventh_roots_of_unity (victory menu)
+for (let id=3; id<=27; id++) reachable(RESTYPE_STRING, id); // hard-coded for menus
 for (let id=1; id<=HIGHEST_DEFINED_SOUND_ID; id++) {
   reachable(RESTYPE_SOUND, id);
 }
