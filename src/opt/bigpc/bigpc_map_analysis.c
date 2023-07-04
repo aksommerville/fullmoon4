@@ -90,6 +90,28 @@ uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v) {
   return 0;
 }
 
+/* Teleport target.
+ */
+
+static int fmn_find_teleport_target_cmd_cb(uint8_t opcode,const uint8_t *argv,int argc,void *userdata) {
+  if (opcode==0x45) {
+    if (argv[1]==*(uint8_t*)userdata) return 1;
+  }
+  return 0;
+}
+
+static int fmn_find_teleport_target_cb(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  if (fmn_map_for_each_command(v,c,fmn_find_teleport_target_cmd_cb,userdata)==1) return id;
+  return 0;
+}
+ 
+uint16_t fmn_find_teleport_target(uint8_t spellid) {
+  // TODO We examine potentially every command in every map, every time you teleport.
+  // Consider searching once at load, or at the first request, and caching by spellid.
+  // If we do that, use it at bigpc_savedgame.c:bigpc_savedgame_mapid_from_spellid too.
+  return fmn_datafile_for_each_of_type(bigpc.datafile,FMN_RESTYPE_MAP,fmn_find_teleport_target_cb,&spellid);
+}
+
 /* Directions to item or map, for the crow.
  */
 

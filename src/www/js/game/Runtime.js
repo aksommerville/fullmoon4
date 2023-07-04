@@ -62,6 +62,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_play_song = (songid) => this.playSong(songid);
     this.wasmLoader.env.fmn_get_string = (dst, dsta, id) => this.getString(dst, dsta, id);
     this.wasmLoader.env.fmn_find_map_command = (dstp, mask, vp) => this.findMapCommand(dstp, mask, vp);
+    this.wasmLoader.env.fmn_find_teleport_target = (spellid) => this.findTeleportTarget(spellid);
     this.wasmLoader.env.fmn_find_direction_to_item = (itemid) => this.findDirectionToItem(itemid);
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
@@ -364,6 +365,14 @@ export class Runtime {
       if (checkMap(this.dataService.getMap(door.mapId), door)) return 1;
     }
     
+    return 0;
+  }
+  
+  findTeleportTarget(spellid) {
+    const map = this.dataService.forEachOfType("map", 0, map => {
+      if (map.spellid === spellid) return map.id;
+    });
+    if (map) return map.id;
     return 0;
   }
   

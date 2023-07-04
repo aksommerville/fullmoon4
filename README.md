@@ -39,7 +39,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history.
-- [ ] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast).
+- [x] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast). (we're ready for this, use 'hero' commands)
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Translation.
 - [ ] Once saving works: Consider "Are you sure?" for New Game when a save file exists.

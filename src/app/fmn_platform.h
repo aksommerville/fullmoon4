@@ -504,6 +504,12 @@ uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id);
  */
 uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v);
 
+/* Search maps for a HERO command with the given spellid, ie a teleport target.
+ * Same idea as fmn_find_map_command, but it's guaranteed to search the entire world.
+ * Returns zero if not found.
+ */
+uint16_t fmn_find_teleport_target(uint8_t spellid);
+
 /* Like fmn_find_map_command() but designed for crows rather than compasses.
  * We'll search a much broader range, and return FMN_DIR_*, which way should you go from here to get to it.
  * We can only search for items, either as "treasure" sprites or "buried_treasure" map commands.

@@ -64,6 +64,10 @@ uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v) {
   return 0;
 }
 
+uint16_t fmn_find_teleport_target(uint8_t spellid) {
+  return 1; // 0 is the right answer for "unknown", but 1 is correct for HOME, so at least we can broken-clock-twice-a-day it.
+}
+
 uint8_t fmn_find_direction_to_item(uint8_t itemid) {
   return 0;
 }

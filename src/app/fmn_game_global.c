@@ -543,10 +543,16 @@ static void fmn_bloom_plants() {
   }
 }
 
-/* Teleport to another map, or the same one.
+/* Teleport to another map, looking up by spellid.
+ * Technically any spellid is valid, but please only use: HOME,TELE1,TELE2,TELE3,TELE4
  */
  
-static void fmn_teleport(uint16_t mapid) {
+static void fmn_teleport(uint8_t spellid) {
+  uint16_t mapid=fmn_find_teleport_target(spellid);
+  if (!mapid) {
+    fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+    return;
+  }
   fmn_prepare_transition(FMN_TRANSITION_WARP);
   if (fmn_game_load_map(mapid,-1.0f,-1.0f)<1) {
     fmn_cancel_transition();
@@ -694,14 +700,11 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_INVISIBLE: fmn_invisibility_begin(); break;
     case FMN_SPELLID_REVELATIONS: fmn_cast_revelations(); break;
     case FMN_SPELLID_OPEN: fmn_open_magic_doors(); break;
-    case FMN_SPELLID_HOME: fmn_teleport(1); break;
-    //TODO mapid for TELE(n) should be stored in the archive somehow.
-    /*TODO TELE 1..4 disabled for demo
-    case FMN_SPELLID_TELE1: fmn_teleport(6); break;
-    case FMN_SPELLID_TELE2: fmn_teleport(13); break;
-    case FMN_SPELLID_TELE3: fmn_teleport(11); break;
-    case FMN_SPELLID_TELE4: fmn_teleport(21); break;
-    /**/
+    case FMN_SPELLID_HOME:
+    case FMN_SPELLID_TELE1:
+    case FMN_SPELLID_TELE2:
+    case FMN_SPELLID_TELE3:
+    case FMN_SPELLID_TELE4: fmn_teleport(spellid); break;
   }
 }
 
