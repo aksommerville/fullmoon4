@@ -2,7 +2,7 @@
  */
  
 import { Globals } from "../game/Globals.js";
-import { Constants } from "../game/Constants.js";
+import * as FMN from "../game/Constants.js";
 import { DataService } from "../game/DataService.js";
 import { AudioChannel } from "./AudioChannel.js";
 import { AudioVoice } from "./AudioVoice.js";
@@ -11,12 +11,11 @@ import { Preferences } from "../game/Preferences.js";
  
 export class Synthesizer {
   static getDependencies() {
-    return [Window, Globals, Constants, DataService, Preferences];
+    return [Window, Globals, DataService, Preferences];
   }
-  constructor(window, globals, constants, dataService, preferences) {
+  constructor(window, globals, dataService, preferences) {
     this.window = window;
     this.globals = globals;
-    this.constants = constants;
     this.dataService = dataService;
     this.preferences = preferences;
     
@@ -42,7 +41,7 @@ export class Synthesizer {
       // This has to be done after the first user interaction, not during construction.
       if (this.window.AudioContext) {
         this.context = new this.window.AudioContext({
-          sampleRate: this.constants.AUDIO_FRAME_RATE,
+          sampleRate: FMN.AUDIO_FRAME_RATE,
           latencyHint: "interactive",
         });
       } else {
@@ -103,7 +102,7 @@ export class Synthesizer {
   }
   
   _checkViolin() {
-    if (this.globals.g_active_item[0] === this.constants.ITEM_VIOLIN) {
+    if (this.globals.g_active_item[0] === FMN.ITEM_VIOLIN) {
       if (!this.pausedForViolin) {
         this.pausedForViolin = true;
         this.songPlayer.releaseAll();
@@ -163,7 +162,7 @@ export class Synthesizer {
     }
   
     // Some events, eg All Sound Off, do not target a channel.
-    if ((chid < 0) || (chid >= this.constants.AUDIO_CHANNEL_COUNT)) {
+    if ((chid < 0) || (chid >= FMN.AUDIO_CHANNEL_COUNT)) {
       this.channellessEvent(opcode, a, b);
     
     // Program Change and Bank Select are managed at this level.
@@ -213,7 +212,7 @@ export class Synthesizer {
   
   requireChannel(chid) {
     if (chid < 0) return null;
-    if (chid >= this.constants.AUDIO_CHANNEL_COUNT) return null;
+    if (chid >= FMN.AUDIO_CHANNEL_COUNT) return null;
     if (this.channels[chid]) return this.channels[chid];
     let fqpid = this.fqpids[chid];
     if (!fqpid) fqpid = 0;

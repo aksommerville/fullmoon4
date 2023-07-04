@@ -5,16 +5,15 @@
  */
  
 import { WasmLoader } from "../util/WasmLoader.js";
-import { Constants } from "./Constants.js";
+import * as FMN from "./Constants.js";
 import { DataService } from "./DataService.js";
  
 export class Globals {
   static getDependencies() {
-    return [WasmLoader, Constants, DataService];
+    return [WasmLoader, DataService];
   }
-  constructor(wasmLoader, constants, dataService) {
+  constructor(wasmLoader, dataService) {
     this.wasmLoader = wasmLoader;
-    this.constants = constants;
     this.dataService = dataService;
     
     this.p_fmn_global = 0;
@@ -40,23 +39,23 @@ export class Globals {
     this.memF32 = this.wasmLoader.memF32;
     
     // "p_" Record some pointers into fmn_global.
-    this.p_map_end = this.p_fmn_global + 8 + this.constants.COLC * this.constants.ROWC;
+    this.p_map_end = this.p_fmn_global + 8 + FMN.COLC * FMN.ROWC;
     this.p_cellphysics = this.p_map_end + 16;
     this.p_cellphysics_end = this.p_cellphysics + 256;
     this.p_sprite_storage = this.p_cellphysics_end;
-    this.p_sprite_storage_end = this.p_sprite_storage + this.constants.SPRITE_STORAGE_SIZE;
-    this.p_door_end = this.p_sprite_storage_end + this.constants.DOOR_LIMIT * this.constants.DOOR_SIZE;
-    this.p_plantv_end = this.p_door_end + 4 + this.constants.PLANT_LIMIT * this.constants.PLANT_SIZE;
-    this.p_sketchv_end = this.p_plantv_end + 4 + this.constants.SKETCH_LIMIT * this.constants.SKETCH_SIZE;
+    this.p_sprite_storage_end = this.p_sprite_storage + FMN.SPRITE_STORAGE_SIZE;
+    this.p_door_end = this.p_sprite_storage_end + FMN.DOOR_LIMIT * FMN.DOOR_SIZE;
+    this.p_plantv_end = this.p_door_end + 4 + FMN.PLANT_LIMIT * FMN.PLANT_SIZE;
+    this.p_sketchv_end = this.p_plantv_end + 4 + FMN.SKETCH_LIMIT * FMN.SKETCH_SIZE;
     this.p_hero = this.p_sketchv_end + 40;
     this.p_gs = this.p_hero + 36;
-    this.p_violin_song = this.p_gs + this.constants.GS_SIZE;
-    this.p_weather = this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH + 7;
+    this.p_violin_song = this.p_gs + FMN.GS_SIZE;
+    this.p_weather = this.p_violin_song + FMN.VIOLIN_SONG_LENGTH + 7;
     
     // "g_" Make a bunch of TypedArrays pointing to individual variables.
     this.g_spritev = new Uint32Array(this.memU8.buffer, this.p_fmn_global, 1);
     this.g_spritec = new Uint32Array(this.memU8.buffer, this.p_fmn_global + 4, 1);
-    this.g_map = new Uint8Array(this.memU8.buffer, this.p_fmn_global + 8, this.constants.COLC * this.constants.ROWC);
+    this.g_map = new Uint8Array(this.memU8.buffer, this.p_fmn_global + 8, FMN.COLC * FMN.ROWC);
     this.g_maptsid = new Uint8Array(this.memU8.buffer, this.p_map_end, 1);
     this.g_songid = new Uint8Array(this.memU8.buffer, this.p_map_end + 1, 1);
     this.g_neighborw = new Uint16Array(this.memU8.buffer, this.p_map_end + 2, 1);
@@ -68,12 +67,12 @@ export class Globals {
     this.g_saveto = new Uint8Array(this.memU8.buffer, this.p_map_end + 14, 1);
     this.g_herostartp = new Uint8Array(this.memU8.buffer, this.p_map_end + 15, 1);
     this.g_cellphysics = new Uint8Array(this.memU8.buffer, this.p_cellphysics, 256);
-    this.g_sprite_storage = new Uint8Array(this.memU8.buffer, this.p_sprite_storage, this.constants.SPRITE_STORAGE_SIZE);
-    this.g_doorv = new Uint8Array(this.memU8.buffer, this.p_sprite_storage_end, this.constants.DOOR_SIZE * this.constants.DOOR_LIMIT);
+    this.g_sprite_storage = new Uint8Array(this.memU8.buffer, this.p_sprite_storage, FMN.SPRITE_STORAGE_SIZE);
+    this.g_doorv = new Uint8Array(this.memU8.buffer, this.p_sprite_storage_end, FMN.DOOR_SIZE * FMN.DOOR_LIMIT);
     this.g_doorc = new Uint32Array(this.memU8.buffer, this.p_door_end, 1);
-    this.g_plantv = new Uint8Array(this.memU8.buffer, this.p_door_end + 4, this.constants.PLANT_SIZE * this.constants.PLANT_LIMIT);
+    this.g_plantv = new Uint8Array(this.memU8.buffer, this.p_door_end + 4, FMN.PLANT_SIZE * FMN.PLANT_LIMIT);
     this.g_plantc = new Uint32Array(this.memU8.buffer, this.p_plantv_end, 1);
-    this.g_sketchv = new Uint8Array(this.memU8.buffer, this.p_plantv_end + 4, this.constants.SKETCH_SIZE * this.constants.SKETCH_LIMIT);
+    this.g_sketchv = new Uint8Array(this.memU8.buffer, this.p_plantv_end + 4, FMN.SKETCH_SIZE * FMN.SKETCH_LIMIT);
     this.g_sketchc = new Uint32Array(this.memU8.buffer, this.p_sketchv_end, 1);
     this.g_selected_item = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 4, 1);
     this.g_active_item = new Uint8Array(this.memU8.buffer, this.p_sketchv_end + 5, 1);
@@ -98,10 +97,10 @@ export class Globals {
     this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 32, 2); // [x,y]
     this.g_werewolf_dead = new Uint8Array(this.memU8.buffer, this.p_hero + 34, 1);
     this.g_blowback = new Uint8Array(this.memU8.buffer, this.p_hero + 35, 1);
-    this.g_gs = new Uint8Array(this.memU8.buffer, this.p_gs, this.constants.GS_SIZE);
-    this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, this.constants.VIOLIN_SONG_LENGTH);
-    this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH, 1);
-    this.g_violin_songp = new Uint8Array(this.memU8.buffer, this.p_violin_song + this.constants.VIOLIN_SONG_LENGTH + 4, 1);
+    this.g_gs = new Uint8Array(this.memU8.buffer, this.p_gs, FMN.GS_SIZE);
+    this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, FMN.VIOLIN_SONG_LENGTH);
+    this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + FMN.VIOLIN_SONG_LENGTH, 1);
+    this.g_violin_songp = new Uint8Array(this.memU8.buffer, this.p_violin_song + FMN.VIOLIN_SONG_LENGTH + 4, 1);
     this.g_wind_dir = new Uint8Array(this.memU8.buffer, this.p_weather, 1);
     this.g_wind_time = new Float32Array(this.memU8.buffer, this.p_weather + 1, 1);
     this.g_rain_time = new Float32Array(this.memU8.buffer, this.p_weather + 5, 1);
@@ -139,24 +138,24 @@ export class Globals {
   }
   
   getSpriteBv(p) {
-    return new Uint8Array(this.memU8.buffer, p + 16, this.constants.SPRITE_BV_SIZE);
+    return new Uint8Array(this.memU8.buffer, p + 16, FMN.SPRITE_BV_SIZE);
   }
   getSpriteSv(p) {
     return new Int16Array(this.memU8.buffer,
-      p + 16 + this.constants.SPRITE_BV_SIZE,
-      this.constants.SPRITE_SV_SIZE
+      p + 16 + FMN.SPRITE_BV_SIZE,
+      FMN.SPRITE_SV_SIZE
     );
   }
   getSpriteFv(p) {
     return new Float32Array(this.memU8.buffer,
-      p + 16 + this.constants.SPRITE_BV_SIZE + this.constants.SPRITE_SV_SIZE * 2,
-      this.constants.SPRITE_FV_SIZE
+      p + 16 + FMN.SPRITE_BV_SIZE + FMN.SPRITE_SV_SIZE * 2,
+      FMN.SPRITE_FV_SIZE
     );
   }
   getSpritePv(p) {
     return new Uint32Array(this.memU8.buffer,
-      p + 16 + this.constants.SPRITE_BV_SIZE + this.constants.SPRITE_SV_SIZE * 2 + this.constants.SPRITE_FV_SIZE * 4,
-      this.constants.SPRITE_PV_SIZE
+      p + 16 + FMN.SPRITE_BV_SIZE + FMN.SPRITE_SV_SIZE * 2 + FMN.SPRITE_FV_SIZE * 4,
+      FMN.SPRITE_PV_SIZE
     );
   }
   
@@ -166,7 +165,7 @@ export class Globals {
     for (; spritei-->0; spritepp++) {
       const spritep = this.memU32[spritepp];
       const style = this.memU8[spritep + 8];
-      if (style === this.constants.SPRITE_STYLE_HERO) return this.getSpriteByAddress(spritep);
+      if (style === FMN.SPRITE_STYLE_HERO) return this.getSpriteByAddress(spritep);
     }
     return null;
   }
@@ -191,7 +190,7 @@ export class Globals {
     this.g_facedir_gsbit[1] = map.facedir_gsbit[1];
     this.g_saveto[0] = map.saveto;
     if (map.doors && map.doors.length) {
-      const doorc = Math.min(map.doors.length, this.constants.DOOR_LIMIT);
+      const doorc = Math.min(map.doors.length, FMN.DOOR_LIMIT);
       this.g_doorc[0] = doorc;
       for (let i=0, dstp=0; i<doorc; i++ ) {
         const door = map.doors[i];
@@ -205,7 +204,7 @@ export class Globals {
         this.g_doorv[dstp++] = door.extra >> 8;
         if (door.mapId && door.extra) { // buried door. we must change the tile to 0x3f if warranted
           if (this.getGsBit(door.extra)) {
-            this.g_map[door.y * this.constants.COLC + door.x] = 0x3f;
+            this.g_map[door.y * FMN.COLC + door.x] = 0x3f;
           }
         }
       }
@@ -234,8 +233,8 @@ export class Globals {
     for (let [mapid,x,y,flowerTime,state,fruit] of this.dataService.plants) {
       if (mapid !== map.id) continue;
       if (!map.indoors) { // auto-bloom... kind of a lot of conditions...
-        if (now && flowerTime && (state === this.constants.PLANT_STATE_GROW) && (now >= flowerTime)) {
-          state = this.constants.PLANT_STATE_FLOWER;
+        if (now && flowerTime && (state === FMN.PLANT_STATE_GROW) && (now >= flowerTime)) {
+          state = FMN.PLANT_STATE_FLOWER;
         }
       }
       this.addPlant(x, y, true, state, fruit, flowerTime);
@@ -262,18 +261,18 @@ export class Globals {
    ***************************************************************************/
   
   getSketch(x, y, create, time) {
-    if ((x < 0) || (y < 0) || (x >= this.constants.COLC) || (y >= this.constants.ROWC)) return null;
+    if ((x < 0) || (y < 0) || (x >= FMN.COLC) || (y >= FMN.ROWC)) return null;
     const count = this.g_sketchc[0];
-    for (let i=0, p=0; i<count; i++, p+=this.constants.SKETCH_SIZE) {
+    for (let i=0, p=0; i<count; i++, p+=FMN.SKETCH_SIZE) {
       if ((this.g_sketchv[p] === x) && (this.g_sketchv[p+1] === y)) return this.getSketchByIndex(i);
     }
-    if (create && (count < this.constants.SKETCH_LIMIT)) {
+    if (create && (count < FMN.SKETCH_LIMIT)) {
       if (!time) time = 0;
       this.g_sketchc[0] = count + 1;
-      for (let i=this.constants.SKETCH_SIZE, p=count*this.constants.SKETCH_SIZE; i-->0; p++) {
+      for (let i=FMN.SKETCH_SIZE, p=count*FMN.SKETCH_SIZE; i-->0; p++) {
         this.g_sketchv[p] = 0;
       }
-      let p = count * this.constants.SKETCH_SIZE;
+      let p = count * FMN.SKETCH_SIZE;
       this.g_sketchv[p++] = x;
       this.g_sketchv[p++] = y;
       p += 6; // 2 bytes unused + 4 bytes bits
@@ -288,7 +287,7 @@ export class Globals {
   
   getSketchByIndex(p) {
     if ((p < 0) || (p >= this.g_sketchc[0])) return null;
-    p *= this.constants.SKETCH_SIZE;
+    p *= FMN.SKETCH_SIZE;
     return {
       x: this.g_sketchv[p],
       y: this.g_sketchv[p + 1],
@@ -298,9 +297,9 @@ export class Globals {
   }
   
   setSketch(sketch) {
-    if ((sketch.x < 0) || (sketch.y < 0) || (sketch.x >= this.constants.COLC) || (sketch.y >= this.constants.ROWC)) return;
+    if ((sketch.x < 0) || (sketch.y < 0) || (sketch.x >= FMN.COLC) || (sketch.y >= FMN.ROWC)) return;
     const count = this.g_sketchc[0];
-    for (let i=0, p=0; i<count; i++, p+=this.constants.SKETCH_SIZE) {
+    for (let i=0, p=0; i<count; i++, p+=FMN.SKETCH_SIZE) {
       if ((this.g_sketchv[p] === sketch.x) && (this.g_sketchv[p+1] === sketch.y)) {
         this.g_sketchv[p+4] = sketch.bits;
         this.g_sketchv[p+5] = sketch.bits >> 8;
@@ -313,12 +312,12 @@ export class Globals {
         return;
       }
     }
-    if (count >= this.constants.SKETCH_LIMIT) return;
+    if (count >= FMN.SKETCH_LIMIT) return;
     this.g_sketchc[0] = count + 1;
-    for (let i=this.constants.SKETCH_SIZE, p=count*this.constants.SKETCH_SIZE; i-->0; ) {
+    for (let i=FMN.SKETCH_SIZE, p=count*FMN.SKETCH_SIZE; i-->0; ) {
       this.g_sketchv[p] = 0;
     }
-    let p = count * this.constants.SKETCH_SIZE;
+    let p = count * FMN.SKETCH_SIZE;
     this.g_sketchv[p++] = sketch.x;
     this.g_sketchv[p++] = sketch.y;
     p += 2;
@@ -342,7 +341,7 @@ export class Globals {
   
   getPlantByIndex(p) {
     if ((p < 0) || (p >= this.g_plantc[0])) return null;
-    p *= this.constants.PLANT_SIZE;
+    p *= FMN.PLANT_SIZE;
     const plant = {
       x: this.g_plantv[p],
       y: this.g_plantv[p + 1],
@@ -362,15 +361,15 @@ export class Globals {
   }
   
   addPlant(x, y, reuse, state, fruit, flower_time) {
-    if (!state) state = this.constants.PLANT_STATE_SEED;
+    if (!state) state = FMN.PLANT_STATE_SEED;
     if (!fruit) fruit = 0;
     if (!flower_time) flower_time = 0;
-    if (this.g_plantc[0] >= this.constants.PLANT_LIMIT) {
+    if (this.g_plantc[0] >= FMN.PLANT_LIMIT) {
       if (reuse) {
-        for (let i=this.g_plantc[0], p=0; i-->0; p+=this.constants.PLANT_SIZE) {
+        for (let i=this.g_plantc[0], p=0; i-->0; p+=FMN.PLANT_SIZE) {
           if (
-            (this.g_plantv[p + 2] === this.constants.PLANT_STATE_DEAD) ||
-            (this.g_plantv[p + 2] === this.constants.PLANT_STATE_NONE)
+            (this.g_plantv[p + 2] === FMN.PLANT_STATE_DEAD) ||
+            (this.g_plantv[p + 2] === FMN.PLANT_STATE_NONE)
           ) {
             this.g_plantv[p++] = x;
             this.g_plantv[p++] = y;
@@ -389,7 +388,7 @@ export class Globals {
     // If there's already a plant here, drop it and replace.
     // This is important, for PLANT_STATE_NONE.
     let index = null;
-    for (let i=0, p=0; i<this.g_plantc[0]; i++, p+=this.constants.PLANT_SIZE) {
+    for (let i=0, p=0; i<this.g_plantc[0]; i++, p+=FMN.PLANT_SIZE) {
       if (this.g_plantv[0] !== x) continue;
       if (this.g_plantv[1] !== y) continue;
       index = i;
@@ -398,7 +397,7 @@ export class Globals {
     if (index === null) {
       index = this.g_plantc[0]++;
     }
-    let p = this.constants.PLANT_SIZE * index;
+    let p = FMN.PLANT_SIZE * index;
     this.g_plantv[p++] = x;
     this.g_plantv[p++] = y;
     this.g_plantv[p++] = state;
@@ -411,7 +410,7 @@ export class Globals {
   }
   
   updatePlant(plant) {
-    for (let i=this.g_plantc[0], p=0; i-->0; p+=this.constants.PLANT_SIZE) {
+    for (let i=this.g_plantc[0], p=0; i-->0; p+=FMN.PLANT_SIZE) {
       if (this.g_plantv[p] !== plant.x) continue;
       if (this.g_plantv[p + 1] !== plant.y) continue;
       this.g_plantv[p + 2] = plant.state;

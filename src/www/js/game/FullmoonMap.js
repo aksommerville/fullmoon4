@@ -2,16 +2,18 @@
  * "Map" to its friends, but that is already a JS class name.
  */
  
+import * as FMN from "./Constants.js";
+ 
 export class FullmoonMap {
-  constructor(src, constants) {
+  constructor(src) {
     // Caller should assign:
     this.id = 0;
     this.cellphysics = null; // Uint8Array(256), ie Tileprops resource
     
-    if (!src) this._init(constants);
+    if (!src) this._init();
     else if (src instanceof FullmoonMap) this._copy(src);
-    else if (src instanceof Uint8Array) this._decode(src, constants);
-    else if (src instanceof ArrayBuffer) this._decode(new Uint8Array(src), constants);
+    else if (src instanceof Uint8Array) this._decode(src);
+    else if (src instanceof ArrayBuffer) this._decode(new Uint8Array(src));
     else throw new Error(`Unsuitable input for FullmoonMap`);
   }
   
@@ -21,13 +23,16 @@ export class FullmoonMap {
   }
   
   getCommandLocation(opcode, argv, argp, argc) {
-    //TODO hard-coded map dimensions 20x12. Put those constants somewhere we don't need an Injector to reach.
+    const mapw = FMN.COLC;
+    const maph = FMN.ROWC;
+    const hmapw = mapw >> 1;
+    const hmaph = maph >> 1;
     switch (opcode) {
       // It's weird to ask this about NEIGHBOR commands, but let's be coherent about it:
-      case 0x40: return [10 - 20, 6];
-      case 0x41: return [10 + 20, 6];
-      case 0x42: return [10, 6 - 12];
-      case 0x43: return [10, 6 + 12];
+      case 0x40: return [hmapw - mapw, hmaph];
+      case 0x41: return [hmapw + mapw, hmaph];
+      case 0x42: return [hmapw, hmaph - maph];
+      case 0x43: return [hmapw, hmaph + maph];
       // Every positioned command so far stores its position packed in the first byte:
       case 0x44: // TRANSMOGRIFY
       case 0x45: // HERO
@@ -35,13 +40,13 @@ export class FullmoonMap {
       case 0x61: // SKETCH
       case 0x80: // SPRITE
       case 0x64: // EVENT_TRIGGER
-          return [argv[argp] % 20, Math.floor(argv[argp] / 20)];
+          return [argv[argp] % mapw, Math.floor(argv[argp] / mapw)];
     }
-    return [10, 6]; // Middle of screen, for commands without a location.
+    return [hmapw, hmaph]; // Middle of screen, for commands without a location.
   }
   
-  _init(constants) {
-    this.cells = new Uint8Array(constants.COLC * constants.ROWC);
+  _init() {
+    this.cells = new Uint8Array(FMN.COLC * FMN.ROWC);
     this.commands = []; // Normally a Uint8Array pointing into the original source.
     this.doors = []; // {x,y,mapId,dstx,dsty,extra}
     this.sprites = []; // {x,y,spriteId,arg0,arg1,arg2}
@@ -53,7 +58,7 @@ export class FullmoonMap {
     this.blowback = 0;
     this.ancillary = 0;
     this.wind = 0;
-    this.herostartp = (constants.ROWC >> 1) * constants.COLC + (constants.COLC >> 1);
+    this.herostartp = (FMN.ROWC >> 1) * FMN.COLC + (FMN.COLC >> 1);
     this.spellid = 0;
     this.songId = 0;
     this.bgImageId = 0;
@@ -90,10 +95,10 @@ export class FullmoonMap {
     this.saveto = src.saveto;
   }
   
-  _decode(src, constants) {
-    this._init(constants);
+  _decode(src) {
+    this._init();
     
-    const cellsLength = constants.COLC * constants.ROWC;
+    const cellsLength = FMN.COLC * FMN.ROWC;
     if (src.length < cellsLength) {
       throw new Error(`Illegal length ${c} for map`);
     }
@@ -118,8 +123,8 @@ export class FullmoonMap {
         case 0x45: this.herostartp = v[argp]; this.spellid = v[argp + 1]; break;
         
         case 0x44: this.doors.push({ // transmogrify
-            x: v[argp] % constants.COLC,
-            y: Math.floor(v[argp] / constants.COLC),
+            x: v[argp] % FMN.COLC,
+            y: Math.floor(v[argp] / FMN.COLC),
             mapId: 0,
             dstx: v[argp + 1] & 0xc0,
             dsty: v[argp + 1] & 0x3f,
@@ -128,25 +133,25 @@ export class FullmoonMap {
           break;
           
         case 0x60: this.doors.push({ // regular door
-            x: v[argp] % constants.COLC,
-            y: Math.floor(v[argp] / constants.COLC),
+            x: v[argp] % FMN.COLC,
+            y: Math.floor(v[argp] / FMN.COLC),
             mapId: (v[argp + 1] << 8) | v[argp + 2],
-            dstx: v[argp + 3] % constants.COLC,
-            dsty: Math.floor(v[argp + 3] / constants.COLC),
+            dstx: v[argp + 3] % FMN.COLC,
+            dsty: Math.floor(v[argp + 3] / FMN.COLC),
             extra: 0,
           });
           break;
           
         case 0x61: this.sketches.push({
-            x: v[argp] % constants.COLC,
-            y: Math.floor(v[argp] / constants.COLC),
+            x: v[argp] % FMN.COLC,
+            y: Math.floor(v[argp] / FMN.COLC),
             bits: (v[argp + 1] << 16) | (v[argp + 2] << 8) | v[argp + 3],
           });
           break;
           
         case 0x62: this.doors.push({ // buried_treasure
-            x: v[argp] % constants.COLC,
-            y: Math.floor(v[argp] / constants.COLC),
+            x: v[argp] % FMN.COLC,
+            y: Math.floor(v[argp] / FMN.COLC),
             mapId: 0,
             dstx: 0x30,
             dsty: v[argp + 3],
@@ -162,8 +167,8 @@ export class FullmoonMap {
           break;
           
         case 0x64: this.doors.push({ // event_trigger
-            x: v[argp] % constants.COLC,
-            y: Math.floor(v[argp] / constants.COLC),
+            x: v[argp] % FMN.COLC,
+            y: Math.floor(v[argp] / FMN.COLC),
             mapId: 0,
             dstx: 0x20,
             dsty: 0,
@@ -177,8 +182,8 @@ export class FullmoonMap {
           } break;
           
         case 0x80: this.sprites.push({
-            x: v[argp] % constants.COLC,
-            y: Math.floor(v[argp] / constants.COLC),
+            x: v[argp] % FMN.COLC,
+            y: Math.floor(v[argp] / FMN.COLC),
             spriteId: (v[argp + 1] << 8) | v[argp + 2],
             arg0: v[argp + 3],
             arg1: v[argp + 4],
@@ -187,11 +192,11 @@ export class FullmoonMap {
           break;
           
         case 0x81: this.doors.push({ // buried_door
-            x: v[argp] % constants.COLC,
-            y: Math.floor(v[argp] / constants.COLC),
+            x: v[argp] % FMN.COLC,
+            y: Math.floor(v[argp] / FMN.COLC),
             mapId: (v[argp + 3] << 8) | v[argp + 4],
-            dstx: v[argp + 5] % constants.COLC,
-            dsty: Math.floor(v[argp + 5] / constants.COLC),
+            dstx: v[argp + 5] % FMN.COLC,
+            dsty: Math.floor(v[argp + 5] / FMN.COLC),
             extra: (v[argp + 1] << 8) | v[argp + 2],
           });
           break;
@@ -228,13 +233,13 @@ export class FullmoonMap {
   regionContainsPassableCell(x, y, w, h, includeHoles) {
     if (x < 0) { w += x; x = 0; }
     if (y < 0) { h += y; y = 0; }
-    if (x + w > 20) w = 20 - x; //XXX hard-coded map size
-    if (y + h > 12) h = 12 - y;
+    if (x + w > FMN.COLC) w = FMN.COLC - x;
+    if (y + h > FMN.ROWC) h = FMN.ROWC - y;
     if ((w < 1) || (h < 1)) return false;
     if (!this.cellphysics) return true; // physics unset, everything is passable
-    for (let rowp=y*20+x; h-->0; rowp+=20) {
+    for (let rowp=y*FMN.COLC+x; h-->0; rowp+=FMN.COLC) {
       for (let p=rowp, xi=w; xi-->0; p++) {
-        switch (this.cellphysics[this.cells[p]]) { // XXX hard-coded FMN_CELLPHYSICS
+        switch (this.cellphysics[this.cells[p]]) { // XXX hard-coded FMN.CELLPHYSICS
           // Truly vacant, no doubt:
           case 0x00:
           case 0x03:

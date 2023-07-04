@@ -4,19 +4,18 @@
  
 import { Dom } from "../util/Dom.js";
 import { InputManager } from "../game/InputManager.js";
-import { Constants } from "../game/Constants.js";
+import * as FMN from "../game/Constants.js";
 import { Preferences } from "../game/Preferences.js";
 
 export class GameUi {
   static getDependencies() {
-    return [HTMLElement, Dom, InputManager, Window, Constants, Preferences];
+    return [HTMLElement, Dom, InputManager, Window, Preferences];
   }
-  constructor(element, dom, inputManager, window, constants, preferences) {
+  constructor(element, dom, inputManager, window, preferences) {
     this.element = element;
     this.dom = dom;
     this.inputManager = inputManager;
     this.window = window;
-    this.constants = constants;
     this.preferences = preferences;
     
     this.running = false;
@@ -64,8 +63,8 @@ export class GameUi {
     const event = events[events.length - 1];
     const fullw = event.contentRect.width;
     const fullh = event.contentRect.height;
-    const fbw = this.constants.COLC * this.constants.TILESIZE;
-    const fbh = this.constants.ROWC * this.constants.TILESIZE;
+    const fbw = FMN.COLC * FMN.TILESIZE;
+    const fbh = FMN.ROWC * FMN.TILESIZE;
     
     // If anything is zero, get out.
     if (!fullw || !fullh || !fbw || !fbh) return;

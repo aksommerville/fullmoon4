@@ -2,17 +2,16 @@
  * Identical interface as RendererGl, owner can swap them.
  */
  
-import { Constants } from "./Constants.js";
+import * as FMN from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { DataService } from "./DataService.js";
 import { Dom } from "../util/Dom.js";
 
 export class Renderer2d {
   static getDependencies() {
-    return [Constants, Globals, DataService, Dom];
+    return [Globals, DataService, Dom];
   }
-  constructor(constants, globals, dataService, dom) {
-    this.constants = constants;
+  constructor(globals, dataService, dom) {
     this.globals = globals;
     this.dataService = dataService;
     this.dom = dom;
@@ -60,8 +59,8 @@ export class Renderer2d {
    ********************************************************************/
   
   fmn_video_init(wmin, wmax, hmin, hmax, pixfmt) {
-    const wpref = this.constants.COLC * this.constants.TILESIZE;
-    const hpref = this.constants.ROWC * this.constants.TILESIZE;
+    const wpref = FMN.COLC * FMN.TILESIZE;
+    const hpref = FMN.ROWC * FMN.TILESIZE;
     
     if ((wmin > wpref) || (wmax < wpref)) return -1;
     if ((hmin > hpref) || (hmax < hpref)) return -1;
@@ -74,13 +73,13 @@ export class Renderer2d {
     }
     
     switch (pixfmt) {
-      case this.constants.VIDEO_PIXFMT_ANY:
-      case this.constants.VIDEO_PIXFMT_ANY_32:
-      case this.constants.VIDEO_PIXFMT_RGBA:
+      case FMN.VIDEO_PIXFMT_ANY:
+      case FMN.VIDEO_PIXFMT_ANY_32:
+      case FMN.VIDEO_PIXFMT_RGBA:
         break;
       default: return -1;
     }
-    this.pixfmt = this.constants.VIDEO_PIXFMT_RGBA;
+    this.pixfmt = FMN.VIDEO_PIXFMT_RGBA;
     
     return 0;
   }
@@ -345,13 +344,13 @@ export class Renderer2d {
     this.ctx.save();
     this.ctx.translate(dstmidx, dstmidy);
     switch (xform) {
-      case this.constants.XFORM_XREV: this.ctx.scale(-1, 1); break;
-      case this.constants.XFORM_YREV: this.ctx.scale(1, -1); break;
-      case this.constants.XFORM_XREV | this.constants.XFORM_YREV: this.ctx.scale(-1, -1); break;
-      case this.constants.XFORM_SWAP: this.ctx.setTransform(0, 1, 1, 0, dstmidx, dstmidy); break;
-      case this.constants.XFORM_SWAP | this.constants.XFORM_XREV: this.ctx.setTransform(0, -1, 1, 0, dstmidx, dstmidy); break;
-      case this.constants.XFORM_SWAP | this.constants.XFORM_YREV: this.ctx.setTransform(0, 1, -1, 0, dstmidx, dstmidy); break;
-      case this.constants.XFORM_SWAP | this.constants.XFORM_XREV | this.constants.XFORM_YREV: this.ctx.setTransform(0, -1, -1, 0, dstmidx, dstmidy); break;
+      case FMN.XFORM_XREV: this.ctx.scale(-1, 1); break;
+      case FMN.XFORM_YREV: this.ctx.scale(1, -1); break;
+      case FMN.XFORM_XREV | FMN.XFORM_YREV: this.ctx.scale(-1, -1); break;
+      case FMN.XFORM_SWAP: this.ctx.setTransform(0, 1, 1, 0, dstmidx, dstmidy); break;
+      case FMN.XFORM_SWAP | FMN.XFORM_XREV: this.ctx.setTransform(0, -1, 1, 0, dstmidx, dstmidy); break;
+      case FMN.XFORM_SWAP | FMN.XFORM_YREV: this.ctx.setTransform(0, 1, -1, 0, dstmidx, dstmidy); break;
+      case FMN.XFORM_SWAP | FMN.XFORM_XREV | FMN.XFORM_YREV: this.ctx.setTransform(0, -1, -1, 0, dstmidx, dstmidy); break;
     }
     this.ctx.drawImage(src, srcx, srcy, w, h, -halfw, -halfh, w, h);
     this.ctx.restore();

@@ -9,21 +9,13 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ## TODO Platform and tooling, should complete before diving into full maps
 
-- [x] Track travel. Use for crow guidance, and report coverage at the end. Flag maps eg border as "not participating in coverage".
-- - Or use a "set gsbit" map command, for selected maps only? Coverage reporting is not a big priority.
-- - No travel record: If we did record that, we would also need to persist it. Would be kind of heavy. Prefer gsbit.
-- - `callback ev:LOADED cb:set_gsbit_00xx 12` bits 0..255. We can add another callback, for each further block of 256 bits.
-- [x] UI for saved game management. And everything else re saved games.
-- [x] web saved games, see stubs in Runtime.js
-- [x] "End game" and "Settings" from pause menu.
 - [ ] Settings menu.
-- [x] Menu text as strings, currently hard-coded.
 - [ ] Data editor improvements.
 - - [ ] Home page
 - - [ ] MapAllUi: Point out neighbor mismatches.
 - - [ ] Delete maps (and resources in general)
 - [ ] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one.
-- [ ] Rekajigger Constants.js, use actual inlinable constants.
+- [x] Rekajigger Constants.js, use actual inlinable constants.
 - [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
@@ -39,7 +31,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history.
-- [x] Remove hard-coded teleport targets, store in the archive (fmn_spell_cast). (we're ready for this, use 'hero' commands)
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Translation.
 - [ ] Once saving works: Consider "Are you sure?" for New Game when a save file exists.

@@ -4,7 +4,7 @@
  * (the game proper is only aware of plants and sketches on screen).
  */
  
-import { Constants } from "./Constants.js";
+import * as FMN from "./Constants.js";
 import { Song } from "../synth/Song.js";
 import { Instrument } from "../synth/Instrument.js";
 import { Sound } from "../synth/Sound.js";
@@ -21,11 +21,10 @@ const RESTYPE_SOUND = 0x08;
  
 export class DataService {
   static getDependencies() {
-    return [Window, Constants];
+    return [Window];
   }
-  constructor(window, constants) {
+  constructor(window) {
     this.window = window;
-    this.constants = constants;
     
     this.textDecoder = new this.window.TextDecoder("utf-8");
     this.toc = null; // null, Array, Promise, or Error. Array: { type, id, q, ser, obj }
@@ -250,7 +249,7 @@ export class DataService {
   }
   
   _decodeSound(src, id) {
-    return new Sound(src, id, this.constants.AUDIO_FRAME_RATE);
+    return new Sound(src, id, FMN.AUDIO_FRAME_RATE);
   }
   
   /* Plants and sketches.

@@ -3,15 +3,13 @@
  */
  
 import { Synthesizer } from "./Synthesizer.js";
-import { Constants } from "../game/Constants.js";
 
 export class SoundEffects {
   static getDependencies() {
-    return [Synthesizer, Constants, Window];
+    return [Synthesizer, Window];
   }
-  constructor(synthesizer, constants, window) {
+  constructor(synthesizer, window) {
     this.synthesizer = synthesizer;
-    this.constants = constants;
     this.window = window;
     
     /* Acoustically speaking, the minimum should be no lower than 50 ms.

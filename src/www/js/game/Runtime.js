@@ -8,7 +8,7 @@ import { InputManager } from "./InputManager.js";
 import { Renderer2d } from "./Renderer2d.js";
 //import { RendererGl } from "./RendererGl.js";
 import { Clock } from "./Clock.js";
-import { Constants } from "./Constants.js";
+import * as FMN from "./Constants.js";
 import { Globals } from "./Globals.js";
 import { FullmoonMap } from "./FullmoonMap.js";
 import { Synthesizer } from "../synth/Synthesizer.js";
@@ -19,13 +19,13 @@ export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
-      Renderer2d, /*RendererGl,*/ Clock, Constants, Globals,
+      Renderer2d, /*RendererGl,*/ Clock, Globals,
       Synthesizer, SoundEffects, Document, SavedGameStore
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
-    renderer2d, /*rendererGl,*/ clock, constants, globals,
+    renderer2d, /*rendererGl,*/ clock, globals,
     synthesizer, soundEffects, document, savedGameStore
   ) {
     this.wasmLoader = wasmLoader;
@@ -34,7 +34,6 @@ export class Runtime {
     this.window = window;
     this.renderer = renderer2d; // rendererGl or renderer2d, same interface. TODO let user choose
     this.clock = clock;
-    this.constants = constants;
     this.globals = globals;
     this.synthesizer = synthesizer;
     this.soundEffects = soundEffects;
@@ -246,8 +245,8 @@ export class Runtime {
     this.globals.forEachPlant(p => {
       p.mapId = this.mapId;
       if (
-        (p.state === this.constants.PLANT_STATE_NONE) ||
-        (p.state === this.constants.PLANT_STATE_DEAD)
+        (p.state === FMN.PLANT_STATE_NONE) ||
+        (p.state === FMN.PLANT_STATE_DEAD)
       ) {
         this.dataService.removePlant({ ...p, mapId: this.mapId });
         return;
@@ -268,14 +267,14 @@ export class Runtime {
   addPlant(x, y) {
     if ((x < 0) || (y < 0) || (x >= this.globals.COLC) || (y >= this.globals.ROWC)) return -1;
     if (this.globals.forEachPlant(plant => {
-      if (plant.state === this.constants.PLANT_STATE_NONE) return 0;
+      if (plant.state === FMN.PLANT_STATE_NONE) return 0;
       return ((plant.x === x) && (plant.y === y));
     })) return -1;
     const plant = this.globals.addPlant(
       x, y,
       true,
-      this.constants.PLANT_STATE_SEED,
-      this.constants.PLANT_FRUIT_SEED,
+      FMN.PLANT_STATE_SEED,
+      FMN.PLANT_FRUIT_SEED,
       0 // flowerTime (0=never, gets set when you water it)
     );
     if (!plant) return -1;
@@ -283,7 +282,7 @@ export class Runtime {
       ...plant,
       mapId: this.mapId,
     });
-    this.globals.g_map[y * this.constants.COLC + x] = 0x00;
+    this.globals.g_map[y * FMN.COLC + x] = 0x00;
     this.savedGameStore.setDirty();
     return 0;
   }
@@ -348,8 +347,8 @@ export class Runtime {
           dstv[0] = x;
           dstv[1] = y;
           if (typeof(dx) === "number") {
-            dstv[0] += this.constants.COLC * dx;
-            dstv[1] += this.constants.ROWC * dy;
+            dstv[0] += FMN.COLC * dx;
+            dstv[1] += FMN.ROWC * dy;
           } else { // (dx) is a door, and we point to it, rather than the actual focus
             dstv[0] = dx.x;
             dstv[1] = dx.y;
@@ -415,15 +414,15 @@ export class Runtime {
     if (!from || !to) return 0;
     if (from.id === to.id) return 0xff;
     let dir = 0, distance = 99;
-    const includeHoles = this.globals.g_itemv[this.constants.ITEM_BROOM];
+    const includeHoles = this.globals.g_itemv[FMN.ITEM_BROOM];
     const checkNeighbor = (mapId, ndir) => {
       if (!mapId) return;
       // Don't provide directions thru a wall:
       switch (ndir) {
-        case 0x10: if (!from.regionContainsPassableCell(0, 0, 1, this.constants.ROWC, includeHoles)) return; break;
-        case 0x08: if (!from.regionContainsPassableCell(this.constants.COLC - 1, 0, 1, this.constants.ROWC, includeHoles)) return; break;
-        case 0x40: if (!from.regionContainsPassableCell(0, 0, this.constants.COLC, 1, includeHoles)) return; break;
-        case 0x02: if (!from.regionContainsPassableCell(0, this.constants.ROWC - 1, this.constants.COLC, 1, includeHoles)) return; break;
+        case 0x10: if (!from.regionContainsPassableCell(0, 0, 1, FMN.ROWC, includeHoles)) return; break;
+        case 0x08: if (!from.regionContainsPassableCell(FMN.COLC - 1, 0, 1, FMN.ROWC, includeHoles)) return; break;
+        case 0x40: if (!from.regionContainsPassableCell(0, 0, FMN.COLC, 1, includeHoles)) return; break;
+        case 0x02: if (!from.regionContainsPassableCell(0, FMN.ROWC - 1, FMN.COLC, 1, includeHoles)) return; break;
       }
       if (mapId === to.id) {
         dir = ndir;
@@ -460,11 +459,11 @@ export class Runtime {
     if (from.id === to.id) return 0;
     
     // Filter neighbors. We only want them if that edge is actually reachable.
-    const includeHoles = this.globals.g_itemv[this.constants.ITEM_BROOM];
-    const neighborw = (from.neighborw && from.regionContainsPassableCell(0, 0, 1, this.constants.ROWC, includeHoles)) ? from.neighborw : 0;
-    const neighbore = (from.neighbore && from.regionContainsPassableCell(this.constants.COLC - 1, 0, 1, this.constants.ROWC, includeHoles)) ? from.neighbore : 0;
-    const neighborn = (from.neighborn && from.regionContainsPassableCell(0, 0, this.constants.COLC, 1, includeHoles)) ? from.neighborn : 0;
-    const neighbors = (from.neighbors && from.regionContainsPassableCell(0, this.constants.ROWC - 1, this.constants.COLC, 1, includeHoles)) ? from.neighbors : 0;
+    const includeHoles = this.globals.g_itemv[FMN.ITEM_BROOM];
+    const neighborw = (from.neighborw && from.regionContainsPassableCell(0, 0, 1, FMN.ROWC, includeHoles)) ? from.neighborw : 0;
+    const neighbore = (from.neighbore && from.regionContainsPassableCell(FMN.COLC - 1, 0, 1, FMN.ROWC, includeHoles)) ? from.neighbore : 0;
+    const neighborn = (from.neighborn && from.regionContainsPassableCell(0, 0, FMN.COLC, 1, includeHoles)) ? from.neighborn : 0;
+    const neighbors = (from.neighbors && from.regionContainsPassableCell(0, FMN.ROWC - 1, FMN.COLC, 1, includeHoles)) ? from.neighbors : 0;
     
     // is it an immediate neighbor?
     if (neighborw === to.id) return 1;

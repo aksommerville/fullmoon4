@@ -4,20 +4,19 @@
  
 import { DataService } from "./DataService.js";
 import { Globals } from "./Globals.js";
-import { Constants } from "./Constants.js";
+import * as FMN from "./Constants.js";
 import { Clock } from "./Clock.js";
 import { Encoder } from "../util/Encoder.js";
 import { Decoder } from "../util/Decoder.js";
 
 export class SavedGameStore {
   static getDependencies() {
-    return [Window, DataService, Globals, Constants, Clock];
+    return [Window, DataService, Globals, Clock];
   }
-  constructor(window, dataService, globals, constants, clock) {
+  constructor(window, dataService, globals, clock) {
     this.window = window;
     this.dataService = dataService;
     this.globals = globals;
-    this.constants = constants;
     this.clock = clock;
     
     this.dirtyDebounceTimeMs = 2000;
@@ -196,7 +195,7 @@ export class SavedGameStore {
       encoder.u8(0x04);
       encoder.u8(6);
       encoder.u16be(sketch.mapId);
-      encoder.u8(sketch.y * this.constants.COLC + sketch.x);
+      encoder.u8(sketch.y * FMN.COLC + sketch.x);
       encoder.u24be(sketch.bits);
     }
   }
@@ -206,7 +205,7 @@ export class SavedGameStore {
       encoder.u8(0x03);
       encoder.u8(9);
       encoder.u16be(plant.mapId);
-      encoder.u8(plant.y * this.constants.COLC + plant.x);
+      encoder.u8(plant.y * FMN.COLC + plant.x);
       encoder.u8(plant.state);
       encoder.u8(plant.fruit);
       encoder.u32be(plant.flowerTime);
@@ -274,8 +273,8 @@ export class SavedGameStore {
     const plant = {};
     plant.mapId = decoder.u16be();
     const cellp = decoder.u8();
-    plant.x = cellp % this.constants.COLC;
-    plant.y = Math.floor(cellp / this.constants.COLC);
+    plant.x = cellp % FMN.COLC;
+    plant.y = Math.floor(cellp / FMN.COLC);
     plant.state = decoder.u8();
     plant.fruit = decoder.u8();
     plant.flowerTime = decoder.u32be();
@@ -286,8 +285,8 @@ export class SavedGameStore {
     const sketch = {};
     sketch.mapId = decoder.u16be();
     const cellp = decoder.u8();
-    sketch.x = cellp % this.constants.COLC;
-    sketch.y = Math.floor(cellp / this.constants.COLC);
+    sketch.x = cellp % FMN.COLC;
+    sketch.y = Math.floor(cellp / FMN.COLC);
     sketch.bits = decoder.u24be();
     savedGame.sketches.push(sketch);
   }
