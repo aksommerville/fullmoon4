@@ -12,8 +12,7 @@
 2b2b2b2b2d1b1b1b1b1b1b1b1b1b1b1b1b1b1b2e
 tilesheet caves
 song seven_circles
-dark
-indoors
+flags dark indoors
 neighborw 35
 sprite 8 3 rat 0 0 0
 sprite 9 10 rat 0 0 0

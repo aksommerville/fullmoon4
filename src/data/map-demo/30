@@ -11,7 +11,7 @@
 0101010101010101010101010101010101010101
 0101010101010101010101010101010101010101
 tilesheet villint
-indoors
+flags indoors
 door 9 9 8 4 3
 sprite 7 5 moonsong gs:moonsong 0 0
 sprite 11 6 gate gs:mns_switch 0 0

@@ -20,7 +20,7 @@ void fmn_prepare_transition(int transition) {
   fmn_render_world(fmn_render_global.hero_above_transition?0:1);
   
   // Capture color and "from" position, in case we need them.
-  if (fmn_global.mapdark) fmn_render_global.transition_color=0x22004400;
+  if (fmn_global.mapflag&FMN_MAPFLAG_DARK) fmn_render_global.transition_color=0x22004400;
   else fmn_render_global.transition_color=0x00000000;
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
@@ -34,7 +34,7 @@ void fmn_prepare_transition(int transition) {
 void fmn_commit_transition() {
   fmn_render_global.transitionp=0;
   fmn_render_global.transitionc=FMN_RENDER_TRANSITION_FRAMEC; // make it official
-  if (fmn_global.mapdark) fmn_render_global.transition_color=0x22004400; // purple if either "from" or "to" is dark.
+  if (fmn_global.mapflag&FMN_MAPFLAG_DARK) fmn_render_global.transition_color=0x22004400; // purple if either "from" or "to" is dark.
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   fmn_render_global.transition_to_x=herox*fmn_render_global.tilesize;

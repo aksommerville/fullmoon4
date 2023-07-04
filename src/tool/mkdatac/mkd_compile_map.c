@@ -218,12 +218,31 @@ static int mkd_map_cmd_sprite(struct mkd_respath *respath,const char *src,int sr
   return 0;
 }
 
-/* dark
- * 0x01 () DARK
+/* flags [dark] [indoors] [blowback] [ancillary]
+ * 0x24 (u8 flags) FLAGS: 1=dark 2=indoors 4=blowback 8=ancillary 0xf0=reserved
  */
  
-static int mkd_map_cmd_dark(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
-  if (sr_encode_u8(&mkd.dst,0x01)<0) return -1;
+static int mkd_map_cmd_flags(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
+  uint8_t flags=0;
+  int srcp=0;
+  while (srcp<srcc) {
+    if ((unsigned char)src[srcp]<=0x20) { srcp++; continue; }
+    const char *token=src+srcp;
+    int tokenc=0,i;
+    while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
+    
+         if ((tokenc==4)&&!memcmp(token,"dark",4)) flags|=0x01;
+    else if ((tokenc==7)&&!memcmp(token,"indoors",7)) flags|=0x02;
+    else if ((tokenc==8)&&!memcmp(token,"blowback",8)) flags|=0x04;
+    else if ((tokenc==9)&&!memcmp(token,"ancillary",9)) flags|=0x08;
+    else if (sr_int_eval(&i,token,tokenc)>=2) flags|=i;
+    else {
+      fprintf(stderr,"%s:%d: Unexpected token '%.*s'. (dark,indoors,blowback,ancillary,(int))\n",respath->path,lineno,tokenc,token);
+      return -2;
+    }
+  }
+  if (sr_encode_u8(&mkd.dst,0x24)<0) return -1;
+  if (sr_encode_u8(&mkd.dst,flags)<0) return -1;
   return 0;
 }
 
@@ -308,15 +327,6 @@ static int mkd_map_cmd_transmogrify(struct mkd_respath *respath,const char *src,
   return 0;
 }
 
-/* indoors
- * 0x02 () INDOORS
- */
- 
-static int mkd_map_cmd_indoors(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
-  if (sr_encode_u8(&mkd.dst,0x02)<0) return -1;
-  return 0;
-}
-
 /* wind N|E|S|W # direction it blows *to*, opposite the meterological convention
  * 0x23 (u8 dir) WIND
  */
@@ -351,15 +361,6 @@ static int mkd_map_cmd_sketch(struct mkd_respath *respath,const char *src,int sr
   if (sr_encode_u8(&mkd.dst,0x61)<0) return -1;
   if (sr_encode_u8(&mkd.dst,argv[1]*FMN_COLC+argv[0])<0) return -1;
   if (sr_encode_intbe(&mkd.dst,argv[2],3)<0) return -1;
-  return 0;
-}
-
-/* blowback
- * 0x03 () BLOWBACK
- */
- 
-static int mkd_map_cmd_blowback(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
-  if (sr_encode_u8(&mkd.dst,0x03)<0) return -1;
   return 0;
 }
 
@@ -425,15 +426,6 @@ static int mkd_map_cmd_callback(struct mkd_respath *respath,const char *src,int 
   if (sr_encode_u8(&mkd.dst,argv[0])<0) return -1;
   if (sr_encode_intbe(&mkd.dst,argv[1],2)<0) return -1;
   if (sr_encode_u8(&mkd.dst,argv[2])<0) return -1;
-  return 0;
-}
-
-/* ancillary # Will not be targetted by crow guidance, and not participate in travel coverage.
- * 0x04 () ANCILLARY
- */
- 
-static int mkd_map_cmd_ancillary(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
-  if (sr_encode_u8(&mkd.dst,0x04)<0) return -1;
   return 0;
 }
 
@@ -541,20 +533,17 @@ int mkd_compile_map(struct mkd_respath *respath) {
     _(neighbors)
     _(door)
     _(sprite)
-    _(dark)
     _(hero)
     _(saveto)
     _(transmogrify)
-    _(indoors)
     _(wind)
     _(sketch)
-    _(blowback)
     _(buried_treasure)
     _(buried_door)
     _(callback)
-    _(ancillary)
     _(event_trigger)
     _(facedir)
+    _(flags)
     #undef _
     {
       fprintf(stderr,"%s:%d: Unknown map command '%.*s'\n",respath->path,lineno,kwc,kw);

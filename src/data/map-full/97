@@ -14,4 +14,4 @@ tilesheet swamp
 neighbors 96
 neighbore 50
 neighborn 98
-blowback
+flags ancillary blowback

@@ -407,7 +407,7 @@ static float fmn_weather_update(float elapsed) {
       fmn_global.invisibility_time=0.0f;
     }
   }
-  if (fmn_global.blowback) {
+  if (fmn_global.mapflag&FMN_MAPFLAG_BLOWBACK) {
     fmn_wind_check_blowback(adjusted,elapsed);
   } else {
     fmn_global.blowbackx=0.0f;
@@ -577,7 +577,7 @@ static int fmn_rain_begin_1(struct fmn_sprite *sprite,void *dummy) {
 }
  
 static void fmn_rain_begin() {
-  if (fmn_global.indoors) {
+  if (fmn_global.mapflag&FMN_MAPFLAG_INDOORS) {
     //TODO repudiation?
     return;
   }
@@ -599,7 +599,7 @@ static void fmn_rain_begin() {
 }
  
 static void fmn_wind_begin(uint8_t dir) {
-  if (fmn_global.indoors) {
+  if (fmn_global.mapflag&FMN_MAPFLAG_INDOORS) {
     //TODO repudiation?
     return;
   }
@@ -926,7 +926,7 @@ void fmn_clear_free_birds() {
 void fmn_update_free_birds() {
   if (!fmn_free_bird_count) return;
   fmn_free_bird_count--;
-  if (fmn_global.indoors) return;
+  if (fmn_global.mapflag&FMN_MAPFLAG_INDOORS) return;
   uint8_t dir=fmn_secrets_get_guide_dir();
   if (!dir) return;
   float x=FMN_COLC*0.5f,y=FMN_ROWC*0.5f;

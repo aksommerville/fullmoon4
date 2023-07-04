@@ -12,7 +12,6 @@
 2626262626262626262626262626262626262626
 tilesheet beach
 neighbore 42
-blowback
+flags blowback ancillary
 neighborn 44
-ancillary
 buried_treasure 9 6 0 item:HAT

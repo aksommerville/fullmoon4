@@ -32,7 +32,7 @@ void fmn_render_fade_out() {
  */
  
 void fmn_render_darkness() {
-  if (!fmn_global.mapdark) return;
+  if (!(fmn_global.mapflag&FMN_MAPFLAG_DARK)) return;
   uint32_t rgba;
   float countdown=(fmn_global.illumination_time>fmn_global.match_illumination_time)?fmn_global.illumination_time:fmn_global.match_illumination_time;
   if (countdown<=0.0f) { // full black

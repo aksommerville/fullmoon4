@@ -118,3 +118,8 @@ export const VIDEO_PIXFMT_RGBA       = 0x71;
 export const VIDEO_PIXFMT_BGRA       = 0x72;
 export const VIDEO_PIXFMT_ARGB       = 0x73;
 export const VIDEO_PIXFMT_ABGR       = 0x74;
+
+export const MAPFLAG_DARK = 0x01;
+export const MAPFLAG_INDOORS = 0x02;
+export const MAPFLAG_BLOWBACK = 0x04;
+export const MAPFLAG_ANCILLARY = 0x08;

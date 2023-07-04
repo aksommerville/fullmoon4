@@ -382,7 +382,7 @@ export class Runtime {
   findDirectionToItem(itemid) {
     return this.findDirectionToMap(
       this.dataService.forEachOfType("map", null, (map) => {
-        if (map.ancillary) return false;
+        if (map.flag & FMN.MAPFLAG_ANCILLARY) return false;
         for (const sprite of map.sprites) {
           if (sprite.spriteId === 3) { // treasure. TODO Can we avoid hard-coding resource IDs?
             if (sprite.arg0 === itemid) return map;

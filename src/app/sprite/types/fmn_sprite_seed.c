@@ -33,7 +33,7 @@ static void _seed_update(struct fmn_sprite *sprite,float elapsed) {
   if (fmn_sprites_for_each(seed_search_crow,0)) return;
   
   // Ditto if we're indoors. No birds allowed here.
-  if (fmn_global.indoors) return;
+  if (fmn_global.mapflag&FMN_MAPFLAG_INDOORS) return;
   
   // Crow starts centered vertically, and just offscreen, whichever horizontal edge is further.
   // We don't introduce ourselves to the crow; let it find us on its own.

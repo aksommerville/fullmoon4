@@ -12,7 +12,6 @@
 2626262626262626262626262626262626262626
 tilesheet beach
 neighborn 20
-blowback
+flags blowback ancillary
 neighborw 41
 neighbore 63
-ancillary

@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ## TODO Platform and tooling, should complete before diving into full maps
 
 - [ ] Settings menu.
-- [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
+- [x] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
 - [ ] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.

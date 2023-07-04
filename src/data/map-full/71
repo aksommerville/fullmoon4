@@ -13,5 +13,5 @@
 tilesheet steppe
 neighborw 70
 neighbors 55
-blowback
+flags ancillary blowback
 neighbore 72

@@ -11,6 +11,6 @@
 2b2b2b2b2b2b2b2d1b1b1b1b2e2b2b2b2b2b2b2b
 2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
 tilesheet caves
-indoors
+flags indoors
 door 9 7 25 6 3
 sprite 12 3 treasure item:VIOLIN 0 0

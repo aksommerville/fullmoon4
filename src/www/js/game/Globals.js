@@ -62,8 +62,7 @@ export class Globals {
     this.g_neighbore = new Uint16Array(this.memU8.buffer, this.p_map_end + 4, 1);
     this.g_neighborn = new Uint16Array(this.memU8.buffer, this.p_map_end + 6, 1);
     this.g_neighbors = new Uint16Array(this.memU8.buffer, this.p_map_end + 8, 1);
-    this.g_mapdark = new Uint8Array(this.memU8.buffer, this.p_map_end + 10, 1);
-    this.g_indoors = new Uint8Array(this.memU8.buffer, this.p_map_end + 11, 1);
+    this.g_mapflag = new Uint8Array(this.memU8.buffer, this.p_map_end + 10, 1);
     this.g_saveto = new Uint8Array(this.memU8.buffer, this.p_map_end + 14, 1);
     this.g_herostartp = new Uint8Array(this.memU8.buffer, this.p_map_end + 15, 1);
     this.g_cellphysics = new Uint8Array(this.memU8.buffer, this.p_cellphysics, 256);
@@ -96,7 +95,6 @@ export class Globals {
     this.g_compass = new Int16Array(this.memU8.buffer, this.p_hero + 28, 2); // [x,y]
     this.g_shovel = new Int8Array(this.memU8.buffer, this.p_hero + 32, 2); // [x,y]
     this.g_werewolf_dead = new Uint8Array(this.memU8.buffer, this.p_hero + 34, 1);
-    this.g_blowback = new Uint8Array(this.memU8.buffer, this.p_hero + 35, 1);
     this.g_gs = new Uint8Array(this.memU8.buffer, this.p_gs, FMN.GS_SIZE);
     this.g_violin_song = new Uint8Array(this.memU8.buffer, this.p_violin_song, FMN.VIOLIN_SONG_LENGTH);
     this.g_violin_clock = new Float32Array(this.memU8.buffer, this.p_violin_song + FMN.VIOLIN_SONG_LENGTH, 1);
@@ -182,9 +180,7 @@ export class Globals {
     this.g_neighbore[0] = map.neighbore;
     this.g_neighborn[0] = map.neighborn;
     this.g_neighbors[0] = map.neighbors;
-    this.g_mapdark[0] = map.dark;
-    this.g_indoors[0] = map.indoors;
-    this.g_blowback[0] = map.blowback;
+    this.g_mapflag[0] = map.flag;
     this.g_herostartp[0] = map.herostartp;
     this.g_facedir_gsbit[0] = map.facedir_gsbit[0];
     this.g_facedir_gsbit[1] = map.facedir_gsbit[1];
@@ -232,7 +228,7 @@ export class Globals {
     this.g_plantc[0] = 0;
     for (let [mapid,x,y,flowerTime,state,fruit] of this.dataService.plants) {
       if (mapid !== map.id) continue;
-      if (!map.indoors) { // auto-bloom... kind of a lot of conditions...
+      if (!(map.flag & FMN.MAPFLAG_INDOORS)) { // auto-bloom... kind of a lot of conditions...
         if (now && flowerTime && (state === FMN.PLANT_STATE_GROW) && (now >= flowerTime)) {
           state = FMN.PLANT_STATE_FLOWER;
         }

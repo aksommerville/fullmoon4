@@ -50,13 +50,11 @@ static void bigpc_clear_map_commands() {
   fmn_global.neighbore=0;
   fmn_global.neighborn=0;
   fmn_global.neighbors=0;
-  fmn_global.mapdark=0;
-  fmn_global.indoors=0;
+  fmn_global.mapflag=0;
   fmn_global.herostartp=0;
   fmn_global.doorc=0;
   fmn_global.plantc=0;
   fmn_global.sketchc=0;
-  fmn_global.blowback=0;
   fmn_global.wind_dir=0;
   fmn_global.facedir_gsbit_horz=0;
   fmn_global.facedir_gsbit_vert=0;
@@ -168,10 +166,6 @@ struct fmn_load_map_context {
 static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,void *userdata) {
   struct fmn_load_map_context *ctx=userdata;
   switch (opcode) {
-    
-      case 0x01: fmn_global.mapdark=1; break;
-      case 0x02: fmn_global.indoors=1; break;
-      case 0x03: fmn_global.blowback=1; break;
       
       case 0x20: bigpc_play_song(arg[0]); break;
       case 0x21: {
@@ -180,6 +174,7 @@ static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,vo
         } break;
       case 0x22: bigpc.saveto_recent=fmn_global.saveto=arg[0]; break;
       case 0x23: if (fmn_global.wind_dir=arg[0]) fmn_global.wind_time=86400.0f; else fmn_global.wind_time=0.0f; break;
+      case 0x24: fmn_global.mapflag=arg[0]; break;
       
       case 0x40: fmn_global.neighborw=(arg[0]<<8)|arg[1]; break;
       case 0x41: fmn_global.neighbore=(arg[0]<<8)|arg[1]; break;
@@ -246,7 +241,7 @@ int8_t fmn_load_map(
 
   fmn_map_for_each_command(serial,serialc,fmn_load_map_cb_command,&ctx);
   
-  if (!fmn_global.indoors) bigpc_autobloom_plants();
+  if (!fmn_global.mapflag&FMN_MAPFLAG_INDOORS) bigpc_autobloom_plants();
   
   bigpc_savedgame_dirty();
   

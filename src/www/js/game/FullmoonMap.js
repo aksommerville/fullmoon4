@@ -53,10 +53,7 @@ export class FullmoonMap {
     this.sketches = []; // {x,y,bits}. Should only be examined if no user sketches exist at load.
     this.callbacks = []; // {evid,cbid,param}
     this.cellphysics = null; // Uint8Array(256), but supplied by our owner
-    this.dark = 0;
-    this.indoors = 0;
-    this.blowback = 0;
-    this.ancillary = 0;
+    this.flag = 0; // bits, FMN.MAPFLAG_*
     this.wind = 0;
     this.herostartp = (FMN.ROWC >> 1) * FMN.COLC + (FMN.COLC >> 1);
     this.spellid = 0;
@@ -78,10 +75,7 @@ export class FullmoonMap {
     this.sketches = src.sketches.map(s => ({ ...s }));
     this.callbacks = src.callbacks.map(cb => ({ ...cb }));
     this.cellphysics = src.cellphysics; // null or a globally shared Tileprops, no need to copy.
-    this.dark = src.dark;
-    this.indoors = src.indoors;
-    this.blowback = src.blowback;
-    this.ancillary = src.ancillary;
+    this.flag = src.flag;
     this.wind = src.wind;
     this.herostartp = src.herostartp;
     this.spellid = src.spellid;
@@ -108,14 +102,11 @@ export class FullmoonMap {
     this._readCommands(this.commands, (opcode, v, argp, argc) => {
       switch (opcode) {
       
-        case 0x01: this.dark = 1; break;
-        case 0x02: this.indoors = 1; break;
-        case 0x03: this.blowback = 1; break;
-        case 0x04: this.ancillary = 1; break;
         case 0x20: this.songId = v[argp]; break;
         case 0x21: this.bgImageId = v[argp]; break;
         case 0x22: this.saveto = v[argp]; break;
         case 0x23: this.wind = v[argp]; break;
+        case 0x24: this.flag = v[argp]; break;
         case 0x40: this.neighborw = (v[argp] << 8) | v[argp + 1]; break;
         case 0x41: this.neighbore = (v[argp] << 8) | v[argp + 1]; break;
         case 0x42: this.neighborn = (v[argp] << 8) | v[argp + 1]; break;

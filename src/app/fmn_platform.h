@@ -241,6 +241,11 @@
 #define FMN_SPELLID_REVELATIONS 19
 #define FMN_SPELLID_PUMPKIN 21
 
+#define FMN_MAPFLAG_DARK 0x01
+#define FMN_MAPFLAG_INDOORS 0x02
+#define FMN_MAPFLAG_BLOWBACK 0x04
+#define FMN_MAPFLAG_ANCILLARY 0x08
+
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
  */
@@ -312,8 +317,8 @@ extern struct fmn_global {
   uint16_t neighbore;
   uint16_t neighborn;
   uint16_t neighbors;
-  uint8_t mapdark;
-  uint8_t indoors;
+  uint8_t mapflag; // bits; FMN_MAPFLAG_*
+  uint8_t pad1;
   uint16_t pad2;
   uint8_t saveto; // spellid
   uint8_t herostartp;
@@ -367,7 +372,7 @@ extern struct fmn_global {
   int8_t shovelx;
   int8_t shovely;
   uint8_t werewolf_dead;
-  uint8_t blowback;
+  uint8_t pad3;
   
   // General-purpose global state.
   // The whole thing gets persisted on saves.
