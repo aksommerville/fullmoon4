@@ -10,13 +10,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ## TODO Platform and tooling, should complete before diving into full maps
 
 - [ ] Settings menu.
-- [x] Data editor improvements.
-- - [x] Home page ...Shortcuts menu does everything we need.
-- - [x] MapAllUi: Point out neighbor mismatches.
-- - [x] MapAllUi: React to Demo/Full switch.
-- - [x] Delete maps (and resources in general) ...whatever, deleting them from your terminal is not so painful
-- [x] Build-time support for enums and such? Thinking FMN_SPRITE_STYLE_ especially, it's a pain to add one. ...wise, but at this point why bother
-- [x] Rekajigger Constants.js, use actual inlinable constants.
 - [ ] Map dark, indoors, blowback... Can we make a "map flags" field to contain these?
 - [ ] verify: analyze map songs, ensure no map could have a different song depending on entry point
 - [ ] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
@@ -35,7 +28,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
 - [ ] Translation.
 - [ ] Once saving works: Consider "Are you sure?" for New Game when a save file exists.
-- [ ] bigpc: Drop "-drivers" from config keys. Just "--video=glx,drm" etc should do. (check all makefiles)
+- [x] bigpc: Drop "-drivers" from config keys. Just "--video=glx,drm" etc should do. (check all makefiles)
 
 ### Full Maps
 
@@ -61,6 +54,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Miscellaneous
 
+- [ ] Soft render: Alpha problem with arrows in wand feedback.
+- [ ] UI sound effects, eg change menu selection.
 - [ ] Sound effect for coin toss
 - [ ] web: Sound effects too quiet relative to music.
 - [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?

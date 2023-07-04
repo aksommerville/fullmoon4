@@ -55,6 +55,7 @@ void bigpc_image_blit_recolor(
   uint32_t pixel
 );
 
+void bigpc_image_clear(struct bigpc_image *dst);
 void bigpc_image_fill_rect(struct bigpc_image *dst,int16_t x,int16_t y,int16_t w,int16_t h,uint32_t pixel);
 void bigpc_image_trace_line(struct bigpc_image *dst,int16_t ax,int16_t ay,int16_t bx,int16_t by,uint32_t pixel);
 

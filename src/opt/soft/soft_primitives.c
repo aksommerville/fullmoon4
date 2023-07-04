@@ -1,5 +1,12 @@
 #include "fmn_soft_internal.h"
 
+/* Clear image.
+ */
+ 
+void bigpc_image_clear(struct bigpc_image *dst) {
+  memset(dst->v,0,dst->stride*dst->h);
+}
+
 /* Fill rect.
  */
  

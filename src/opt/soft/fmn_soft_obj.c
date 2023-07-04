@@ -215,7 +215,7 @@ static int8_t _soft_draw_set_output(struct bigpc_render_driver *driver,uint16_t 
  
 static void _soft_draw_clear(struct bigpc_render_driver *driver) {
   if (!DRIVER->output) return;
-  bigpc_image_fill_rect(DRIVER->output,0,0,DRIVER->output->w,DRIVER->output->h,0);
+  bigpc_image_clear(DRIVER->output);
 }
  
 static void _soft_draw_line(struct bigpc_render_driver *driver,const struct fmn_draw_line *v,int c) {

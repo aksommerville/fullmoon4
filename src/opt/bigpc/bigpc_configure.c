@@ -141,12 +141,71 @@ int bigpc_configure_argv(int argc,char **argv) {
   return 0;
 }
 
+/* --help
+ */
+ 
+static void bigpc_print_help(const char *topic,int topicc) {
+  fprintf(stderr,
+    "\n"
+    "Usage: %s [OPTIONS]\n"
+    "\n"
+  ,bigpc.exename);
+  fprintf(stderr,
+    "Usually best to leave all options unset.\n"
+    "\n"
+    "OPTIONS:\n"
+    "  --help                Print this message.\n"
+    "  --video=LIST          Use first available video driver (see below).\n"
+    "  --fullscreen=0|1      [0] Start in fullscreen.\n"
+    "  --video-renderer=?    Don't use.\n"
+    "  --tilesize=1..64      [16] Best not to touch.\n"
+    "  --input=LIST          Use all specified input drivers (see below).\n"
+    "  --audio=LIST          Use first available audio driver (see below).\n"
+    "  --audio-rate=HZ       [44100] Audio output rate.\n"
+    "  --audio-chanc=INT     [1] Audio channel count, typically 1 or 2.\n"
+    "  --audio-format=?      [s16n] Audio sample format: s16n,f32n\n"
+    "  --synth=LIST          Use first available synthesizer (see below).\n"
+    "  --render=LIST         Use first available renderer (see below).\n"
+    "  --data=PATH           Path to data archive.\n"
+    "  --log=PATH_PREFIX     Business log.\n"
+    "  --save=PATH           Saved game.\n"
+    "\n"
+  );
+  
+  int i;
+  fprintf(stderr,"Video drivers:\n");
+  const struct bigpc_video_type *video;
+  for (i=0;video=bigpc_video_type_by_index(i);i++) fprintf(stderr,"  %-15s %s\n",video->name,video->desc);
+  fprintf(stderr,"\n");
+  fprintf(stderr,"Renderers:\n");
+  const struct bigpc_render_type *render;
+  for (i=0;render=bigpc_render_type_by_index(i);i++) fprintf(stderr,"  %-15s %s\n",render->name,render->desc);
+  fprintf(stderr,"\n");
+  fprintf(stderr,"Audio drivers:\n");
+  const struct bigpc_audio_type *audio;
+  for (i=0;audio=bigpc_audio_type_by_index(i);i++) fprintf(stderr,"  %-15s %s\n",audio->name,audio->desc);
+  fprintf(stderr,"\n");
+  fprintf(stderr,"Synthesizers:\n");
+  const struct bigpc_synth_type *synth;
+  for (i=0;synth=bigpc_synth_type_by_index(i);i++) fprintf(stderr,"  %-15s %s\n",synth->name,synth->desc);
+  fprintf(stderr,"\n");
+  fprintf(stderr,"Input drivers (may select more than one):\n");
+  const struct bigpc_input_type *input;
+  for (i=0;input=bigpc_input_type_by_index(i);i++) fprintf(stderr,"  %-15s %s\n",input->name,input->desc);
+  fprintf(stderr,"\n");
+}
+
 /* Key=value.
  */
  
 int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   if (!k) kc=0; else if (kc<0) { kc=0; while (k[kc]) kc++; }
   if (!v) vc=0; else if (vc<0) { vc=0; while (v[vc]) vc++; }
+  
+  if ((kc==4)&&!memcmp(k,"help",4)) {
+    bigpc_print_help(v,vc);
+    return -2;
+  }
   
   #define STRINGOPT(arg,fld) if ((kc==sizeof(arg)-1)&&!memcmp(k,arg,kc)) { \
     if (bigpc.config.fld) { \
@@ -191,25 +250,27 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
     return 0; \
   }
   
-  STRINGOPT("video-drivers",video_drivers)
-  BOOLOPT("video-fullscreen",video_fullscreen)
+  STRINGOPT("video",video_drivers)
+  BOOLOPT("fullscreen",video_fullscreen)
   ENUMOPT("video-renderer",video_renderer,bigpc_video_renderer_eval)
   INTOPT("tilesize",tilesize,1,64)
   
-  STRINGOPT("input-drivers",input_drivers)
+  STRINGOPT("input",input_drivers)
   
-  STRINGOPT("audio-drivers",audio_drivers)
+  STRINGOPT("audio",audio_drivers)
   INTOPT("audio-rate",audio_rate,200,200000)
   INTOPT("audio-chanc",audio_chanc,1,8)
   ENUMOPT("audio-format",audio_format,bigpc_audio_format_eval)
   
-  STRINGOPT("synth-drivers",synth_drivers)
+  STRINGOPT("synth",synth_drivers)
   
-  STRINGOPT("render-drivers",render_drivers)
+  STRINGOPT("render",render_drivers)
   
   STRINGOPT("data",data_path)
   STRINGOPT("log",log_path)
   STRINGOPT("save",savedgame_path)
+  
+  // Remember to update bigpc_print_help (just above) if you change anything.
   
   #undef STRINGOPT
   #undef BOOLOPT
