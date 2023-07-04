@@ -26,8 +26,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history.
 - [ ] Filter resources by qualifier, see src/tool/mkdata/packArchive.js
-- [ ] Translation.
-- [ ] Once saving works: Consider "Are you sure?" for New Game when a save file exists.
+- [x] Translation.
+- [x] Once saving works: Consider "Are you sure?" for New Game when a save file exists. ...not worth the trouble
 - [x] bigpc: Drop "-drivers" from config keys. Just "--video=glx,drm" etc should do. (check all makefiles)
 
 ### Full Maps
@@ -54,6 +54,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Miscellaneous
 
+- [ ] web: Language selection, figure out how that works
 - [ ] Soft render: Alpha problem with arrows in wand feedback.
 - [ ] UI sound effects, eg change menu selection.
 - [ ] Sound effect for coin toss

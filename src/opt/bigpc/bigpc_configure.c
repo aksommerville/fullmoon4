@@ -80,6 +80,14 @@ static int bigpc_audio_format_eval(const char *src,int srcc) {
   return -1;
 }
 
+static int bigpc_lang_eval(const char *src,int srcc) {
+  if (!src) return -1;
+  if (srcc!=2) return -1;
+  if ((src[0]<'a')||(src[0]>'z')) return -1;
+  if ((src[1]<'a')||(src[1]>'z')) return -1;
+  return (src[0]<<8)|src[1];
+}
+
 /* Argv.
  */
  
@@ -169,6 +177,7 @@ static void bigpc_print_help(const char *topic,int topicc) {
     "  --data=PATH           Path to data archive.\n"
     "  --log=PATH_PREFIX     Business log.\n"
     "  --save=PATH           Saved game.\n"
+    "  --lang=iso631         Two-character language code. Prefer LANG env var.\n"
     "\n"
   );
   
@@ -270,6 +279,8 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   STRINGOPT("log",log_path)
   STRINGOPT("save",savedgame_path)
   
+  ENUMOPT("lang",lang,bigpc_lang_eval)
+  
   // Remember to update bigpc_print_help (just above) if you change anything.
   
   #undef STRINGOPT
@@ -285,6 +296,24 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
  
 void bigpc_config_init() {
   bigpc.config.video_fullscreen=1;
+}
+
+/* Guess language from environment.
+ */
+ 
+static uint16_t bigpc_guess_language() {
+
+  // First two characters of LANG are usually what we're after.
+  const char *LANG=getenv("LANG");
+  if (LANG&&LANG[0]&&LANG[1]) {
+    char a=LANG[0]; if ((a>='A')&&(a<='Z')) a+=0x20;
+    char b=LANG[1]; if ((b>='A')&&(b<='Z')) b+=0x20;
+    if ((a>='a')&&(a<='z')&&(b>='a')&&(b<='z')) return (a<<8)|b;
+  }
+
+  // English is Full Moon's native language, and also the most widely spoken language on Earth*. Good for a default.
+  // [*] TODO Confirm preferred language on other planets.
+  return ('e'<<8)|'n';
 }
 
 /* Finish configuration.
@@ -309,6 +338,8 @@ int bigpc_config_ready() {
       bigpc.config.video_renderer=type->video_renderer_id;
     }
   }
+  
+  if (!bigpc.config.lang) bigpc.config.lang=bigpc_guess_language();
   
   return 0;
 }

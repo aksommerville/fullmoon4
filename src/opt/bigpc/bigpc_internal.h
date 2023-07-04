@@ -62,6 +62,7 @@ struct bigpc_config {
   char *data_path;
   char *log_path;
   char *savedgame_path; // per user. The one we actually use is (bigpc.savedgame_path).
+  int lang;
 };
 
 extern struct bigpc {

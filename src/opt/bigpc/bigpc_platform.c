@@ -381,8 +381,7 @@ void fmn_play_song(uint8_t songid) {
  */
  
 uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id) {
-  const char *lang="en";
-  const uint16_t langid=(lang[0]<<8)|lang[1];//TODO configurable
+  const uint16_t langid=bigpc.config.lang;
   const char *src=0;
   int srcc=fmn_datafile_get_qualified(&src,bigpc.datafile,FMN_RESTYPE_STRING,langid,id);
   if (srcc<0) srcc=0;
