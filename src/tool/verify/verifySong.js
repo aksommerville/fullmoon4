@@ -52,6 +52,7 @@ function verifyMTrk(src, ref, index) {
     
     // Data bytes.
     const chid = status & 0x0f;
+    if ((status < 0xf0) && (chid === 14)) throw new Error(`Event ${status} on channel 14. Please keep this channel clear for the violin.`);
     switch (status & 0xf0) {
     
       case 0x80: { // Note Off

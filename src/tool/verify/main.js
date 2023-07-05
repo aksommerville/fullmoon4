@@ -222,7 +222,7 @@ for (const res of resources) {
       default: throw new Error(`Unknown type`);
     }
   } catch (e) {
-    e.message = `${resTypeRepr(type)}:${qualifier}:${id}: ${e.message}`;
+    e.message = `${archivePath}: ${resTypeRepr(type)}:${qualifier}:${id}: ${e.message}`;
     throw e;
   }
 }
@@ -251,8 +251,19 @@ for (const type of listUniqueProperties(r => r.type)) {
   }
 }
 
+/* Type-specific aggregate tests.
+ *******************************************************************************/
+
+try {
+  warningCount += require("./validateAggregateMaps.js")(resources);
+} catch (e) {
+  console.log(`${archivePath}: Error in this file.`);
+  throw e;
+}
+
 /* Verify that all resources are reachable.
- */
+ ******************************************************************************/
+
 const unreachable = [...resources];
 function reachable(type, id) {
   let found = false;
