@@ -10,22 +10,13 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ## TODO Platform and tooling, should complete before diving into full maps
 
 - [ ] Settings menu.
-- [x] verify: analyze map songs, ensure no map could have a different song depending on entry point
-- [x] verify: Check neighbor edges cell by cell (be mindful of firewall). Open no-neighbor edges must have blowback.
-- [x] verify: Tile 0x0f must be UNSHOVELLABLE in all tile sheets.
-- [x] verify: Song channel 14 reserved for violin, songs must not use.
-- [x] verify: Teleport targets must set song.
-- [x] verify: Firewall must be on edge, with at least two vacant cells, and a solid on both ends.
-- [ ] verify: Chalk duplicates ...these aren't actually resources, what should we do?
+- [x] verify: Chalk duplicates ...these aren't actually resources, what should we do?
 - [ ] verify: Resources named by sprite config, eg chalkguard strings
-- [x] verify: 'indoors' should be the same for all edge neighbors, should change only when passing thru a door
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
 - [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history. (similar to the song check)
-- [x] verify: I believe this is only looking at demo maps? Need it to run against both sets, separately.
-- [x] verify: Add hard-coded resources. ...this will be an ongoing effort.
 - [ ] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
 
 ### Full Maps

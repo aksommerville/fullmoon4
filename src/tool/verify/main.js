@@ -323,12 +323,15 @@ if (unreachable.length) {
 }
 
 /* Examine input files.
+ * This is for things that don't directly turn into resources: chalk and gsbit
  *************************************************************************/
  
 if (dirPath) {
-  //TODO Not sure we need to do anything here.
-  // It would be crazy to recompile them all just to compare against the archive (tho that is an option).
+  warningCount += require("./validateNonArchiveFiles.js")(dirPath, archivePath, resources);
 }
+
+/* Final word.
+ *********************************************************************/
 
 if (warningCount) {
   console.log(`${archivePath}: Valid but some issues, see above.`);
