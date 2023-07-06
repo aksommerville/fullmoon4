@@ -3,3 +3,5 @@ image 3
 tile 0x90
 style eightframe
 layer 1
+argtype 0 int dir
+argtype 1 gsbit gsbit

@@ -5,3 +5,4 @@ xform 0
 style tile
 radius 0.5
 physics solid hole blowable
+argtype 0 int itemid

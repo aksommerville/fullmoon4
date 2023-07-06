@@ -1,7 +1,7 @@
 /* verifySprite.js
  */
  
-module.exports = function(src, resources, ref/*(type,id)*/) {
+module.exports = function(src, resources, ref/*(type,id)*/, metadata) {
   for (let srcp=0; srcp<src.length; ) {
   
     const lead = src[srcp++];

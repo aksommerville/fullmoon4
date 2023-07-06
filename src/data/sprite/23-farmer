@@ -5,3 +5,4 @@ style hidden
 physics edge sprites solid hole
 radius 0.4
 invmass 0
+argtype 0 int hole_distance

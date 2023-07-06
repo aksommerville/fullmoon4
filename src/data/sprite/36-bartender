@@ -2,3 +2,5 @@ controller decoanimal
 image sprites
 tile 0xb8
 style twoframe
+argtype 0 int xoffset_signed
+argtype 1 int yoffset_signed

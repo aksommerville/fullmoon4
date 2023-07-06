@@ -19,7 +19,7 @@ function readCommands(src, cb/*(lead,payp)*/) {
   }
 }
  
-module.exports = function(src, id, resources, ref/*(type,id)*/) {
+module.exports = function(src, id, resources, ref/*(type,id)*/, spriteMetadata) {
   if (src.length < 20 * 12) throw new Error(`Minimum length 20 * 12 = 240, found ${src.length}`);
   let songId = 0;
   for (let srcp=20*12; srcp<src.length; ) {
@@ -107,7 +107,21 @@ module.exports = function(src, id, resources, ref/*(type,id)*/) {
       case 0x80: { // SPRITE
           const spriteid = (src[srcp+1] << 8) | src[srcp+2];
           ref(0x05, spriteid);
-          // Opportunity to validate sprite args, if we ever feel a need.
+          const metadata = spriteMetadata.byId[spriteid];
+          if (metadata) {
+            const argv = [
+              [src[srcp+3], metadata.argv[0]],
+              [src[srcp+4], metadata.argv[1]],
+              [src[srcp+5], metadata.argv[2]],
+            ];
+            for (const [v, def] of argv) {
+              if (!def) continue; // no definition, that's fine, it's a plain scalar
+              if (!v) continue; // zero always means "none", even for contexts like gsbit where it's a valid value.
+              switch (def.type) {
+                case "string": ref(0x06, v); break;
+              }
+            }
+          }
         } break;
         
       case 0x81: { // BURIED_DOOR

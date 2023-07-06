@@ -2,3 +2,5 @@ controller wildflower
 image 3
 tile 0x80
 style tile
+argtype 0 int varietal
+argtype 1 int flop

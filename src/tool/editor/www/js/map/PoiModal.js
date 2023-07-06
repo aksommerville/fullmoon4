@@ -143,11 +143,11 @@ export class PoiModal {
   }
   
   buildSpriteForm(table) {
-    //TODO Sprite metadata, get meaningful labels instead of "arg0" etc.
+    const sprite = this.resService.getResourceObject("sprite", this.poi.spriteId);
     this.addTextRow(table, "spriteId", this.poi ? this.reprSpriteId(this.poi.spriteId) : "", `PoiModal-${this.discriminator}-spriteList`);
-    this.addTextRow(table, "arg0", this.poi ? this.poi.argv[0] : 0);
-    this.addTextRow(table, "arg1", this.poi ? this.poi.argv[1] : 0);
-    this.addTextRow(table, "arg2", this.poi ? this.poi.argv[2] : 0);
+    this.addTextRow(table, sprite ? sprite.getArgLabel(0) : "arg0", this.poi ? this.poi.argv[0] : 0);
+    this.addTextRow(table, sprite ? sprite.getArgLabel(1) : "arg1", this.poi ? this.poi.argv[1] : 0);
+    this.addTextRow(table, sprite ? sprite.getArgLabel(2) : "arg2", this.poi ? this.poi.argv[2] : 0);
   }
   
   buildTransmogrifyForm(table) {

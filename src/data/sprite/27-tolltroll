@@ -5,3 +5,5 @@ style tile
 physics edge sprites solid hole
 radius 0.5
 invmass 0
+argtype 0 gsbit gsbit
+argtype 1 int pumpkinproof_1right_2left

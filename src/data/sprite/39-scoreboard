@@ -2,3 +2,4 @@ controller scoreboard
 image sprites
 tile 0xd0
 style tile
+argtype 0 int gameid

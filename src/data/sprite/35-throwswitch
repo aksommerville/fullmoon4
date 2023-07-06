@@ -2,3 +2,4 @@ controller throwswitch
 image 3
 tile 0xb6
 style tile
+argtype 0 gsbit gsbit

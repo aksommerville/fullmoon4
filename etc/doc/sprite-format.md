@@ -23,7 +23,10 @@ invmass (0..255)
 controller (0..65535|name)
 layer (0..255)
 bv[N] (0..255) # N in 0..7
+argtype (0..2) string|gsbit|int NAME # Doesn't produce output. Advice for editors.
 ```
+
+Note that `argtype` would be more appropriate for the controller to declare, in its C code, but that would be inconvenient.
 
 ## Binary Format
 

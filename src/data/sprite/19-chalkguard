@@ -5,3 +5,5 @@ style tile
 physics sprites
 radius 0.5
 invmass 0
+argtype 0 string leftstring
+argtype 1 string rightstring

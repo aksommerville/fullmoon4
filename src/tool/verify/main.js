@@ -186,6 +186,8 @@ if (archivePath) {
 /* Examine serial data of all resources.
  ***********************************************************************/
  
+const spriteMetadata = require("./spriteMetadata.js")(dirPath);
+ 
 /* {
  *   fromType: number; // referrer
  *   fromId: number;
@@ -205,9 +207,9 @@ for (const res of resources) {
     switch (type) {
       case 0x01: warningCount += verifyImage(serial, qualifier); break;
       case 0x02: warningCount += verifySong(serial, resources, ref); break;
-      case 0x03: warningCount += verifyMap(serial, id, resources, ref); break;
+      case 0x03: warningCount += verifyMap(serial, id, resources, ref, spriteMetadata); break;
       case 0x04: warningCount += verifyTileprops(serial, resources, ref); break;
-      case 0x05: warningCount += verifySprite(serial, resources, ref); break;
+      case 0x05: warningCount += verifySprite(serial, resources, ref, spriteMetadata.byId[id]); break;
       case 0x06: warningCount += verifyString(serial, qualifier); break;
       case 0x07: switch (qualifier) {
           case 0x01: warningCount += verifyWebAudioInstrument(serial); break;

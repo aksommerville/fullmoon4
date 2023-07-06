@@ -217,6 +217,7 @@ int mkd_compile_sprite(struct mkd_respath *respath) {
     _(layer)
     #undef _
     if ((kwc==5)&&(kw[0]=='b')&&(kw[1]=='v')&&(kw[2]=='[')&&(kw[3]>='0')&&(kw[3]<='7')&&(kw[4]==']')) err=mkd_sprite_cmd_bv(respath,kw[3]-'0',line+linep,linec-linep,lineno);
+    else if ((kwc==7)&&!memcmp(kw,"argtype",7)) err=0; // we can ignore this one; it's only for editors
     else {
       fprintf(stderr,"%s:%d: Unknown command '%.*s'\n",respath->path,lineno,kwc,kw);
       return -2;

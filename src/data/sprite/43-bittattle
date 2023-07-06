@@ -5,3 +5,5 @@ style tile
 physics edge sprites solid hole blowable
 radius 0.5
 invmass 128
+argtype 0 gsbit leftbit
+argtype 1 gsbit rightbit

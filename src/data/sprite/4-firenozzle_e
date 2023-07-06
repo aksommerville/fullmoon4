@@ -3,3 +3,6 @@ image 3
 tile 0x10
 style firenozzle
 layer 130
+argtype 0 int range
+argtype 1 int off_time_ds
+argtype 2 int init_phase_or_gsbit

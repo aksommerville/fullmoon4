@@ -5,3 +5,4 @@ style tile
 physics edge sprites solid hole
 invmass 0
 radius 0.45
+argtype 0 int mode_0harvest_1feast

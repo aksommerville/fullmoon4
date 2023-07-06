@@ -11,7 +11,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [ ] Settings menu.
 - [x] verify: Chalk duplicates ...these aren't actually resources, what should we do?
-- [ ] verify: Resources named by sprite config, eg chalkguard strings
+- [x] verify: Resources named by sprite config, eg chalkguard strings
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
 - [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.

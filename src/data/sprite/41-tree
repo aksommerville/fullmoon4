@@ -5,3 +5,4 @@ style tile
 physics sprites solid hole
 radius 0.5
 invmass 0
+argtype 0 gsbit gsbit

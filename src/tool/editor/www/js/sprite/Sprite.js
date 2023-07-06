@@ -73,4 +73,11 @@ export class Sprite {
     }
     return "";
   }
+  
+  getArgLabel(p) {
+    p = p.toString();
+    const command = this.commands.find(cmd => ((cmd[0] === "argtype") && (cmd[1] === p)));
+    if (command && command[3]) return command[3];
+    return "arg" + p;
+  }
 }

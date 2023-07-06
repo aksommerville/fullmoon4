@@ -5,3 +5,4 @@ style pitchfork
 physics sprites
 radius 0.5
 invmass 0
+argtype 0 int flop

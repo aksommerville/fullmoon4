@@ -3,3 +3,4 @@ image 3
 tile 0xb0
 style twoframe
 radius 0.5
+argtype 0 int secret_tileid
