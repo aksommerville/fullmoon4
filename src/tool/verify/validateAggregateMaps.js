@@ -3,6 +3,90 @@
  * Maps must be validated before calling.
  */
  
+/* Every map must save to exactly one save point, unambiguously.
+ * Maps with explicit 'saveto' or 'hero' with spellid, we can ignore, those are explicit.
+ * Every other map must only be able to reach 'hero' and 'saveto' commands bearing the same spellid.
+ **************************************************************************/
+
+function validateDeterministicSavePoints(maps, resources) {
+  let warningCount = 0;
+  
+  /* Make a visit list parallel to (maps), ie indexed by mapId.
+   * Any missing maps are automatically ok, ignore them.
+   */
+  const ok = [];
+  for (let i=0; i<maps.length; i++) {
+    const map = maps[i];
+    if (!map) ok.push(true);
+    else ok.push(false);
+  }
+  
+  /* Search every map.
+   * We're going to walk from these start points, and potentially mark lots of others ok along the way.
+   * Maps with an explicit spell do not get marked ok.
+   */
+  for (let i=0; i<maps.length; i++) {
+    if (ok[i]) continue;
+    const map = maps[i];
+    if (map.spellId) continue;
+    if (map.saveTo) continue;
+    const spellIds = findReachableSpellIds(map, maps, ok, i, resources);
+    if (spellIds.length > 1) throw new Error(`map:${i}: Ambiguous save point ${JSON.stringify(spellIds)}`);
+  }
+  
+  return warningCount;
+}
+
+// Call only for maps not ok yet, which don't have an explicit spell.
+function findReachableSpellIds(map, maps, ok, mapId, resources) {
+  ok[mapId] = true;
+  const spellIds = new Set();
+  const neighborMapIds = getReachableNeighborMapIds(map, resources);
+  for (const neighborMapId of neighborMapIds) {
+    if (ok[neighborMapId]) continue;
+    const neighbor = maps[neighborMapId];
+    if (neighbor.spellId) spellIds.add(neighbor.spellId);
+    else if (neighbor.saveTo) spellIds.add(neighbor.saveTo);
+    else {
+      for (const spellId of findReachableSpellIds(neighbor, maps, ok, neighborMapId, resources)) {
+        spellIds.add(spellId);
+      }
+    }
+  }
+  return Array.from(spellIds);
+}
+
+// Get all neighbor IDs, but exclude cardinal neighbors with a straight solid edge.
+function getReachableNeighborMapIds(map, resources) {
+  let cellphysics = [];
+  const tileProps = resources.find(r => ((r.type === 4) && (r.id === map.imageId)));
+  if (tileProps) cellphysics = tileProps.serial;
+  const ids = [...map.doorMapIds];
+  if (map.neighborw && !mapRegionIsSolid(map, 0, 0, 1, 12, cellphysics)) ids.push(map.neighborw);
+  if (map.neighbore && !mapRegionIsSolid(map, 19, 0, 1, 12, cellphysics)) ids.push(map.neighbore);
+  if (map.neighborn && !mapRegionIsSolid(map, 0, 0, 20, 1, cellphysics)) ids.push(map.neighborn);
+  if (map.neighbors && !mapRegionIsSolid(map, 0, 11, 20, 1, cellphysics)) ids.push(map.neighbors);
+  return ids;
+}
+
+function mapRegionIsSolid(map, x, y, w, h, cellphysics) {
+  for (let yi=0; yi<h; yi++) {
+    for (let xi=0, p=(y+yi)*20+x; xi<w; xi++, p++) {
+      const tileid = map.serial[p];
+      switch (cellphysics[tileid]) {
+        case 1: // SOLID
+        case 4: // UNCHALKABLE
+        case 5: // SAP
+        case 6: // SAP_NOCHALK
+        case 8: // REVELABLE
+          break;
+        default: return false;
+      }
+    }
+  }
+  return true;
+}
+ 
 /* From every map, no matter which way we travel, the first SONG command we encounter, they'll all be the same song.
  * Following on that, if a map is a teleport target, it *must* declare its song explicitly.
  ***************************************************************************/
@@ -260,6 +344,8 @@ function decodeMap(src) {
   let neighbors = 0;
   let imageId = 0;
   let flags = 0;
+  let spellId = 0;
+  let saveTo = 0;
   const doorMapIds = [];
   const sprites = []; // {x,y,id,argv[3]}
   for (let srcp=20*12; srcp<src.length; ) {
@@ -276,12 +362,13 @@ function decodeMap(src) {
     switch (lead) {
       case 0x20: songId = src[srcp]; break;
       case 0x21: imageId = src[srcp]; break;
+      case 0x22: saveTo = src[srcp]; break;
       case 0x24: flags = src[srcp]; break;
       case 0x40: neighborw = (src[srcp]<<8) | src[srcp+1]; break;
       case 0x41: neighbore = (src[srcp]<<8) | src[srcp+1]; break;
       case 0x42: neighborn = (src[srcp]<<8) | src[srcp+1]; break;
       case 0x43: neighbors = (src[srcp]<<8) | src[srcp+1]; break;
-      case 0x45: if (src[srcp+1]) teleportable = true; break;
+      case 0x45: if (src[srcp+1]) { teleportable = true; spellId = src[srcp+1]; } break;
       case 0x60: doorMapIds.push((src[srcp+1]<<8) | src[srcp+2]); break;
       case 0x80: sprites.push({
           x: src[srcp] % 20,
@@ -299,6 +386,8 @@ function decodeMap(src) {
     imageId,
     flags,
     teleportable,
+    spellId,
+    saveTo,
     neighborw, neighbore, neighborn, neighbors,
     doorMapIds,
     sprites,
@@ -314,6 +403,7 @@ module.exports = function(resources) {
     mapsById[id] = map;
   }
   
+  warningCount += validateDeterministicSavePoints(mapsById, resources);
   warningCount += validateDeterministicSongSelection(mapsById);
   warningCount += requireBlowbackForOpenEdges(mapsById, resources);
   warningCount += validateSprites(mapsById, resources);

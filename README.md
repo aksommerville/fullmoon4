@@ -9,13 +9,13 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ## TODO Platform and tooling, should complete before diving into full maps
 
+..."should complete before" but whatever
+
 - [ ] Settings menu.
-- [x] verify: Chalk duplicates ...these aren't actually resources, what should we do?
-- [x] verify: Resources named by sprite config, eg chalkguard strings
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
 - [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
-- [ ] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
+- [x] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history. (similar to the song check)
 - [ ] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
 
