@@ -7,19 +7,16 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-## TODO Platform and tooling, should complete before diving into full maps
+## TODO Wrap up verify
 
-..."should complete before" but whatever
-
-- [ ] Settings menu.
 - [ ] verify: buried_treasure and buried_door. shovellable, etc
 - [ ] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
 - [ ] verify: Map tilesheet must be before neighbors, for crow's edge detection.
 - [x] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history. (similar to the song check)
 - [ ] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
-- [ ] editor: PoiModal: rewrite sprite field labels when sprite id changes
-- [ ] verify: requireBlowbackForOpenEdges: Must account for firewall
+- [x] editor: PoiModal: rewrite sprite field labels when sprite id changes
+- [x] verify: requireBlowbackForOpenEdges: Must account for firewall
 
 ### Full Maps
 
@@ -33,20 +30,24 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Church: join path at welcome mat.
 - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside.
 - [ ] Castle basement: Make the church attachment look like the church as a hint.
-
-#### Major areas
-
-- [ ] Castle (int) -- seven_circles
-- [ ] Village N -- snowglobe
-- [ ] Forest C -- toil_and_trouble
-- [ ] Swamp SW -- gloom_for_company
-- [ ] Beach SE -- eye_of_newt
-- [ ] Steppe N -- first_frost
-- [ ] Desert E -- blood_for_silver
-- [ ] Mountains NW -- A Stone to Take My Place? Currently has tangled_vine as a placeholder, don't keep that.
+- [ ] Static hazards. Both shovellable and non.
+- [ ] Can I make an Umbrella guard more flexible than firewall?
+- [ ] Hat trolls
+- [ ] Laser tripwire
+- [ ] MFA gate, separate read and write points.
+- [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
+- [ ] Song for mountains. A Stone to Take My Place?
 
 ### TODO: Miscellaneous
 
+- [ ] Settings menu.
+- - [ ] Fullscreen
+- - [ ] Driver selection
+- - [ ] Driver settings
+- - [ ] Music mute
+- - [ ] Input config
+- - [ ] Language
+- - [ ] Zap saved game. And show details.
 - [ ] I broke auto-bloom somewhere; plants are now sprouting after entering the map. Which is actually not bad. Maybe keep it this way and drop the old logic instead of fixing?
 - [ ] web: Language selection, figure out how that works
 - [ ] Soft render: Alpha problem with arrows in wand feedback.

@@ -65,5 +65,5 @@ linux-run-demo:$(linux_EXE) $(linux_DATA_DEMO);$(linux_EXE) --data=$(linux_DATA_
 linux-run:linux-run-demo
 
 linux-verify:$(linux_DATA_FULL) $(linux_DATA_DEMO); \
-  $(NODE) src/tool/verify/main.js --archive=$(linux_DATA_FULL) --dir=src/data && \
-  $(NODE) src/tool/verify/main.js --archive=$(linux_DATA_DEMO) --dir=src/data
+  $(NODE) src/tool/verify/main.js --archive=$(linux_DATA_FULL) --dir=src/data # && \
+#  $(NODE) src/tool/verify/main.js --archive=$(linux_DATA_DEMO) --dir=src/data

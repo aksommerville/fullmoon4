@@ -144,10 +144,20 @@ export class PoiModal {
   
   buildSpriteForm(table) {
     const sprite = this.poi ? this.resService.getResourceObject("sprite", this.poi.spriteId) : null;
-    this.addTextRow(table, "spriteId", this.poi ? this.reprSpriteId(this.poi.spriteId) : "", `PoiModal-${this.discriminator}-spriteList`);
+    const idField = this.addTextRow(table, "spriteId", this.poi ? this.reprSpriteId(this.poi.spriteId) : "", `PoiModal-${this.discriminator}-spriteList`);
+    idField.addEventListener("blur", () => this.reconsiderSpriteArgLabels());
     this.addTextRow(table, sprite ? sprite.getArgLabel(0) : "arg0", this.poi ? this.poi.argv[0] : 0, null, "arg0");
     this.addTextRow(table, sprite ? sprite.getArgLabel(1) : "arg1", this.poi ? this.poi.argv[1] : 0, null, "arg1");
     this.addTextRow(table, sprite ? sprite.getArgLabel(2) : "arg2", this.poi ? this.poi.argv[2] : 0, null, "arg2");
+  }
+  
+  reconsiderSpriteArgLabels() {
+    const spriteId = this.element.querySelector(`input[name='spriteId']`).value;
+    const sprite = this.resService.getResourceObject("sprite", spriteId);
+    if (!sprite) return;
+    this.element.querySelector(`td.key[data-inputName='arg0']`).innerText = sprite.getArgLabel(0);
+    this.element.querySelector(`td.key[data-inputName='arg1']`).innerText = sprite.getArgLabel(1);
+    this.element.querySelector(`td.key[data-inputName='arg2']`).innerText = sprite.getArgLabel(2);
   }
   
   buildTransmogrifyForm(table) {
@@ -188,7 +198,7 @@ export class PoiModal {
   
   addTextRow(table, key, value, dataListId, inputName) {
     const tr = this.dom.spawn(table, "TR");
-    this.dom.spawn(tr, "TD", ["key"], key);
+    this.dom.spawn(tr, "TD", ["key"], key, { "data-inputName": inputName || key });
     const td = this.dom.spawn(tr, "TD", ["value"]);
     const input = this.dom.spawn(td, "INPUT", {
       type: "text",

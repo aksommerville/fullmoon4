@@ -166,8 +166,6 @@ function loadCellPhysics(imageId, resources) {
   return [];
 }
 
-//TODO!!! This needs to account for firewall -- When firewall is in play, there is required to be an open edge, and don't worry, it's not reachable.
-
 function requireBlowbackForOpenEdges(maps, resources) {
   let imageId = 0;
   let cellphysics = [];
@@ -179,15 +177,30 @@ function requireBlowbackForOpenEdges(maps, resources) {
       cellphysics = loadCellPhysics(map.imageId, resources);
       imageId = map.imageId;
     }
-    if (!map.neighborw) requireBlowbackForOpenEdges1(map, id, cellphysics, 0, 0, 1, 12);
-    if (!map.neighbore) requireBlowbackForOpenEdges1(map, id, cellphysics, 19, 0, 1, 12);
-    if (!map.neighborn) requireBlowbackForOpenEdges1(map, id, cellphysics, 0, 0, 20, 1);
-    if (!map.neighbors) requireBlowbackForOpenEdges1(map, id, cellphysics, 0, 11, 20, 1);
+    if (!map.neighborw) requireBlowbackForOpenEdges1(map, id, cellphysics, 0, 0, 1, 12, resources);
+    if (!map.neighbore) requireBlowbackForOpenEdges1(map, id, cellphysics, 19, 0, 1, 12, resources);
+    if (!map.neighborn) requireBlowbackForOpenEdges1(map, id, cellphysics, 0, 0, 20, 1, resources);
+    if (!map.neighbors) requireBlowbackForOpenEdges1(map, id, cellphysics, 0, 11, 20, 1, resources);
   }
   return 0;
 }
 
-function requireBlowbackForOpenEdges1(map, id, cellphysics, x, y, w, h) {
+function requireBlowbackForOpenEdges1(map, id, cellphysics, x, y, w, h, resources) {
+
+  // If there's a firewall sprite in this box, nevermind.
+  // Firewall is required to sit on an open edge, and it's not actually passable.
+  // We're not accounting for cases where a different part of the edge is open, not blocked by firewall, and mismatched.
+  // (sorry Andy, I can't fix all your problems, just be careful when editing).
+  for (const sprite of map.sprites) {
+    if (sprite.x < x) continue;
+    if (sprite.y < y) continue;
+    if (sprite.x >= x + w) continue;
+    if (sprite.y >= y + h) continue;
+    const sres = getSpriteByResourceId(resources, sprite.id);
+    if (!sres) continue;
+    if (sres.controller === 18) return; // FMN_SPRCTL_firewall
+  }
+
   for (let yi=0; yi<h; yi++) {
     for (let xi=0, p=(y+yi)*20+x; xi<w; xi++, p++) {
       const tileid = map.serial[p];
