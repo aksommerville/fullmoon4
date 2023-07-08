@@ -18,6 +18,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
 - - Otherwise there's a map that could save to two different places depending on history. (similar to the song check)
 - [ ] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
+- [ ] editor: PoiModal: rewrite sprite field labels when sprite id changes
+- [ ] verify: requireBlowbackForOpenEdges: Must account for firewall
 
 ### Full Maps
 
@@ -29,6 +31,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] image steppe: Entirely temporary
 - [ ] steppe/beach boundary in blowback border
 - [ ] Church: join path at welcome mat.
+- [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside.
+- [ ] Castle basement: Make the church attachment look like the church as a hint.
 
 #### Major areas
 
@@ -43,6 +47,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Miscellaneous
 
+- [ ] I broke auto-bloom somewhere; plants are now sprouting after entering the map. Which is actually not bad. Maybe keep it this way and drop the old logic instead of fixing?
 - [ ] web: Language selection, figure out how that works
 - [ ] Soft render: Alpha problem with arrows in wand feedback.
 - [ ] UI sound effects, eg change menu selection.

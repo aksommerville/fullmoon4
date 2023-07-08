@@ -166,6 +166,8 @@ function loadCellPhysics(imageId, resources) {
   return [];
 }
 
+//TODO!!! This needs to account for firewall -- When firewall is in play, there is required to be an open edge, and don't worry, it's not reachable.
+
 function requireBlowbackForOpenEdges(maps, resources) {
   let imageId = 0;
   let cellphysics = [];

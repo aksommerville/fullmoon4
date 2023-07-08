@@ -17,8 +17,8 @@ neighborw 11
 sprite 9 2 scarydoor 0 0 0
 sprite 7 5 bonfire 0 0 0
 sprite 8 5 bonfire 0 0 0
-sprite 9 5 bonfire 0 0 0
-sprite 10 5 bonfire 0 0 0
+sprite 7 6 bonfire 0 0 0
+sprite 12 6 bonfire 0 0 0
 sprite 11 5 bonfire 0 0 0
 sprite 12 5 bonfire 0 0 0
 sprite 5 10 firenozzle_n 2 1 gs:castlenozzle_l
@@ -31,6 +31,6 @@ sprite 18 6 pitchfork 0 0 0
 sprite 10 6 saw 0 0 0
 neighbore 10
 neighborn 53
-door 9 4 102 6 5
-door 10 4 102 6 5
 saveto spell:HOME
+door 9 4 62 9 10
+door 10 4 62 9 10
