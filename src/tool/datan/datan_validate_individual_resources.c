@@ -166,5 +166,6 @@ int datan_validate_individual_resources() {
   datan_res_clear();
   int err=fmn_datafile_for_each(datan.datafile,validate_1,0);
   if (err<0) return err;
+  if ((err=datan_sprites_acquire_argtype())<0) return err;
   return 0;
 }

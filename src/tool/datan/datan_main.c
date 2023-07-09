@@ -49,12 +49,12 @@ static int datan_process_archive(const char *path) {
   TEST(datan_validate_spawn_points)
   TEST(datan_validate_res_id_continuity)
   TEST(datan_validate_cross_qualifier)
-  TEST(datan_validate_reachability)
   TEST(datan_validate_save_points)
   TEST(datan_validate_song_choice)
   TEST(datan_validate_blowback)
   TEST(datan_validate_indoor_outdoor_boundaries)
   TEST(datan_validate_tileprops_against_image)
+  TEST(datan_validate_reachability)
   
   #undef TEST
   return 0;

@@ -112,3 +112,70 @@ int datan_sprite_for_each_command(
   }
   return 0;
 }
+
+/* Scan source for 'argtype' declarations.
+ */
+ 
+static int datan_sprites_scan_source(int id,const char *src,int srcc,const char *path) {
+  struct datan_sprite *sprite=0;
+  struct sr_decoder decoder={.v=src,.c=srcc};
+  const char *line;
+  int linec,lineno=1;
+  for (;linec=sr_decode_line(&line,&decoder);lineno++) {
+    while (linec&&((unsigned char)line[linec-1]<=0x20)) linec--;
+    while (linec&&((unsigned char)line[0]<=0x20)) { line++; linec++; }
+    if ((linec<7)||memcmp(line,"argtype",7)) continue;
+    
+    int linep=7; // "argtype"
+    while ((linep<linec)&&((unsigned char)line[linep]<=0x20)) linep++;
+    int argp=0;
+    while ((linep<linec)&&((unsigned char)line[linep]>0x20)) {
+      char ch=line[linep++];
+      if ((ch<'0')||(ch>'9')) { argp=-1; break; }
+      argp*=10;
+      argp+=ch-'0';
+    }
+    if ((argp<0)||(argp>2)) continue;
+    while ((linep<linec)&&((unsigned char)line[linep]<=0x20)) linep++;
+    const char *type=line+linep;
+    int typec=0;
+    while ((linep<linec)&&((unsigned char)line[linep++]>0x20)) typec++;
+    uint16_t typen=fmn_restype_eval(type,typec);
+    if (!typen) continue;
+    
+    if (!sprite) {
+      if (!(sprite=datan_res_get(FMN_RESTYPE_SPRITE,0,id))) return 0;
+    }
+    switch (argp) {
+      case 0: sprite->arg0type=typen; break;
+      case 1: sprite->arg1type=typen; break;
+      case 2: sprite->arg2type=typen; break;
+    }
+  }
+  return 0;
+}
+ 
+static int datan_sprites_acquire_argtype_1(const char *path,const char *base,char type,void *userdata) {
+  if (type!='f') return 0;
+  int id=0,basep=0;
+  while ((base[basep]>='0')&&(base[basep]<='9')) {
+    id*=10;
+    id+=base[basep++]-'0';
+  }
+  if (!basep) return 0;
+  char *src=0;
+  int srcc=fmn_file_read(&src,path);
+  if (srcc<0) return 0;
+  int err=datan_sprites_scan_source(id,src,srcc,path);
+  free(src);
+  if (err<0) return err;
+  return 0;
+}
+ 
+int datan_sprites_acquire_argtype() {
+  if (!datan.srcpath) return 0;
+  char path[1024];
+  int pathc=snprintf(path,sizeof(path),"%s/sprite",datan.srcpath);
+  if ((pathc<1)||(pathc>=sizeof(path))) return 0;
+  return fmn_dir_read(path,datan_sprites_acquire_argtype_1,0);
+}

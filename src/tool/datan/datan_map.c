@@ -185,3 +185,100 @@ uint8_t datan_map_get_cellphysics(const struct datan_map *map,int x,int y) {
   if (!map->cellphysics) return 0;
   return map->cellphysics[map->v[y*FMN_COLC+x]];
 }
+
+int datan_map_rect_contains_solid(const struct datan_map *map,int x,int y,int w,int h) {
+  if (!map->cellphysics) return 0;
+  if (x<0) { w+=x; x=0; }
+  if (y<0) { h+=y; y=0; }
+  if (x>FMN_COLC-w) w=FMN_COLC-x;
+  if (y>FMN_ROWC-h) h=FMN_ROWC-y;
+  if ((w<1)||(h<1)) return 0;
+  const uint8_t *row=map->v+y*FMN_COLC+x;
+  int yi=h;
+  for (;yi-->0;row+=FMN_COLC) {
+    const uint8_t *p=row;
+    int xi=w;
+    for (;xi-->0;p++) {
+      switch (map->cellphysics[*p]) {
+        case FMN_CELLPHYSICS_SOLID:
+        case FMN_CELLPHYSICS_UNCHALKABLE:
+        case FMN_CELLPHYSICS_SAP:
+        case FMN_CELLPHYSICS_SAP_NOCHALK:
+        case FMN_CELLPHYSICS_REVELABLE:
+          return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+int datan_map_rect_entirely_solid(const struct datan_map *map,int x,int y,int w,int h) {
+  if (!map->cellphysics) return 0;
+  if (x<0) { w+=x; x=0; }
+  if (y<0) { h+=y; y=0; }
+  if (x>FMN_COLC-w) w=FMN_COLC-x;
+  if (y>FMN_ROWC-h) h=FMN_ROWC-y;
+  if ((w<1)||(h<1)) return 0;
+  const uint8_t *row=map->v+y*FMN_COLC+x;
+  int yi=h;
+  for (;yi-->0;row+=FMN_COLC) {
+    const uint8_t *p=row;
+    int xi=w;
+    for (;xi-->0;p++) {
+      switch (map->cellphysics[*p]) {
+        case FMN_CELLPHYSICS_SOLID:
+        case FMN_CELLPHYSICS_UNCHALKABLE:
+        case FMN_CELLPHYSICS_SAP:
+        case FMN_CELLPHYSICS_SAP_NOCHALK:
+        case FMN_CELLPHYSICS_REVELABLE:
+          break;
+        default: return 0;
+      }
+    }
+  }
+  return 1;
+}
+
+/* Enumerate neighbors.
+ */
+ 
+struct datan_map_for_each_neighbor_context {
+  struct datan_map *map;
+  int check_solid_edges;
+  int (*cb)(struct datan_map *map,uint16_t neighbor_map_id,void *userdata);
+  void *userdata;
+};
+
+static int datan_map_for_each_neighbor_cardinal(
+  struct datan_map_for_each_neighbor_context *ctx,
+  int x,int y,int w,int h,
+  int mapid
+) {
+  if (ctx->check_solid_edges) {
+    if (datan_map_rect_entirely_solid(ctx->map,x,y,w,h)) return 0;
+  }
+  return ctx->cb(ctx->map,mapid,ctx->userdata);
+}
+
+static int datan_map_for_each_neighbor_cb(uint8_t opcode,const uint8_t *v,int c,void *userdata) {
+  struct datan_map_for_each_neighbor_context *ctx=userdata;
+  switch (opcode) {
+    case 0x40: return datan_map_for_each_neighbor_cardinal(ctx,0,         0,1,       FMN_ROWC,(v[0]<<8)|v[1]);
+    case 0x41: return datan_map_for_each_neighbor_cardinal(ctx,FMN_COLC-1,0,1,       FMN_ROWC,(v[0]<<8)|v[1]);
+    case 0x42: return datan_map_for_each_neighbor_cardinal(ctx,0,         0,FMN_COLC,1,       (v[0]<<8)|v[1]);
+    case 0x43: return datan_map_for_each_neighbor_cardinal(ctx,0,FMN_ROWC-1,FMN_COLC,1,       (v[0]<<8)|v[1]);
+    case 0x60: return ctx->cb(ctx->map,(v[1]<<8)|v[2],ctx->userdata); // DOOR
+    case 0x81: return ctx->cb(ctx->map,(v[3]<<8)|v[4],ctx->userdata); // BURIED_DOOR
+  }
+  return 0;
+}
+ 
+int datan_map_for_each_neighbor(
+  struct datan_map *map,
+  int check_solid_edges,
+  int (*cb)(struct datan_map *map,uint16_t neighbor_map_id,void *userdata),
+  void *userdata
+) {
+  struct datan_map_for_each_neighbor_context ctx={.map=map,.check_solid_edges=check_solid_edges,.cb=cb,.userdata=userdata};
+  return datan_map_for_each_command(map,datan_map_for_each_neighbor_cb,&ctx);
+}

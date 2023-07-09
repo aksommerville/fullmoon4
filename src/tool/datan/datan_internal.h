@@ -59,6 +59,7 @@ extern struct datan {
 } datan;
 
 const char *fmn_restype_repr(uint16_t type);
+uint16_t fmn_restype_eval(const char *src,int srcc);
 
 int datan_chalk_codepoint_for_bits(int bits);
 int datan_chalk_bits_for_codepoint(int codepoint,int p);
@@ -153,6 +154,18 @@ int datan_map_for_each_command(
 
 int datan_map_cell_is_solid(const struct datan_map *map,int x,int y);
 uint8_t datan_map_get_cellphysics(const struct datan_map *map,int x,int y);
+int datan_map_rect_contains_solid(const struct datan_map *map,int x,int y,int w,int h);
+int datan_map_rect_entirely_solid(const struct datan_map *map,int x,int y,int w,int h);
+
+/* Trigger callback for each edge and door with a nonzero mapid.
+ * Optionally skip cardinal neighbors if our side of the border is fully solid.
+ */
+int datan_map_for_each_neighbor(
+  struct datan_map *map,
+  int check_solid_edges,
+  int (*cb)(struct datan_map *map,uint16_t neighbor_map_id,void *userdata),
+  void *userdata
+);
 
 struct datan_sprite {
   uint16_t qualifier;
@@ -171,6 +184,10 @@ struct datan_sprite {
   uint16_t radius; // u8.8
   uint16_t controller;
   uint8_t bv[FMN_SPRITE_BV_SIZE];
+  // Extracted from source before validation:
+  uint16_t arg0type; // if nonzero, spawn point argument is a resource id
+  uint16_t arg1type;
+  uint16_t arg2type;
 };
 
 void datan_sprite_del(struct datan_sprite *sprite);
@@ -184,5 +201,7 @@ int datan_sprite_for_each_command(
   int (*cb)(uint8_t opcode,const uint8_t *v,int c,void *userdata),
   void *userdata
 );
+
+int datan_sprites_acquire_argtype();
 
 #endif

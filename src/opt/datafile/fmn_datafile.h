@@ -79,6 +79,13 @@ int fmn_datafile_for_each_of_id(
 int fmn_datafile_get_any(void *dstpp,struct fmn_datafile *file,uint16_t type,uint32_t id);
 int fmn_datafile_get_qualified(void *dstpp,struct fmn_datafile *file,uint16_t type,uint16_t qualifier,uint32_t id);
 
+int fmn_datafile_get_by_index(
+  void *dstpp,uint16_t *type,uint16_t *qualifier,uint32_t *id,
+  struct fmn_datafile *file,
+  int p
+);
+int fmn_datafile_count(const struct fmn_datafile *file);
+
 int fmn_file_read(void *dstpp,const char *path);
 int fmn_file_write(const char *path,const void *src,int srcc);
 int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,char type,void *userdata),void *userdata);

@@ -4,7 +4,7 @@
 /* MIDI event.
  */
  
-static int datan_song_event(struct midi_file *midi,uint16_t qualifier,uint16_t id,const struct midi_event *event,int trackp) {
+static int datan_song_event(struct midi_file *midi,uint16_t qualifier,uint16_t id,const struct midi_event *event,int trackp,int durationms) {
   #define CHECKCHID { \
     if (event->chid==14) { \
       fprintf(stderr,"%s:song:%d(%d): Channel 14 is reserved for violin. (found on track %d)\n",datan.arpath,id,qualifier,trackp); \
@@ -26,7 +26,12 @@ static int datan_song_event(struct midi_file *midi,uint16_t qualifier,uint16_t i
     case MIDI_OPCODE_NOTE_OFF: CHECKCHID break;
     case MIDI_OPCODE_NOTE_ADJUST: DONTUSE(NOTE_ADJUST) break;
     case MIDI_OPCODE_CONTROL: DONTUSE(CONTROL) break;
-    case MIDI_OPCODE_PROGRAM: CHECKCHID break;
+    case MIDI_OPCODE_PROGRAM: {
+        CHECKCHID
+        if (durationms) {
+          fprintf(stderr,"%s:song:%d(%d):WARNING: Program Change after time zero (track %d).\n",datan.arpath,id,qualifier,trackp);
+        }
+      } break;
     case MIDI_OPCODE_PRESSURE: DONTUSE(PRESSURE) break;
     case MIDI_OPCODE_WHEEL: CHECKCHID break;
     
@@ -66,7 +71,7 @@ static int datan_song_validate_midi_file(struct midi_file *midi,uint16_t qualifi
       if (midi_file_advance(midi,err)<0) return -1;
       durationms+=err;
     } else { // event
-      if ((err=datan_song_event(midi,qualifier,id,&event,trackp))<0) {
+      if ((err=datan_song_event(midi,qualifier,id,&event,trackp,durationms))<0) {
         return err;
       }
       eventc++;
@@ -88,6 +93,13 @@ int datan_song_validate_serial(uint16_t qualifier,uint32_t id,const void *v,int 
     return -2;
   }
   int err=datan_song_validate_midi_file(midi,qualifier,id);
-  midi_file_del(midi);
-  return err;
+  if (err<0) {
+    midi_file_del(midi);
+    return err;
+  }
+  if (datan_res_add(FMN_RESTYPE_SONG,qualifier,id,midi,midi_file_del)<0) {
+    midi_file_del(midi);
+    return -1;
+  }
+  return 0;
 }

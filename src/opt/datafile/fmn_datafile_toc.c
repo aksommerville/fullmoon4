@@ -269,3 +269,25 @@ int fmn_datafile_get_qualified(void *dstpp,struct fmn_datafile *file,uint16_t ty
   *(void**)dstpp=ctx.alt;
   return ctx.altc;
 }
+
+/* Direct access to internal list.
+ */
+ 
+int fmn_datafile_get_by_index(
+  void *dstpp,uint16_t *type,uint16_t *qualifier,uint32_t *id,
+  struct fmn_datafile *file,
+  int p
+) {
+  if (p<0) return -1;
+  if (p>=file->entryc) return -1;
+  const struct fmn_datafile_toc_entry *entry=file->entryv+p;
+  if (dstpp) *(void**)dstpp=file->serial+entry->p;
+  if (type) *type=entry->type;
+  if (qualifier) *qualifier=entry->qualifier;
+  if (id) *id=entry->id;
+  return entry->c;
+}
+
+int fmn_datafile_count(const struct fmn_datafile *file) {
+  return file->entryc;
+}
