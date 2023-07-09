@@ -189,4 +189,4 @@ endif
 web-fiddle:;$(NODE) src/tool/server/main.js \
   --htdocs=src/tool/fiddle/www --midi-broadcast --port=43215 --htalias=/js/:src/www/js/ --makeable=$(web_HTSA_DATA)
   
-web-verify:$(web_HTSA_DATA);$(NODE) src/tool/verify/main.js --archive=$(web_HTSA_DATA) --dir=src/data
+web-verify:$(web_HTSA_DATA_FULL) $(web_HTSA_DATA_DEMO) $(tools_EXE_datan);$(tools_EXE_datan) --src=src/data --archive=$(web_HTSA_DATA_FULL) --archive=$(web_HTSA_DATA_DEMO)
