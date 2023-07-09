@@ -283,8 +283,8 @@ struct fmn_door {
   uint8_t x;
   uint8_t y;
   uint16_t mapid; // zero if the door is used for special purposes (ie not an actual door)
-  uint8_t dstx;
-  uint8_t dsty;
+  int8_t dstx;
+  int8_t dsty;
   uint16_t extra;
   /* Use as a door, pretty obvious.
    * Can also be abused for other purposes:

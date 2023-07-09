@@ -1,9 +1,9 @@
 8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f
 8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f8f
 8f8f8f8f8f4c4d4d4d4d4d4d4d4d4d4f8f8f8f8f
-8f8f8f8f8f5c5d4e5e6c5e7e5e6f5e5f8f8f8f8f
-8f8f8f8f8f5c6d8e7b8e6e8e6e8e6e5f8f8f8f8f
-8f8f8f8f8f5c6d6e8b8c8c8c8c8c8d5f8f8f8f8f
+8f8f8f8f8f5c5d4e5e6f5e7e5e6c5e5f8f8f8f8f
+8f8f8f8f8f5c6d8e6e8e7b8e6e8e6e5f8f8f8f8f
+8f8f8f8f8f5c6d6e6e6e8b8c8c8c8d5f8f8f8f8f
 8f8f8f8f8f5c6d6e6e6e6e6e6e6e6e5f8f8f8f8f
 8f8f8f8f8f5c6d6e6e6e6e6e6e6e6e5f8f8f8f8f
 8f8f8f8f8f7c7d7d7d7d7d7d7d7d7d7f8f8f8f8f
@@ -14,4 +14,5 @@ tilesheet caves
 hero 10 7 spell:OPEN
 flags ancillary indoors
 door 7 4 1 -1 -1
+door 9 4 62 -1 -1
 song choose_a_door

@@ -74,8 +74,13 @@ static void bigpc_add_door(uint8_t cellp,uint16_t gsbit,uint16_t dstmapid,uint8_
   door->x=cellp%FMN_COLC;
   door->y=cellp/FMN_COLC;
   door->mapid=dstmapid;
-  door->dstx=dstx;
-  door->dsty=dsty;
+  if (dsty>=FMN_ROWC) {
+    door->dstx=-1;
+    door->dsty=-1;
+  } else {
+    door->dstx=dstx;
+    door->dsty=dsty;
+  }
   door->extra=gsbit;
   // Expose buried doors if we got them already:
   if (door->extra&&door->mapid&&fmn_gs_get_bit(door->extra)) {

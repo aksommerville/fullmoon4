@@ -9,14 +9,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ## TODO Wrap up verify
 
-- [x] verify: buried_treasure and buried_door. shovellable, etc
-- [x] verify: Map flag commands eg ANCILLARY, also "sketch" important, must come before sprites and doors.
-- [x] verify: Map tilesheet must be before neighbors, for crow's edge detection.
-- [x] verify: Non-adjacent maps with 'hero' must have an intervening 'saveto' on any possible path.
-- - Otherwise there's a map that could save to two different places depending on history. (similar to the song check)
-- [ ] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
-- [x] editor: PoiModal: rewrite sprite field labels when sprite id changes
-- [x] verify: requireBlowbackForOpenEdges: Must account for firewall
+- [x] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
 - [ ] editor: MapAllUi: Some regions are appearing more than once, eg church/castle basement.
 
 ### Full Maps

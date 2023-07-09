@@ -238,7 +238,16 @@ static int datan_reachability_visit_known(struct datan_reachability_context *ctx
   int err,i;
 
   if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,1))<0) return err;
-  if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,51))<0) return err; // choose_a_door. TODO don't hard-code this id
+  // Also, any map that's teleportable is "reachable". This matters for the magic door.
+  {
+    struct datan_res *res=datan.resv;
+    int i=datan.resc;
+    for (;i-->0;res++) {
+      if (res->obj&&(res->type==FMN_RESTYPE_MAP)&&((struct datan_map*)res->obj)->spellid) {
+        if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,res->id))<0) return err;
+      }
+    }
+  }
   
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,2))<0) return err; // hero
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,4))<0) return err; // items splash

@@ -646,16 +646,18 @@ static void fmn_cast_revelations() {
 }
 
 /* The Spell of Opening: If any sketched doors are present, turn them into real doors.
+ * We use similar plumbing to teleport targets for this, but keyed on FMN_SPELLID_OPEN.
  */
  
 static void fmn_open_magic_doors() {
-  const uint16_t mapid=51;
   const uint32_t door_bits=0x0d0a04;
   uint8_t changed=0;
   struct fmn_sketch *sketch=fmn_global.sketchv;
   int i=fmn_global.sketchc;
   for (;i-->0;sketch++) {
     if (sketch->bits==door_bits) {
+      uint16_t mapid=fmn_find_teleport_target(FMN_SPELLID_OPEN);
+      if (!mapid) return;
       sketch->bits=0;
       changed=1;
       if (fmn_global.doorc<FMN_DOOR_LIMIT) {
@@ -664,8 +666,8 @@ static void fmn_open_magic_doors() {
         door->y=sketch->y;
         door->extra=0;
         door->mapid=mapid;
-        door->dstx=10;
-        door->dsty=6;
+        door->dstx=-1;//10; // NB The secret room's HERO command, we ignore its position. Maybe we can find a way to use it?
+        door->dsty=-1;//6;
         struct fmn_sprite *sprite=fmn_sprite_generate_noparam(FMN_SPRCTL_magicdoor,door->x+0.5f,door->y+0.5f);
         fmn_global.map[door->y*FMN_COLC+door->x]=0;
       }

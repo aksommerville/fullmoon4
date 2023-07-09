@@ -182,14 +182,18 @@ static int mkd_map_cmd_door(struct mkd_respath *respath,const char *src,int srcc
     "x",0,FMN_COLC-1,"",
     "y",0,FMN_ROWC-1,"",
     "mapid",1,0xffff,"map",
-    "dstx",0,FMN_COLC-1,"",
-    "dsty",0,FMN_ROWC-1,""
+    "dstx",-1,FMN_COLC-1,"",
+    "dsty",-1,FMN_ROWC-1,""
   );
   if (err<0) return err;
   if (sr_encode_u8(&mkd.dst,0x60)<0) return -1;
   if (sr_encode_u8(&mkd.dst,argv[1]*FMN_COLC+argv[0])<0) return -1;
   if (sr_encode_intbe(&mkd.dst,argv[2],2)<0) return -1;
-  if (sr_encode_u8(&mkd.dst,argv[4]*FMN_COLC+argv[3])<0) return -1;
+  if (argv[3]<0) {
+    if (sr_encode_u8(&mkd.dst,0xff)<0) return -1;
+  } else {
+    if (sr_encode_u8(&mkd.dst,argv[4]*FMN_COLC+argv[3])<0) return -1;
+  }
   return 0;
 }
 
@@ -397,15 +401,19 @@ static int mkd_map_cmd_buried_door(struct mkd_respath *respath,const char *src,i
     "y",0,FMN_ROWC-1,"",
     "gsbit",0,0xffff,"",
     "mapid",0,0xffff,"map",
-    "dstx",0,FMN_COLC-1,"",
-    "dsty",0,FMN_ROWC-1,""
+    "dstx",-1,FMN_COLC-1,"",
+    "dsty",-1,FMN_ROWC-1,""
   );
   if (err<0) return err;
   if (sr_encode_u8(&mkd.dst,0x81)<0) return -1;
   if (sr_encode_u8(&mkd.dst,argv[1]*FMN_COLC+argv[0])<0) return -1;
   if (sr_encode_intbe(&mkd.dst,argv[2],2)<0) return -1;
   if (sr_encode_intbe(&mkd.dst,argv[3],2)<0) return -1;
-  if (sr_encode_u8(&mkd.dst,argv[5]*FMN_COLC+argv[4])<0) return -1;
+  if (argv[4]<0) {
+    if (sr_encode_u8(&mkd.dst,0xff)<0) return -1;
+  } else {
+    if (sr_encode_u8(&mkd.dst,argv[5]*FMN_COLC+argv[4])<0) return -1;
+  }
   return 0;
 }
 

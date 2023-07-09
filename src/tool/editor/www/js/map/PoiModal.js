@@ -295,8 +295,8 @@ export class PoiModal {
     
       case "exit": {
           if (isNaN(poi.mapId) || (poi.mapId < 0) || (poi.mapId > 0xffff)) return null;
-          if (isNaN(poi.dstx) || (poi.dstx < 0) || (poi.dstx >= FullmoonMap.COLC)) return null;
-          if (isNaN(poi.dsty) || (poi.dsty < 0) || (poi.dsty >= FullmoonMap.COLC)) return null;
+          if (isNaN(poi.dstx) || (poi.dstx < -1) || (poi.dstx >= FullmoonMap.COLC)) return null;
+          if (isNaN(poi.dsty) || (poi.dsty < -1) || (poi.dsty >= FullmoonMap.COLC)) return null;
           return ["door", poi.x.toString(), poi.y.toString(), poi.mapId.toString(), poi.dstx.toString(), poi.dsty.toString()];
         }
       

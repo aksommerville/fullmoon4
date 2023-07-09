@@ -123,15 +123,18 @@ export class FullmoonMap {
           });
           break;
           
-        case 0x60: this.doors.push({ // regular door
-            x: v[argp] % FMN.COLC,
-            y: Math.floor(v[argp] / FMN.COLC),
-            mapId: (v[argp + 1] << 8) | v[argp + 2],
-            dstx: v[argp + 3] % FMN.COLC,
-            dsty: Math.floor(v[argp + 3] / FMN.COLC),
-            extra: 0,
-          });
-          break;
+        case 0x60: { // regular door
+            const door = {
+              x: v[argp] % FMN.COLC,
+              y: Math.floor(v[argp] / FMN.COLC),
+              mapId: (v[argp + 1] << 8) | v[argp + 2],
+              dstx: v[argp + 3] % FMN.COLC,
+              dsty: Math.floor(v[argp + 3] / FMN.COLC),
+              extra: 0,
+            };
+            if (v[argp + 3] === 0xff) door.dstx = door.dsty = -1;
+            this.doors.push(door);
+          } break;
           
         case 0x61: this.sketches.push({
             x: v[argp] % FMN.COLC,
@@ -182,15 +185,18 @@ export class FullmoonMap {
           });
           break;
           
-        case 0x81: this.doors.push({ // buried_door
-            x: v[argp] % FMN.COLC,
-            y: Math.floor(v[argp] / FMN.COLC),
-            mapId: (v[argp + 3] << 8) | v[argp + 4],
-            dstx: v[argp + 5] % FMN.COLC,
-            dsty: Math.floor(v[argp + 5] / FMN.COLC),
-            extra: (v[argp + 1] << 8) | v[argp + 2],
-          });
-          break;
+        case 0x81: { // buried_door
+            const door = {
+              x: v[argp] % FMN.COLC,
+              y: Math.floor(v[argp] / FMN.COLC),
+              mapId: (v[argp + 3] << 8) | v[argp + 4],
+              dstx: v[argp + 5] % FMN.COLC,
+              dsty: Math.floor(v[argp + 5] / FMN.COLC),
+              extra: (v[argp + 1] << 8) | v[argp + 2],
+            };
+            if (v[argp + 5] === 0xff) door.dstx = door.dsty = -1;
+            this.doors.push(door);
+          } break;
       }
     });
   }
