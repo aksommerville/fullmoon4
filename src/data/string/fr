@@ -3,6 +3,7 @@
 2 WORM
 
 # The remaining text might look French but don't trust it. Just making things up so I can test language switching. -AK
+# et je ne parles francais si bon
 
 # We currently only support ASCII text. Translator: How important are diacritic marks? We can add glyphs if need be.
 
@@ -34,3 +35,11 @@
 25 Lait
 26 Miele
 27 Seve
+
+# More password puzzle: Do not translate
+28 FIRE
+29 MOON
+30 WINE
+31 LOVE
+32 HAND
+33 BIRD

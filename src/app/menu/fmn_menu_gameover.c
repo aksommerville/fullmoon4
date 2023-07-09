@@ -12,7 +12,9 @@ static void gameover_dismiss(struct fmn_menu *menu) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
     fmn_dismiss_menu(menu);
-    if (fmn_game_load_map(1,-1.0f,-1.0f)<0) fmn_abort();
+    if (fmn_game_load_saved_game()<0) {
+      if (fmn_game_load_map(1,-1.0f,-1.0f)<0) fmn_abort();
+    }
   }
 }
 
