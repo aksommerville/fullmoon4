@@ -27,6 +27,16 @@ struct fmn_datafile;
 #define FMN_RESTYPE_INSTRUMENT 0x07 /* qualifier=synthesizer */
 #define FMN_RESTYPE_SOUND      0x08 /* qualifier=synthesizer */
 
+#define FMN_FOR_EACH_RESTYPE \
+  _(IMAGE) \
+  _(SONG) \
+  _(MAP) \
+  _(TILEPROPS) \
+  _(SPRITE) \
+  _(STRING) \
+  _(INSTRUMENT) \
+  _(SOUND)
+
 void fmn_datafile_del(struct fmn_datafile *file);
 
 struct fmn_datafile *fmn_datafile_open(const char *path);
