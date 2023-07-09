@@ -11,8 +11,8 @@
 2c0204000100010101005b5c5c5c5c5d00020200
 2d1b1b1c0000000000005b5c5c5c5c5e4c4c4c4c
 tilesheet desert
-song blood_for_silver
 neighborw 6
 neighbore 8
 neighborn 10
 neighbors 28
+song blood_for_silver

@@ -13,6 +13,8 @@
 tilesheet castleint
 flags indoors
 neighbors 64
+neighbore 76
+neighborn 98
 door 2 2 68 2 2
 sprite 10 7 bonfire 0 0 0
 sprite 10 6 bonfire 0 0 0
@@ -39,5 +41,3 @@ sprite 16 1 bonfire 0 0 0
 sprite 12 1 bonfire 0 0 0
 sprite 11 1 bonfire 0 0 0
 sprite 10 1 bonfire 0 0 0
-neighbore 76
-neighborn 98

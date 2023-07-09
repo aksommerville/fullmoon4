@@ -11,8 +11,8 @@
 2c0000002a2b2b2b2b2b2c002a2c000000000000
 2d1b1b1b2e2b2b2b2b2b2d1b2e2d1b1b1b1b1b1b
 tilesheet caves
-song seven_circles
 flags dark indoors
 neighbore 35
 door 7 2 37 7 2
 door 2 9 37 2 9
+song seven_circles

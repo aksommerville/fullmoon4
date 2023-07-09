@@ -11,7 +11,7 @@
 2121212121212121212121212121212121212121
 2121212121212121212121212121212121212121
 tilesheet swamp
-song gloom_for_company
+flags ancillary blowback
 neighbors 95
 neighbore 5
-flags ancillary blowback
+song gloom_for_company

@@ -13,6 +13,6 @@
 tilesheet castleint
 flags indoors
 neighborw 62
-transmogrify 13 4 from 1
 neighborn 77
 door 6 3 121 6 3
+transmogrify 13 4 from 1

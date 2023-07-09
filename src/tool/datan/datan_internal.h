@@ -89,12 +89,13 @@ int datan_validate_individual_resources();
 int datan_validate_spawn_points();
 int datan_validate_res_id_continuity();
 int datan_validate_cross_qualifier();
-int datan_validate_reachability();
 int datan_validate_save_points();
 int datan_validate_song_choice();
 int datan_validate_blowback();
 int datan_validate_indoor_outdoor_boundaries();
 int datan_validate_tileprops_against_image();
+int datan_validate_buried_things();
+int datan_validate_reachability();
 
 /* Individual resource validators, single serial only.
  */

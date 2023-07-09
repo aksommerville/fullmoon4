@@ -11,12 +11,12 @@
 4545454545454545454610120000000000000015
 5555555555555555555620221a1b1b1b1b1c1529
 tilesheet village
-song snowglobe
+saveto spell:TELE1
 neighbore 7
 neighbors 5
 neighborw 4
 door 16 3 29 7 9
 door 4 3 30 9 9
-transmogrify 10 2 from 1
 sprite 14 5 pamcake 0 0 0
-saveto spell:TELE1
+song snowglobe
+transmogrify 10 2 from 1

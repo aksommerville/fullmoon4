@@ -14,5 +14,5 @@ tilesheet castleint
 flags indoors
 neighbore 117
 neighborn 99
-sprite 9 5 alphablock_alpha 0 0 0
 neighbors 119
+sprite 9 5 alphablock_alpha 0 0 0

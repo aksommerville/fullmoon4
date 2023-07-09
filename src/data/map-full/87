@@ -11,9 +11,9 @@
 2626262626262626262626262626262626262626
 2626262626262626262626262626262626262626
 tilesheet beach
-song eye_of_newt
+flags ancillary blowback
+saveto spell:TELE1
 neighbore 86
 neighborn 17
-flags ancillary blowback
 neighborw 88
-saveto spell:TELE1
+song eye_of_newt

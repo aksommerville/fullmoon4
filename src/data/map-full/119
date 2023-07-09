@@ -13,6 +13,6 @@
 tilesheet castleint
 flags indoors
 neighborn 118
-sprite 7 5 conveyor 64 0 0
 neighbore 120
+sprite 7 5 conveyor 64 0 0
 door 17 9 122 17 9

@@ -11,7 +11,6 @@
 2b2b2b2b2b2b2b2b2b2c3536363636372a2b2b2b
 2b2b2b2b2b2b2b2b2b2d1b1b1b1b1b1b2e2b2b2b
 tilesheet forest
-song toil_and_trouble
 neighborn 13
 neighbore 16
 neighbors 18
@@ -26,3 +25,4 @@ sprite 6 8 wildflower 1 0 0
 sprite 7 8 wildflower 2 0 0
 sprite 8 8 wildflower 3 0 0
 sprite 8 4 wildflower 0 1 0
+song toil_and_trouble

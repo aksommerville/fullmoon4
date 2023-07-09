@@ -11,9 +11,9 @@
 1b1b1b1b1b1b1c00020100010001020000252626
 2b2b2b2b2b2b2c00000102001a1b1b1b1c252626
 tilesheet forest
-song toil_and_trouble
+saveto spell:HOME
 neighbore 1
 neighborw 3
 neighborn 21
 neighbors 13
-saveto spell:HOME
+song toil_and_trouble

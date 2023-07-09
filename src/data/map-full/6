@@ -11,9 +11,9 @@
 2628161700021a1b1c040001000200030002012a
 26262628171a2e2b2d1b1c000003001a1b1b1b2e
 tilesheet forest
-song toil_and_trouble
 neighborw 1
 neighbore 7
-sprite 14 7 beehive 0 0 0
 neighborn 23
 neighbors 24
+sprite 14 7 beehive 0 0 0
+song toil_and_trouble

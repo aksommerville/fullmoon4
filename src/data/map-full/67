@@ -13,6 +13,6 @@
 tilesheet castleint
 flags indoors
 neighbors 66
+neighborw 68
 sprite 2 0 firewall 0 0 0
 sprite 19 6 firewall 0 0 0
-neighborw 68

@@ -40,6 +40,13 @@ flags [dark] [indoors] [blowback] [ancillary]
 
 Resource IDs may be name or number.
 
+Required order of commands. (asserted only at `make verify`). All unlisted commands may appear anywhere.
+
+- tilesheet,flags,hero,saveto
+- neighborw,neighbore,neighborn,neighbors
+- sketch
+- door,sprite,buried_door
+
 ## Binary Format
 
 Each map starts with 20*12 cells, one byte each. (or FMN_MAP_COLC,ROWC in src/app/fmn_platform.h, if it changes).

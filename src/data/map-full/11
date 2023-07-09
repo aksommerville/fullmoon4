@@ -11,7 +11,6 @@
 0101012013313131313131313131313131320025
 1617012022011516161616161616161616161629
 tilesheet village
-song snowglobe
 neighbors 1
 neighborn 12
 neighborw 21
@@ -20,3 +19,4 @@ sprite 7 4 cow 0 0 0
 door 12 1 103 10 9
 door 2 3 104 13 8
 sprite 12 1 farmer 4 0 0
+song snowglobe

@@ -11,10 +11,10 @@
 262626262628161616161616170000002a2b2b2b
 262626262626262626262626281616172a2b2b2b
 tilesheet forest
-song toil_and_trouble
 neighborn 14
 neighbore 16
 neighborw 20
-sprite 1 6 seamonster 0 0 0
 neighbors 48
+sprite 1 6 seamonster 0 0 0
 sprite 13 5 bonfire 0 0 0
+song toil_and_trouble

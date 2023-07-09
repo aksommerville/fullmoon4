@@ -11,7 +11,6 @@
 5d0103465a575758010000010001005658005b5c
 5d00465a57575759474747474748005658005b5c
 tilesheet desert
-song blood_for_silver
 neighborw 8
 neighborn 27
 neighbors 30
@@ -20,3 +19,4 @@ sketch 10 3 606243
 sketch 11 3 99466
 sketch 12 3 265860
 sprite 7 3 chalkguard 1 2 0
+song blood_for_silver

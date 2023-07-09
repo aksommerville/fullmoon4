@@ -11,7 +11,6 @@
 2702020002040000000001000000000000000100
 2816161616161616161616161616161616161616
 tilesheet village
-song snowglobe
 neighbors 2
 neighbore 11
 neighborn 22
@@ -21,3 +20,4 @@ door 14 5 105 9 9
 door 8 3 108 9 9
 sprite 5 9 pamcake 0 0 0
 sprite 12 10 treasure item:HAT 0 0
+song snowglobe

@@ -13,10 +13,10 @@
 tilesheet castleint
 flags indoors
 neighbors 123
-sprite 0 2 firewall 0 0 0
-sprite 12 5 chalkguard 0 0 0
+neighbore 125
 sketch 15 6 853504
 sketch 16 6 606243
 sketch 17 6 857616
 sketch 18 6 853507
-neighbore 125
+sprite 0 2 firewall 0 0 0
+sprite 12 5 chalkguard 0 0 0

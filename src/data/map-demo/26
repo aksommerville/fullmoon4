@@ -11,14 +11,14 @@
 5d000000004647474747475a575757586f000000
 5d000000465a575757575757575757586e00004b
 tilesheet desert
-song eye_of_newt
 neighbors 25
 neighbore 23
 neighborn 10
 neighborw 46
-facedir gs:dirfirea gs:dirfireb
 sprite 5 1 firenozzle_s 2 0 gs:dirfireb
 sprite 8 8 firenozzle_n 2 0 gs:dirfirea
 sprite 5 5 firenozzle_e 2 0 gs:dirfireb
 sprite 5 4 firenozzle_w 2 0 gs:dirfirea
 sprite 9 2 bittattle gs:dirfirea gs:dirfireb 0
+song eye_of_newt
+facedir gs:dirfirea gs:dirfireb

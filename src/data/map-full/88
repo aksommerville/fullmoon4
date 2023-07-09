@@ -11,9 +11,9 @@
 5151515151515151515151515151515151515151
 5151515151515151515151515151515151515151
 tilesheet swamp
-song gloom_for_company
+flags ancillary blowback
+saveto spell:TELE2
 neighbore 87
 neighborn 18
-flags ancillary blowback
 neighborw 89
-saveto spell:TELE2
+song gloom_for_company

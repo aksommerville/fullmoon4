@@ -11,11 +11,11 @@
 212312e400000003252816161616171011112421
 2121231200000000252626262626272021212121
 tilesheet midlands
-song toil_and_trouble
-sprite 13 1 treasure item:FEATHER 0 0
+hero 11 6 spell:HOME
 neighborn 2
 neighbore 13
 neighbors 19
 neighborw 23
-hero 11 6 spell:HOME
+sprite 13 1 treasure item:FEATHER 0 0
 door 2 2 3 2 2
+song toil_and_trouble

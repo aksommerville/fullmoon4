@@ -11,11 +11,11 @@
 2626262626262626262626262628161616292626
 2626262626262626262626262626262626262626
 tilesheet beach
-song eye_of_newt
+hero 15 9 spell:TELE1
 neighborw 17
 neighborn 25
 neighbore 31
 neighbors 86
 sprite 5 1 treasure item:SHOVEL 0 0
 sprite 4 3 treasure item:COMPASS 0 0
-hero 15 9 spell:TELE1
+song eye_of_newt

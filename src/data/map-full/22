@@ -11,10 +11,10 @@
 2700002013313200000000005c5d5d5e1a1b1b1b
 27000020221a1b1b1b1b1b1c5c5d5d5e5c5d5d5d
 tilesheet village
-song snowglobe
 neighbore 12
 neighbors 21
 neighborw 47
 door 7 7 109 9 9
 door 13 5 111 9 9
 door 18 6 112 10 10
+song snowglobe

@@ -11,10 +11,10 @@
 2626262628161616161616161616292626262626
 2626262626262626262626262626262626262626
 tilesheet village
-song snowglobe
 neighborw 5
 neighborn 7
 neighbors 18
 sprite 8 2 treasure item:SNOWGLOBE 0 0
 sprite 9 8 pushblock 0 0 0
 sprite 12 8 pushblock 0 0 0
+song snowglobe

@@ -11,7 +11,7 @@
 21212311111201000200010001001a1b1b1b2e2b
 2121212121220100011a1b1b1b1b2e2b2b2b2b2b
 tilesheet midlands
-song toil_and_trouble
+saveto spell:HOME
 neighbors 1
 neighborn 4
 neighbore 5
@@ -20,4 +20,4 @@ sprite 13 1 seamonster 0 0 0
 sprite 9 1 pushblock 0 0 0
 sprite 8 4 saw 0 0 0
 sprite 7 3 firenozzle_e 3 30 0
-saveto spell:HOME
+song toil_and_trouble

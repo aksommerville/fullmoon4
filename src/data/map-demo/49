@@ -11,6 +11,6 @@
 2b2b2b2b2b2b2b2b2b2b2d1b1c60616161616161
 2b2b2b2b2b2b2b2b2b2b2b2b2c60616161616161
 tilesheet caves
-door 5 3 7 5 3
-neighbore 50
 flags indoors
+neighbore 50
+door 5 3 7 5 3

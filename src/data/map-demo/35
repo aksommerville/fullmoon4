@@ -11,10 +11,10 @@
 0000002a2c002a2b2b2b2c002a2b2c000000002a
 1b1b1b2e2d1b2e2b2b2b2d1b2e2b2d1b1b1b1b2e
 tilesheet caves
-song seven_circles
 flags dark indoors
-door 8 2 34 8 2
-sprite 14 4 lizard 0 0 0
 neighborw 36
 neighbore 38
+door 8 2 34 8 2
+sprite 14 4 lizard 0 0 0
+song seven_circles
 buried_treasure 8 8 0 item:MATCH

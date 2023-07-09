@@ -11,8 +11,8 @@
 0000000000000000000000000300000000010000
 0000000300000001030000030100000200000000
 tilesheet swamp
-song gloom_for_company
 neighbore 39
 neighborn 4
 neighbors 41
 neighborw 43
+song gloom_for_company

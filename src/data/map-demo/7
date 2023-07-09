@@ -11,7 +11,6 @@
 1617000000000000000000000015161700152926
 2628161616161616161616161629262700252626
 tilesheet village
-song snowglobe
 neighbors 6
 neighborw 8
 door 11 5 32 7 10
@@ -21,11 +20,12 @@ sprite 6 6 gate 0 0 0
 sprite 3 2 ghost 0 0 0
 sprite 5 4 ghost 0 0 0
 sprite 7 2 ghost 0 0 0
+buried_door 5 3 gs:gravedoor 49 5 3
+sprite 16 10 tree gs:treeactivated 0 0
+song snowglobe
 buried_treasure 3 3 gs:graverob1 item:COIN
 buried_treasure 7 3 gs:graverob2 item:COIN
 buried_treasure 3 5 gs:graverob3 item:COIN
 buried_treasure 5 5 gs:graverob4 item:COIN
 buried_treasure 7 5 gs:graverob5 item:COIN
-buried_door 5 3 gs:gravedoor 49 5 3
-sprite 16 10 tree gs:treeactivated 0 0
 event_trigger 16 2 4

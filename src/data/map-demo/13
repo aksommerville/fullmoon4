@@ -11,7 +11,6 @@
 2122252627000002012a2c0000012a2d1c000100
 2122252627020100012a2d1b1c012a2b2d1b1b1b
 tilesheet forest
-song toil_and_trouble
 neighborw 1
 neighborn 5
 neighbors 14
@@ -23,4 +22,5 @@ sprite 4 7 pushblock 0 0 0
 sprite 4 6 pushblock 0 0 0
 sprite 6 8 7 3 25 0
 sprite 11 5 raccoon 0 0 0
+song toil_and_trouble
 callback ev:LOADED cb:kill_top_pushblock_if_pumpkin_at_nw 0

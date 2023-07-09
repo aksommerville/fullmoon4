@@ -11,12 +11,12 @@
 0000000000001516161629262816161616292626
 1616161616162926262626262626262626262626
 tilesheet beach
-song eye_of_newt
 neighbore 20
 neighborw 22
 neighborn 24
+neighbors 41
 sprite 10 0 firewall 0 0 0
 sprite 11 8 tolltroll gs:tolltroll 0 0
 sprite 15 5 lobster 0 0 0
 sprite 5 6 lobster 0 0 0
-neighbors 41
+song eye_of_newt

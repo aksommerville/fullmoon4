@@ -45,7 +45,7 @@ static int datan_process_archive(const char *path) {
     if (err!=-2) fprintf(stderr,"%s: Unspecified error at step '%s'\n",path,#fnname); \
     return -2; \
   }
-  TEST(datan_validate_individual_resources)
+  TEST(datan_validate_individual_resources) // Must come first; this populates our live-resource list.
   TEST(datan_validate_spawn_points)
   TEST(datan_validate_res_id_continuity)
   TEST(datan_validate_cross_qualifier)
@@ -54,7 +54,8 @@ static int datan_process_archive(const char *path) {
   TEST(datan_validate_blowback)
   TEST(datan_validate_indoor_outdoor_boundaries)
   TEST(datan_validate_tileprops_against_image)
-  TEST(datan_validate_reachability)
+  TEST(datan_validate_buried_things)
+  TEST(datan_validate_reachability) // Recommend last because it tends to generate a large warning.
   
   #undef TEST
   return 0;

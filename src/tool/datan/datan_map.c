@@ -47,6 +47,50 @@ static int datan_map_add_spawn(struct datan_map *map,uint8_t x,uint8_t y,uint16_
   return 0;
 }
 
+/* Validate order of commands.
+ * - 0: tilesheet,flags,hero,saveto
+ * - 1: neighborw,neighbore,neighborn,neighbors
+ * - 2: sketch
+ * - 3: door,sprite,buried_door
+ */
+ 
+static int datan_map_validate_order(uint8_t opcode,const uint8_t *v,int c,void *userdata) {
+  int mapid=((int*)userdata)[0];
+  int *stage=((int*)userdata)+1;
+  switch (opcode) {
+    #define STAGE(st,op,name) case op: { \
+      if (*stage>st) { \
+        fprintf(stderr,"%s:map:%d: %s command out of place. See order in etc/doc/maps-format.md.\n",datan.arpath,mapid,name); \
+        return -2; \
+      } \
+      *stage=st; \
+    } break;
+    STAGE(0,0x21,"TILESHEET")
+    STAGE(0,0x22,"SAVETO")
+    STAGE(0,0x24,"FLAGS")
+    STAGE(1,0x40,"NEIGHBORW")
+    STAGE(1,0x41,"NEIGHBORE")
+    STAGE(1,0x42,"NEIGHBORN")
+    STAGE(1,0x43,"NEIGHBORS")
+    STAGE(0,0x45,"HERO")
+    STAGE(3,0x60,"DOOR")
+    STAGE(2,0x61,"SKETCH")
+    STAGE(3,0x80,"SPRITE")
+    STAGE(3,0x81,"BURIED_DOOR")
+    #undef STAGE
+    /* Anywhere:
+     * 0x20 (u8 songid) SONG
+     * 0x23 (u8 dir) WIND
+     * 0x44 (u8 cellp,u8 0x80:to 0x40:from 0x3f:state) TRANSMOGRIFY
+     * 0x62 (u8 cellp,u16 gsbit,u8 itemid) BURIED_TREASURE
+     * 0x63 (u8 evid,u16 cbid,u8 param) CALLBACK
+     * 0x64 (u8 cellp,u16 eventid,u8 unused) EVENT_TRIGGER
+     * 0x65 (u16 gsbit_horz,u16 gsbit_vert) FACEDIR
+     */
+  }
+  return 0;
+}
+
 /* Validate.
  */
  
@@ -104,6 +148,7 @@ static int datan_map_validate_1(uint8_t opcode,const uint8_t *v,int c,void *user
       } break;
 
     // Not extracting these automatically. Preserve for documentation, and so there's no "unknown command" warning.
+    // The BURIED things require more validation, but that has to wait until our cellphysics get attached, so it's separate.
     case 0x44: break; // (u8 cellp,u8 0x80:to 0x40:from 0x3f:state) TRANSMOGRIFY
     case 0x60: break; // (u8 cellp,u16 mapid,u8 dstcellp) DOOR
     case 0x61: break; // (u8 cellp,u24 bits) SKETCH
@@ -121,8 +166,15 @@ static int datan_map_validate_1(uint8_t opcode,const uint8_t *v,int c,void *user
 }
  
 int datan_map_validate(struct datan_map *map) {
+
+  // First the general validation.
   int err=datan_map_for_each_command(map,datan_map_validate_1,map);
   if (err<0) return err;
+  
+  // Then command order in its own pass.
+  int ctx[]={map->id,0};
+  if ((err=datan_map_for_each_command(map,datan_map_validate_order,ctx))<0) return err;
+  
   return 0;
 }
 

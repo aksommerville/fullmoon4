@@ -11,11 +11,11 @@
 00000202010201000000030001011a1b1b1b1b1b
 1b1b1b1b1b1b1b1b1b1b1b1b1b1b2e2b2b2b2b2b
 tilesheet mountains
-song tangled_vine
+hero 13 5 spell:TELE3
 neighbore 2
 neighborw 4
 neighbors 39
 neighborn 46
 sprite 4 4 treasure item:BELL 0 0
 sprite 7 4 treasure item:CHALK 0 0
-hero 13 5 spell:TELE3
+song tangled_vine

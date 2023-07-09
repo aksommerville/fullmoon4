@@ -11,10 +11,10 @@
 0000000000000000000000000000000000000000
 1111111111120000000000000010111111111111
 tilesheet steppe
-song first_frost
 neighborw 52
 neighbors 26
 neighbore 57
 neighborn 59
 sprite 6 4 treasure item:SNOWGLOBE 0 0
 sprite 11 4 treasure item:BROOM 0 0
+song first_frost

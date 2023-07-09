@@ -11,8 +11,8 @@
 0101010101010101010101010101010101010101
 0101010101010101010101010101010101010101
 tilesheet villint
-song snowglobe
 saveto spell:HOME
 flags dark indoors
 neighbore 65
 door 14 8 113 14 8
+song snowglobe

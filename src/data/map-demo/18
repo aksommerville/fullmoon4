@@ -11,7 +11,6 @@
 04020000000004030000010200040003001a2e2b
 1b1b1b1b1b1c0100000001001a1b1b1b1b2e2b2b
 tilesheet forest
-song toil_and_trouble
 neighbors 17
 neighborw 13
 neighborn 6
@@ -23,3 +22,4 @@ sprite 9 1 gate gs:wandgate3 0 0
 sprite 13 5 treadle gs:wandgate1 0 0
 sprite 15 8 treadle gs:wandgate2 0 0
 sprite 12 3 stompbox gs:wandgate3 0 0
+song toil_and_trouble

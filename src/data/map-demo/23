@@ -11,9 +11,9 @@
 000000006f565757580000006f00000010112421
 4d0000006e565757580000006f00000020212121
 tilesheet desert
-song eye_of_newt
 neighbore 1
 neighborn 9
 neighbors 24
 neighborw 26
 sprite 9 2 pushblock 0 0 0
+song eye_of_newt

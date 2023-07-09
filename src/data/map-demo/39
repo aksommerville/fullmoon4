@@ -11,9 +11,9 @@
 2b2b2b2b2d1b1b1b1b2e2b2d1b1c3536371a1b2e
 2b2b2b2b2b2b2b2b2b2b2b2b2b2d1b1b1b2e2b2b
 tilesheet caves
-song seven_circles
 flags dark indoors
+neighborw 40
 door 17 2 38 17 2
 sprite 6 7 rat 0 0 0
-neighborw 40
+song seven_circles
 buried_treasure 8 9 0 item:MATCH

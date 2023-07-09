@@ -11,12 +11,12 @@
 2626262626262628161617000015292627010300
 2626262626262626262628161629262628161616
 tilesheet beach
-song eye_of_newt
 neighbore 21
 neighborn 25
+neighbors 42
+neighborw 44
 sprite 1 8 seamonster 0 0 0
 sprite 6 4 lobster 0 0 0
 sprite 16 6 lobster 0 0 0
 sprite 10 2 alphablock_lambda 0 0 0
-neighbors 42
-neighborw 44
+song eye_of_newt

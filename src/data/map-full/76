@@ -14,8 +14,8 @@ tilesheet castleint
 flags indoors
 neighborw 75
 neighbors 62
+neighbore 77
+neighborn 97
 sprite 12 5 stompbox gs:ww_fire4 0 0
 sprite 14 5 firenozzle_e 3 0 gs:ww_fire4
 sprite 11 5 bonfire 0 0 0
-neighbore 77
-neighborn 97

@@ -11,7 +11,6 @@
 6768000000000000000000000066676800004b5f
 4c4c4c4c4c4d0000000000000000004b4c4c5f5c
 tilesheet desert
-song eye_of_newt
 neighborn 23
 neighbore 19
 neighbors 21
@@ -19,3 +18,4 @@ neighborw 25
 sprite 12 10 treasure item:COMPASS 0 0
 sprite 10 9 saw 0 0 0
 sprite 10 11 firewall 0 0 0
+song eye_of_newt

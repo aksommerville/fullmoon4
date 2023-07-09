@@ -11,8 +11,8 @@
 2c02000000000000000000000000000000000000
 2c02000000000000000000000000000000000000
 tilesheet beach
-song eye_of_newt
 neighbors 31
 neighborw 25
 neighborn 28
 neighbore 36
+song eye_of_newt

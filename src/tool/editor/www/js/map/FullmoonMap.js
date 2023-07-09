@@ -34,7 +34,35 @@ export class FullmoonMap {
   }
   
   encodeCommands() {
+    this.commands.sort((a, b) => this.cmdcmp(a, b));
     return this.commands.map(c => c.join(" ")).reduce((a, v) => a + v + "\n", "");
+  }
+  
+  cmdcmp(a, b) {
+    return this.cmdcls(a[0]) - this.cmdcls(b[0]);
+  }
+  
+  cmdcls(kw) {
+    switch (kw) {
+      case "tilesheet":
+      case "flags":
+      case "hero":
+      case "saveto":
+        return 0;
+      case "neighborw":
+      case "neighbore":
+      case "neighborn":
+      case "neighbors":
+        return 1;
+      case "sketch":
+        return 2;
+      case "door":
+      case "sprite":
+      case "buried_door":
+        return 3;
+      default:
+        return 4;
+    }
   }
   
   /* Access to commands.

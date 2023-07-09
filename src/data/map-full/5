@@ -11,9 +11,9 @@
 2c02000000000000010203000000000000000100
 2d1b1b1b1b1b1b1b1c0300001a1b1b1b1b1b1b1b
 tilesheet mountains
-song tangled_vine
+saveto spell:TELE3
 neighbore 4
 neighbors 43
 neighborn 50
 neighborw 96
-saveto spell:TELE3
+song tangled_vine

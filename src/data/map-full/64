@@ -13,5 +13,5 @@
 tilesheet castleint
 flags indoors
 neighbore 62
-door 3 8 65 2 9
 neighborn 75
+door 3 8 65 2 9

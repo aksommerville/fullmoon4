@@ -13,7 +13,7 @@
 tilesheet castleint
 flags indoors
 neighbors 122
-sprite 5 3 firenozzle_w 4 0 gs:ww_fire6
-sprite 8 3 stompbox gs:ww_fire6 0 0
 neighborn 124
 neighbore 128
+sprite 5 3 firenozzle_w 4 0 gs:ww_fire6
+sprite 8 3 stompbox gs:ww_fire6 0 0

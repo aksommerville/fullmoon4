@@ -11,7 +11,7 @@
 2626281616161616161616161616162926262626
 2626262626262626262626262626262626262626
 tilesheet village
-song snowglobe
+saveto spell:TELE1
 neighborw 2
 neighbore 6
 neighborn 8
@@ -21,4 +21,4 @@ door 4 3 27 9 9
 sprite 14 2 cow 0 0 0
 door 16 1 28 10 9
 sprite 1 8 tolltroll 0 1 0
-saveto spell:TELE1
+song snowglobe

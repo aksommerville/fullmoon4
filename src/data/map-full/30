@@ -11,10 +11,10 @@
 6767676768000000000000000000000000000000
 4c4c4c4c4c4c4c4c4d0000004b4c4c4c4c4c4c4c
 tilesheet desert
-song blood_for_silver
+saveto spell:HOME
 neighborw 29
 neighborn 9
 neighbors 34
 neighbore 79
 sprite 19 6 firewall 0 0 0
-saveto spell:HOME
+song blood_for_silver

@@ -11,9 +11,9 @@
 0000000000029093929293939194000115162926
 4141414141414141414141414215161629262626
 tilesheet swamp
-song gloom_for_company
+saveto spell:TELE2
 neighbore 17
 neighborn 14
 neighborw 37
 neighbors 88
-saveto spell:TELE2
+song gloom_for_company

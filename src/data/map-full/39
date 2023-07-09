@@ -11,11 +11,11 @@ b2b3b2b3b2b3b2b3b4b5696a6b00000000020300
 0000020202020003000001030000000300020020
 0000000000000000000000010100000000000020
 tilesheet swamp
-song gloom_for_company
+hero 11 5 spell:TELE2
 neighbors 38
 neighbore 13
 neighborn 3
 neighborw 40
 sprite 6 2 treasure item:WAND 0 0
 sprite 4 2 treasure item:UMBRELLA 0 0
-hero 11 5 spell:TELE2
+song gloom_for_company

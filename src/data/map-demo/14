@@ -11,7 +11,6 @@
 2225270200001a1b1b1b1b1b1b2e2b2b2b2b2b2b
 2225270300002a2b2b2b2b2b2b2b2b2b2b2b2b2b
 tilesheet forest
-song toil_and_trouble
 neighborn 13
 neighbors 15
 neighbore 17
@@ -25,3 +24,4 @@ sprite 9 4 pushblock 0 0 0
 sprite 8 7 firenozzle_s 2 40 0
 sprite 7 10 firenozzle_n 2 40 128
 sprite 9 6 firenozzle_e 4 20 128
+song toil_and_trouble

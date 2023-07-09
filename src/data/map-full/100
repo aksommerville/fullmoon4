@@ -13,11 +13,11 @@
 tilesheet castleint
 flags indoors
 neighborw 99
+neighbore 115
+neighbors 117
 sprite 15 4 firenozzle_e 2 0 gs:ww_eqs1
 sprite 15 3 firenozzle_e 2 0 gs:ww_eqs2
 sprite 12 4 treadle gs:ww_eqs1 0 0
 sprite 12 3 treadle gs:ww_eqs2 0 0
 sprite 7 3 pushblock 0 0 0
 sprite 10 5 pushblock 0 0 0
-neighbore 115
-neighbors 117

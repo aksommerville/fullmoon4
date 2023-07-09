@@ -11,7 +11,6 @@
 2b2b2b2d1b2e2b2b2b2b2b2b2b2b2b2b2b2b2b2b
 2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
 tilesheet caves
-song seven_circles
 flags dark indoors
 neighbore 39
 neighborw 37
@@ -20,3 +19,4 @@ sprite 4 9 stompbox gs:cavegate2 0 0
 sprite 13 4 firenozzle_s 2 0 gs:cavegate1
 sprite 15 7 firenozzle_n 2 0 gs:cavegate2
 sprite 9 4 treasure item:BELL 0 0
+song seven_circles

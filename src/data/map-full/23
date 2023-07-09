@@ -11,9 +11,11 @@
 2800000016171800000000000016171800000026
 291717172a27280000000000002627291717172a
 tilesheet castleext
-song toil_and_trouble
+saveto spell:HOME
 neighbors 6
 neighborw 11
+neighbore 10
+neighborn 53
 sprite 9 2 scarydoor 0 0 0
 sprite 7 5 bonfire 0 0 0
 sprite 8 5 bonfire 0 0 0
@@ -29,8 +31,6 @@ sprite 7 9 saw 0 0 0
 sprite 1 6 pitchfork 1 0 0
 sprite 18 6 pitchfork 0 0 0
 sprite 10 6 saw 0 0 0
-neighbore 10
-neighborn 53
-saveto spell:HOME
 door 9 4 62 9 10
 door 10 4 62 9 10
+song toil_and_trouble
