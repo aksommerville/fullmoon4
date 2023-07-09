@@ -4,6 +4,8 @@
  * Plenty of opportunity for optimization in generating these maps, it's pretty wasteful.
  */
  
+import { FullmoonMap } from "./FullmoonMap.js";
+ 
 export class WorldMapGenerator {
   static getDependencies() {
     return [];
@@ -200,6 +202,7 @@ export class WorldMapGenerator {
       }
       if (!this.anyMapInRect(big, big.w - lil.w - 1, y, lil.w + 1, lil.h + 2)) {
         this.copyMap(big, big.w - lil.w, y + 1, lil);
+        return true;
       }
     }
     // Finally scan the interior. We can start at 2: If there wasn't space at 0, there can't be at 1 either.

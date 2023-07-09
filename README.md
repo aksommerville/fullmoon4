@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ## TODO Wrap up verify
 
 - [x] choose-a-door map ID 51 in demo, unsure in full, did i even make it there yet? Can we somehow not hard-code that ID?
-- [ ] editor: MapAllUi: Some regions are appearing more than once, eg church/castle basement.
+- [x] editor: MapAllUi: Some regions are appearing more than once, eg church/castle basement.
 
 ### Full Maps
 
