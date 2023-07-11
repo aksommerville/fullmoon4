@@ -795,6 +795,47 @@ void fmn_gs_set_bit(uint16_t p,uint8_t v) {
   fmn_saved_game_dirty();
 }
 
+/* GS access, multibit.
+ */
+ 
+uint32_t fmn_gs_get_word(uint16_t p,uint16_t c) {
+  if (c<1) return 0;
+  if (c>32) c=32;
+  uint16_t bytepz=(p+c-1)>>3;
+  if (bytepz>=FMN_GS_SIZE) return 0;
+  // Read from gs one bit at a time. This could be ~8x more efficient but I don't imagine it matters.
+  uint8_t *srcp=fmn_global.gs+(p>>3);
+  uint8_t rmask=0x80>>(p&7);
+  uint32_t wmask=1<<(c-1);
+  uint32_t v=0;
+  for (;;) {
+    if ((*srcp)&rmask) v|=wmask;
+    if (wmask==1) break;
+    wmask>>=1;
+    if (rmask==1) { rmask=0x80; srcp++; }
+    else rmask>>=1;
+  }
+  return v;
+}
+
+void fmn_gs_set_word(uint16_t p,uint16_t c,uint32_t v) {
+  if (c<1) return;
+  if (c>32) c=32;
+  uint16_t bytepz=(p+c-1)>>3;
+  if (bytepz>=FMN_GS_SIZE) return;
+  uint8_t *dstp=fmn_global.gs+(p>>3);
+  uint8_t wmask=0x80>>(p&7);
+  uint32_t rmask=1<<(c-1);
+  for (;;) {
+    if (v&rmask) (*dstp)|=wmask;
+    else (*dstp)&=~wmask;
+    if (rmask==1) break;
+    rmask>>=1;
+    if (wmask==1) { wmask=0x80; dstp++; }
+    else wmask>>=1;
+  }
+}
+
 /* Game events.
  */
  

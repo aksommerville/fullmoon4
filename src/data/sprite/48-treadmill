@@ -1,0 +1,6 @@
+controller treadmill
+image 24
+tile 0x5a
+style tall2
+layer 1
+argtype 0 int magnitude

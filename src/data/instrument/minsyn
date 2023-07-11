@@ -963,3 +963,10 @@ sound PANDA_CRY
   env ( 0xffff * 0xffff 200 0 )
   mlt 0.300
 end
+
+sound TREADMILL_INCREMENT
+  len 0.250
+  wave ( 700 ) sine
+  env ( 0 40 0xffff 40 0x2000 * 0 )
+  mlt 0.500
+end

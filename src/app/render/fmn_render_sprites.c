@@ -311,6 +311,22 @@ static int fmn_render_sprite_PANDA(struct fmn_draw_mintile *vtxv,int vtxa,struct
   return vtxc;
 }
 
+/* Multiple mintile: TALL2
+ */
+ 
+static int fmn_render_sprite_TALL2(struct fmn_draw_mintile *vtxv,int vtxa,struct fmn_sprite *sprite) {
+  if (vtxa>=2) {
+    if (sprite->xform&FMN_XFORM_YREV) {
+      fmn_mintile_world(vtxv+0,sprite->x,sprite->y,sprite->tileid+0x10,sprite->xform);
+      fmn_mintile_world(vtxv+1,sprite->x,sprite->y+1.0f,sprite->tileid,sprite->xform);
+    } else {
+      fmn_mintile_world(vtxv+0,sprite->x,sprite->y,sprite->tileid,sprite->xform);
+      fmn_mintile_world(vtxv+1,sprite->x,sprite->y+1.0f,sprite->tileid+0x10,sprite->xform);
+    }
+  }
+  return 2;
+}
+
 /* Single-mintile sprite styles.
  */
  
@@ -349,7 +365,7 @@ static int fmn_render_sprite_mintile(struct fmn_draw_mintile *vtxv,int vtxa,stru
     case FMN_SPRITE_STYLE_FLOORFIRE: return fmn_render_sprite_FLOORFIRE(vtxv,vtxa,sprite);
     case FMN_SPRITE_STYLE_DEADWITCH: return fmn_render_sprite_DEADWITCH(vtxv,vtxa,sprite);
     case FMN_SPRITE_STYLE_PANDA: return fmn_render_sprite_PANDA(vtxv,vtxa,sprite);
-      return 1;
+    case FMN_SPRITE_STYLE_TALL2: return fmn_render_sprite_TALL2(vtxv,vtxa,sprite);
   }
   return 0;
 }
@@ -433,6 +449,7 @@ static inline int fmn_sprite_is_batchable(const struct fmn_sprite *sprite) {
     case FMN_SPRITE_STYLE_FLOORFIRE: // we have some discretion, could do this differently if we like.
     case FMN_SPRITE_STYLE_DEADWITCH:
     case FMN_SPRITE_STYLE_PANDA:
+    case FMN_SPRITE_STYLE_TALL2:
       return 1;
   }
   return 0;

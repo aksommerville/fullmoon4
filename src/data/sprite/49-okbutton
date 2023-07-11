@@ -1,0 +1,6 @@
+controller treadle
+image moresprites
+tile 0x60
+style tile
+layer 1
+argtype 0 gsbit gsbit

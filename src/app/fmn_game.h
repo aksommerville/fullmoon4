@@ -61,6 +61,8 @@ uint8_t fmn_collect_item(uint8_t itemid,uint8_t quantity);
 
 uint8_t fmn_gs_get_bit(uint16_t p);
 void fmn_gs_set_bit(uint16_t p,uint8_t v);
+uint32_t fmn_gs_get_word(uint16_t p,uint16_t c);
+void fmn_gs_set_word(uint16_t p,uint16_t c,uint32_t v);
 
 /* Game will call whenever this gs bit changes.
  * All listeners are blindly dropped at each map transition.
@@ -82,6 +84,7 @@ void fmn_game_event_unlisten_all();
 #define FMN_GAME_EVENT_SCOREBOARD_WIN 2 /* payload=sprite. argv[0]=gameid */
 #define FMN_GAME_EVENT_SCOREBOARD_LOSE 3
 #define FMN_GAME_EVENT_BALCONY 4
+#define FMN_GAME_EVENT_TREADMILL 5 /* payload=int *delta */
 
 /* Extra mechanism for arbitrary update logic.
  * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.

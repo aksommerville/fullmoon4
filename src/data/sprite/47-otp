@@ -1,0 +1,8 @@
+controller otp
+image 24
+tile 0x40
+style tile
+layer 128
+argtype 0 int role_0r_1w
+argtype 1 gsbit gsbit_20bits
+argtype 2 gsbit gsbit_submit
