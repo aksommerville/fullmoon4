@@ -9,6 +9,9 @@
 #define tileid0 sprite->bv[2]
 #define stompbox sprite->bv[3] /* set in template please */
 #define gsbit sprite->argv[0] /* zero means detached, not bit zero */
+#define time_ds sprite->argv[1] /* If nonzero, flag stays on for so long after stepping off */
+#define countdown sprite->fv[0]
+#define ticktime sprite->fv[1]
 
 /* Notify of change, for stompbox.
  */
@@ -55,9 +58,22 @@ static void _treadle_press(struct fmn_sprite *sprite) {
   state=1;
   if (gsbit) fmn_gs_set_bit(gsbit,1);
   fmn_sound_effect(FMN_SFX_TREADLE_PRESS);
+  countdown=0.0f;
 }
  
 static void _treadle_release(struct fmn_sprite *sprite) {
+  if (time_ds) {
+    countdown=time_ds/10.0f;
+    ticktime=0.0f;
+    return;
+  }
+  sprite->tileid=tileid0;
+  state=0;
+  if (gsbit) fmn_gs_set_bit(gsbit,0);
+  fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
+}
+
+static void _treadle_commit_delayed_release(struct fmn_sprite *sprite) {
   sprite->tileid=tileid0;
   state=0;
   if (gsbit) fmn_gs_set_bit(gsbit,0);
@@ -118,14 +134,27 @@ static uint8_t _treadle_current_state(const struct fmn_sprite *sprite) {
  
 static void _treadle_update(struct fmn_sprite *sprite,float elapsed) {
   uint8_t foot=_treadle_current_state(sprite);
-  if (foot==pressed) return;
-  pressed=foot;
-  if (stompbox) {
-    if (pressed) _stompbox_press(sprite);
-    else _stompbox_release(sprite);
-  } else {
-    if (pressed) _treadle_press(sprite);
-    else _treadle_release(sprite);
+  if (foot!=pressed) {
+    pressed=foot;
+    if (stompbox) {
+      if (pressed) _stompbox_press(sprite);
+      else _stompbox_release(sprite);
+    } else {
+      if (pressed) _treadle_press(sprite);
+      else _treadle_release(sprite);
+    }
+  }
+  if (countdown>0.0f) {
+    if ((countdown-=elapsed)<=0.0f) {
+      countdown=0.0f;
+      _treadle_commit_delayed_release(sprite);
+    } else {
+      ticktime-=elapsed;
+      if (ticktime<=0.0f) {
+        fmn_sound_effect(FMN_SFX_TREADLE_TICK);
+        ticktime+=0.250f;
+      }
+    }
   }
 }
 

@@ -26,6 +26,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] MFA gate, separate read and write points.
 - [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - [ ] Song for mountains. A Stone to Take My Place? Infinite Stories Deep?
+- [x] Timed treadles.
 
 ### TODO: Miscellaneous
 

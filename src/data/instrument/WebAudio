@@ -1042,3 +1042,10 @@ sound TREADMILL_INCREMENT
   env 0 ( 0 40 0xffff 40 0x2000 * 0 )
   norm 0 0.500
 end
+
+sound TREADLE_TICK
+  len 0.080
+  fm 0 ( 100 20 1100 20 100 ) 8.3 ( 6000 40 6000 * 0 ) sine
+  env 0 ( 0 10 0xffff 20 0x2000 * 0 )
+  norm 0 0.150
+end

@@ -16,4 +16,6 @@ neighbore 7
 neighborn 23
 neighbors 24
 sprite 14 7 beehive 0 0 0
+sprite 8 5 treadle gs:TEMP 20 0
+sprite 10 3 firenozzle_s 2 0 gs:TEMP
 song toil_and_trouble

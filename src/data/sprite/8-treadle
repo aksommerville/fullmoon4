@@ -4,3 +4,4 @@ tile 0x24
 style tile
 layer 100
 argtype 0 gsbit gsbit
+argtype 1 int time_ds
