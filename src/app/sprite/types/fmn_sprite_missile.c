@@ -13,6 +13,8 @@
 #define speed sprite->fv[0]
 #define dx sprite->fv[1]
 #define dy sprite->fv[2]
+#define xoffset_held sprite->fv[3]
+#define yoffset_held sprite->fv[4]
 #define ready sprite->bv[0]
 #define reflected sprite->bv[1]
 
@@ -23,6 +25,7 @@ static void _missile_init(struct fmn_sprite *sprite) {
   speed=6.0f;
   sprite->layer=140;
   sprite->radius=0.5f;
+  yoffset_held=-0.5f;
 }
 
 /* Target the hero.
@@ -62,8 +65,8 @@ static void missile_check_collision(struct fmn_sprite *sprite) {
  
 static void _missile_update(struct fmn_sprite *sprite,float elapsed) {
   if (holder) {
-    sprite->x=holder->x;
-    sprite->y=holder->y-0.5f;
+    sprite->x=holder->x+xoffset_held;
+    sprite->y=holder->y+yoffset_held;
   } else {
     if (!ready) missile_calculate_trajectory(sprite);
     sprite->x+=dx*elapsed;

@@ -1,0 +1,8 @@
+controller hattroll
+image moresprites
+tile 0x06
+style tile
+layer 128
+physics edge sprites solid hole blowable
+radius 0.5
+invmass 0
