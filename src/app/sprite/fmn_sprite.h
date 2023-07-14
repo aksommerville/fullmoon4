@@ -158,6 +158,7 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_pumpkin       52
 #define FMN_SPRCTL_otp           53
 #define FMN_SPRCTL_treadmill     54
+#define FMN_SPRCTL_tripwire      55
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -214,7 +215,8 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
   _(watchduck) \
   _(pumpkin) \
   _(otp) \
-  _(treadmill)
+  _(treadmill) \
+  _(tripwire)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

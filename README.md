@@ -22,7 +22,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Static hazards. Both shovellable and non.
 - [ ] Can I make an Umbrella guard more flexible than firewall?
 - [ ] Hat trolls
-- [ ] Laser tripwire
+- [x] Laser tripwire
 - [x] MFA gate, separate read and write points.
 - [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - [ ] Song for mountains. A Stone to Take My Place? Infinite Stories Deep?

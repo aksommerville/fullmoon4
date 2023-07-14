@@ -145,12 +145,10 @@ static void otp_cb_submit(void *userdata,uint16_t p,uint8_t v) {
   struct fmn_sprite *sprite=userdata;
   if (!v) return;
   if (fmn_gs_get_bit(gsbit_submit+2)) {
-    fmn_log("%s already passed",__func__);
     return;
   }
   int password=fmn_gs_get_word(gsbit,10);
   int guess=fmn_gs_get_word(gsbit+10,10);
-  fmn_log("%s password=%d guess=%d",__func__,password,guess);
   if (password==guess) {
     //TODO sound effect
     fmn_gs_set_bit(gsbit_submit+2,1);

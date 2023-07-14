@@ -367,7 +367,7 @@ static void fmn_render_hero_item(uint8_t tileid,uint8_t xform) {
 int fmn_render_sprite_HERO(struct fmn_draw_mintile *vtxv,int vtxa,struct fmn_sprite *sprite) {
 
   // Skip every other frame if invisible.
-  if ((fmn_global.invisibility_time>0.0f)&&(fmn_rh.framec&1)) return 0;
+  if ((fmn_global.invisibility_time>0.0f)&&(fmn_render_global.framec&1)) return 0;
   
   // Populate local context.
   fmn_rh.vtxv=vtxv;

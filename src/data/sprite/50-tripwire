@@ -1,0 +1,5 @@
+controller tripwire
+image moresprites
+tile 0x04
+style tile
+argtype 0 gsbit gsbit

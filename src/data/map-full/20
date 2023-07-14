@@ -19,4 +19,8 @@ sprite 10 4 treasure item:FEATHER 0 0
 sprite 12 4 treasure item:VIOLIN 0 0
 sprite 14 4 treasure item:MATCH 0 0
 sprite 6 6 treasure item:UMBRELLA 0 0
+sprite 8 6 treasure item:CHALK 0 0
+sprite 10 6 treasure item:PITCHER 0 0
+sprite 12 6 treasure item:SNOWGLOBE 0 0
+sprite 14 6 treasure item:SHOVEL 0 0
 song toil_and_trouble
