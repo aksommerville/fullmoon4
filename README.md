@@ -20,13 +20,14 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside.
 - [ ] Castle basement: Make the church attachment look like the church as a hint.
 - [ ] Static hazards. Both shovellable and non.
-- [ ] Can I make an Umbrella guard more flexible than firewall?
+- [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?
 - [x] Hat trolls
 - [x] Laser tripwire
 - [x] MFA gate, separate read and write points.
 - [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
-- [ ] Song for mountains. A Stone to Take My Place? Infinite Stories Deep?
+- [x] Song for mountains. A Stone to Take My Place? Infinite Stories Deep? ...new: Nearer the Sky
 - [x] Timed treadles.
+- [ ] Reorganize the castle a little: each floor is a circle, with a single stairwell at the front. Each floor has its own "done" flag, like first floor today.
 
 ### TODO: Miscellaneous
 
