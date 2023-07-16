@@ -7,29 +7,40 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### Full Maps
+### Broad areas. Finish before 21 July.
+
+- [ ] Mountains and caves.
+- [ ] Forest.
+- [ ] Review village.
+- [ ] All maps we expect to need must exist at this point. Not necessarily populated.
+
+### Populate all interactions. Finish before 18 August.
+
+- [ ] Static hazards. Both shovellable and non.
+- [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?
+- [ ] Castle.
+- [ ] Village, mostly education.
+- - [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
+- [ ] Mountains.
+- [ ] Swamp.
+- [ ] Forest.
+- - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
+- [ ] Beach.
+- [ ] Desert.
+- [ ] Steppe.
+- [ ] Gameplay should now be complete.
+
+### Final graphics. Finish before 1 September.
 
 - [ ] Village/forest boundary, need big tree on the village side.
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.
 - [ ] image castleext: Water-into-trees, 4 tiles needed.
 - [ ] desert: tiles for forest boundary
-- [ ] image steppe: Entirely temporary
-- [ ] steppe/beach boundary in blowback border
 - [ ] Church: join path at welcome mat.
-- [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside.
 - [ ] Castle basement: Make the church attachment look like the church as a hint.
-- [ ] Static hazards. Both shovellable and non.
-- [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?
-- [x] Hat trolls
-- [x] Laser tripwire
-- [x] MFA gate, separate read and write points.
-- [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
-- [x] Song for mountains. A Stone to Take My Place? Infinite Stories Deep? ...new: Nearer the Sky
-- [x] Timed treadles.
-- [x] Reorganize the castle a little: each floor is a circle, with a single stairwell at the front. Each floor has its own "done" flag, like first floor today.
 
-### TODO: Miscellaneous
+### Further critical features and bugs. Finish before 15 September.
 
 - [ ] Settings menu.
 - - [ ] Fullscreen
@@ -40,28 +51,31 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] Language
 - - [ ] Zap saved game. And show details.
 - [ ] I broke auto-bloom somewhere; plants are now sprouting after entering the map. Which is actually not bad. Maybe keep it this way and drop the old logic instead of fixing?
-- [ ] web: Language selection, figure out how that works
-- [ ] Soft render: Alpha problem with arrows in wand feedback.
 - [ ] UI sound effects, eg change menu selection.
-- [ ] Sound effect for coin toss
 - [ ] web: Sound effects too quiet relative to music.
-- [ ] The church's altar area looks like a stage; can we make something happen when you play the violin up there?
-- [ ] More involved tutorial for violin?
 - [ ] Violin: Fuzz playback? Look for matches that allow off-by-one somehow.
-- [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
-- [ ] Tree-shake resources when packing.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] Metal
 - [ ] inmgr: Real input mapping.
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
-- [ ] stdsyn. Or drop it, maybe minsyn is adequate?
-- [ ] Summoning the crow potentially examines every command in every map, every time. Can we pre-index all that by itemid?
-- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
 - [ ] Touch input.
 - [ ] Input configuration.
 - - [ ] UI for mapping.
+- [ ] Windows
+- [ ] minsyn drums too loud
+
+### TODO: Not critical.
+
+- [ ] web: Language selection, figure out how that works
+- [ ] Soft render: Alpha problem with arrows in wand feedback.
+- [ ] Sound effect for coin toss
+- [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
+- [ ] Tree-shake resources when packing.
+- [ ] stdsyn. Or drop it, maybe minsyn is adequate?
+- [ ] Summoning the crow potentially examines every command in every map, every time. Can we pre-index all that by itemid?
+- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
 - [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
 - [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
 - - 2023-05-07: A quick test (no actual rendering, just clear the framebuffer), and WebGL is no better.
@@ -70,8 +84,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] C tests
 - - [ ] JS platform tests
 - [ ] Automation against headless native build.
-- [ ] Windows
-- [ ] minsyn drums too loud
 - [ ] Native fiddle tool.
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.
