@@ -84,9 +84,12 @@ static int datan_save_walk(struct datan_save_context *ctx,struct datan_save_entr
     if (entry->map->saveto) return 0;
     if (entry->effective_spellid==spellid) return 0;
     if (entry->effective_spellid) {
-      // This is the error we've been looking for.
-      fprintf(stderr,"%s:map:%d(0): Reachable from save points %d and %d.\n",datan.arpath,entry->map->id,entry->effective_spellid,spellid);
-      return -2;
+      if (entry->map->flags&0x10) { // multihome. This entry is allowed to have effective_spellid conflicts.
+      } else {
+        // This is the error we've been looking for.
+        fprintf(stderr,"%s:map:%d(0): Reachable from save points %d and %d.\n",datan.arpath,entry->map->id,entry->effective_spellid,spellid);
+        return -2;
+      }
     }
     entry->effective_spellid=spellid;
   }

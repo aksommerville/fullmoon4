@@ -11,12 +11,10 @@
 5500000053564444444444444444444457545454
 5644444457545454545454545454545454545454
 tilesheet castleint
-saveto spell:TELE4
-flags dark indoors
+flags dark indoors multihome
 neighborw 61
 neighbore 66
 neighborn 68
 door 2 9 64 3 8
 sprite 6 6 firenozzle_s 3 0 gs:ww_fire3
 sprite 6 4 stompbox gs:ww_fire3 0 0
-song seven_circles

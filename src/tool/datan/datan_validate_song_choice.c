@@ -82,9 +82,12 @@ static int datan_song_walk(struct datan_song_context *ctx,struct datan_song_entr
     if (entry->map->songid) return 0;
     if (entry->effective_songid==songid) return 0;
     if (entry->effective_songid) {
-      // This is the error we've been looking for.
-      fprintf(stderr,"%s:map:%d(0): Reachable with songs %d and %d.\n",datan.arpath,entry->map->id,entry->effective_songid,songid);
-      return -2;
+      if (entry->map->flags&0x10) { // multihome. This map is allowed to have song conflicts.
+      } else {
+        // This is the error we've been looking for.
+        fprintf(stderr,"%s:map:%d(0): Reachable with songs %d and %d.\n",datan.arpath,entry->map->id,entry->effective_songid,songid);
+        return -2;
+      }
     }
     entry->effective_songid=songid;
   }

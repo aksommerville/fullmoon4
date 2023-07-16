@@ -11,7 +11,9 @@
 5454545454545454545454545454545454545454
 5454545454545454545454545454545454545454
 tilesheet castleint
+saveto spell:TELE4
 flags dark indoors
 neighborw 65
 neighborn 67
 sprite 6 3 trickfloor 0 0 0
+song seven_circles

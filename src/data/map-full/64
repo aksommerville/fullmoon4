@@ -11,7 +11,9 @@
 2123111111242121212121212121231111111111
 2121212121212121212121212121212121212121
 tilesheet castleint
+saveto spell:TELE4
 flags indoors
 neighbore 62
 neighborn 75
 door 3 8 65 2 9
+song seven_circles

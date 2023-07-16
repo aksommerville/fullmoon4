@@ -35,7 +35,7 @@ buried_door X Y GSBIT MAPID DSTX DSTY
 callback EVID CBID PARAM
 event_trigger X Y EVENTID # for fmn_game.h:fmn_game_event_listen. Not the same events as "callback".
 facedir GSBIT_HORZ GSBIT_VERT # Set a gsbit when the hero turns.
-flags [dark] [indoors] [blowback] [ancillary]
+flags [dark] [indoors] [blowback] [ancillary] [multihome]
 ```
 
 Resource IDs may be name or number.
@@ -46,6 +46,14 @@ Required order of commands. (asserted only at `make verify`). All unlisted comma
 - neighborw,neighbore,neighborn,neighbors
 - sketch
 - door,sprite,buried_door
+
+Flags
+
+- dark: Start with lights out, matches required.
+- indoors: Weather spells won't work.
+- blowback: Edges without a neighbor, we will produce wind as you approach to signal "end of world".
+- ancillary: Doesn't particpate in crow paths.
+- multihome: (for `make verify` only) Indicate that the map is allowed to have multiple songs or save points.
 
 ## Binary Format
 
@@ -72,7 +80,7 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x21 (u8 imageid) TILESHEET
 0x22 (u8 spellid) SAVETO
 0x23 (u8 dir) WIND
-0x24 (u8 flags) FLAGS: 1=dark 2=indoors 4=blowback 8=ancillary 0xf0=reserved
+0x24 (u8 flags) FLAGS: 0x01=dark 0x02=indoors 0x04=blowback 0x08=ancillary 0x10=multihome 0xe0=reserved
 
 0x40 (u16 mapid) NEIGHBORW
 0x41 (u16 mapid) NEIGHBORE

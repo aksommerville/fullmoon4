@@ -11,7 +11,9 @@
 5500000053550000000404000404000000000000
 5644444457564444444444444444444444444444
 tilesheet castleint
+saveto spell:TELE4
 flags dark indoors
 neighbore 67
 neighbors 65
 door 2 2 75 2 2
+song seven_circles
