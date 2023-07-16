@@ -12,6 +12,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Mountains and caves.
 - [ ] Forest.
 - [ ] Review village.
+- [ ] Make two more teleport spells: Steppe and Desert
 - [ ] All maps we expect to need must exist at this point. Not necessarily populated.
 
 ### Populate all interactions. Finish before 18 August.
@@ -21,6 +22,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Castle.
 - [ ] Village, mostly education.
 - - [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
+- - [ ] Orphans.
 - [ ] Mountains.
 - [ ] Swamp.
 - [ ] Forest.
@@ -42,6 +44,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] End credits.
 - [ ] Settings menu.
 - - [ ] Fullscreen
 - - [ ] Driver selection

@@ -8,6 +8,7 @@ Things I did wrong here, that I aim to do right in future projects:
 - Need to auto-generate code for enums etc.
 - Any chance of using generic instruments and sound effects definitions? Maintaining these per synthesizer is painful.
 - Web as the "principal" platform. It's cool and all, but Native is my style.
+- Tilesheet tooling is painful. The map and tilesheet editors should behave like image editors i think. (map already pretty much does, and it works ok).
 
 Things I did right here, and try not to forget:
 
