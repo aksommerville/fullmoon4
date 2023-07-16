@@ -27,7 +27,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - [x] Song for mountains. A Stone to Take My Place? Infinite Stories Deep? ...new: Nearer the Sky
 - [x] Timed treadles.
-- [ ] Reorganize the castle a little: each floor is a circle, with a single stairwell at the front. Each floor has its own "done" flag, like first floor today.
+- [x] Reorganize the castle a little: each floor is a circle, with a single stairwell at the front. Each floor has its own "done" flag, like first floor today.
 
 ### TODO: Miscellaneous
 
