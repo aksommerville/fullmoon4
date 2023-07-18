@@ -186,7 +186,12 @@ static uint8_t fmn_game_check_doors(uint8_t x,uint8_t y) {
     
     // If (extra) nonzero, it's a gsbit telling whether the door is revealed.
     if (door->extra) {
-      if (!fmn_gs_get_bit(door->extra)) continue;
+      // And bit 68 is even specialler; it will never be set, but instead we just look at the tile.
+      if (door->extra==68) {
+        if (fmn_global.map[y*FMN_COLC+x]!=0x3f) continue;
+      } else {
+        if (!fmn_gs_get_bit(door->extra)) continue;
+      }
     }
     
     fmn_last_nav_x=0;

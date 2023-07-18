@@ -293,7 +293,7 @@ struct fmn_door {
    * Can also be abused for other purposes:
    *  - transmogrify: mapid==0, dstx=0x80(to),0x40(from),0xc0(toggle), dsty=state(nonzero)
    *  - buried_treasure: mapid==0, dstx=0x30, dsty=itemid, extra=gsbit
-   *  - buried_door: extra=gsbit(nonzero)
+   *  - buried_door: extra=gsbit(nonzero). gsbit 68 "transient_hole" is special, it won't stay dug.
    *  - event_trigger: mapid==0, dstx=0x20, extra=eventid. See fmn_game_event_listen. (in fmn_game, not platform)
    */
 };

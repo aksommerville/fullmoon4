@@ -342,7 +342,9 @@ static void fmn_hero_shovel_begin() {
         if (door->y!=fmn_global.shovely) continue;
         if (door->mapid) {
           if (!door->extra) continue; // not buried
-          fmn_gs_set_bit(door->extra,1);
+          if (door->extra!=68) { // transient_hole is a special gsbit; don't actually set it
+            fmn_gs_set_bit(door->extra,1);
+          }
           fmn_global.map[tilep]=0x3f;
           fmn_map_dirty();
           fmn_sound_effect(FMN_SFX_UNBURY_DOOR);

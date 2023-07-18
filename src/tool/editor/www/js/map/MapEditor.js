@@ -144,7 +144,7 @@ export class MapEditor {
     if (this.tileprops.fields.weight && !this.tileprops.fields.weight[tileid]) return;
     
     // Initially the set of candidate tiles is everything in the focus's family.
-    const candidates = [];
+    let candidates = [];
     for (let i=0; i<256; i++) {
       if (this.tileprops.fields.family[i] === family) {
         candidates.push(i);
@@ -164,35 +164,25 @@ export class MapEditor {
       // It's possible to eliminate all possibilities here, eg a family that only works in fat masses.
       // If we did that, it's fine, just keep whatever is there.
       if (candidates.length < 1) return;
-      // Next, count the bits in each candidate's neighbor mask. Only keep those with the most bits. Multiple only if there's a tie.
-      const popCounts = candidates.map(ctileid => this.popcnt8(this.tileprops.fields.neighbors[ctileid]));
-      const maxPop = Math.max(...popCounts);
-      for (let i=candidates.length; i-->0; ) {
-        if (popCounts[i] < maxPop) candidates.splice(i, 1);
-      }
+    /**/
     }
-  
-    // If we have a weight table, eliminate zeroes, then select randomly, acknowledging weights.
-    // They might all be zero, in which case we should keep whatever is present.
+    
+    // If we have a weight table and they are not all zero, eliminate the zeroes.
     if (this.tileprops.fields.weight) {
-      let range = 0;
+      const nonzeroCandidates = [];
       for (let i=candidates.length; i-->0; ) {
-        const ctileid = candidates[i];
-        const cweight = this.tileprops.fields.weight[ctileid];
-        if (!cweight) candidates.splice(i, 1);
-        else range += cweight;
-      }
-      if (!range) return;
-      let choice = Math.random() * range;
-      for (const ctileid of candidates) {
-        choice -= this.tileprops.fields.weight[ctileid];
-        if (choice <= 0) {
-          this.map.cells[y * FullmoonMap.COLC + x] = ctileid;
-          return;
+        if (this.tileprops.fields.weight[candidates[i]]) {
+          nonzeroCandidates.push(candidates[i]);
         }
       }
-      // oops
-      return;
+      if (nonzeroCandidates.length) candidates = nonzeroCandidates;
+    }
+    
+    // Count the bits in each candidate's neighbor mask. Only keep those with the most bits. Multiple only if there's a tie.
+    const popCounts = candidates.map(ctileid => this.popcnt8(this.tileprops.fields.neighbors[ctileid]));
+    const maxPop = Math.max(...popCounts);
+    for (let i=candidates.length; i-->0; ) {
+      if (popCounts[i] < maxPop) candidates.splice(i, 1);
     }
     
     // No weight table, so select uniformly from the candidates.

@@ -95,6 +95,8 @@ static void hattroll_brandish_rock(struct fmn_sprite *sprite) {
   rock->pv[0]=sprite; // holder
   rock->fv[3]=(sprite->xform&FMN_XFORM_XREV)?0.375f:-0.375f; // xoffset_held
   rock->fv[4]=-0.125f; // yoffset_held
+  rock->x=sprite->x+rock->fv[3];
+  rock->y=sprite->y+rock->fv[4];
   rock->imageid=sprite->imageid;
   rock->tileid=tileid0-1;
   rock->style=FMN_SPRITE_STYLE_TILE;
