@@ -108,6 +108,7 @@ int fmn_game_load_saved_game() {
     return -1;
   }
   if (fmn_game_load_map(mapid,-1.0f,-1.0f)<0) return -1;
+  fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
   return 0;
 }
 

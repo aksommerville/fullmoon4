@@ -121,10 +121,12 @@ void fmn_game_map_callback(uint16_t cbid,uint8_t param,void *userdata);
 
 #define FMN_MAP_CALLBACK_kill_top_pushblock_if_pumpkin_at_nw 1
 #define FMN_MAP_CALLBACK_set_gsbit_00xx 2
+#define FMN_MAP_CALLBACK_swamp_maze 3
 
 #define FMN_FOR_EACH_MAP_CALLBACK \
   _(kill_top_pushblock_if_pumpkin_at_nw) \
-  _(set_gsbit_00xx)
+  _(set_gsbit_00xx) \
+  _(swamp_maze)
   
 #define _(tag) void fmn_map_callback_##tag(uint8_t param,void *userdata);
 FMN_FOR_EACH_MAP_CALLBACK

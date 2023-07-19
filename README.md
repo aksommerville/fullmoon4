@@ -46,6 +46,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] desert: tiles for forest boundary
 - [ ] Church: join path at welcome mat.
 - [ ] Castle basement: Make the church attachment look like the church as a hint.
+- [ ] swamp: forest edge
+- [ ] Compass: make easier to read?
 
 ### Further critical features and bugs. Finish before 15 September.
 

@@ -755,11 +755,10 @@ static void fmn_hero_feather_update() {
   if (target&&target->interact) target->interact(target,FMN_ITEM_FEATHER,0);
 }
 
-/* Compass: When "used", refresh the secret location.
+/* Compass: Everything useful is handled by render.
  */
  
 static void fmn_hero_compass_begin() {
-  fmn_secrets_refresh_for_map();
 }
 
 /* Dispatch on item type.

@@ -14,6 +14,7 @@ static void gameover_dismiss(struct fmn_menu *menu) {
     fmn_dismiss_menu(menu);
     if (fmn_game_load_saved_game()<0) {
       if (fmn_game_load_map(1,-1.0f,-1.0f)<0) fmn_abort();
+      fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
     }
   }
 }

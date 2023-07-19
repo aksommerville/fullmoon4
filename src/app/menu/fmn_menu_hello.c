@@ -35,6 +35,7 @@ static uint8_t hello_submit(struct fmn_menu *menu) {
         } else {
           fmn_dismiss_menu(menu);
           if (fmn_game_load_map(1,-1.0f,-1.0f)<0) fmn_abort();
+          fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
         }
       } return 1;
     case 2: { // Settings
