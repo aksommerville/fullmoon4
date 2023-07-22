@@ -250,6 +250,7 @@
 #define FMN_MAPFLAG_INDOORS 0x02
 #define FMN_MAPFLAG_BLOWBACK 0x04
 #define FMN_MAPFLAG_ANCILLARY 0x08
+#define FMN_MAPFLAG_MULTIHOME 0x10
 
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
