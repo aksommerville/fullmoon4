@@ -25,4 +25,5 @@ sprite 6 8 wildflower 1 0 0
 sprite 7 8 wildflower 2 0 0
 sprite 8 8 wildflower 3 0 0
 sprite 8 4 wildflower 0 1 0
+sprite 10 4 beehive 0 0 0
 song toil_and_trouble

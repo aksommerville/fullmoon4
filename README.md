@@ -9,7 +9,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Broad areas. Finish before 21 July.
 
-- [ ] Forest.
+- [x] Forest.
 - [ ] Review village.
 
 ### Populate all interactions. Finish before 18 August.
@@ -28,11 +28,12 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Beach.
 - - [ ] Bury some treasure. You just got a shovel and compass, let's use them!
 - [ ] Desert.
-- [ ] Steppe. Needs some hazards, and maybe hints somewhere?
+- [ ] Steppe. Needs some hazards. A new seamonster for the north.
 - [ ] Gameplay should now be complete.
 
 ### Final graphics. Finish before 1 September.
 
+- [ ] Caves: Illumination sprite so the doors show up while dark.
 - [ ] Village/forest boundary, need big tree on the village side.
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.

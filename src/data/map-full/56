@@ -16,4 +16,11 @@ neighborw 52
 neighbors 26
 neighbore 57
 neighborn 59
+sprite 4 4 bonfire 0 0 0
+sprite 4 3 bonfire 0 0 0
+sprite 4 9 bonfire 0 0 0
+sprite 4 10 bonfire 0 0 0
+sprite 16 6 bonfire 0 0 0
+sprite 16 9 bonfire 0 0 0
+sprite 16 10 bonfire 0 0 0
 song first_frost
