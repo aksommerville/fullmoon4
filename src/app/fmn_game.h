@@ -85,6 +85,7 @@ void fmn_game_event_unlisten_all();
 #define FMN_GAME_EVENT_SCOREBOARD_LOSE 3
 #define FMN_GAME_EVENT_BALCONY 4
 #define FMN_GAME_EVENT_TREADMILL 5 /* payload=int *delta */
+#define FMN_GAME_EVENT_BLOCKS_MOVED 6
 
 /* Extra mechanism for arbitrary update logic.
  * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.

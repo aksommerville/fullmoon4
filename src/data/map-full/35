@@ -17,7 +17,7 @@ neighborn 28
 neighbore 36
 sprite 5 4 treasure item:COMPASS 0 0
 sprite 16 4 treadle gs:compassgate 0 0
-sprite 5 6 alphablock_lambda 0 0 0
+sprite 8 6 alphablock_lambda 0 0 0
 sprite 10 4 gate gs:compassgate 0 0
 sprite 9 9 seamonster 0 0 0
 song eye_of_newt

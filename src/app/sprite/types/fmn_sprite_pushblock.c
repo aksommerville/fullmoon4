@@ -1,6 +1,7 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/sprite/fmn_physics.h"
 #include "app/hero/fmn_hero.h"
+#include "app/fmn_game.h"
 
 #define FMN_PUSHBLOCK_PRESS_TIME 0.5f
 #define FMN_PUSHBLOCK_SLIDE_SPEED 5.0f
@@ -108,14 +109,18 @@ static void pushblock_push(struct fmn_sprite *sprite) {
 static void pushblock_move_charm(struct fmn_sprite *sprite,float elapsed) {
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
+  int moved=0;
   #define BARREL(axis) ((hero##axis>=sprite->axis-FMN_PUSHBLOCK_CHARM_RADIUS)&&(hero##axis<=sprite->axis+FMN_PUSHBLOCK_CHARM_RADIUS))
   switch (charmdir) {
-    case FMN_DIR_N: if (BARREL(x)&&(heroy<sprite->y-FMN_PUSHBLOCK_CHARM_PROXIMITY)) sprite->y-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; break;
-    case FMN_DIR_S: if (BARREL(x)&&(heroy>sprite->y+FMN_PUSHBLOCK_CHARM_PROXIMITY)) sprite->y+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; break;
-    case FMN_DIR_W: if (BARREL(y)&&(herox<sprite->x-FMN_PUSHBLOCK_CHARM_PROXIMITY)) sprite->x-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; break;
-    case FMN_DIR_E: if (BARREL(y)&&(herox>sprite->x+FMN_PUSHBLOCK_CHARM_PROXIMITY)) sprite->x+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; break;
+    case FMN_DIR_N: if (BARREL(x)&&(heroy<sprite->y-FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->y-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
+    case FMN_DIR_S: if (BARREL(x)&&(heroy>sprite->y+FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->y+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
+    case FMN_DIR_W: if (BARREL(y)&&(herox<sprite->x-FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->x-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
+    case FMN_DIR_E: if (BARREL(y)&&(herox>sprite->x+FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->x+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
   }
   #undef BARREL
+  if (moved) {
+    fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,sprite);
+  }
 }
 
 /* Update.
@@ -151,6 +156,9 @@ static void _pushblock_update(struct fmn_sprite *sprite,float elapsed) {
       case FMN_DIR_S: sprite->y+=FMN_PUSHBLOCK_SLIDE_SPEED*elapsed; if (sprite->y>=slidedst) { sprite->y=slidedst; slidedir=0; } break;
       case FMN_DIR_W: sprite->x-=FMN_PUSHBLOCK_SLIDE_SPEED*elapsed; if (sprite->x<=slidedst) { sprite->x=slidedst; slidedir=0; } break;
       case FMN_DIR_E: sprite->x+=FMN_PUSHBLOCK_SLIDE_SPEED*elapsed; if (sprite->x>=slidedst) { sprite->x=slidedst; slidedir=0; } break;
+    }
+    if (!slidedir) { // slide ended
+      fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,sprite);
     }
   }
   

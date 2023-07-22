@@ -1,6 +1,7 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/sprite/fmn_physics.h"
 #include "app/hero/fmn_hero.h"
+#include "app/fmn_game.h"
 
 // Our behavior is known from (tileid). It's cool, our tile never changes.
 #define AB_MODE_ALPHA 0x01
@@ -172,6 +173,7 @@ static void fmn_alphablock_check_contact_history(struct fmn_sprite *sprite) {
           fmn_sound_effect(FMN_SFX_BLOCK_EXPLODE);
           fmn_sprite_generate_soulballs(sprite->x,sprite->y,5,0);
           fmn_sprite_kill(sprite);
+          fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,0);
         }
       } break;
     case AB_MODE_MU: {
@@ -232,6 +234,7 @@ static void _alphablock_update(struct fmn_sprite *sprite,float elapsed) {
     motion_clock-=motion_time;
     sprite->x+=AB_SPEED*dx*motion_time;
     sprite->y+=AB_SPEED*dy*motion_time;
+    fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,sprite);
   }
 
   if (sprite->tileid==AB_MODE_LAMBDA) {
