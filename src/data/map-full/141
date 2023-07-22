@@ -13,4 +13,5 @@
 tilesheet caves
 flags multihome indoors
 neighborw 142
+neighbors 68
 door 15 9 54 2 1

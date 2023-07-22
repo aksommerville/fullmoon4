@@ -15,5 +15,7 @@ saveto spell:TELE4
 flags dark indoors
 neighbore 67
 neighbors 65
+neighborw 144
+neighborn 141
 door 2 2 75 2 2
 song seven_circles

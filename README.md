@@ -9,15 +9,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Broad areas. Finish before 21 July.
 
-- [x] Mountains and caves.
 - [ ] Forest.
 - [ ] Review village.
-- [x] Make two more teleport spells: Steppe and Desert
-- [x] All maps we expect to need must exist at this point. Not necessarily populated.
-- [x] Editor: Mountain rocks are not joining correctly, at SE and SW when an irrelevant diagonal present. Tileprops looks kosher. ?
-- - Have to filter out zero weights before counting bits.
-- [x] Buried door must be allowed to have gsbit zero, meaning it doesn't stay open after leaving screen. (as is, it is open without digging)
-- - Use gsbit 68
 
 ### Populate all interactions. Finish before 18 August.
 
@@ -34,7 +27,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
 - [ ] Beach.
 - [ ] Desert.
-- [ ] Steppe.
+- [ ] Steppe. Needs some hazards, and maybe hints somewhere?
 - [ ] Gameplay should now be complete.
 
 ### Final graphics. Finish before 1 September.

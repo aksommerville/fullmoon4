@@ -164,10 +164,10 @@ export class MapEditor {
       // It's possible to eliminate all possibilities here, eg a family that only works in fat masses.
       // If we did that, it's fine, just keep whatever is there.
       if (candidates.length < 1) return;
-    /**/
     }
     
     // If we have a weight table and they are not all zero, eliminate the zeroes.
+    let haveWeights = false;
     if (this.tileprops.fields.weight) {
       const nonzeroCandidates = [];
       for (let i=candidates.length; i-->0; ) {
@@ -175,7 +175,10 @@ export class MapEditor {
           nonzeroCandidates.push(candidates[i]);
         }
       }
-      if (nonzeroCandidates.length) candidates = nonzeroCandidates;
+      if (nonzeroCandidates.length) {
+        candidates = nonzeroCandidates;
+        haveWeights = true;
+      }
     }
     
     // Count the bits in each candidate's neighbor mask. Only keep those with the most bits. Multiple only if there's a tie.
@@ -183,6 +186,22 @@ export class MapEditor {
     const maxPop = Math.max(...popCounts);
     for (let i=candidates.length; i-->0; ) {
       if (popCounts[i] < maxPop) candidates.splice(i, 1);
+    }
+    
+    // A weight table is present, so select accordingly.
+    if (haveWeights) {
+      const range = candidates.reduce((a, v) => a + this.tileprops.fields.weight[v], 0);
+      if (range > 0) {
+        let selection = ~~(Math.random() * range);
+        if (selection >= range) selection = range - 1;
+        for (const tileid of candidates) {
+          selection -= this.tileprops.fields.weight[tileid];
+          if (selection < 0) {
+            this.map.cells[y * FullmoonMap.COLC + x] = tileid;
+            return;
+          }
+        }
+      }
     }
     
     // No weight table, so select uniformly from the candidates.
