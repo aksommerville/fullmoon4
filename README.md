@@ -12,8 +12,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] Mountains and caves.
 - [ ] Forest.
 - [ ] Review village.
-- [ ] Make two more teleport spells: Steppe and Desert
-- [ ] All maps we expect to need must exist at this point. Not necessarily populated.
+- [x] Make two more teleport spells: Steppe and Desert
+- [x] All maps we expect to need must exist at this point. Not necessarily populated.
 - [x] Editor: Mountain rocks are not joining correctly, at SE and SW when an irrelevant diagonal present. Tileprops looks kosher. ?
 - - Have to filter out zero weights before counting bits.
 - [x] Buried door must be allowed to have gsbit zero, meaning it doesn't stay open after leaving screen. (as is, it is open without digging)

@@ -11,7 +11,7 @@
 2800000016171800000000000016171800000026
 291717172a27280000000000002627291717172a
 tilesheet castleext
-saveto spell:HOME
+flags multihome
 neighbors 6
 neighborw 11
 neighbore 10

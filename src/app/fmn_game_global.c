@@ -550,7 +550,7 @@ static void fmn_bloom_plants() {
 }
 
 /* Teleport to another map, looking up by spellid.
- * Technically any spellid is valid, but please only use: HOME,TELE1,TELE2,TELE3,TELE4
+ * Technically any spellid is valid, but please only use: HOME,TELE1..TELE6
  */
  
 static void fmn_teleport(uint8_t spellid) {
@@ -713,7 +713,9 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_TELE1:
     case FMN_SPELLID_TELE2:
     case FMN_SPELLID_TELE3:
-    case FMN_SPELLID_TELE4: fmn_teleport(spellid); break;
+    case FMN_SPELLID_TELE4: 
+    case FMN_SPELLID_TELE5:
+    case FMN_SPELLID_TELE6: fmn_teleport(spellid); break;
   }
 }
 

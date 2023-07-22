@@ -230,11 +230,11 @@
 #define FMN_SPELLID_WIND_N 5
 #define FMN_SPELLID_WIND_S 6
 #define FMN_SPELLID_SLOWMO 7
-#define FMN_SPELLID_HOME 8
-#define FMN_SPELLID_TELE1 9
-#define FMN_SPELLID_TELE2 10
-#define FMN_SPELLID_TELE3 11
-#define FMN_SPELLID_TELE4 12
+#define FMN_SPELLID_HOME 8 /* forest. ought to have been called "TELE-something" i guess */
+#define FMN_SPELLID_TELE1 9 /* beach */
+#define FMN_SPELLID_TELE2 10 /* swamp */
+#define FMN_SPELLID_TELE3 11 /* mountains */
+#define FMN_SPELLID_TELE4 12 /* castle */
 #define FMN_SPELLID_OPEN 13
 #define FMN_SPELLID_INVISIBLE 14
 #define FMN_SPELLID_REVEILLE 15
@@ -243,6 +243,8 @@
 #define FMN_SPELLID_THITHER 18
 #define FMN_SPELLID_REVELATIONS 19
 #define FMN_SPELLID_PUMPKIN 21
+#define FMN_SPELLID_TELE5 22 /* desert */
+#define FMN_SPELLID_TELE6 23 /* steppe */
 
 #define FMN_MAPFLAG_DARK 0x01
 #define FMN_MAPFLAG_INDOORS 0x02

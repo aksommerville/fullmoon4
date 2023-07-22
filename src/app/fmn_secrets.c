@@ -171,6 +171,8 @@ static const struct fmn_spell {
   SONG(THITHER,N,E,W,S,E,E,W,S)
   SONG(REVELATIONS,S,_,W,_,S,W,E,W,S,_,N,_,N)
   SPELL(PUMPKIN,N,S,N,S,W,W,E)
+  SPELL(TELE5,E,N,S,W,N,S)
+  SPELL(TELE6,E,S,N,W,S,N)
 
 #undef SPELL
 #undef SONG
