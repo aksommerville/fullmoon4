@@ -26,6 +26,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Forest.
 - - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
 - [ ] Beach.
+- - [ ] Bury some treasure. You just got a shovel and compass, let's use them!
 - [ ] Desert.
 - [ ] Steppe. Needs some hazards, and maybe hints somewhere?
 - [ ] Gameplay should now be complete.

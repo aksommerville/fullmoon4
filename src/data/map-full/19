@@ -16,6 +16,6 @@ neighborw 17
 neighborn 25
 neighbore 31
 neighbors 86
-sprite 5 1 treasure item:SHOVEL 0 0
-sprite 4 3 treasure item:COMPASS 0 0
+sprite 14 4 lobster 0 0 0
+sprite 7 7 seamonster 0 0 0
 song eye_of_newt

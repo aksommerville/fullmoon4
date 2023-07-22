@@ -10,7 +10,7 @@
 #define FMN_WIND_TIME 4.0f
 #define FMN_WIND_RATE 2.0f
 #define FMN_RAIN_TIME 4.0f
-#define FMN_SLOWMO_TIME 4.0f
+#define FMN_SLOWMO_TIME 7.0f
 #define FMN_SLOWMO_RATE 0.25f
 #define FMN_INVISIBILITY_TIME 5.0f
 

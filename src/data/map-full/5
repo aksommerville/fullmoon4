@@ -16,9 +16,9 @@ neighbore 4
 neighbors 43
 neighborn 50
 neighborw 96
+buried_door 7 6 gs:transient_hole 138 7 6
 buried_door 14 4 gs:transient_hole 138 14 4
 buried_door 5 3 gs:transient_hole 138 5 3
-buried_door 7 6 gs:transient_hole 138 7 6
 buried_door 10 8 gs:transient_hole 138 10 8
 buried_door 11 5 gs:transient_hole 138 11 5
 buried_door 15 8 gs:transient_hole 138 15 8

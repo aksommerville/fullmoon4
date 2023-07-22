@@ -32,6 +32,7 @@
 #define huff_time 0.80f
 #define width 0.600f
 #define min_stage_time 0.250f /* if actuated by a gsbit, must be on or off so long before changing */
+#define FIRENOZZLE_SOUND_MIN_PERIOD 2.0f /* period less than this, no sound effect (it would be hard on the ear) */
 
 // (status) is shared with the renderer
 #define FIRENOZZLE_STATUS_IDLE 0
@@ -151,7 +152,9 @@ static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
     while (clock>=period) clock-=period;
     if (clock>=period-on_time) {
       if (status!=FIRENOZZLE_STATUS_PUFF) {
-        fmn_sound_effect(FMN_SFX_FIRENOZZLE_ON);
+        if (period>=FIRENOZZLE_SOUND_MIN_PERIOD) {
+          fmn_sound_effect(FMN_SFX_FIRENOZZLE_ON);
+        }
         status=FIRENOZZLE_STATUS_PUFF;
       }
       firenozzle_check_hero(sprite);
