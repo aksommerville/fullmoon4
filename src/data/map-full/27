@@ -14,7 +14,7 @@ tilesheet desert
 neighborw 26
 neighbors 9
 neighborn 57
-sprite 11 5 treasure item:VIOLIN 0 0
+sprite 11 5 treasure item:BROOM 0 0
 sprite 12 4 bonfire 0 0 0
 sprite 11 4 bonfire 0 0 0
 sprite 12 5 bonfire 0 0 0

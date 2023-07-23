@@ -74,7 +74,10 @@ static void bigpc_add_door(uint8_t cellp,uint16_t gsbit,uint16_t dstmapid,uint8_
   door->x=cellp%FMN_COLC;
   door->y=cellp/FMN_COLC;
   door->mapid=dstmapid;
-  if (dsty>=FMN_ROWC) {
+  if (dstx>=FMN_COLC) { // eg buried_treasure
+    door->dstx=dstx;
+    door->dsty=dsty;
+  } else if (dsty>=FMN_ROWC) {
     door->dstx=-1;
     door->dsty=-1;
   } else {

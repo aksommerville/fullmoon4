@@ -19,7 +19,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 
 ### Populate all interactions. Finish before 18 August.
 
-- [ ] Shuffle items. See playthru notes above.
+- [x] Shuffle items. See playthru notes above.
 - [x] Mountains: Hat trolls aren't deadly enough. Add static hazards for them to knock you into? More of them? Faster missiles?
 - [x] Static hazards. Both shovellable and non. ...nah we don't need shovellable or solid
 - [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?

@@ -91,6 +91,7 @@ int fmn_game_load_map(int mapid,float herox,float heroy) {
   if (fmn_hero_reset()<0) return -1;
   fmn_secrets_refresh_for_map();
   fmn_map_dirty();
+  
   return 1;
 }
 
