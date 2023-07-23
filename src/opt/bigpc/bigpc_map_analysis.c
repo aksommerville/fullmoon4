@@ -287,6 +287,7 @@ static int fmn_travel_plan_edge_passable(const struct fmn_travel_plan *plan,cons
         // Conditional:
         case FMN_CELLPHYSICS_HOLE:
         case FMN_CELLPHYSICS_WATER:
+        case FMN_CELLPHYSICS_FOOTHAZARD:
           if (plan->use_holes) return 1;
           break;
       }

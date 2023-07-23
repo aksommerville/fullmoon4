@@ -416,6 +416,9 @@ static void fmn_hero_broom_end() {
   if (fmn_hero_broom_ok_to_end()) {
     fmn_hero.sprite->physics|=FMN_PHYSICS_HOLE;
     fmn_global.active_item=0xff;
+    if ((fmn_hero.cellx>=0)&&(fmn_hero.celly>=0)&&(fmn_hero.cellx<FMN_COLC)&&(fmn_hero.celly<FMN_ROWC)) {
+      fmn_game_check_static_hazards(fmn_hero.cellx,fmn_hero.celly);
+    }
   } else {
     fmn_hero.landing_pending=1;
   }

@@ -497,6 +497,7 @@ void fmn_hero_static_pressure(struct fmn_sprite *sprite,struct fmn_sprite *null_
   switch (fmn_global.cellphysics[farcell]) {
     case FMN_CELLPHYSICS_VACANT:
     case FMN_CELLPHYSICS_UNSHOVELLABLE:
+    case FMN_CELLPHYSICS_FOOTHAZARD:
       break;
     default: return;
   }

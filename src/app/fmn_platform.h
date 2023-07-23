@@ -217,6 +217,7 @@
 #define FMN_CELLPHYSICS_SAP_NOCHALK 6
 #define FMN_CELLPHYSICS_WATER 7 /* HOLE and also supplies water */
 #define FMN_CELLPHYSICS_REVELABLE 8 /* SOLID */
+#define FMN_CELLPHYSICS_FOOTHAZARD 9 /* VACANT but receive damage if you step here. eg nails on the floor */
 
 /* Size of the violin input buffer.
  * The longest song must be shorter than this. (not equal)

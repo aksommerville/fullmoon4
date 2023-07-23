@@ -24,6 +24,9 @@ int fmn_game_load_map(int mapid,float herox,float heroy); // (herox<0) for defau
 void fmn_game_input(uint8_t bit,uint8_t value,uint8_t state);
 void fmn_game_update(float elapsed);
 
+// Happens automatically on normal movement. Exposed so fmn_hero_item can call it when broom travel ends.
+uint8_t fmn_game_check_static_hazards(uint8_t x,uint8_t y);
+
 /* Rebuild the secrets in response to a newly loaded map.
  * fmn_global.(compassx,compassy)
  */

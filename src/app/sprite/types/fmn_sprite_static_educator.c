@@ -28,7 +28,6 @@ static struct {
 static void sted_retile(uint8_t col) {
   if (col>0x0e) return;
   if (col==sted.tilecol) return;
-  fmn_log("%s %d",__func__,col);
   sted.tilecol=col;
   uint8_t *maprow=fmn_global.map+(sted.y-1)*FMN_COLC+sted.x-1;
   maprow[0]=(maprow[0]&0xf0)|col;

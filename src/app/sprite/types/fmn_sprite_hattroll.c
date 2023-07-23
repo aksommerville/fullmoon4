@@ -21,9 +21,9 @@
 #define HATTROLL_SUBSTATE_SCRATCH1 6
 #define HATTROLL_SUBSTATE_SCRATCH2 7
 
-#define HATTROLL_THROW_TIME_MIN 0.5f
-#define HATTROLL_THROW_TIME_MAX 2.0f
-#define HATTROLL_BRANDISH_TIME 0.5f
+#define HATTROLL_THROW_TIME_MIN 0.3f
+#define HATTROLL_THROW_TIME_MAX 1.4f
+#define HATTROLL_BRANDISH_TIME 0.25f
 #define HATTROLL_FOLLOWTHRU_TIME 0.5f
 #define HATTROLL_BLINK_TIME 0.25f
 #define HATTROLL_SCRATCH_TIME 0.25f
@@ -93,6 +93,7 @@ static void hattroll_brandish_rock(struct fmn_sprite *sprite) {
     return;
   }
   rock->pv[0]=sprite; // holder
+  rock->fv[0]=8.0f; // speed, default 6.0
   rock->fv[3]=(sprite->xform&FMN_XFORM_XREV)?0.375f:-0.375f; // xoffset_held
   rock->fv[4]=-0.125f; // yoffset_held
   rock->x=sprite->x+rock->fv[3];

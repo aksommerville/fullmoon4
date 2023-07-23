@@ -1,0 +1,5 @@
+controller dummy
+image moresprites
+tile 0x17
+style twoframe
+layer 0

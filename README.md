@@ -7,34 +7,42 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### Broad areas. Finish before 21 July.
+2023-07-23, observations on playthru:
 
-- [x] Forest.
-- [x] Review village.
+- Farming is not obvious. Maybe bring the shovel forward? Or somehow lead from shovel to farming.
+- Violin is acquired late, and is not really useful at all.
+- - Add a musical gate in the castle, for sure.
+- - It's not overpowering like the Broom or Snowglobe, no reason not to provide it early.
+x Need the hat trolls deadly enough that it's unlikely to get past without wearing the hat.
+x Need a beach sign from the third screen, otherwise one assumes you're supposed to walk toward the swamp or mountains.
+- Play time just over 30 min, and that's about where I want it. :)
 
 ### Populate all interactions. Finish before 18 August.
 
-- [ ] Mountains: Hat trolls aren't deadly enough. Add static hazards for them to knock you into? More of them? Faster missiles?
-- [ ] Static hazards. Both shovellable and non.
+- [ ] Shuffle items. See playthru notes above.
+- [x] Mountains: Hat trolls aren't deadly enough. Add static hazards for them to knock you into? More of them? Faster missiles?
+- [x] Static hazards. Both shovellable and non. ...nah we don't need shovellable or solid
 - [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?
 - [ ] Castle.
 - [ ] Village, mostly education.
 - - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - - [ ] Orphans.
+- - [ ] Purchase hat.
 - [ ] Mountains.
 - [ ] Swamp.
+- - [ ] Put a trick floor just west of the maze exit.
 - [ ] Forest.
 - - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
 - [ ] Beach.
 - - [ ] Bury some treasure. You just got a shovel and compass, let's use them!
-- [ ] Desert.
+- [ ] Desert. Some dead space in the middle, do something with it.
 - [ ] Steppe. Needs some hazards. A new seamonster for the north.
 - [ ] Gameplay should now be complete.
 
-### Final graphics. Finish before 1 September.
+### Final graphics, etc. Finish before 1 September.
 
 - [ ] bucklock: Fireworks, sound effect, when unlocking.
-- [ ] Caves: Illumination sprite so the doors show up while dark.
+- [x] Caves: Illumination sprite so the doors show up while dark.
 - [ ] Village/forest boundary, need big tree on the village side.
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.
@@ -47,6 +55,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] Arriving at swamp the first time, seems I can't guess wrong in the first mazelet. Is that my imagination? Or is it not getting set?
 - [ ] Crow guidance for full version. fmn_secrets.c:fmn_secrets_get_guide_dir()
 - [ ] End credits.
 - [ ] Settings menu.

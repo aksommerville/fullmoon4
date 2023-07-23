@@ -114,7 +114,7 @@ export class TilepropsModal {
             this.dom.spawn(select, "OPTION", { value: "6" }, "Sap, unchalkable");
             this.dom.spawn(select, "OPTION", { value: "7" }, "Water");
             this.dom.spawn(select, "OPTION", { value: "8" }, "Revelable");
-            this.dom.spawn(select, "OPTION", { value: "9" }, "9");
+            this.dom.spawn(select, "OPTION", { value: "9" }, "Foot hazard");
             select.value = value.toString();
             // 10..255 are unreachable unless we add them. I expect to start using values beyond 2 eventually, but probly not many.
           } break;

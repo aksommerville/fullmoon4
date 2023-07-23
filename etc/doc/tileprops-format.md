@@ -19,6 +19,7 @@ Each tile has 4 properties: physics, family, neighbors, weight.
  - 6: sap, unchalkable
  - 7: water (hole)
  - 8: revelable (solid, chalkable)
+ - 9: foothazard (vacant)
  
 #### family
 

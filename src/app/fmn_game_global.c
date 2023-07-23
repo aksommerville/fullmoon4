@@ -478,6 +478,21 @@ static void fmn_update_bloomage(float elapsed) {
   }
 }
 
+/* Check static hazards. If present, apply damage and return nonzero.
+ */
+ 
+uint8_t fmn_game_check_static_hazards(uint8_t x,uint8_t y) {
+  uint8_t tilep=y*FMN_COLC+x;
+  uint8_t tileid=fmn_global.map[tilep];
+  uint8_t tileph=fmn_global.cellphysics[tileid];
+  if (tileph==FMN_CELLPHYSICS_FOOTHAZARD) {
+    if (fmn_global.active_item==FMN_ITEM_BROOM) return 0;
+    fmn_hero_injure(x+0.5f,y+0.5f,0);
+    return 1;
+  }
+  return 0;
+}
+
 /* Update.
  */
  
@@ -523,6 +538,7 @@ void fmn_game_update(float elapsed) {
     else if (y<0) fmn_game_navigate(0,-1);
     else if (y>=FMN_ROWC) fmn_game_navigate(0,1);
     else {
+      if (fmn_game_check_static_hazards(x,y)) return;
       if (fmn_game_check_doors(x,y)) return;
       fmn_game_check_plant_collection(x,y);
     }
