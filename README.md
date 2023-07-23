@@ -27,7 +27,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [ ] Village, mostly education.
 - - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - - [ ] Orphans.
-- - [ ] Purchase hat.
+- - [x] Purchase hat.
 - [ ] Mountains.
 - [ ] Swamp.
 - - [ ] Put a trick floor just west of the maze exit.
@@ -51,6 +51,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [ ] Church: join path at welcome mat.
 - [ ] Castle basement: Make the church attachment look like the church as a hint.
 - [ ] swamp: forest edge
+- [ ] Hat shop: mannequins
 - [ ] Compass: make easier to read?
 
 ### Further critical features and bugs. Finish before 15 September.

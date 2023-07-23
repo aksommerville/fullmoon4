@@ -1,0 +1,10 @@
+controller coincollector
+image moresprites
+tile 0x90
+style tile
+layer 120
+physics sprites
+radius 0.5
+invmass 0
+argtype 0 int threshold
+argtype 1 gsbit gs_amt_7bit
