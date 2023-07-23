@@ -1,0 +1,8 @@
+controller musicstand
+image moresprites
+tile 0x74
+style tile
+layer 128
+physics edge sprites
+invmass 0
+argtype 0 gsbit gsbit_selection_2bit

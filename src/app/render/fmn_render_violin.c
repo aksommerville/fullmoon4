@@ -19,7 +19,7 @@ struct fmn_violin_context {
   struct fmn_violin_note {
     int16_t x,y; // absolute
     uint8_t tileid;
-  } notev[FMN_VIOLIN_SONG_LENGTH];
+  } notev[FMN_VIOLIN_SONG_LENGTH*2]; // *2 because it includes shadow notes
   uint8_t notec;
 };
 
@@ -64,9 +64,27 @@ static void fmn_violin_begin(struct fmn_violin_context *ctx) {
     bar->pixel=fmn_render_global.violin_line_color;
   }
   
+  // Shadow notes...
   uint8_t songp=fmn_global.violin_songp;
   x=leftx+(songp&3)*note_spacing;
   ctx->notec=0;
+  for (i=FMN_VIOLIN_SONG_LENGTH;i-->0;songp++,x+=note_spacing) {
+    if (songp>=FMN_VIOLIN_SONG_LENGTH) songp=0;
+    struct fmn_violin_note *note=ctx->notev+ctx->notec;
+    switch (fmn_global.violin_shadow[songp]) {
+      case FMN_DIR_N: note->y=ctx->linev[0].y; note->tileid=0xc8; break;
+      case FMN_DIR_E: note->y=ctx->linev[1].y; note->tileid=0xc9; break;
+      case FMN_DIR_W: note->y=ctx->linev[2].y; note->tileid=0xca; break;
+      case FMN_DIR_S: note->y=ctx->linev[3].y; note->tileid=0xcb; break;
+      default: continue;
+    }
+    note->x=x;
+    ctx->notec++;
+  }
+  
+  // Live notes...
+  songp=fmn_global.violin_songp;
+  x=leftx+(songp&3)*note_spacing;
   for (i=FMN_VIOLIN_SONG_LENGTH;i-->0;songp++,x+=note_spacing) {
     if (songp>=FMN_VIOLIN_SONG_LENGTH) songp=0;
     struct fmn_violin_note *note=ctx->notev+ctx->notec;

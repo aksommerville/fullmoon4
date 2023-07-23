@@ -51,6 +51,7 @@ void fmn_game_begin_earthquake(uint8_t dir);
  */
 uint8_t fmn_spell_eval(const uint8_t *v,uint8_t c);
 uint8_t fmn_song_eval(const uint8_t *v,uint8_t c);
+uint8_t fmn_spell_get(uint8_t *dst,uint8_t dsta,uint8_t spellid);
 void fmn_spell_cast(uint8_t spellid);
 
 /* (quantity) zero for default, and we ignore it if irrelevant.
@@ -86,6 +87,7 @@ void fmn_game_event_unlisten_all();
 #define FMN_GAME_EVENT_BALCONY 4
 #define FMN_GAME_EVENT_TREADMILL 5 /* payload=int *delta */
 #define FMN_GAME_EVENT_BLOCKS_MOVED 6
+#define FMN_GAME_EVENT_SONG_OK 7 /* payload=uint8_t *spellid; sent as soon as the song is played; it's not cast yet */
 
 /* Extra mechanism for arbitrary update logic.
  * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.

@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### Broad areas. Finish before 21 July.
 
 - [x] Forest.
-- [ ] Review village.
+- [x] Review village.
 
 ### Populate all interactions. Finish before 18 August.
 
@@ -19,7 +19,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?
 - [ ] Castle.
 - [ ] Village, mostly education.
-- - [ ] Song tutorials in the village: Show ghost notes, if you stand in the right place.
+- - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - - [ ] Orphans.
 - [ ] Mountains.
 - [ ] Swamp.
@@ -33,6 +33,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Final graphics. Finish before 1 September.
 
+- [ ] bucklock: Fireworks, sound effect, when unlocking.
 - [ ] Caves: Illumination sprite so the doors show up while dark.
 - [ ] Village/forest boundary, need big tree on the village side.
 - [ ] Furnish Dot's house.
@@ -46,6 +47,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] Crow guidance for full version. fmn_secrets.c:fmn_secrets_get_guide_dir()
 - [ ] End credits.
 - [ ] Settings menu.
 - - [ ] Fullscreen
@@ -58,7 +60,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] I broke auto-bloom somewhere; plants are now sprouting after entering the map. Which is actually not bad. Maybe keep it this way and drop the old logic instead of fixing?
 - [ ] UI sound effects, eg change menu selection.
 - [ ] web: Sound effects too quiet relative to music.
-- [ ] Violin: Fuzz playback? Look for matches that allow off-by-one somehow.
+- xxx Violin: Fuzz playback? Look for matches that allow off-by-one somehow. ...too complicated, and we're educating better now so i think not a problem.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
@@ -70,6 +72,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] UI for mapping.
 - [ ] Windows
 - [ ] minsyn drums too loud
+- [ ] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
 
 ### TODO: Not critical.
 

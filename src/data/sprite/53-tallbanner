@@ -1,0 +1,7 @@
+controller tallbanner
+image moresprites
+tile 0x62
+style tile
+bv[0] gs:windbanner
+radius 0.5
+invmass 0

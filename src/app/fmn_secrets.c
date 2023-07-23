@@ -208,6 +208,20 @@ uint8_t fmn_song_eval(const uint8_t *v,uint8_t c) {
   return 0;
 }
 
+/* Get song or spell verbatim.
+ */
+ 
+uint8_t fmn_spell_get(uint8_t *dst,uint8_t dsta,uint8_t spellid) {
+  const struct fmn_spell *spell=fmn_spellv;
+  int i=sizeof(fmn_spellv)/sizeof(struct fmn_spell);
+  for (;i-->0;spell++) {
+    if (spell->spellid!=spellid) continue;
+    if (spell->c<=dsta) memcpy(dst,spell->v,spell->c);
+    return spell->c;
+  }
+  return 0;
+}
+
 /* Read sketches as text.
  */
 

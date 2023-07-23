@@ -1,0 +1,9 @@
+controller musicteacher
+image moresprites
+tile 0x64
+style tile
+layer 128
+physics edge sprites solid hole blowable
+radius 0.5
+invmass 0
+argtype 0 gsbit gsbit_spell_2bit

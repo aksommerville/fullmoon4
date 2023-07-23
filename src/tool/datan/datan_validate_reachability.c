@@ -262,6 +262,9 @@ static int datan_reachability_visit_known(struct datan_reachability_context *ctx
   if ((err=datan_reachable(ctx,FMN_RESTYPE_SONG,6))<0) return err; // truffles_in_forbidden_sauce (gameover menu)
   if ((err=datan_reachable(ctx,FMN_RESTYPE_SONG,7))<0) return err; // seventh_roots_of_unity (victory menu)
   
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_INSTRUMENT,1))<0) return err; // Dot's violin
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_INSTRUMENT,42))<0) return err; // Music teacher's saxophone
+  
   for (i=3;i<=27;i++) { // hard-coded for menus
     if ((err=datan_reachable(ctx,FMN_RESTYPE_STRING,i))<0) return err;
   }

@@ -445,6 +445,13 @@ static void fmn_hero_broom_restart() {
 /* Snowglobe. Basically the same thing as Wand, but strokes take effect immediately.
  */
  
+static int fmn_snowglobe_cb(struct fmn_sprite *sprite,void *userdata) {
+  if (sprite->interact) {
+    sprite->interact(sprite,FMN_ITEM_SNOWGLOBE,0);
+  }
+  return 0;
+}
+ 
 static void fmn_hero_snowglobe_begin() {
   fmn_global.wand_dir=0;
 }
@@ -471,6 +478,7 @@ static void fmn_hero_snowglobe_motion(uint8_t bit,uint8_t value) {
   }
   if (ndir==fmn_global.wand_dir) return;
   if (fmn_global.wand_dir=ndir) {
+    fmn_sprites_for_each(fmn_snowglobe_cb,0);
     fmn_game_begin_earthquake(fmn_dir_reverse(ndir));
   }
 }
@@ -531,7 +539,7 @@ static void fmn_hero_wand_motion(uint8_t bit,uint8_t value) {
 /* Violin.
  */
  
-static uint8_t fmn_violin_note_from_dir(uint8_t dir) {
+uint8_t fmn_violin_note_from_dir(uint8_t dir) { // NOT STATIC. fmn_sprite_musicteacher.c borrows this too
   // Consider using a different note depending on the last one played.
   // Will be a little complicated, but it would be nice to expand the tones available for songs.
   // That will be auditory only; a canonical song will always be composed of The Four Notes.
@@ -563,6 +571,7 @@ static void fmn_violin_check_song() {
     uint8_t spellid=fmn_song_eval(song,dstc);
     if (spellid) {
       fmn_hero.violin_spellid=spellid;
+      fmn_game_event_broadcast(FMN_GAME_EVENT_SONG_OK,&spellid);
     }
   }
 }
@@ -570,6 +579,7 @@ static void fmn_violin_check_song() {
 static void fmn_hero_violin_begin() {
   fmn_global.wand_dir=0;
   memset(fmn_global.violin_song,0,FMN_VIOLIN_SONG_LENGTH);
+  memset(fmn_global.violin_shadow,0,FMN_VIOLIN_SONG_LENGTH);
   fmn_global.violin_clock=0.0f;
   fmn_global.violin_songp=0;
   fmn_hero.next_metronome_songp=0;
@@ -582,13 +592,14 @@ static void fmn_hero_violin_end() {
     fmn_synth_event(0x0e,0x80,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);
   }
   if (fmn_hero.violin_spellid) {
-      fmn_spell_cast(fmn_hero.violin_spellid);
-      if (!fmn_hero_facedir_agrees()) {
-        fmn_hero_reset_facedir();
-      }
-      fmn_global.walking=0; // force-stop walking
-      fmn_hero.walkdx=0;
-      fmn_hero.walkdy=0;
+    fmn_spell_cast(fmn_hero.violin_spellid);
+    fmn_hero.violin_spellid=0;
+    if (!fmn_hero_facedir_agrees()) {
+      fmn_hero_reset_facedir();
+    }
+    fmn_global.walking=0; // force-stop walking
+    fmn_hero.walkdx=0;
+    fmn_hero.walkdy=0;
   }
 }
 
@@ -609,6 +620,7 @@ static void fmn_hero_violin_update(float elapsed) {
   while (fmn_global.violin_clock>=1.0f) {
     fmn_global.violin_clock-=1.0f;
     fmn_global.violin_song[fmn_global.violin_songp]=0;
+    fmn_global.violin_shadow[fmn_global.violin_songp]=0;
     fmn_global.violin_songp++;
     if (fmn_global.violin_songp>=FMN_VIOLIN_SONG_LENGTH) {
       fmn_global.violin_songp=0;

@@ -14,3 +14,5 @@ tilesheet villint
 flags indoors
 door 9 9 22 7 7
 door 5 6 110 5 6
+sprite 9 5 book 38 0 0
+sprite 12 6 book 40 0 0

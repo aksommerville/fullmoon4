@@ -161,6 +161,11 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_tripwire      55
 #define FMN_SPRCTL_hattroll      56
 #define FMN_SPRCTL_static_educator 57
+#define FMN_SPRCTL_tallbanner    58
+#define FMN_SPRCTL_book          59
+#define FMN_SPRCTL_musicteacher  60
+#define FMN_SPRCTL_musicstand    61
+#define FMN_SPRCTL_bucklock      62
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -220,7 +225,12 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
   _(treadmill) \
   _(tripwire) \
   _(hattroll) \
-  _(static_educator)
+  _(static_educator) \
+  _(tallbanner) \
+  _(book) \
+  _(musicteacher) \
+  _(musicstand) \
+  _(bucklock)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);

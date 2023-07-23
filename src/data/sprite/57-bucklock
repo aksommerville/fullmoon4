@@ -1,0 +1,8 @@
+controller bucklock
+image moresprites
+tile 0x16
+style tile
+layer 128
+physics edge sprites solid hole
+radius 0.5
+invmass 0

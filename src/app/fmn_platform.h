@@ -408,6 +408,7 @@ extern struct fmn_global {
   uint16_t facedir_gsbit_vert;
   
   float snow_time;
+  uint8_t violin_shadow[FMN_VIOLIN_SONG_LENGTH]; // populated by musicteacher; cleared by hero on violin start
   
 } fmn_global;
 

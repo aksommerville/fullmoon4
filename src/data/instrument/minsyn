@@ -226,6 +226,14 @@ begin 41 # extra chords at end
   env 20 0x20 20 0x08 100 .. 10 0x50 15 0x10 400
 end
 
+#--- 42 is special, it's the music teacher's saxophone ---
+begin 42
+  wave    0x80 0x40 0x20 0x10
+  mixwave 0x40 0x60 0x40 0x18 0x08
+  mixenv 20 0xff 100 0x80 100
+  env 20 0x80 150 0x20 100
+end
+
 #------------------------------------------------ Sound effects ----------------------------------------
 
 sound BELL

@@ -177,7 +177,24 @@ static int mkd_sprite_cmd_bv(struct mkd_respath *respath,int bp,const char *src,
     return -2;
   }
   int v;
-  if ((sr_int_eval(&v,src,srcc)<2)||(v<0)||(v>255)) return faileval(respath->path,lineno,src,srcc,"int in 0..255");
+  
+  // I guess we should generalize and share this? Copied from mkd_compile_map.c.
+  // For now, I think not many other sprite fields will need namespaces so whatever.
+  if ((sr_int_eval(&v,src,srcc)>=2)&&(v>=0)&&(v<=255)) {
+  } else if ((srcc>=3)&&!memcmp(src,"gs:",3)) {
+    if ((v=assist_get_gsbit_by_name(src+3,srcc-3))<0) return faileval(respath->path,lineno,src,srcc,"gsbit name");
+  } else if ((srcc>=5)&&!memcmp(src,"item:",5)) {
+    if ((v=assist_get_item_by_name(src+5,srcc-5))<0) return faileval(respath->path,lineno,src,srcc,"item name");
+  } else if ((srcc>=3)&&!memcmp(src,"ev:",3)) {
+    if ((v=assist_get_map_event_by_name(src+3,srcc-3))<0) return faileval(respath->path,lineno,src,srcc,"map event name");
+  } else if ((srcc>=3)&&!memcmp(src,"cb:",3)) {
+    if ((v=assist_get_map_callback_by_name(src+3,srcc-3))<0) return faileval(respath->path,lineno,src,srcc,"map callback name");
+  } else if ((srcc>=6)&&!memcmp(src,"spell:",6)) {
+    if ((v=assist_get_spell_id_by_name(src+6,srcc-6))<0) return faileval(respath->path,lineno,src,srcc,"spell name");
+  } else {
+    faileval(respath->path,lineno,src,srcc,"integer in 0..255");
+  }
+  
   if (sr_encode_u8(&mkd.dst,0x43)<0) return -1;
   if (sr_encode_u8(&mkd.dst,bp)<0) return -1;
   if (sr_encode_u8(&mkd.dst,v)<0) return -1;

@@ -313,6 +313,14 @@ begin 39 # bass
   env 15 60 20 20 250 .. 10 a0 15 40 400
 end
 
+#--- 42 is special, it's the music teacher's saxophone ---
+begin 42
+  wave 8080 4040 2020 1010
+  modRate 0.5
+  modEnv 00 20 ff 100 80 100 00
+  env 20 80 150 20 100
+end
+
 #-------------------------------------- Final Sound Effects --------------------------------
 
 sound BELL
