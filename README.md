@@ -28,9 +28,9 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - - [ ] Orphans.
 - - [x] Purchase hat.
-- [ ] Mountains.
-- [ ] Swamp.
-- - [ ] Put a trick floor just west of the maze exit.
+- [x] Mountains.
+- [x] Swamp.
+- - [x] Put a trick floor just west of the maze exit.
 - [ ] Forest.
 - - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
 - [ ] Beach.

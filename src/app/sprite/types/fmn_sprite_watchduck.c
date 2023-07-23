@@ -4,6 +4,7 @@
 #include "app/hero/fmn_hero.h"
 
 #define WATCHDUCK_SPEAK_RANGE 2.0f
+#define WATCHDUCK_SPEAK_RANGE_X 4.0f
 #define WATCHDUCK_WALK_SPEED 2.0f
 
 #define needitem sprite->argv[0]
@@ -125,7 +126,11 @@ static void _watchduck_update(struct fmn_sprite *sprite,float elapsed) {
   //TODO check sleep
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
-  if ((heroy>sprite->y)&&(heroy<sprite->y+WATCHDUCK_SPEAK_RANGE)) {
+  if (
+    (heroy>sprite->y)&&(heroy<sprite->y+WATCHDUCK_SPEAK_RANGE)&&
+    (herox>=sprite->x-WATCHDUCK_SPEAK_RANGE_X)&&
+    (herox<=sprite->x+WATCHDUCK_SPEAK_RANGE_X)
+  ) {
     watchduck_update_speech(sprite,elapsed);
   } else {
     watchduck_update_walk(sprite,elapsed,herox);
