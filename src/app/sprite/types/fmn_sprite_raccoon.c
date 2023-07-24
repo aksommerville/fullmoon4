@@ -19,6 +19,7 @@
 #define dstx sprite->fv[1]
 #define dsty sprite->fv[2]
 #define panic_clock sprite->fv[3]
+#define neuter sprite->argv[0]
 
 // Keep (w,e) symmetric, or account for xform at RACCOON_SET_HITBOX
 #define RACCOON_HBW_UPRIGHT 0.5f
@@ -150,7 +151,7 @@ static void raccoon_update_WAIT(struct fmn_sprite *sprite,float elapsed) {
   if (animclock>=1.5f) {
     // If enchanted, we don't throw things at our true love the witch. Just start walking again.
     // Same deal if she's invisible, albeit not due to good intentions.
-    if (enchanted||(fmn_global.invisibility_time>0.0f)) {
+    if (enchanted||(fmn_global.invisibility_time>0.0f)||neuter) {
       stage=RACCOON_STAGE_CHOOSE_DESTINATION;
       animclock=0.0f;
     } else {
