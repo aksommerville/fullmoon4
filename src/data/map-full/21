@@ -19,4 +19,6 @@ door 18 3 104 6 8
 door 14 5 105 9 9
 door 8 3 108 9 9
 sprite 5 9 pamcake 0 0 0
+sprite 10 4 billy 0 0 0
+sprite 11 4 janie 0 0 0
 song snowglobe

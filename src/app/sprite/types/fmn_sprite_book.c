@@ -3,6 +3,7 @@
 #define tileid0 sprite->bv[0]
 #define opened sprite->bv[1]
 #define tileid_open sprite->argv[0]
+#define table_hack sprite->argv[1] /* cheat position down and turn off physics */
 
 #define BOOK_HBW_CLOSED  0.375f
 #define BOOK_HBE_CLOSED  0.375f
@@ -63,11 +64,16 @@ static int16_t _book_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t q
  
 static void _book_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
-  sprite->radius=0.0f;
-  sprite->hbw=BOOK_HBW_CLOSED;
-  sprite->hbe=BOOK_HBE_CLOSED;
-  sprite->hbn=BOOK_HBN_CLOSED;
-  sprite->hbs=BOOK_HBS_CLOSED;
+  if (table_hack) {
+    sprite->physics=0;
+    sprite->y+=0.3125f;
+  } else {
+    sprite->radius=0.0f;
+    sprite->hbw=BOOK_HBW_CLOSED;
+    sprite->hbe=BOOK_HBE_CLOSED;
+    sprite->hbn=BOOK_HBN_CLOSED;
+    sprite->hbs=BOOK_HBS_CLOSED;
+  }
 }
 
 /* Type definition.

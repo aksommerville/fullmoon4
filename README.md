@@ -26,8 +26,15 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [ ] Castle.
 - [ ] Village, mostly education.
 - - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
-- - [ ] Orphans.
+- - [x] Orphans.
 - - [x] Purchase hat.
+- - [ ] Library: 1f=3 alphablock books. 2f=chalk HAND/BIRD FIRE/MOON. (current spell books are placeholders; remove)
+- - [ ] Library: World map.
+- - [ ] Magic school 1f: Charm challenge. Make a racoon walk thru fire to open the door.
+- - [ ] Magic school 2f: Spell books Slowmo and Rain (two you would already know by this point). Ladder up guarded by a mu block.
+- - [ ] Magic school 3f: Spell books Invisibility and Opening. Both critical, and both only taught here.
+- - [ ] Dept of Agriculture: Plainly readable help: Water=>Seed, Milk=>Cheese, Sap=>Match, Honey=>Coin, Song of Blooming, Rain Spell. (none of this is unique)
+- - [ ] Dept of Agriculture basement: Guide to killing werewolfs?
 - [x] Mountains.
 - [x] Swamp.
 - - [x] Put a trick floor just west of the maze exit.
