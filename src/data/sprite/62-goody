@@ -1,0 +1,7 @@
+controller goody
+image moresprites
+tile 0xa0
+style tall2
+layer 128
+physics sprites
+invmass 0

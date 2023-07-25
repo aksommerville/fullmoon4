@@ -168,6 +168,7 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_bucklock      62
 #define FMN_SPRCTL_coincollector 63
 #define FMN_SPRCTL_orphan        64
+#define FMN_SPRCTL_goody         65
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -234,7 +235,8 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
   _(musicstand) \
   _(bucklock) \
   _(coincollector) \
-  _(orphan)
+  _(orphan) \
+  _(goody)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
