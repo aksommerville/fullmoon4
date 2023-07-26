@@ -1,0 +1,8 @@
+controller slideshow
+image moresprites
+tile 0xa5
+bv[0] 3
+bv[1] 2
+style slideshow
+physics sprites
+invmass 0

@@ -24,7 +24,8 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] Static hazards. Both shovellable and non. ...nah we don't need shovellable or solid
 - [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?
 - [ ] Castle.
-- [ ] Village, mostly education.
+- - [ ] Some kind of musical gate.
+- [x] Village, mostly education.
 - - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - - [x] Orphans.
 - - [x] Purchase hat.
@@ -33,8 +34,8 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - - [x] Magic school 1f: Charm challenge. Make a racoon walk thru fire to open the door.
 - - [x] Magic school 2f: Spell books Slowmo and Rain (two you would already know by this point). Ladder up guarded by a mu block.
 - - [x] Magic school 3f: Spell books Invisibility and Opening. Both critical, and both only taught here. --teacher, not book, for invisibility
-- - [ ] Dept of Agriculture: Plainly readable help: Water=>Seed, Milk=>Cheese, Sap=>Match, Honey=>Coin, Song of Blooming, Rain Spell. (none of this is unique)
-- - [ ] Dept of Agriculture basement: Guide to killing werewolfs?
+- - [x] Dept of Agriculture: Plainly readable help: Water=>Seed, Milk=>Cheese, Sap=>Match, Honey=>Coin, Song of Blooming, Rain Spell. (none of this is unique)
+- - xxx Dept of Agriculture basement: Guide to killing werewolfs? ...nah let this remain a mystery
 - [x] Mountains.
 - [x] Swamp.
 - - [x] Put a trick floor just west of the maze exit.
@@ -44,10 +45,15 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - - [ ] Bury some treasure. You just got a shovel and compass, let's use them!
 - [ ] Desert. Some dead space in the middle, do something with it.
 - [ ] Steppe. Needs some hazards. A new seamonster for the north.
+- [ ] Steppe is ridiculously easy if you get the broom first. Are we confident that that's not likely? Maybe broom should go back there.
+- [ ] Need to lead more, to the bell. Not obvious at all.
+- [ ] I still think farming is not obvious enough.
+- [ ] Nerf the shovel puzzle a little.
 - [ ] Gameplay should now be complete.
 
 ### Final graphics, etc. Finish before 1 September.
 
+- [ ] Magic school: Toy castle, door opens when you cast spell of opening.
 - [ ] bucklock: Fireworks, sound effect, when unlocking.
 - [x] Caves: Illumination sprite so the doors show up while dark.
 - [ ] Village/forest boundary, need big tree on the village side.
@@ -63,6 +69,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Arriving at swamp the first time, seems I can't guess wrong in the first mazelet. Is that my imagination? Or is it not getting set?
 - [ ] Crow guidance for full version. fmn_secrets.c:fmn_secrets_get_guide_dir()
 - [ ] End credits.

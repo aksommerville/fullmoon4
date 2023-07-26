@@ -60,7 +60,7 @@ static int mkd_sprite_cmd_xform(struct mkd_respath *respath,const char *src,int 
   return 0;
 }
 
-/* style hidden|tile|hero|fourframe|firenozzle|firewall|doublewide|pitchfork|twoframe|eightframe
+/* style hidden|tile|hero|fourframe|firenozzle|firewall|doublewide|pitchfork|twoframe|eightframe|slideshow
  * 0x23 Style. Default 1 (FMN_SPRITE_STYLE_TILE)
  */
  

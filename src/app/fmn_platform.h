@@ -200,6 +200,7 @@
 #define FMN_SPRITE_STYLE_DEADWITCH  14 /* special */
 #define FMN_SPRITE_STYLE_PANDA      15 /* special */
 #define FMN_SPRITE_STYLE_TALL2      16 /* like DOUBLEWIDE but vertical, and no position adjustment. secondary tile is below */
+#define FMN_SPRITE_STYLE_SLIDESHOW  17 /* special */
 
 #define FMN_SPRITE_BV_SIZE 8
 #define FMN_SPRITE_SV_SIZE 4

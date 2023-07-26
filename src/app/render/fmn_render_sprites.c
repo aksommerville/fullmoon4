@@ -30,7 +30,7 @@ static inline void fmn_mintile_sprite(struct fmn_draw_mintile *vtx,const struct 
 int fmn_render_sprite_HERO(struct fmn_draw_mintile *vtxv,int vtxa,struct fmn_sprite *sprite);
 int fmn_render_sprite_WEREWOLF(struct fmn_draw_mintile *vtxv,int vtxa,struct fmn_sprite *sprite);
 
-/* Non-mintile sprite styles. Only SCARYDOOR.
+/* Non-mintile sprite styles. SCARYDOOR and SLIDESHOW.
  */
  
 static void fmn_render_sprite_SCARYDOOR(struct fmn_sprite *sprite) {
@@ -47,6 +47,21 @@ static void fmn_render_sprite_SCARYDOOR(struct fmn_sprite *sprite) {
     {dstx,dsty+tilesize+ts2-halfh,ts2,halfh,srcx,srcy+ts2,ts2,halfh},
   };
   fmn_draw_decal(vtxv,2,sprite->imageid);
+}
+ 
+static int fmn_render_sprite_SLIDESHOW(struct fmn_sprite *sprite) {
+  const int16_t tilesize=fmn_render_global.tilesize;
+  // Flicker between tileid and tileid0 (bv[2])
+  uint8_t tileid=(fmn_render_global.framec%3)?sprite->tileid:sprite->bv[2];
+  int16_t dstx=sprite->x*tilesize-((tilesize*3)/2);
+  int16_t dsty=sprite->y*tilesize-(tilesize/2);
+  int16_t srcx=(tileid&0x0f)*tilesize;
+  int16_t srcy=(tileid>>4)*tilesize;
+  struct fmn_draw_decal vtx={
+    dstx,dsty,tilesize*3,tilesize*2,
+    srcx,srcy,tilesize*3,tilesize*2,
+  };
+  fmn_draw_decal(&vtx,1,sprite->imageid);
 }
 
 /* Multiple-mintile: FIRENOZZLE
@@ -383,6 +398,7 @@ static void fmn_render_sprite_batch(struct fmn_sprite **v,int c,uint8_t include_
   // Pick off non-mintile sprites, which must arrive individually.
   if (c==1) switch (v[0]->style) {
     case FMN_SPRITE_STYLE_SCARYDOOR: fmn_render_sprite_SCARYDOOR(v[0]); return;
+    case FMN_SPRITE_STYLE_SLIDESHOW: fmn_render_sprite_SLIDESHOW(v[0]); return;
   }
   
   // Batchable mintile-only sprites.
