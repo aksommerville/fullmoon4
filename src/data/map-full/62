@@ -11,8 +11,8 @@
 1111111111111111120010111111111111112421
 2121212121212121231124212121212121212121
 tilesheet castleint
-hero 7 7 spell:TELE4
 flags indoors
+hero 7 7 spell:TELE4
 neighbore 63
 neighborw 64
 neighborn 76

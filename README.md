@@ -22,7 +22,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] Shuffle items. See playthru notes above.
 - [x] Mountains: Hat trolls aren't deadly enough. Add static hazards for them to knock you into? More of them? Faster missiles?
 - [x] Static hazards. Both shovellable and non. ...nah we don't need shovellable or solid
-- [ ] Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles?
+- xxx Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles? ...no particular need for this
 - [ ] Castle.
 - - [ ] Some kind of musical gate.
 - [x] Village, mostly education.
@@ -39,8 +39,8 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] Mountains.
 - [x] Swamp.
 - - [x] Put a trick floor just west of the maze exit.
-- [ ] Forest.
-- - [ ] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
+- [x] Forest.
+- - [x] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
 - [ ] Beach.
 - - [ ] Bury some treasure. You just got a shovel and compass, let's use them!
 - [ ] Desert. Some dead space in the middle, do something with it.
@@ -69,6 +69,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map?
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Arriving at swamp the first time, seems I can't guess wrong in the first mazelet. Is that my imagination? Or is it not getting set?
 - [ ] Crow guidance for full version. fmn_secrets.c:fmn_secrets_get_guide_dir()

@@ -35,6 +35,7 @@ static void _firewall_init(struct fmn_sprite *sprite) {
       case FMN_CELLPHYSICS_HOLE: \
       case FMN_CELLPHYSICS_UNSHOVELLABLE: \
       case FMN_CELLPHYSICS_WATER: \
+      case FMN_CELLPHYSICS_FOOTHAZARD: \
         ok=1; break; \
     } \
     ok; \
@@ -145,6 +146,7 @@ static uint8_t firewall_hero_is_peeking(const struct fmn_sprite *sprite,float he
         case FMN_CELLPHYSICS_HOLE:
         case FMN_CELLPHYSICS_UNSHOVELLABLE:
         case FMN_CELLPHYSICS_WATER:
+        case FMN_CELLPHYSICS_FOOTHAZARD:
           break;
         default: return 0;
       }

@@ -19,3 +19,5 @@ neighborn 97
 sprite 12 5 stompbox gs:ww_fire4 0 0
 sprite 14 5 firenozzle_e 3 0 gs:ww_fire4
 sprite 11 5 bonfire 0 0 0
+sprite 7 7 firenozzle_s 3 8 0
+sprite 11 7 firenozzle_s 3 8 128
