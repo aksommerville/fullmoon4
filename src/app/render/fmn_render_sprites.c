@@ -30,7 +30,7 @@ static inline void fmn_mintile_sprite(struct fmn_draw_mintile *vtx,const struct 
 int fmn_render_sprite_HERO(struct fmn_draw_mintile *vtxv,int vtxa,struct fmn_sprite *sprite);
 int fmn_render_sprite_WEREWOLF(struct fmn_draw_mintile *vtxv,int vtxa,struct fmn_sprite *sprite);
 
-/* Non-mintile sprite styles. SCARYDOOR and SLIDESHOW.
+/* Non-mintile sprite styles. SCARYDOOR, SLIDESHOW, DRAGON.
  */
  
 static void fmn_render_sprite_SCARYDOOR(struct fmn_sprite *sprite) {
@@ -49,7 +49,7 @@ static void fmn_render_sprite_SCARYDOOR(struct fmn_sprite *sprite) {
   fmn_draw_decal(vtxv,2,sprite->imageid);
 }
  
-static int fmn_render_sprite_SLIDESHOW(struct fmn_sprite *sprite) {
+static void fmn_render_sprite_SLIDESHOW(struct fmn_sprite *sprite) {
   const int16_t tilesize=fmn_render_global.tilesize;
   // Flicker between tileid and tileid0 (bv[2])
   uint8_t tileid=(fmn_render_global.framec%3)?sprite->tileid:sprite->bv[2];
@@ -60,6 +60,40 @@ static int fmn_render_sprite_SLIDESHOW(struct fmn_sprite *sprite) {
   struct fmn_draw_decal vtx={
     dstx,dsty,tilesize*3,tilesize*2,
     srcx,srcy,tilesize*3,tilesize*2,
+  };
+  fmn_draw_decal(&vtx,1,sprite->imageid);
+}
+
+static void fmn_render_sprite_DRAGON(struct fmn_sprite *sprite) {
+  const int16_t tilesize=fmn_render_global.tilesize;
+  // Dragon has 6 frames of different widths. Always 2 rows high. (x,y) is the middle of the lower-right cell always.
+  // (tileid): IDLE, BLINK, FIRE1, FIRE2, PUMPKIN1, PUMPKIN2
+  uint8_t tileid=sprite->bv[0];
+  uint8_t colc;
+  switch (sprite->tileid) {
+    case 0: tileid+=0xc1; colc=3; break;
+    case 1: tileid+=0xe1; colc=3; break;
+    case 2: tileid+=0xe4; colc=6; break;
+    case 3: tileid+=0x04; colc=6; break;
+    case 4: tileid+=0xbf; colc=2; break;
+    case 5: tileid+=0xdf; colc=2; break;
+    default: return;
+  }
+  int16_t srcx=(tileid&0x0f)*tilesize;
+  int16_t srcy=(tileid>>4)*tilesize;
+  int16_t srcw=colc*tilesize;
+  int16_t dstx=(int16_t)sprite->x; // cast first; force to cell boundary
+  int16_t dsty=((int16_t)sprite->y-1)*tilesize;
+  if (sprite->xform&FMN_XFORM_XREV) {
+    srcx+=srcw;
+    srcw=-srcw;
+  } else {
+    dstx-=colc-1;
+  }
+  dstx*=tilesize;
+  struct fmn_draw_decal vtx={
+    dstx,dsty,colc*tilesize,2*tilesize,
+    srcx,srcy,srcw,2*tilesize,
   };
   fmn_draw_decal(&vtx,1,sprite->imageid);
 }
@@ -399,6 +433,7 @@ static void fmn_render_sprite_batch(struct fmn_sprite **v,int c,uint8_t include_
   if (c==1) switch (v[0]->style) {
     case FMN_SPRITE_STYLE_SCARYDOOR: fmn_render_sprite_SCARYDOOR(v[0]); return;
     case FMN_SPRITE_STYLE_SLIDESHOW: fmn_render_sprite_SLIDESHOW(v[0]); return;
+    case FMN_SPRITE_STYLE_DRAGON: fmn_render_sprite_DRAGON(v[0]); return;
   }
   
   // Batchable mintile-only sprites.

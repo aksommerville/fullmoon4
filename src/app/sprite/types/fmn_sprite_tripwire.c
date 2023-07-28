@@ -8,7 +8,7 @@
 #define debounce sprite->fv[1]
 
 #define TW_RADIUS 0.25f
-#define TW_DEBOUNCE_TIME 1.0f
+#define TW_DEBOUNCE_TIME 0.500f
 
 /* Beam sprites.
  * For now, a tripwire gun is always facing south.
@@ -79,23 +79,51 @@ static void tw_trip(struct fmn_sprite *sprite) {
   tw_set_beams_style(sprite,FMN_SPRITE_STYLE_HIDDEN);
 }
 
+/* Check if object in range.
+ */
+ 
+static int tw_range_cb(struct fmn_sprite *q,void *userdata) {
+  struct fmn_sprite *sprite=userdata;
+  if (!(q->physics&FMN_PHYSICS_SPRITES)) return 0;
+  if ((q->controller==FMN_SPRCTL_hero)&&(fmn_global.invisibility_time>0.0f)) return 0;
+  if (q->y<sprite->y) return 0;
+  if (q->y>sprite->y+range) return 0;
+  if (q->x<sprite->x-TW_RADIUS) return 0;
+  if (q->x>sprite->x+TW_RADIUS) return 0;
+  return 1;
+}
+ 
+static uint8_t tw_object_in_range(struct fmn_sprite *sprite) {
+  //TODO not just hero
+  /*
+  if (fmn_global.invisibility_time<=0.0f) {
+    float herox,heroy;
+    fmn_hero_get_position(&herox,&heroy);
+    if ((heroy>=sprite->y)&&(heroy<=sprite->y+range)&&(herox>=sprite->x-TW_RADIUS)&&(herox<=sprite->x+TW_RADIUS)) {
+      return 1;
+    }
+  }
+  return 0;
+  /**/
+  return fmn_sprites_for_each(tw_range_cb,sprite);
+}
+
 /* Update.
  */
  
 static void _tw_update(struct fmn_sprite *sprite,float elapsed) {
   if (debounce>0.0f) {
     if ((debounce-=elapsed)<=0.0f) {
-      debounce=0.0f;
-      tw_set_beams_style(sprite,FMN_SPRITE_STYLE_TWOFRAME);
-      fmn_gs_set_bit(gsbit,0);
-    } else return;
-  }
-  if (fmn_global.invisibility_time<=0.0f) {
-    float herox,heroy;
-    fmn_hero_get_position(&herox,&heroy);
-    if ((heroy>=sprite->y)&&(heroy<=sprite->y+range)&&(herox>=sprite->x-TW_RADIUS)&&(herox<=sprite->x+TW_RADIUS)) {
-      tw_trip(sprite);
+      if (tw_object_in_range(sprite)) {
+        debounce=TW_DEBOUNCE_TIME;
+      } else {
+        debounce=0.0f;
+        tw_set_beams_style(sprite,FMN_SPRITE_STYLE_TWOFRAME);
+        fmn_gs_set_bit(gsbit,0);
+      }
     }
+  } else if (tw_object_in_range(sprite)) {
+    tw_trip(sprite);
   }
 }
 

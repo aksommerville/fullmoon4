@@ -170,6 +170,7 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
 #define FMN_SPRCTL_orphan        64
 #define FMN_SPRCTL_goody         65
 #define FMN_SPRCTL_slideshow     66
+#define FMN_SPRCTL_dragon        67
 
 #define FMN_FOR_EACH_SPRCTL \
   _(dummy) \
@@ -238,7 +239,8 @@ void fmn_sprite_refunct(struct fmn_sprite *sprite);
   _(coincollector) \
   _(orphan) \
   _(goody) \
-  _(slideshow)
+  _(slideshow) \
+  _(dragon)
   
 struct fmn_sprite_controller {
   void (*init)(struct fmn_sprite *sprite);
@@ -259,6 +261,7 @@ const struct fmn_sprite_controller *fmn_sprite_controller_by_id(uint16_t id);
 void fmn_sprite_generate_soulballs(float x,float y,uint8_t c,uint8_t return_to_sender);
 void fmn_sprite_generate_soilballs(float x,float y); // like soulballs but for plants
 struct fmn_sprite *fmn_sprite_generate_zzz(struct fmn_sprite *source);
+void fmn_sprite_kill_zzz(struct fmn_sprite *source);
 struct fmn_sprite *fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y);
 struct fmn_sprite *fmn_sprite_generate_toast(float x,float y,uint8_t imageid,uint8_t tileid,uint8_t xform);
 struct fmn_sprite *fmn_sprite_generate_enchantment(struct fmn_sprite *source,uint8_t persistent);

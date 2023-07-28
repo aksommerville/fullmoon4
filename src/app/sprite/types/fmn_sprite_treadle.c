@@ -13,6 +13,8 @@
 #define countdown sprite->fv[0]
 #define ticktime sprite->fv[1]
 
+static uint8_t _treadle_current_state(const struct fmn_sprite *sprite);
+
 /* Notify of change, for stompbox.
  */
  
@@ -45,7 +47,9 @@ static void _treadle_init(struct fmn_sprite *sprite) {
   } else {
     // Treadle plates clear their gs bit on init, since they start in the Off state.
     if (gsbit) {
-      fmn_gs_set_bit(gsbit,0);
+      // Except in this one place, I'm starting a pushblock on top of a treadle.
+      if (_treadle_current_state(sprite)) fmn_gs_set_bit(gsbit,1);
+      else fmn_gs_set_bit(gsbit,0);
     }
   }
 }
@@ -55,10 +59,12 @@ static void _treadle_init(struct fmn_sprite *sprite) {
  
 static void _treadle_press(struct fmn_sprite *sprite) {
   sprite->tileid=tileid0+1;
-  state=1;
-  if (gsbit) fmn_gs_set_bit(gsbit,1);
-  fmn_sound_effect(FMN_SFX_TREADLE_PRESS);
-  countdown=0.0f;
+  if (!state) {
+    state=1;
+    if (gsbit) fmn_gs_set_bit(gsbit,1);
+    fmn_sound_effect(FMN_SFX_TREADLE_PRESS);
+    countdown=0.0f;
+  }
 }
  
 static void _treadle_release(struct fmn_sprite *sprite) {
@@ -68,16 +74,20 @@ static void _treadle_release(struct fmn_sprite *sprite) {
     return;
   }
   sprite->tileid=tileid0;
-  state=0;
-  if (gsbit) fmn_gs_set_bit(gsbit,0);
-  fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
+  if (state) {
+    state=0;
+    if (gsbit) fmn_gs_set_bit(gsbit,0);
+    fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
+  }
 }
 
 static void _treadle_commit_delayed_release(struct fmn_sprite *sprite) {
   sprite->tileid=tileid0;
-  state=0;
-  if (gsbit) fmn_gs_set_bit(gsbit,0);
-  fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
+  if (state) {
+    state=0;
+    if (gsbit) fmn_gs_set_bit(gsbit,0);
+    fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
+  }
 }
  
 static void _stompbox_press(struct fmn_sprite *sprite) {

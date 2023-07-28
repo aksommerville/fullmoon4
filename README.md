@@ -49,6 +49,10 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [ ] Need to lead more, to the bell. Not obvious at all.
 - [ ] I still think farming is not obvious enough.
 - [ ] Nerf the shovel puzzle a little.
+- [ ] Use skyleton somewhere.
+- [ ] '' duck
+- [ ] '' rat
+- [ ] Ghosts at the graveyard.
 - [ ] Gameplay should now be complete.
 
 ### Final graphics, etc. Finish before 1 September.

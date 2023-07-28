@@ -1,0 +1,6 @@
+controller dragon
+image castleint
+tile 0xc6
+style dragon
+layer 128
+invmass 0

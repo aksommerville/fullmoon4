@@ -6,6 +6,8 @@
 #define dx sprite->fv[1]
 #define dy sprite->fv[2]
 #define restorettl sprite->fv[3]
+#define xxtra sprite->fv[4]
+#define yxtra sprite->fv[5]
 #define source sprite->pv[0]
 // For a persistent repeating toast, caller should set (source) and (restorettl).
 
@@ -34,8 +36,8 @@ static void _toast_update(struct fmn_sprite *sprite,float elapsed) {
         // Luckily we caught it before the source object got reused...
         fmn_sprite_kill(sprite);
       } else {
-        sprite->x=src->x;
-        sprite->y=src->y-0.5f;
+        sprite->x=src->x+xxtra;
+        sprite->y=src->y-0.5f+yxtra;
         ttl=restorettl;
       }
     } else {

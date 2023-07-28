@@ -222,12 +222,8 @@ static void fmn_sprite_physics_update(float elapsed) {
         if (!fmn_physics_check_sprites(&cx,&cy,a,b)) continue;
         int msum=a->invmass+b->invmass;
         float aweight;
-        if (msum<1) { // panic, both infinite-mass! Restore last known positions.
-          a->x=a->pvx;
-          a->y=a->pvy;
-          b->x=b->pvx;
-          b->y=b->pvy;
-          continue;
+        if (msum<1) { // panic, both infinite-mass! Treat them as equal.
+          aweight=0.5f;
         } else if (!a->invmass) aweight=0.0f;
         else if (!b->invmass) aweight=1.0f;
         else aweight=(float)a->invmass/(float)msum;
@@ -443,6 +439,17 @@ struct fmn_sprite *fmn_sprite_generate_zzz(struct fmn_sprite *source) {
     zzz->pv[0]=source;
   }
   return zzz;
+}
+
+static int fmn_sprite_kill_zzz_cb(struct fmn_sprite *q,void *userdata) {
+  if (q->controller!=FMN_SPRCTL_zzz) return 0;
+  if (q->pv[0]!=userdata) return 0;
+  fmn_sprite_kill(q);
+  return 1;
+}
+
+void fmn_sprite_kill_zzz(struct fmn_sprite *source) {
+  fmn_sprites_for_each(fmn_sprite_kill_zzz_cb,source);
 }
  
 struct fmn_sprite *fmn_sprite_generate_noparam(uint16_t sprctl,float x,float y) {

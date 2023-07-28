@@ -8,6 +8,8 @@
 #define clock sprite->fv[0]
 #define x0 sprite->fv[1]
 #define y0 sprite->fv[2]
+#define xxtra sprite->fv[3]
+#define yxtra sprite->fv[4]
 #define source ((struct fmn_sprite*)sprite->pv[0])
 #define source_w sprite->pv[0]
 
@@ -39,8 +41,8 @@ static void _zzz_update(struct fmn_sprite *sprite,float elapsed) {
   clock+=elapsed;
   if (clock>=ZZZ_PERIOD) {
     clock=0.0f;
-    sprite->x=x0;
-    sprite->y=y0-0.5f;
+    sprite->x=x0+xxtra;
+    sprite->y=y0-0.5f+yxtra;
     sprite->tileid=tileid0;
   } else {
     sprite->x+=ZZZ_SPEED_X*elapsed;
