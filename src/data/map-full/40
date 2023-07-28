@@ -16,4 +16,5 @@ neighborn 4
 neighbors 41
 neighborw 43
 sprite 11 7 treasure item:UMBRELLA 0 0
+sprite 9 2 duck 0 0 0
 song gloom_for_company

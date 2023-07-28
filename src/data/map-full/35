@@ -21,3 +21,4 @@ sprite 8 6 alphablock_lambda 0 0 0
 sprite 10 4 gate gs:compassgate 0 0
 sprite 9 9 seamonster 0 0 0
 song eye_of_newt
+buried_treasure 5 6 gs:beach_coins3 item:COIN

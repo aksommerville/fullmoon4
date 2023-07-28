@@ -18,3 +18,4 @@ neighbore 28
 sprite 11 4 raccoon 0 0 0
 sprite 7 8 bonfire 0 0 0
 song toil_and_trouble
+buried_treasure 13 5 gs:forest_coins1 item:COIN

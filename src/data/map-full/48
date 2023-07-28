@@ -19,4 +19,5 @@ sprite 11 6 treadle gs:mtn_fire4 15 0
 sprite 6 3 hattroll 0 0 0
 sprite 14 4 hattroll 0 0 0
 sprite 7 8 hattroll 0 0 0
+sprite 5 4 skyleton 0 0 0
 song nearer_the_sky

@@ -21,3 +21,4 @@ sprite 16 3 seamonster 0 0 0
 sprite 4 7 lobster 0 0 0
 sprite 9 4 lobster 0 0 0
 song eye_of_newt
+buried_treasure 12 5 gs:beach_coins2 item:COIN

@@ -41,18 +41,18 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - - [x] Put a trick floor just west of the maze exit.
 - [x] Forest.
 - - [x] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
-- [ ] Beach.
-- - [ ] Bury some treasure. You just got a shovel and compass, let's use them!
+- [x] Beach.
+- - [x] Bury some treasure. You just got a shovel and compass, let's use them!
 - [ ] Desert. Some dead space in the middle, do something with it.
-- [ ] Steppe. Needs some hazards. A new seamonster for the north.
+- [ ] Steppe. Needs some hazards. A new seamonster for the north. Penguins (ie raccoon).
 - [ ] Steppe is ridiculously easy if you get the broom first. Are we confident that that's not likely? Maybe broom should go back there.
 - [ ] Need to lead more, to the bell. Not obvious at all.
 - [ ] I still think farming is not obvious enough.
 - [ ] Nerf the shovel puzzle a little.
-- [ ] Use skyleton somewhere.
-- [ ] '' duck
-- [ ] '' rat
-- [ ] Ghosts at the graveyard.
+- [x] Use skyleton somewhere.
+- [x] '' duck
+- [x] '' rat
+- [ ] Ghosts at the graveyard. Appear whenever you dig.
 - [ ] Gameplay should now be complete.
 
 ### Final graphics, etc. Finish before 1 September.

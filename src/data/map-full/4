@@ -16,4 +16,5 @@ neighborw 5
 neighbors 40
 neighborn 49
 door 3 2 139 3 2
+sprite 10 3 skyleton 0 0 0
 song nearer_the_sky

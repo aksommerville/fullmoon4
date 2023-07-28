@@ -22,6 +22,7 @@ sprite 13 5 firenozzle_n 4 4 215
 sprite 12 0 firenozzle_s 4 4 171
 sprite 11 5 firenozzle_n 4 4 128
 sprite 10 0 firenozzle_s 4 4 86
-sprite  9 5 firenozzle_n 4 4 43
-sprite  8 0 firenozzle_s 4 4 0
+sprite 9 5 firenozzle_n 4 4 43
+sprite 8 0 firenozzle_s 4 4 0
 song eye_of_newt
+buried_treasure 6 9 gs:beach_coins1 item:COIN

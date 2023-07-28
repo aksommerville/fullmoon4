@@ -23,4 +23,5 @@ buried_door 10 8 gs:transient_hole 138 10 8
 buried_door 11 5 gs:transient_hole 138 11 5
 buried_door 15 8 gs:transient_hole 138 15 8
 buried_door 9 2 gs:transient_hole 138 9 2
+sprite 9 4 skyleton 0 0 0
 song nearer_the_sky

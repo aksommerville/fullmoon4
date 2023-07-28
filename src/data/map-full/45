@@ -19,4 +19,5 @@ sprite 4 3 alphablock_gamma 0 0 0
 sprite 6 3 alphablock_alpha 0 0 0
 sprite 5 4 pushblock 0 0 0
 sprite 5 6 static_educator 0 0 0
+sprite 10 3 duck 0 0 0
 song gloom_for_company
