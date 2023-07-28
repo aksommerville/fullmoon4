@@ -1,4 +1,5 @@
 #include "app/sprite/fmn_sprite.h"
+#include "app/sprite/fmn_physics.h"
 #include "app/fmn_game.h"
 
 #define THROWSWITCH_BLACKOUT_TIME 1.0f
@@ -42,16 +43,30 @@ static void _throwswitch_init(struct fmn_sprite *sprite) {
 /* Update.
  */
  
+static int throwswitch_sprite_is_activator(struct fmn_sprite *missile) {
+  if (missile->controller==FMN_SPRCTL_missile) return 1;
+  if (missile->controller==FMN_SPRCTL_coin) {
+    if (!(missile->physics&FMN_PHYSICS_MOTION)) return 0;
+    return 1;
+  }
+  return 0;
+}
+ 
 static int throwswitch_check_collision(struct fmn_sprite *missile,void *userdata) {
   struct fmn_sprite *sprite=userdata;
-  if (missile->controller!=FMN_SPRCTL_missile) return 0; // TODO should we track any other types?
+  if (!throwswitch_sprite_is_activator(missile)) return 0;
   const float radius=0.5f;
   float dx=missile->x-sprite->x;
   if ((dx>radius)||(dx<-radius)) return 0;
   float dy=missile->y-sprite->y;
   if ((dy>radius)||(dy<-radius)) return 0;
+  fmn_sound_effect(FMN_SFX_TREADLE_PRESS);
   throwswitch_set_state(sprite,state?0:1);
   blackout_time=THROWSWITCH_BLACKOUT_TIME;
+  if (0&&missile->static_pressure) {
+    uint8_t dir=fmn_dir_from_vector_cardinal(dx,dy);
+    missile->static_pressure(missile,0,dir); // null, not sprite: otherwise it might trigger interact
+  }
   return 1;
 }
  
@@ -67,6 +82,13 @@ static void _throwswitch_update(struct fmn_sprite *sprite,float elapsed) {
  */
  
 static int16_t _throwswitch_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {
+  switch (itemid) {
+    case FMN_ITEM_COIN: {
+        if (blackout_time>0.0f) return 0;
+        throwswitch_set_state(sprite,state?0:1);
+        blackout_time=THROWSWITCH_BLACKOUT_TIME;
+      } return 1;
+  }
   return 0;
 }
 

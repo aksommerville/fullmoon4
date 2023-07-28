@@ -23,8 +23,8 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] Mountains: Hat trolls aren't deadly enough. Add static hazards for them to knock you into? More of them? Faster missiles?
 - [x] Static hazards. Both shovellable and non. ...nah we don't need shovellable or solid
 - xxx Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles? ...no particular need for this
-- [ ] Castle.
-- - [ ] Some kind of musical gate.
+- [x] Castle.
+- - xxx Some kind of musical gate.
 - [x] Village, mostly education.
 - - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
 - - [x] Orphans.
