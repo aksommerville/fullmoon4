@@ -14,5 +14,7 @@ tilesheet steppe
 neighborw 56
 neighbors 27
 neighborn 58
+sprite 12 5 penguin 0 0 0
+sprite 7 3 penguin 0 0 0
 song first_frost
 buried_treasure 17 5 gs:steppe_coins1 item:COIN

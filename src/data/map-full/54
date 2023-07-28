@@ -17,4 +17,5 @@ neighbore 55
 neighborw 60
 neighborn 70
 door 2 1 141 15 9
+sprite 7 5 penguin 0 0 0
 song first_frost

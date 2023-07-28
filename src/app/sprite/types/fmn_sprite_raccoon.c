@@ -44,8 +44,9 @@
 static void _raccoon_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
   stage=RACCOON_STAGE_CHOOSE_DESTINATION;
-  sprite->radius=0.0f;
-  RACCOON_SET_HITBOX(UPRIGHT)
+  if (sprite->radius<=0.0f) {
+    RACCOON_SET_HITBOX(UPRIGHT)
+  }
 }
 
 /* Choose destination and enter TRAVEL stage.
@@ -160,7 +161,8 @@ static void raccoon_update_WAIT(struct fmn_sprite *sprite,float elapsed) {
       struct fmn_sprite *acorn=fmn_sprite_generate_noparam(FMN_SPRCTL_missile,sprite->x,sprite->y);
       if (acorn) {
         acorn->imageid=sprite->imageid;
-        acorn->tileid=0x61;
+        if (acorn->imageid==24) acorn->tileid=0x1f;
+        else acorn->tileid=0x61;
         acorn->pv[0]=sprite;
       }
     }
@@ -179,7 +181,6 @@ static int raccoon_find_acorn_1(struct fmn_sprite *sprite,void *userdata) {
   struct raccoon_find_acorn_context *ctx=userdata;
   if (sprite->controller!=FMN_SPRCTL_missile) return 0;
   if (sprite->imageid!=ctx->raccoon->imageid) return 0;
-  if (sprite->tileid!=0x61) return 0;
   if (sprite->pv[0]!=ctx->raccoon) return 0;
   ctx->acorn=sprite;
   return 1;

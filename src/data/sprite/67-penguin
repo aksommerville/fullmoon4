@@ -1,8 +1,8 @@
 controller raccoon
-image 3
-tile 0x3a
+image moresprites
+tile 0x19
 style tile
+layer 128
 physics edge sprites solid hole blowable
-radius 0
+radius 0.4
 invmass 128
-argtype 0 int neuter

@@ -15,4 +15,5 @@ flags ancillary blowback
 neighborw 70
 neighbors 55
 neighbore 72
+sprite 8 1 nffish 0 0 0
 buried_treasure 10 7 gs:snowglobe item:BELL

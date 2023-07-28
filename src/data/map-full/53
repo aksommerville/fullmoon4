@@ -18,4 +18,5 @@ neighborn 54
 sprite 2 9 treasure item:VIOLIN 0 0
 sprite 10 10 firenozzle_n 2 0 gs:steppe_fire1
 sprite 7 6 stompbox gs:steppe_fire1 0 0
+sprite 10 5 penguin 0 0 0
 song first_frost

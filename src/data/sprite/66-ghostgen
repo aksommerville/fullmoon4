@@ -1,0 +1,4 @@
+controller ghostgen
+style hidden
+argtype 0 int colc
+argtype 1 int rowc

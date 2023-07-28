@@ -1,0 +1,6 @@
+controller nffish
+image moresprites
+tile 0x70
+style tile
+layer 128
+radius 0.5

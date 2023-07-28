@@ -16,4 +16,6 @@ neighborw 53
 neighborn 55
 neighbore 56
 sprite 7 7 firenozzle_s 2 0 gs:steppe_fire1
+sprite 7 3 penguin 0 0 0
+sprite 13 6 penguin 0 0 0
 song first_frost
