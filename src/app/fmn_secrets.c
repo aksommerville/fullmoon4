@@ -159,10 +159,10 @@ static const struct fmn_spell {
   SPELL(WIND_S,E,N,W,S,E,W,S,S)
   SPELL(SLOWMO,E,W,W,E,W,W,S,W)
   SPELL(HOME,S,S,S)
-  SPELL(TELE1,S,W,E,N,W,E)
-  SPELL(TELE2,W,N,S,E,N,S)
-  SPELL(TELE3,N,E,W,S,E,W)
-  SPELL(TELE4,W,E,W,E,S,N,N)
+  SPELL(TELE1,W,S,E,W,S,E) /* beach */
+  SPELL(TELE2,E,W,E,S) /* swamp */
+  SPELL(TELE3,W,N,E,W,N,E) /* mountains */
+  SPELL(TELE4,W,E,W,E,S,N,N) /* castle */
   SPELL(OPEN,W,E,W,N,N)
   SPELL(INVISIBLE,W,N,S,E,W,W,E,E)
   SONG(REVEILLE,S,_,N,N,E,_,N,_,N,_,_,E,N)
@@ -171,8 +171,8 @@ static const struct fmn_spell {
   SONG(THITHER,N,E,W,S,E,E,W,S)
   SONG(REVELATIONS,S,_,W,_,S,W,E,W,S,_,N,_,N)
   SPELL(PUMPKIN,N,S,N,S,W,W,E)
-  SPELL(TELE5,E,N,S,W,N,S)
-  SPELL(TELE6,E,S,N,W,S,N)
+  SPELL(TELE5,E,E,W,E,E) /* desert */
+  SPELL(TELE6,N,N,S,N,N) /* steppe */
 
 #undef SPELL
 #undef SONG

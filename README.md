@@ -53,11 +53,12 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] '' duck
 - [x] '' rat
 - [x] Ghosts at the graveyard. Appear whenever you dig.
-- [ ] Change teleport spells. More distinct, more memorable, and shorter.
+- [x] Change teleport spells. More distinct, more memorable, and shorter.
 - [ ] Hat: cheaper. say $10?
 - [ ] Bloom time, should be 3 or 4 times longer
 - [ ] Crow guidance
 - [ ] Gameplay should now be complete.
+- [ ] Review demo, we've probably broken some things.
 
 ### Final graphics, etc. Finish before 1 September.
 
