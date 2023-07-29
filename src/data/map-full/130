@@ -19,3 +19,5 @@ sprite 7 3 firenozzle_s 3 0 0
 sprite 9 3 firenozzle_s 3 0 0
 sprite 11 3 firenozzle_s 6 0 gs:ww_fire19
 sprite 6 3 firenozzle_s 6 1 gs:ww_fire19
+sprite 1 7 firenozzle_e 5 0 gs:ww_fire20
+sprite 13 8 treadle gs:ww_fire20 10 0

@@ -43,16 +43,20 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - - [x] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
 - [x] Beach.
 - - [x] Bury some treasure. You just got a shovel and compass, let's use them!
-- [ ] Desert. Some dead space in the middle, do something with it.
+- xxx Desert. Some dead space in the middle, do something with it. meh.
 - [x] Steppe. Needs some hazards. A new seamonster for the north. Penguins (ie raccoon).
-- [ ] Steppe is ridiculously easy if you get the broom first. Are we confident that that's not likely? Maybe broom should go back there.
-- [ ] Need to lead more, to the bell. Not obvious at all.
-- [ ] I still think farming is not obvious enough.
-- [ ] Nerf the shovel puzzle a little.
+- [x] Steppe is ridiculously easy if you get the broom first. Are we confident that that's not likely? Maybe broom should go back there. ...yes, confident
+- [x] Need to lead more, to the bell. Not obvious at all.
+- [x] I still think farming is not obvious enough. Seeds by the shovel, and more instruction in the village.
+- [x] Nerf the shovel puzzle a little.
 - [x] Use skyleton somewhere.
 - [x] '' duck
 - [x] '' rat
 - [x] Ghosts at the graveyard. Appear whenever you dig.
+- [ ] Change teleport spells. More distinct, more memorable, and shorter.
+- [ ] Hat: cheaper. say $10?
+- [ ] Bloom time, should be 3 or 4 times longer
+- [ ] Crow guidance
 - [ ] Gameplay should now be complete.
 
 ### Final graphics, etc. Finish before 1 September.
