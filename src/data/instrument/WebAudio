@@ -125,7 +125,7 @@ end
 
 begin 15
   wave square
-  env 10 40 20 40 200 .. 5 ff 20 80 300
+  env 10 20 20 20 200 .. 5 60 20 30 300
   modRate 1
   modRange 5
   modEnv 00 50 00 400 00 200 00 .. 80 50 c0 400 80 200 00
@@ -311,6 +311,25 @@ begin 39 # bass
   modRate 0.5
   modRange 1
   env 15 60 20 20 250 .. 10 a0 15 40 400
+end
+
+#--- Nearer the Sky ---
+begin 39 # lead
+  wave c000 2000 1000 0800
+  modRate 1
+  modRange 1
+  modEnv 00 40 ff 100 80 500 80 
+  env 20 50 20 18 100 .. 10 c0 15 60 400
+end
+begin 40 # bass
+  wave 8080
+  modRate 0.5
+  modRange 2.5
+  env 20 40 20 10 100 .. 10 60 15 20 400
+end
+begin 41 # extra chords at end
+  wave 4000 0000 2000 0000 1000
+  env 20 20 20 08 100 .. 10 50 15 10 400
 end
 
 #--- 42 is special, it's the music teacher's saxophone ---

@@ -67,6 +67,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_find_direction_to_item = (itemid) => this.findDirectionToItem(itemid);
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
     this.wasmLoader.env.fmn_find_direction_to_teleport = (spellid) => this.findDirectionToTeleport(mapid);
+    this.wasmLoader.env.fmn_find_direction_to_map_reference = (ref) => this.findDirectionToMapReference(ref);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     this.wasmLoader.env.fmn_web_log_event = p => this.logBusinessEvent(this.wasmLoader.zstringFromMemory(p));
     this.wasmLoader.env.fmn_has_saved_game = () => this.savedGameStore.hasSavedGame();

@@ -136,7 +136,7 @@ export class DataService {
         qualified = this.shouldRetainResources(nextType, nextQualifier);
       } else {
         if (!nextType) throw new Error(`Expected nonzero State Change in TOC around ${tocp}/${src.length}`);
-        if (nextype === RESTYPE_MAP) this.mapCount++;
+        if (nextType === RESTYPE_MAP) this.mapCount++;
         const offset = (src[tocp] << 24) | (src[tocp + 1] << 16) | (src[tocp + 2] << 8) | src[tocp + 3];
         if (prev) {
           if (offset < prev.p) throw new Error(`Archive offsets out of order, ${offset}<${prev.p}`);

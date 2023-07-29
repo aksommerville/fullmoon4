@@ -58,11 +58,18 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] Bloom time, should be 3 or 4 times longer ...3x = 1 min = nice and long
 - [x] Crow guidance
 - [x] Gameplay should now be complete.
-- [ ] Review demo, we've probably broken some things.
-- [ ] Web too.
+- [x] Review demo, we've probably broken some things.
+- [x] Web too.
+- - xxx Web full clear shows time 0:08:11.487. That can't be right. It was at least half an hour.
+- - - ARsMABdOwQAcAAT//wAAAAYcIwAAAAAAAAAAAAUCQgAAEA6Q95HWdYvwsLYqZpV/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQGAAlFBApUBAYACUYNCgcEBgAJRw0
+      WEAQGAAlIBhoEBAYAA5QEDoQEBgADlQCmhAQGAAOWBgoUBAYAA5cMIgoEBgCHRQBiBAQGAHyHBhoEBAYAfIgNCgcEBgB8iQ0KBwQGAHyKBgoU
+- - - 00000000  01 1b 0c 00 17 4e c1 00  1c : 0x00174ec1 = 1527489 = 25 minutes, more believable. Why is it displaying 8?
+- - - This is going to take some heavy work, but can punt for now.
 
 ### Final graphics, etc. Finish before 1 September.
 
+- [ ] Demo: Mountains default tile changed. Needs some edging.
+- [ ] Demo: Church teleport spell.
 - [ ] Magic school: Toy castle, door opens when you cast spell of opening.
 - [ ] bucklock: Fireworks, sound effect, when unlocking.
 - [x] Caves: Illumination sprite so the doors show up while dark.
@@ -79,6 +86,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map?
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Arriving at swamp the first time, seems I can't guess wrong in the first mazelet. Is that my imagination? Or is it not getting set?

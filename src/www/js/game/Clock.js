@@ -90,7 +90,7 @@ export class Clock {
   update() {
     if (this.paused) {
       this.paused = false;
-      this.lastGameTime = this.window.Date.now();
+      this.lastRealTime = this.window.Date.now();
     }
     if (this.debugging) {
       this.lastGameTime += this.DEBUG_INTERVAL_MS;
