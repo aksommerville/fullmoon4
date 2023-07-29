@@ -54,7 +54,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] '' rat
 - [x] Ghosts at the graveyard. Appear whenever you dig.
 - [x] Change teleport spells. More distinct, more memorable, and shorter.
-- [ ] Hat: cheaper. say $10?
+- [x] Hat: cheaper. say $10? Also, buy seed, cheese, and match at the hat store, since those are basically categories of hat.
 - [ ] Bloom time, should be 3 or 4 times longer
 - [ ] Crow guidance
 - [ ] Gameplay should now be complete.

@@ -3,7 +3,7 @@
 0101010101010101010101010101010101010101
 01010101222323230d0e23232323232201010101
 01010101203131261d1e26313131312001010101
-010101012000002d00002d000000002001010101
+010101012049002d00002d4a004b002001010101
 010101012000003600003d000000002001010101
 0101010120000000000000000000002001010101
 0101010120000000000000000000002001010101
@@ -13,5 +13,11 @@
 tilesheet villint
 flags indoors
 door 9 9 22 13 5
-sprite 8 6 coincollector 20 gs:hat_collect_7bit 0
-sprite 8 5 treasure item:HAT 0 0
+sprite 8 6 coincollector 10 gs:hat_collect_7bit 0
+sprite 9 5 treasure item:HAT 0 0
+sprite 5 6 coincollector 6 gs:seed_collect_7bit 1
+sprite 11 6 coincollector 6 gs:cheese_collect_7bit 1
+sprite 13 6 coincollector 6 gs:match_collect_7bit 1
+sprite 6 5 treasure item:SEED 0 0
+sprite 12 5 treasure item:CHEESE 0 0
+sprite 14 5 treasure item:MATCH 0 0

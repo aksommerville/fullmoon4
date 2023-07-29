@@ -4,6 +4,7 @@
 #define tileid0 sprite->bv[0]
 #define threshold sprite->argv[0]
 #define gsbit sprite->argv[1]
+#define reset sprite->argv[2]
 
 /* Dependent sprites.
  * One for the arm, two for the digits.
@@ -90,6 +91,10 @@ static int16_t cc_accept_coin(struct fmn_sprite *sprite) {
   fmn_gs_set_word(gsbit,7,amount);
   if (amount==threshold) {
     cc_open_arm(sprite);
+    if (reset) {
+      amount=0;
+      fmn_gs_set_word(gsbit,7,amount);
+    }
   }
   cc_update_digits(sprite,amount);
   return 1;

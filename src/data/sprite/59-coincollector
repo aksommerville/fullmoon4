@@ -8,3 +8,4 @@ radius 0.5
 invmass 0
 argtype 0 int threshold
 argtype 1 gsbit gs_amt_7bit
+argtype 2 int reset
