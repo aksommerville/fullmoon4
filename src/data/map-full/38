@@ -11,6 +11,7 @@
 8b03018c0000017c017c01997a8b02028c010020
 8b02798b0001798b038c0203898b02798b020020
 tilesheet swamp
+flags nodoors
 neighbors 37
 neighbore 14
 neighborn 39

@@ -66,12 +66,14 @@ export class Runtime {
     this.wasmLoader.env.fmn_find_teleport_target = (spellid) => this.findTeleportTarget(spellid);
     this.wasmLoader.env.fmn_find_direction_to_item = (itemid) => this.findDirectionToItem(itemid);
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
+    this.wasmLoader.env.fmn_find_direction_to_teleport = (spellid) => this.findDirectionToTeleport(mapid);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     this.wasmLoader.env.fmn_web_log_event = p => this.logBusinessEvent(this.wasmLoader.zstringFromMemory(p));
     this.wasmLoader.env.fmn_has_saved_game = () => this.savedGameStore.hasSavedGame();
     this.wasmLoader.env.fmn_load_saved_game = () => this.savedGameStore.loadSavedGame();
     this.wasmLoader.env.fmn_delete_saved_game = () => this.savedGameStore.deleteSavedGame();
     this.wasmLoader.env.fmn_saved_game_dirty = () => this.savedGameStore.setDirty();
+    this.wasmLoader.env.fmn_is_demo = () => this.dataService.mapCount < 100;
     
     this.wasmLoader.env.fmn_video_init = (wmin, wmax, hmin, hmax, pixfmt) => this.renderer.fmn_video_init(wmin, wmax, hmin, hmax, pixfmt);
     this.wasmLoader.env.fmn_video_get_framebuffer_size = (wv, hv) => this.renderer.fmn_video_get_framebuffer_size(wv, hv);
@@ -398,6 +400,18 @@ export class Runtime {
         }
         return false;
       })
+    );
+  }
+  
+  findDirectionToTeleport(spellid) {
+    return this.findDirectionToMap(
+      this.dataService.forEachOfType("map", null, (map) => map.spellid === spellid)
+    );
+  }
+  
+  findDirectionToMapReference(ref) {
+    return this.findDirectionToMap(
+      this.dataService.forEachOfType("map", null, (map) => map.ref === ref)
     );
   }
   

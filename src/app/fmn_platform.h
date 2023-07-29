@@ -254,6 +254,7 @@
 #define FMN_MAPFLAG_BLOWBACK 0x04
 #define FMN_MAPFLAG_ANCILLARY 0x08
 #define FMN_MAPFLAG_MULTIHOME 0x10
+#define FMN_MAPFLAG_NODOORS 0x20 /* advice to crow, do not use doors. for the swamp maze */
 
 /* fmn_sprite_header is the part visible to the platform.
  * The app declares a more useful struct fmn_sprite with more content.
@@ -479,6 +480,11 @@ uint8_t fmn_can_quit();
  */
 void fmn_reset();
 
+/* Nonzero if we're using the abbreviated world map that I show off at GDEX.
+ * It only matters for crow guidance.
+ */
+uint8_t fmn_is_demo();
+
 /* Replace the global map section from the platform-owned data archive.
  * Also updates (plantv,sketchv) with plants and sketches in the current view.
  * Returns >0 if loaded, 0 if not found, <0 for real errors.
@@ -532,7 +538,9 @@ uint16_t fmn_find_teleport_target(uint8_t spellid);
  * 0xff if it's on the current map.
  */
 uint8_t fmn_find_direction_to_item(uint8_t itemid);
-uint8_t fmn_find_direction_to_map(uint16_t mapid);
+uint8_t fmn_find_direction_to_map(uint16_t mapid); // XXX try not to use -- don't hard-code mapid
+uint8_t fmn_find_direction_to_teleport(uint8_t spellid);
+uint8_t fmn_find_direction_to_map_reference(uint8_t ref);
 
 /* Trigger callbacks registered with the current map, for this (evid).
  * This is a generic extension point for attaching your C code with map-specific config.

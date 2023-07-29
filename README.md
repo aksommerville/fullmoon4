@@ -56,9 +56,10 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] Change teleport spells. More distinct, more memorable, and shorter.
 - [x] Hat: cheaper. say $10? Also, buy seed, cheese, and match at the hat store, since those are basically categories of hat.
 - [x] Bloom time, should be 3 or 4 times longer ...3x = 1 min = nice and long
-- [ ] Crow guidance
-- [ ] Gameplay should now be complete.
+- [x] Crow guidance
+- [x] Gameplay should now be complete.
 - [ ] Review demo, we've probably broken some things.
+- [ ] Web too.
 
 ### Final graphics, etc. Finish before 1 September.
 

@@ -149,6 +149,42 @@ uint8_t fmn_find_direction_to_item(uint8_t itemid) {
   return fmn_find_direction_to_map(fmn_any_mapid_with_item(itemid));
 }
 
+static int fmn_any_mapid_with_spell_command_cb(uint8_t opcode,const uint8_t *argv,int argc,void *userdata) {
+  uint8_t spellid=*(uint8_t*)userdata;
+  if ((opcode==0x45)&&(argv[1]==spellid)) return 1;
+  return 0;
+}
+
+static int fmn_any_mapid_with_spell_cb(uint16_t type,uint16_t qualifier,uint32_t mapid,const void *v,int c,void *userdata) {
+  return (fmn_map_for_each_command(v,c,fmn_any_mapid_with_spell_command_cb,userdata)>0)?mapid:0;
+}
+
+static uint16_t fmn_any_mapid_with_spell(uint8_t spellid) {
+  return fmn_datafile_for_each_of_type(bigpc.datafile,FMN_RESTYPE_MAP,fmn_any_mapid_with_spell_cb,&spellid);
+}
+
+uint8_t fmn_find_direction_to_teleport(uint8_t spellid) {
+  return fmn_find_direction_to_map(fmn_any_mapid_with_spell(spellid));
+}
+
+static int fmn_any_mapid_with_ref_command_cb(uint8_t opcode,const uint8_t *argv,int argc,void *userdata) {
+  uint8_t ref=*(uint8_t*)userdata;
+  if ((opcode==0x25)&&(argv[0]==ref)) return 1;
+  return 0;
+}
+
+static int fmn_any_mapid_with_ref_cb(uint16_t type,uint16_t qualifier,uint32_t mapid,const void *v,int c,void *userdata) {
+  return (fmn_map_for_each_command(v,c,fmn_any_mapid_with_ref_command_cb,userdata)>0)?mapid:0;
+}
+
+static uint16_t fmn_any_mapid_with_ref(uint8_t ref) {
+  return fmn_datafile_for_each_of_type(bigpc.datafile,FMN_RESTYPE_MAP,fmn_any_mapid_with_ref_cb,&ref);
+}
+
+uint8_t fmn_find_direction_to_map_reference(uint8_t ref) {
+  return fmn_find_direction_to_map(fmn_any_mapid_with_ref(ref));
+}
+
 /* Travel plan object, for determining next step to a given map.
  */
  
@@ -308,6 +344,7 @@ struct fmn_travel_plan_expand_from_map_context {
   uint8_t dir;
   int edgec0;
   const uint8_t *cellv;
+  uint8_t nodoors;
 };
 
 static int fmn_travel_plan_expand_from_map_cb(uint8_t opcode,const uint8_t *argv,int argc,void *userdata) {
@@ -323,6 +360,11 @@ static int fmn_travel_plan_expand_from_map_cb(uint8_t opcode,const uint8_t *argv
     case 0x04: {
         ctx->plan->edgec=ctx->edgec0;
       } return 1;
+      
+    /* FLAGS
+     * Check for nodoors.
+     */
+    case 0x24: if (argv[0]&FMN_MAPFLAG_NODOORS) ctx->nodoors=1; break;
       
     /* TILESHEET
      * Load the new cellphysics.
@@ -353,7 +395,7 @@ static int fmn_travel_plan_expand_from_map_cb(uint8_t opcode,const uint8_t *argv
     
     /* DOOR.
      */
-    case 0x60: if (ctx->plan->use_doors) {
+    case 0x60: if (ctx->plan->use_doors&&!ctx->nodoors) {
         uint16_t mapid=(argv[1]<<8)|argv[2];
         fmn_travel_plan_add_edge(ctx->plan,mapid,ctx->dir?ctx->dir:0xff);
       } break;
@@ -444,7 +486,7 @@ static int fmn_travel_plan_begin(struct fmn_travel_plan *plan) {
  */
  
 static uint8_t fmn_direction_map_to_map(uint16_t frommapid,uint16_t tomapid) {
-  
+
   /* Start at (frommapid) and expand into all possible directions from there.
    * Keep doing this until we've visited every map, or found (tomapid).
    * ie a breadth-first search.

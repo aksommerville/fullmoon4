@@ -19,6 +19,7 @@ edit:web-edit
 deploy:web-deploy
 fiddle:web-fiddle
 verify:web-verify
+adulterate:linux-adulterate
 
 #-------------------------------------------
 # For "web" target.

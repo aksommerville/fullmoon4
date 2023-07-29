@@ -19,4 +19,5 @@ sprite 7 4 cow 0 0 0
 door 12 1 103 10 9
 door 2 3 104 12 8
 sprite 12 1 farmer 4 0 0
+ref 1
 song snowglobe

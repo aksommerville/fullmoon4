@@ -21,6 +21,7 @@ door 17 1 114 14 9
 door 13 5 113 7 10
 sprite 17 3 tallbanner 0 0 0
 sprite 1 1 ghostgen 9 5 0
+ref 2
 song snowglobe
 buried_treasure 2 3 gs:graverob1 item:COIN
 buried_treasure 4 3 gs:graverob2 item:COIN

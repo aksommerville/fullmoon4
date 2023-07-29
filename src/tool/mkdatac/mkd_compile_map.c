@@ -117,6 +117,20 @@ static int mkd_map_cmd_tilesheet(struct mkd_respath *respath,const char *src,int
   return 0;
 }
 
+/* ref REF
+ * 0x25 (u8 ref) REF
+ */
+ 
+static int mkd_map_cmd_ref(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
+  int v;
+  if ((sr_int_eval(&v,src,srcc)<2)||(v<0)||(v>255)) {
+    return faileval(respath->path,lineno,src,srcc,"integer in 0..255");
+  }
+  if (sr_encode_u8(&mkd.dst,0x25)<0) return -1;
+  if (sr_encode_u8(&mkd.dst,v)<0) return -1;
+  return 0;
+}
+
 /* neighborw MAPID
  * 0x40 (u16 mapid) NEIGHBORW
  * neighbore MAPID
@@ -222,8 +236,8 @@ static int mkd_map_cmd_sprite(struct mkd_respath *respath,const char *src,int sr
   return 0;
 }
 
-/* flags [dark] [indoors] [blowback] [ancillary] [multihome]
- * 0x24 (u8 flags) FLAGS: 1=dark 2=indoors 4=blowback 8=ancillary 16=multihome 0xe0=reserved
+/* flags [dark] [indoors] [blowback] [ancillary] [multihome] [nodoors]
+ * 0x24 (u8 flags) FLAGS: 1=dark 2=indoors 4=blowback 8=ancillary 16=multihome 32=nodoors 0xe0=reserved
  */
  
 static int mkd_map_cmd_flags(struct mkd_respath *respath,const char *src,int srcc,int lineno) {
@@ -240,9 +254,10 @@ static int mkd_map_cmd_flags(struct mkd_respath *respath,const char *src,int src
     else if ((tokenc==8)&&!memcmp(token,"blowback",8)) flags|=0x04;
     else if ((tokenc==9)&&!memcmp(token,"ancillary",9)) flags|=0x08;
     else if ((tokenc==9)&&!memcmp(token,"multihome",9)) flags|=0x10;
+    else if ((tokenc==7)&&!memcmp(token,"nodoors",7)) flags|=0x20;
     else if (sr_int_eval(&i,token,tokenc)>=2) flags|=i;
     else {
-      fprintf(stderr,"%s:%d: Unexpected token '%.*s'. (dark,indoors,blowback,ancillary,multihome,(int))\n",respath->path,lineno,tokenc,token);
+      fprintf(stderr,"%s:%d: Unexpected token '%.*s'. (dark,indoors,blowback,ancillary,multihome,nodoors,(int))\n",respath->path,lineno,tokenc,token);
       return -2;
     }
   }
@@ -553,6 +568,7 @@ int mkd_compile_map(struct mkd_respath *respath) {
     _(event_trigger)
     _(facedir)
     _(flags)
+    _(ref)
     #undef _
     {
       fprintf(stderr,"%s:%d: Unknown map command '%.*s'\n",respath->path,lineno,kwc,kw);

@@ -85,6 +85,7 @@ int fmn_datafile_get_by_index(
   int p
 );
 int fmn_datafile_count(const struct fmn_datafile *file);
+int fmn_datafile_count_type(const struct fmn_datafile *file,uint16_t type);
 
 int fmn_file_read(void *dstpp,const char *path);
 int fmn_file_write(const char *path,const void *src,int srcc);

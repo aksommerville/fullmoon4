@@ -59,23 +59,84 @@ void fmn_secrets_refresh_for_map() {
  * TODO: Can we encode these decisions in the data set somehow?
  */
  
-uint8_t fmn_secrets_get_guide_dir() {
+uint8_t fmn_secrets_get_guide_dir_full() {
   uint8_t dir;
+  //fmn_log("%s...",__func__);
+  #define RESPOND(comment) { /*fmn_log("...%s 0x%04x",comment,dir);*/ return dir; }
+  #define SIMPLE_ITEM(tag) if (!fmn_global.itemv[FMN_ITEM_##tag]) { if (dir=fmn_find_direction_to_item(FMN_ITEM_##tag)) RESPOND(#tag) }
   
-  /* Feather required, and it has no prerequisites.
+  SIMPLE_ITEM(FEATHER) // no prereqs, intended as the very first thing.
+  SIMPLE_ITEM(COMPASS) // only FEATHER required, and it's prereq to the swamp.
+  SIMPLE_ITEM(WAND) // requires FEATHER,COMPASS
+  SIMPLE_ITEM(UMBRELLA) // requires FEATHER,COMPASS. arguably required for SHOVEL (to learn the Spell of Slow Motion).
+  SIMPLE_ITEM(SHOVEL) // requires WAND and Slow Motion.
+  SIMPLE_ITEM(PITCHER) // no prereqs, but also not useful before you have SHOVEL.
+  SIMPLE_ITEM(VIOLIN) // requires FEATHER probably, and it's a fair bit of travel so WAND is recommended too. Acquire before we start recommending farming.
+  
+  /* Chalk should come next. Don't recommend it if she's no COIN or MATCH.
+   * COIN or MATCH missing, lead her to the Department of Agriculture.
+   * ...on second thought, if it's COIN that's missing, send her to the Rabbit (beehive there).
    */
-  if (!fmn_global.itemv[FMN_ITEM_FEATHER]) {
-    if (dir=fmn_find_direction_to_item(FMN_ITEM_FEATHER)) return dir;
+  if (!fmn_global.itemv[FMN_ITEM_MATCH]) {
+    if (dir=fmn_find_direction_to_map_reference(1)) RESPOND("farmer(initial)")
   }
+  if (!fmn_global.itemv[FMN_ITEM_COIN]) {
+    if (dir=fmn_find_direction_to_map_reference(3)) RESPOND("rabbit")
+  }
+  SIMPLE_ITEM(HAT) // with PITCHER and SHOVEL, you can get COIN and buy this. needed for CHALK.
+  SIMPLE_ITEM(CHALK)
+  
+  /* After chalk, SNOWGLOBE and BROOM become available.
+   * SNOWGLOBE is very close to CHALK geographically, so recommend that first.
+   */
+  SIMPLE_ITEM(SNOWGLOBE)
+  SIMPLE_ITEM(BROOM)
+  
+  SIMPLE_ITEM(BELL) // requires BROOM. Pretty much always the last item.
+  
+  // Not recommending SEED or CHEESE. SEED you would get along the way (at the farmer step). CHEESE is never required.
+  
+  /* If the castle's basement door is still locked (gs:ww_fire3), guide to the Church.
+   */
+  if (!fmn_gs_get_bit(29)) {
+    if (dir=fmn_find_direction_to_map_reference(2)) RESPOND("church")
+  }
+  
+  /* If she hasn't reached the werewolf yet (gs:ww_fire_3f as a proxy), ensure some quantity of COIN.
+   * You need at least 2 coins, right at the end of the 3rd floor.
+   */
+  if (!fmn_gs_get_bit(63)&&(fmn_global.itemqv[FMN_ITEM_COIN]<2)) {
+    if (dir=fmn_find_direction_to_map_reference(1)) RESPOND("farmer(coin)")
+  }
+  
+  // OK! Guide to the castle.
+  if (dir=fmn_find_direction_to_teleport(FMN_SPELLID_TELE4)) RESPOND("werewolf")
+  
+  
+  // Welp that's all I got. Kaaaa, thanks for the corn.
+  fmn_log("...no response");
+  return 0;
+  #undef RESPOND
+  #undef SIMPLE_ITEM
+}
+
+static uint8_t fmn_secrets_get_guide_dir_demo() {
+  uint8_t dir;
+  //fmn_log("%s...",__func__);
+  #define RESPOND(comment) { /*fmn_log("...%s 0x%04x",comment,dir);*/ return dir; }
+  #define SIMPLE_ITEM(tag) if (!fmn_global.itemv[FMN_ITEM_##tag]) { if (dir=fmn_find_direction_to_item(FMN_ITEM_##tag)) RESPOND(#tag) }
+  
+  // Feather required, and it has no prerequisites.
+  SIMPLE_ITEM(FEATHER)
   
   /* Broom required, but you need feather or compass first.
    * We've already checked feather, so only check compass.
    */
   if (!fmn_global.itemv[FMN_ITEM_BROOM]) {
     if (!fmn_global.itemv[FMN_ITEM_FEATHER]&&!fmn_global.itemv[FMN_ITEM_COMPASS]) { // COMPASS required only if you don't have BROOM or FEATHER.
-      if (dir=fmn_find_direction_to_item(FMN_ITEM_COMPASS)) return dir;
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_COMPASS)) RESPOND("compass")
     } else {
-      if (dir=fmn_find_direction_to_item(FMN_ITEM_BROOM)) return dir;
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_BROOM)) RESPOND("broom")
     }
   }
   
@@ -89,9 +150,9 @@ uint8_t fmn_secrets_get_guide_dir() {
    */
   if (!fmn_global.itemv[FMN_ITEM_WAND]) {
     if (!fmn_global.itemv[FMN_ITEM_VIOLIN]) {
-      if (dir=fmn_find_direction_to_item(FMN_ITEM_VIOLIN)) return dir;
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_VIOLIN)) RESPOND("violin")
     } else {
-      if (dir=fmn_find_direction_to_item(FMN_ITEM_WAND)) return dir;
+      if (dir=fmn_find_direction_to_item(FMN_ITEM_WAND)) RESPOND("wand")
     }
   }
   
@@ -100,38 +161,44 @@ uint8_t fmn_secrets_get_guide_dir() {
    *  - Feather, and knowledge of lambda blocks.
    *  - Wand, and the Spell of Opening.
    *  - Wand, and the Spell of Wind.
-   * TODO Platform needs to track player's travel history.
+   * ...i'm only a bird, I don't get learning spells.
    */
-  if (!fmn_global.itemv[FMN_ITEM_UMBRELLA]) {
-    // We've already checked FEATHER and WAND, and can't add the knowledge conditions yet.
-    if (dir=fmn_find_direction_to_item(FMN_ITEM_UMBRELLA)) return dir;
-  }
+  SIMPLE_ITEM(UMBRELLA)
   
   /* TODO Require Spell of Opening.
    * For now, use either of gsbit (3,4) as a proxy for knowing the spell.
    * Those are (moonsong,mns_switch); you've likely been in her basement if either of those is true.
    */
   if (!fmn_gs_get_bit(3)&&!fmn_gs_get_bit(4)) {
-    if (dir=fmn_find_direction_to_map(30)) return dir;
+    if (dir=fmn_find_direction_to_map(30)) RESPOND("opening")
   }
   
   /* If the werewolf is alive, that's where you're going.
    */
   if (!fmn_global.werewolf_dead) {
-    if (dir=fmn_find_direction_to_map(11)) return dir;
+    // Would prefer to use fmn_find_direction_to_teleport(FMN_SPELLID_TELE4), but in the Demo there is no castle teleport point.
+    if (dir=fmn_find_direction_to_map(11)) RESPOND("werewolf")
   }
   
   /* Werewolf is dead? Hmm ok. Let's figure they're going for 100% item collection.
-   * NB We are currently not allowing play to proceed after killing the werewolf.
+   * NB We are currently not allowing play to proceed after killing the werewolf, and werewolf_dead will always save false.
    */
   uint8_t itemid=2; for (;itemid<FMN_ITEM_COUNT;itemid++) {
     if (!fmn_global.itemv[itemid]) {
-      if (dir=fmn_find_direction_to_item(itemid)) return dir;
+      if (dir=fmn_find_direction_to_item(itemid)) RESPOND("some item (impossible)")
     }
   }
   
   // Welp that's all I got. Kaaaa, thanks for the corn.
+  //fmn_log("...no response");
   return 0;
+  #undef RESPOND
+  #undef SIMPLE_ITEM
+}
+
+uint8_t fmn_secrets_get_guide_dir() {
+  if (fmn_is_demo()) return fmn_secrets_get_guide_dir_demo();
+  return fmn_secrets_get_guide_dir_full();
 }
 
 /* Decode spells and songs.

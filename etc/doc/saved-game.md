@@ -47,6 +47,10 @@ u8 length
 
 The first chunk must be (0x01,0x1b) ie (FIXED01,27), which can also be used as a signature.
 
+Logically, unknown chunks should be an error, since we provide the EOF chunk for future expansion.
+But whatever. Current decoder quietly skips unknown chunks.
+If in the future we need to make saved games unreadable by old decoders, change the FIXED01 rules or something.
+
 ```
 Chunk 0x00 EOF
   Ignore payload and anything after.
@@ -61,7 +65,7 @@ Chunk 0x01 FIXED01
     u16 damage_count
     u8 transmogrification
     u8 selected_item
-    u16 itemv
+    u16 itemv. *Little-endian*. oops, i did it different from (gs), that's going to be confusing.
     u8[16] itemqv
     
 Chunk 0x02 GSBIT
@@ -70,6 +74,7 @@ Chunk 0x02 GSBIT
   If two GSBIT chunks cover the same range, the later one takes precedence.
   Decoder must check range and ignore excess.
   (Current implementation has a 64-byte gs, and I plan to encode the whole thing verbatim in one chunk).
+  Bit indices are big-endian: [0]&0x80 is bit zero, [0]&0x40 is bit one...
   Any length.
     u16 startp, byte offset in fmn_global.gs
     ... content

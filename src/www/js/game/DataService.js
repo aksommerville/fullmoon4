@@ -30,6 +30,7 @@ export class DataService {
     this.toc = null; // null, Array, Promise, or Error. Array: { type, id, q, ser, obj }
     this.plants = [];
     this.sketches = [];
+    this.mapCount = 0;
   }
   
   /* Access to resources.
@@ -89,6 +90,7 @@ export class DataService {
    
   refresh() {
     this.toc = null;
+    this.mapCount = 0;
     return this.load();
   }
    
@@ -114,6 +116,7 @@ export class DataService {
   _receiveArchive(serial) {
     const src = new Uint8Array(serial);
     this.toc = [];
+    this.mapCount = 0;
     if (src.length < 12) throw new Error(`Short archive ${src.length}<12`);
     if ((src[0] !== 0xff) || (src[1] !== 0x41) || (src[2] !== 0x52) || (src[3] !== 0x00)) {
       throw new Error(`Archive signature mismatch`);
@@ -133,6 +136,7 @@ export class DataService {
         qualified = this.shouldRetainResources(nextType, nextQualifier);
       } else {
         if (!nextType) throw new Error(`Expected nonzero State Change in TOC around ${tocp}/${src.length}`);
+        if (nextype === RESTYPE_MAP) this.mapCount++;
         const offset = (src[tocp] << 24) | (src[tocp + 1] << 16) | (src[tocp + 2] << 8) | src[tocp + 3];
         if (prev) {
           if (offset < prev.p) throw new Error(`Archive offsets out of order, ${offset}<${prev.p}`);

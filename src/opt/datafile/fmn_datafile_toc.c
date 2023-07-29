@@ -291,3 +291,13 @@ int fmn_datafile_get_by_index(
 int fmn_datafile_count(const struct fmn_datafile *file) {
   return file->entryc;
 }
+
+int fmn_datafile_count_type(const struct fmn_datafile *file,uint16_t type) {
+  const struct fmn_datafile_toc_entry *entry=file->entryv;
+  int i=file->entryc,c=0;
+  for (;i-->0;entry++) {
+    if (entry->type>type) break;
+    if (entry->type==type) c++;
+  }
+  return c;
+}

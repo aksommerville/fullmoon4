@@ -62,6 +62,8 @@ $(eval $(call SINGLE_DATA_ARCHIVE,linux,$(linux_DATA_FULL),$(linux_DATA_DEMO),$(
 
 linux-run-full:$(linux_EXE) $(linux_DATA_FULL);$(linux_EXE) --data=$(linux_DATA_FULL) $(linux_RUN_ARGS)
 linux-run-demo:$(linux_EXE) $(linux_DATA_DEMO);$(linux_EXE) --data=$(linux_DATA_DEMO) $(linux_RUN_ARGS)
-linux-run:linux-run-demo
+linux-run:linux-run-full
 
 linux-verify:$(tools_EXE_datan) $(linux_DATA_FULL) $(linux_DATA_DEMO);$(tools_EXE_datan) --src=src/data --archive=$(linux_DATA_FULL) --archive=$(linux_DATA_DEMO)
+
+linux-adulterate:;src/tool/adulterate/adulterate.js $(linux_OUTDIR)/save

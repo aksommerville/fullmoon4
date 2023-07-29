@@ -76,6 +76,14 @@ uint8_t fmn_find_direction_to_map(uint16_t mapid) {
   return 0;
 }
 
+uint8_t fmn_find_direction_to_teleport(uint8_t spellid) {
+  return 0;
+}
+
+uint8_t fmn_find_direction_to_map_reference(uint8_t ref) {
+  return 0;
+}
+
 void fmn_map_callbacks(uint8_t evid,void (*cb)(uint16_t cbid,uint8_t param,void *userdata),void *userdata) {
 }
 
@@ -94,6 +102,10 @@ void fmn_delete_saved_game() {
 }
 
 void fmn_saved_game_dirty() {
+}
+
+uint8_t fmn_is_demo() {
+  return 0;
 }
 
 /* Render API.

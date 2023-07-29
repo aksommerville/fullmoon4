@@ -103,7 +103,7 @@ $(eval $(call web_ZIP,$(web_HTSA_ZIP_DEMO),$(filter-out %-full.data,$(web_HTSA_F
 
 # Getting a little weird... We need to serve "fullmoon.data", but that file won't exist anymore before the final packaging.
 web_HTSA_DATA:=$(web_HTSA_DIR)/fullmoon.data
-$(web_HTSA_DATA):$(web_HTSA_DIR)/fullmoon-demo.data;$(PRECMD) cp $< $@
+$(web_HTSA_DATA):$(web_HTSA_DIR)/fullmoon-full.data;$(PRECMD) cp $< $@
 
 #-----------------------------------------------------------
 # Info site for aksommerville.com

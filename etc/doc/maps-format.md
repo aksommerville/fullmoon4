@@ -35,7 +35,8 @@ buried_door X Y GSBIT MAPID DSTX DSTY
 callback EVID CBID PARAM
 event_trigger X Y EVENTID # for fmn_game.h:fmn_game_event_listen. Not the same events as "callback".
 facedir GSBIT_HORZ GSBIT_VERT # Set a gsbit when the hero turns.
-flags [dark] [indoors] [blowback] [ancillary] [multihome]
+flags [dark] [indoors] [blowback] [ancillary] [multihome] [nodoors]
+ref 0..255 # arbitrary identifier, for crow guidance
 ```
 
 Resource IDs may be name or number.
@@ -80,7 +81,8 @@ Future decoders are allowed to skip unknown commands if the length is known.
 0x21 (u8 imageid) TILESHEET
 0x22 (u8 spellid) SAVETO
 0x23 (u8 dir) WIND
-0x24 (u8 flags) FLAGS: 0x01=dark 0x02=indoors 0x04=blowback 0x08=ancillary 0x10=multihome 0xe0=reserved
+0x24 (u8 flags) FLAGS: 0x01=dark 0x02=indoors 0x04=blowback 0x08=ancillary 0x10=multihome 0x20=nodoors 0xe0=reserved
+0x25 (u8 ref) REF
 
 0x40 (u16 mapid) NEIGHBORW
 0x41 (u16 mapid) NEIGHBORE

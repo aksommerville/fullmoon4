@@ -438,6 +438,10 @@ uint16_t fmn_load_saved_game() {
   return bigpc_savedgame_load(bigpc.savedgame_serial,bigpc.savedgame_serialc);
 }
 
+uint8_t fmn_is_demo() {
+  return (fmn_datafile_count_type(bigpc.datafile,FMN_RESTYPE_MAP)<100)?1:0;
+}
+
 /* fmn_find_map_command, fmn_find_direction_to_item, fmn_find_direction_to_map
  * are part of the platform API, but have their own home in bigpc_map_analysis.c.
  * fmn_log and fmn_log_event live in bigpc_log.c.
