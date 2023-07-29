@@ -249,7 +249,7 @@ int8_t fmn_load_map(
 
   fmn_map_for_each_command(serial,serialc,fmn_load_map_cb_command,&ctx);
   
-  if (!fmn_global.mapflag&FMN_MAPFLAG_INDOORS) bigpc_autobloom_plants();
+  if (!(fmn_global.mapflag&FMN_MAPFLAG_INDOORS)) bigpc_autobloom_plants();
   
   bigpc_savedgame_dirty();
   

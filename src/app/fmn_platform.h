@@ -72,7 +72,7 @@
 #define FMN_PLANT_STATE_FLOWER   3 /* Bearing fruit. */
 #define FMN_PLANT_STATE_DEAD     4 /* Withered, candidate for replacement. */
 
-#define FMN_FLOWER_TIME_MS 20000
+#define FMN_FLOWER_TIME_MS 60000
 
 // PLANT_FRUIT corresponds to PITCHER_CONTENT, what you get by watering a plant with the given liquid.
 #define FMN_PLANT_FRUIT_NONE    0

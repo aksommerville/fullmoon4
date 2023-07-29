@@ -55,7 +55,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [x] Ghosts at the graveyard. Appear whenever you dig.
 - [x] Change teleport spells. More distinct, more memorable, and shorter.
 - [x] Hat: cheaper. say $10? Also, buy seed, cheese, and match at the hat store, since those are basically categories of hat.
-- [ ] Bloom time, should be 3 or 4 times longer
+- [x] Bloom time, should be 3 or 4 times longer ...3x = 1 min = nice and long
 - [ ] Crow guidance
 - [ ] Gameplay should now be complete.
 - [ ] Review demo, we've probably broken some things.
@@ -91,7 +91,7 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - - [ ] Input config
 - - [ ] Language
 - - [ ] Zap saved game. And show details.
-- [ ] I broke auto-bloom somewhere; plants are now sprouting after entering the map. Which is actually not bad. Maybe keep it this way and drop the old logic instead of fixing?
+- [x] I broke auto-bloom somewhere; plants are now sprouting after entering the map. Which is actually not bad. Maybe keep it this way and drop the old logic instead of fixing?
 - [ ] UI sound effects, eg change menu selection.
 - [ ] web: Sound effects too quiet relative to music.
 - xxx Violin: Fuzz playback? Look for matches that allow off-by-one somehow. ...too complicated, and we're educating better now so i think not a problem.
