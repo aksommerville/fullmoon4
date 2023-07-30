@@ -2,6 +2,7 @@
 
 #define tileid0 sprite->bv[0]
 #define opened sprite->bv[1]
+#define bellable sprite->bv[2]
 #define tileid_open sprite->argv[0]
 #define table_hack sprite->argv[1] /* cheat position down and turn off physics */
 
@@ -51,7 +52,7 @@ static void book_toggle(struct fmn_sprite *sprite) {
  
 static int16_t _book_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qualifier) {
   switch (itemid) {
-    case FMN_ITEM_BELL: book_toggle(sprite); break;
+    case FMN_ITEM_BELL: if (bellable) book_toggle(sprite); break;
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_OPEN: book_open(sprite); break;
       } break;

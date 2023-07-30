@@ -1,9 +1,8 @@
 controller book
 image moresprites
-tile 0x24
+tile 0x25
 style tile
 layer 128
 physics edge sprites solid hole blowable
 invmass 40
 argtype 0 int tileid_open
-bv[2] 1

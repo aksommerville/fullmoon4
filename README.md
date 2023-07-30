@@ -22,9 +22,11 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] desert: tiles for forest boundary
 - [x] Church: join path at welcome mat.
 - [x] Castle basement: Make the church attachment look like the church as a hint.
-- [ ] swamp: forest edge
+- [x] swamp: forest edge
+- [x] "Draw door" book in Goody's room.
+- [x] Goody should face left.
 - [ ] Compass: make easier to read
-- [ ] Choose-a-door room.
+- [x] Choose-a-door room.
 - [ ] Black out unused tiles.
 
 ### Remaining major features. Finish before 31 August.
