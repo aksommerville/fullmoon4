@@ -7,72 +7,12 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-2023-07-23, observations on playthru:
+### Final graphics, etc. Finish before 13 August.
 
-- Farming is not obvious. Maybe bring the shovel forward? Or somehow lead from shovel to farming.
-- Violin is acquired late, and is not really useful at all.
-- - Add a musical gate in the castle, for sure.
-- - It's not overpowering like the Broom or Snowglobe, no reason not to provide it early.
-x Need the hat trolls deadly enough that it's unlikely to get past without wearing the hat.
-x Need a beach sign from the third screen, otherwise one assumes you're supposed to walk toward the swamp or mountains.
-- Play time just over 30 min, and that's about where I want it. :)
-
-### Populate all interactions. Finish before 18 August.
-
-- [x] Shuffle items. See playthru notes above.
-- [x] Mountains: Hat trolls aren't deadly enough. Add static hazards for them to knock you into? More of them? Faster missiles?
-- [x] Static hazards. Both shovellable and non. ...nah we don't need shovellable or solid
-- xxx Can I make an Umbrella guard more flexible than firewall? Rapid-fire missiles? ...no particular need for this
-- [x] Castle.
-- - xxx Some kind of musical gate.
-- [x] Village, mostly education.
-- - [x] Song tutorials in the village: Show ghost notes, if you stand in the right place.
-- - [x] Orphans.
-- - [x] Purchase hat.
-- - [x] Library: 1f=3 alphablock books. 2f=chalk HAND/BIRD FIRE/MOON. (current spell books are placeholders; remove)
-- - [x] Library: World map.
-- - [x] Magic school 1f: Charm challenge. Make a racoon walk thru fire to open the door.
-- - [x] Magic school 2f: Spell books Slowmo and Rain (two you would already know by this point). Ladder up guarded by a mu block.
-- - [x] Magic school 3f: Spell books Invisibility and Opening. Both critical, and both only taught here. --teacher, not book, for invisibility
-- - [x] Dept of Agriculture: Plainly readable help: Water=>Seed, Milk=>Cheese, Sap=>Match, Honey=>Coin, Song of Blooming, Rain Spell. (none of this is unique)
-- - xxx Dept of Agriculture basement: Guide to killing werewolfs? ...nah let this remain a mystery
-- [x] Mountains.
-- [x] Swamp.
-- - [x] Put a trick floor just west of the maze exit.
-- [x] Forest.
-- - [x] Ensure HOME is pumpkinproof; a pumpkin can leave the castle, to just the first screen outside. (or guard inside the castle? or make the exterior multihome?)
-- [x] Beach.
-- - [x] Bury some treasure. You just got a shovel and compass, let's use them!
-- xxx Desert. Some dead space in the middle, do something with it. meh.
-- [x] Steppe. Needs some hazards. A new seamonster for the north. Penguins (ie raccoon).
-- [x] Steppe is ridiculously easy if you get the broom first. Are we confident that that's not likely? Maybe broom should go back there. ...yes, confident
-- [x] Need to lead more, to the bell. Not obvious at all.
-- [x] I still think farming is not obvious enough. Seeds by the shovel, and more instruction in the village.
-- [x] Nerf the shovel puzzle a little.
-- [x] Use skyleton somewhere.
-- [x] '' duck
-- [x] '' rat
-- [x] Ghosts at the graveyard. Appear whenever you dig.
-- [x] Change teleport spells. More distinct, more memorable, and shorter.
-- [x] Hat: cheaper. say $10? Also, buy seed, cheese, and match at the hat store, since those are basically categories of hat.
-- [x] Bloom time, should be 3 or 4 times longer ...3x = 1 min = nice and long
-- [x] Crow guidance
-- [x] Gameplay should now be complete.
-- [x] Review demo, we've probably broken some things.
-- [x] Web too.
-- - xxx Web full clear shows time 0:08:11.487. That can't be right. It was at least half an hour.
-- - - ARsMABdOwQAcAAT//wAAAAYcIwAAAAAAAAAAAAUCQgAAEA6Q95HWdYvwsLYqZpV/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQGAAlFBApUBAYACUYNCgcEBgAJRw0
-      WEAQGAAlIBhoEBAYAA5QEDoQEBgADlQCmhAQGAAOWBgoUBAYAA5cMIgoEBgCHRQBiBAQGAHyHBhoEBAYAfIgNCgcEBgB8iQ0KBwQGAHyKBgoU
-- - - 00000000  01 1b 0c 00 17 4e c1 00  1c : 0x00174ec1 = 1527489 = 25 minutes, more believable. Why is it displaying 8?
-- - - This is going to take some heavy work, but can punt for now.
-
-### Final graphics, etc. Finish before 1 September.
-
-- [ ] Demo: Mountains default tile changed. Needs some edging.
-- [ ] Demo: Church teleport spell.
-- [ ] Magic school: Toy castle, door opens when you cast spell of opening.
-- [ ] bucklock: Fireworks, sound effect, when unlocking.
-- [x] Caves: Illumination sprite so the doors show up while dark.
+- [x] Demo: Mountains default tile changed. Needs some edging.
+- [x] Demo: Church teleport spell.
+- [x] Magic school: Toy castle, door opens when you cast spell of opening. ...meh, just use a regular gate.
+- [x] bucklock: Fireworks, sound effect, when unlocking.
 - [ ] Village/forest boundary, need big tree on the village side.
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.
@@ -81,16 +21,11 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - [ ] Church: join path at welcome mat.
 - [ ] Castle basement: Make the church attachment look like the church as a hint.
 - [ ] swamp: forest edge
-- [ ] Hat shop: mannequins
-- [ ] Compass: make easier to read?
+- [ ] Compass: make easier to read
+- [ ] Choose-a-door room.
 
-### Further critical features and bugs. Finish before 15 September.
+### Remaining major features. Finish before 31 August.
 
-- [ ] Web reported play time runs short -- it doesn't match what gets saved.
-- [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map?
-- [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
-- [ ] Arriving at swamp the first time, seems I can't guess wrong in the first mazelet. Is that my imagination? Or is it not getting set?
-- [ ] Crow guidance for full version. fmn_secrets.c:fmn_secrets_get_guide_dir()
 - [ ] End credits.
 - [ ] Settings menu.
 - - [ ] Fullscreen
@@ -100,20 +35,26 @@ x Need a beach sign from the third screen, otherwise one assumes you're supposed
 - - [ ] Input config
 - - [ ] Language
 - - [ ] Zap saved game. And show details.
-- [x] I broke auto-bloom somewhere; plants are now sprouting after entering the map. Which is actually not bad. Maybe keep it this way and drop the old logic instead of fixing?
-- [ ] UI sound effects, eg change menu selection.
-- [ ] web: Sound effects too quiet relative to music.
-- xxx Violin: Fuzz playback? Look for matches that allow off-by-one somehow. ...too complicated, and we're educating better now so i think not a problem.
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
+- [ ] Windows
+
+### Further critical features and bugs. Finish before 15 September.
+
+- [ ] Web reported play time runs short -- it doesn't match what gets saved.
+- [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map?
+- [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
+- [ ] Arriving at swamp the first time, seems I can't guess wrong in the first mazelet. Is that my imagination? Or is it not getting set?
+- [ ] Crow guidance for full version. fmn_secrets.c:fmn_secrets_get_guide_dir()
+- [ ] UI sound effects, eg change menu selection.
+- [ ] web: Sound effects too quiet relative to music.
 - [ ] Metal
 - [ ] inmgr: Real input mapping.
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
 - [ ] Touch input.
 - [ ] Input configuration.
 - - [ ] UI for mapping.
-- [ ] Windows
 - [ ] minsyn drums too loud
 - [ ] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
 

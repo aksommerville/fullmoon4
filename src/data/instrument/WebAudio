@@ -1076,3 +1076,10 @@ sound TREADLE_TICK
   env 0 ( 0 10 0xffff 20 0x2000 * 0 )
   norm 0 0.150
 end
+
+sound CHA_CHING
+  len 0.500
+  fm 0 ( 800 150 800 20 1200 ) 1.5 ( 0 50 1000 150 1000 * 0 ) sine
+  env 0 ( 0 50 0xc000 50 0xffff 50 0 50 0xffff * 0 )
+  norm 0 0.200
+end

@@ -18,6 +18,14 @@ static void bc_open_grudgingly(struct fmn_sprite *sprite) {
   fmn_sprite_kill(sprite);
 }
 
+/* Receive coin.
+ */
+ 
+static void bc_open_normally(struct fmn_sprite *sprite) {
+  fmn_sound_effect(FMN_SFX_CHA_CHING);
+  fmn_sprite_kill(sprite);
+}
+
 /* Interact.
  */
  
@@ -26,7 +34,7 @@ static int16_t _bc_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t qua
     case FMN_ITEM_WAND: switch (qualifier) {
         case FMN_SPELLID_OPEN: bc_open_grudgingly(sprite); break;
       } break;
-    case FMN_ITEM_COIN: fmn_sprite_kill(sprite); return 1; //TODO gsbit?
+    case FMN_ITEM_COIN: bc_open_normally(sprite); return 1;
   }
   return 0;
 }

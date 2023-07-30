@@ -226,7 +226,7 @@ static const struct fmn_spell {
   SPELL(WIND_S,E,N,W,S,E,W,S,S)
   SPELL(SLOWMO,E,W,W,E,W,W,S,W)
   SPELL(HOME,S,S,S)
-  SPELL(TELE1,W,S,E,W,S,E) /* beach */
+  SPELL(TELE1,W,S,E,W,S,E) /* beach (demo:Church) */
   SPELL(TELE2,E,W,E,S) /* swamp */
   SPELL(TELE3,W,N,E,W,N,E) /* mountains */
   SPELL(TELE4,W,E,W,E,S,N,N) /* castle */
