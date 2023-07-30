@@ -7,28 +7,6 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### Final graphics, etc. Finish before 13 August.
-
-- [x] Demo: Mountains default tile changed. Needs some edging.
-- [x] Demo: Church teleport spell.
-- [x] Magic school: Toy castle, door opens when you cast spell of opening. ...meh, just use a regular gate.
-- [x] bucklock: Fireworks, sound effect, when unlocking.
-- [x] datan: Generate tile usage report.
-- [x] Steppe: hole tile.
-- [x] Village/forest boundary, need big tree on the village side.
-- [x] Furnish Dot's house.
-- [x] Big tree edges don't line up.
-- [x] image castleext: Water-into-trees, 4 tiles needed.
-- [x] desert: tiles for forest boundary
-- [x] Church: join path at welcome mat.
-- [x] Castle basement: Make the church attachment look like the church as a hint.
-- [x] swamp: forest edge
-- [x] "Draw door" book in Goody's room.
-- [x] Goody should face left.
-- [x] Compass: make easier to read
-- [x] Choose-a-door room.
-- [ ] Black out unused tiles.
-
 ### Remaining major features. Finish before 31 August.
 
 - [ ] End credits.
