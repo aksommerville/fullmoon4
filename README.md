@@ -25,7 +25,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] swamp: forest edge
 - [x] "Draw door" book in Goody's room.
 - [x] Goody should face left.
-- [ ] Compass: make easier to read
+- [x] Compass: make easier to read
 - [x] Choose-a-door room.
 - [ ] Black out unused tiles.
 

@@ -17,3 +17,4 @@ door 13 4 106 13 4
 sprite 10 6 firenozzle_e 3 0 gs:school_fire1
 sprite 11 4 treadle gs:school_fire1 15 0
 sprite 7 5 raccoon 1 0 0
+sprite 13 5 pushblock 0 0 0

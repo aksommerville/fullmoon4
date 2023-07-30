@@ -18,7 +18,7 @@ neighbors 14
 neighborw 39
 sprite 16 5 pushblock 0 0 0
 sprite 14 1 treadle gs:forest_fire4 0 0
-sprite 4 2 firenozzle_s 2 0 gs:forest_fire4
+sprite 5 2 firenozzle_s 2 0 gs:forest_fire4
 sprite 2 3 stompbox gs:forest_gate2 0 0
 sprite 3 6 gate gs:forest_gate2 0 0
 song toil_and_trouble

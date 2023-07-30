@@ -17,3 +17,6 @@ door 5 6 110 5 6
 sprite 14 6 book 56 1 0
 sprite 11 2 book 58 1 0
 sprite 14 2 book 60 1 0
+sprite 8 5 alphablock_alpha 0 0 0
+sprite 10 5 alphablock_mu 0 0 0
+sprite 9 6 alphablock_gamma 0 0 0

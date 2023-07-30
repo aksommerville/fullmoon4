@@ -531,7 +531,9 @@ static void fmn_render_hero_overlay_compass() {
       if (diff>M_PI) diff-=M_PI*2.0f;
       else if (diff<-M_PI) diff+=M_PI*2.0f;
       if (diff<0.0f) diff=-diff;
-      fmn_render_global.compassangle+=minrate+(diff*(FMN_RENDER_COMPASS_RATE_MAX-minrate))/M_PI;
+      // Max speed for the far half of the circle, and scale linear down to (minrate) for the near half.
+      if (diff>M_PI/2.0f) fmn_render_global.compassangle+=FMN_RENDER_COMPASS_RATE_MAX;
+      else fmn_render_global.compassangle+=minrate+(diff*(FMN_RENDER_COMPASS_RATE_MAX-minrate)*2.0f)/M_PI;
     }
   }
   if (fmn_render_global.compassangle>M_PI) fmn_render_global.compassangle-=M_PI*2.0f;
