@@ -60,7 +60,7 @@ static int datan_validate_buried_things_1(struct datan_map *map) {
   return datan_map_for_each_command(map,datan_validate_buried_things_cmd,map);
 }
 
-/* Assert that every BURIED_DOOR and BURIED_TREASURE command is locate on a SHOVELLABLE tile.
+/* Assert that every BURIED_DOOR and BURIED_TREASURE command is located on a SHOVELLABLE tile.
  */
  
 int datan_validate_buried_things() {

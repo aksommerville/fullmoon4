@@ -236,6 +236,8 @@ int sr_encode_vlqlen(struct sr_encoder *encoder,const void *src,int srcc);
 
 int sr_encode_fmt(struct sr_encoder *encoder,const char *fmt,...);
 
+int sr_encode_base64(struct sr_encoder *encoder,const void *v,int c);
+
 /* Open and close JSON structures.
  * Within an array, you *must* supply (0,0) for all keys.
  * Within an object, (k) must never be null.

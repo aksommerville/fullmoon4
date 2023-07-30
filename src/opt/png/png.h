@@ -64,6 +64,8 @@ struct png_image *png_image_reformat(
   int always_copy
 );
 
+int png_image_reformat_in_place(struct png_image *image,uint8_t depth,uint8_t colortype);
+
 /* Calls (cb) with each pixel in LRTB order until you return nonzero or we reach the end.
  * We convert to 32-bit RGBA for all valid input formats, and we do use PLTE and tRNS as warranted.
  * (image) is const to us.

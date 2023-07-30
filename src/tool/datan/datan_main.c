@@ -39,6 +39,21 @@ static int datan_process_archive(const char *path) {
     return -2;
   }
   
+  /* If we're in --tileusage mode, do that instead.
+   * We still need to run "individual_resources", in order to populate (datan.resv).
+   */
+  if (datan.tileusage) {
+    if ((err=datan_validate_individual_resources())<0) {
+      if (err!=-2) fprintf(stderr,"%s: Unspecified error reading resources.\n",path);
+      return -2;
+    }
+    if ((err=datan_tileusage())<0) {
+      if (err!=-2) fprintf(stderr,"%s: Unspecified error gathering tile usage data.\n",path);
+      return -2;
+    }
+    return 0;
+  }
+  
   /* Schedule of tests against one archive.
    */
   #define TEST(fnname) if ((err=fnname())<0) { \
@@ -55,6 +70,7 @@ static int datan_process_archive(const char *path) {
   TEST(datan_validate_indoor_outdoor_boundaries)
   TEST(datan_validate_tileprops_against_image)
   TEST(datan_validate_buried_things)
+  TEST(datan_validate_map_refs)
   TEST(datan_validate_reachability) // Recommend last because it tends to generate a large warning.
   
   #undef TEST
@@ -66,8 +82,9 @@ static int datan_process_archive(const char *path) {
  
 static void datan_print_usage(const char *exename) {
   if (!exename||!exename[0]) exename="datan";
-  fprintf(stderr,"Usage: %s [--src=DIR] --archive=FILE [--archive=FILE...]\n",exename);
+  fprintf(stderr,"Usage: %s [--tileusage=HTMLPATH] [--src=DIR] --archive=FILE [--archive=FILE...]\n",exename);
   fprintf(stderr,"Each archive is processed independently.\n");
+  fprintf(stderr,"--tileusage is a special mode to generate a report of which image tiles are used by maps. Normal validation doesn't run.\n");
 }
 
 /* Main.
@@ -98,10 +115,22 @@ int main(int argc,char **argv) {
       archivec++;
       continue;
     }
+    if (!memcmp(arg,"--tileusage=",12)) {
+      datan.tileusage=arg+12;
+      continue;
+    }
+    fprintf(stderr,"%s: Unexpected argument '%s'\n",datan.exename,arg);
+    return 1;
   }
   if (!archivec) {
     datan_print_usage(argv[0]);
     return 1;
+  }
+  if (datan.tileusage) {
+    if ((err=datan_tileusage_finish())<0) {
+      if (err!=-2) fprintf(stderr,"%s: Unspecified error generating tile usage report.\n",datan.exename);
+      return 1;
+    }
   }
   return 0;
 }

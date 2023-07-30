@@ -13,6 +13,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] Demo: Church teleport spell.
 - [x] Magic school: Toy castle, door opens when you cast spell of opening. ...meh, just use a regular gate.
 - [x] bucklock: Fireworks, sound effect, when unlocking.
+- [x] datan: Generate tile usage report.
+- [ ] Steppe: hole tile.
 - [ ] Village/forest boundary, need big tree on the village side.
 - [ ] Furnish Dot's house.
 - [ ] Big tree edges don't line up.
@@ -23,6 +25,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] swamp: forest edge
 - [ ] Compass: make easier to read
 - [ ] Choose-a-door room.
+- [ ] Black out unused tiles.
 
 ### Remaining major features. Finish before 31 August.
 

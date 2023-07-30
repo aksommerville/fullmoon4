@@ -110,6 +110,7 @@ static int datan_map_validate_1(uint8_t opcode,const uint8_t *v,int c,void *user
     case 0x22: ONCE8(saveto) break;
     case 0x23: ONCE8(winddir) break;
     case 0x24: ONCE8(flags) break;
+    case 0x25: ONCE8(ref) break;
     #undef ONCE8
    
     #define ONCE16(fldname) { \

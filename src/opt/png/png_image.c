@@ -219,6 +219,28 @@ struct png_image *png_image_reformat(
   return dst;
 }
 
+/* Reformat in place.
+ */
+ 
+int png_image_reformat_in_place(struct png_image *image,uint8_t depth,uint8_t colortype) {
+  if (!image) return -1;
+  if ((depth==image->depth)&&(colortype==image->colortype)) return 0;
+  struct png_image *temp=png_image_reformat(image,0,0,0,0,depth,colortype,1);
+  if (!temp) return -1;
+  
+  // Carefully bodysnatch (temp) into (image).
+  if (image->pixels&&image->ownpixels) free(image->pixels);
+  image->pixels=temp->pixels;
+  temp->pixels=0;
+  image->ownpixels=1;
+  image->stride=temp->stride;
+  image->depth=depth;
+  image->colortype=colortype;
+  
+  png_image_del(temp);
+  return 0;
+}
+
 /* Read one pixel as RGBA.
  */
  

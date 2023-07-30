@@ -152,6 +152,23 @@ int sr_encode_fmt(struct sr_encoder *encoder,const char *fmt,...) {
   }
 }
 
+/* Encode base64 text, from the raw binary.
+ */
+ 
+int sr_encode_base64(struct sr_encoder *encoder,const void *v,int c) {
+  if (!v) return 0;
+  if (c<0) { c=0; while (((char*)v)[c]) c++; }
+  while (1) {
+    int err=sr_base64_encode(encoder->v+encoder->c,encoder->a-encoder->c,v,c);
+    if (err<0) return -1;
+    if (encoder->c<=encoder->a-err) {
+      encoder->c+=err;
+      return 0;
+    }
+    if (sr_encoder_require(encoder,err)<0) return -1;
+  }
+}
+
 /* JSON collections.
  */
 

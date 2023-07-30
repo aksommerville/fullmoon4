@@ -26,6 +26,7 @@ extern struct datan {
   const char *exename;
   const char *srcpath;
   const char *arpath;
+  const char *tileusage; // If set, path to output HTML file. Don't run normal validation.
   struct fmn_datafile *datafile;
   
   // Chalk definitions. Unsorted (preserving order of input file, not that we care).
@@ -56,6 +57,13 @@ extern struct datan {
     void (*del)(void *obj); // required
   } *resv;
   int resc,resa;
+  
+  // --tileusage
+  struct datan_tuentry {
+    uint8_t imageid; // maps can only refer to the first 256 images
+    uint8_t usage[256>>3]; // little-endian bits per tile
+  } *tuentryv;
+  int tuentryc,tuentrya;
 } datan;
 
 const char *fmn_restype_repr(uint16_t type);
@@ -82,6 +90,9 @@ void *datan_res_get(uint16_t type,uint16_t qualifier,uint32_t id);
 int datan_acquire_gsbit();
 int datan_acquire_chalk();
 
+int datan_tileusage(); // Call once per archive, after datan_validate_individual_resources
+int datan_tileusage_finish();
+
 /* Archive validators.
  * (arpath,datafile) are valid when these run.
  */
@@ -95,6 +106,7 @@ int datan_validate_blowback();
 int datan_validate_indoor_outdoor_boundaries();
 int datan_validate_tileprops_against_image();
 int datan_validate_buried_things();
+int datan_validate_map_refs();
 int datan_validate_reachability();
 
 /* Individual resource validators, single serial only.
@@ -124,6 +136,7 @@ struct datan_map {
   uint8_t saveto;
   uint8_t winddir;
   uint8_t flags;
+  uint8_t ref;
   uint16_t neighborw;
   uint16_t neighbore;
   uint16_t neighborn;
