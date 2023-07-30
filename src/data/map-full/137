@@ -18,3 +18,4 @@ neighbors 140
 door 7 5 46 7 5
 sprite 7 5 doorhere 0 0 0
 sprite 4 8 rat 0 0 0
+sprite 17 5 lizard 0 0 0

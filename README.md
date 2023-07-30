@@ -14,14 +14,14 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] Magic school: Toy castle, door opens when you cast spell of opening. ...meh, just use a regular gate.
 - [x] bucklock: Fireworks, sound effect, when unlocking.
 - [x] datan: Generate tile usage report.
-- [ ] Steppe: hole tile.
-- [ ] Village/forest boundary, need big tree on the village side.
+- [x] Steppe: hole tile.
+- [x] Village/forest boundary, need big tree on the village side.
 - [ ] Furnish Dot's house.
-- [ ] Big tree edges don't line up.
-- [ ] image castleext: Water-into-trees, 4 tiles needed.
-- [ ] desert: tiles for forest boundary
-- [ ] Church: join path at welcome mat.
-- [ ] Castle basement: Make the church attachment look like the church as a hint.
+- [x] Big tree edges don't line up.
+- [x] image castleext: Water-into-trees, 4 tiles needed.
+- [x] desert: tiles for forest boundary
+- [x] Church: join path at welcome mat.
+- [x] Castle basement: Make the church attachment look like the church as a hint.
 - [ ] swamp: forest edge
 - [ ] Compass: make easier to read
 - [ ] Choose-a-door room.
