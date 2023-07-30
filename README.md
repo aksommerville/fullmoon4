@@ -16,7 +16,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] datan: Generate tile usage report.
 - [x] Steppe: hole tile.
 - [x] Village/forest boundary, need big tree on the village side.
-- [ ] Furnish Dot's house.
+- [x] Furnish Dot's house.
 - [x] Big tree edges don't line up.
 - [x] image castleext: Water-into-trees, 4 tiles needed.
 - [x] desert: tiles for forest boundary

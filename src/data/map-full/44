@@ -16,5 +16,5 @@ neighbore 41
 neighbors 45
 neighborw 94
 sprite 6 5 alphablock_gamma 0 0 0
-sprite 10 6 duck 0 0 0
+sprite 12 3 duck 0 0 0
 song gloom_for_company
