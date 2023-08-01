@@ -183,10 +183,11 @@ struct fmn_menu *fmn_begin_menu(int menuid,int arg0);
 #define FMN_MENU_PAUSE 1
 #define FMN_MENU_CHALK 2 /* arg0=bits */
 #define FMN_MENU_TREASURE 3 /* arg0=itemid */
-#define FMN_MENU_VICTORY 4
+#define FMN_MENU_VICTORY 4 /* Demo only. Simple splash of "Victory" and stats. */
 #define FMN_MENU_GAMEOVER 5
 #define FMN_MENU_HELLO 6
 #define FMN_MENU_SETTINGS 7
+#define FMN_MENU_CREDITS 8 /* Full only. Extended narrative sequence. */
 
 #define FMN_MENU_MESSAGE_CANCEL 1
 #define FMN_MENU_MESSAGE_SUBMIT 2

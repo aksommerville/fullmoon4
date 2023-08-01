@@ -20,6 +20,13 @@ static uint32_t color_selected=0,color_enabled=0,color_disabled=0;
  */
  
 static uint8_t hello_submit(struct fmn_menu *menu) {
+
+  /*XXX show credits instead of whatever was picked. Can't just jump to Credits instead of Hello because Hello loads some images.
+  if (selp==3) fmn_quit();
+  else { fmn_begin_menu(FMN_MENU_CREDITS,0); fmn_dismiss_menu(menu); }
+  return 1;
+  /**/
+
   switch (selp) {
     case 0: { // Continue
         if (fmn_game_load_saved_game()<0) {

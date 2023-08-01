@@ -10,6 +10,12 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### Remaining major features. Finish before 31 August.
 
 - [ ] End credits.
+- - [ ] Text.
+- - [ ] Still frames.
+- - - [ ] Fade in and out
+- - - [ ] I'd really like these to be animated.
+- - [ ] Live frames: Dragging the werewolf, clothing the orphans, returning home.
+- - [ ] Don't repeat song.
 - [ ] Settings menu.
 - - [ ] Fullscreen
 - - [ ] Driver selection
