@@ -12,10 +12,11 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] End credits.
 - - [x] Text.
 - - [ ] Still frames.
-- - - [ ] Fade in and out
+- - - [x] Fade in and out
 - - - [ ] I'd really like these to be animated.
-- - [ ] Live frames: Dragging the werewolf, clothing the orphans, returning home.
+- - [x] Live frames: Dragging the werewolf, clothing the orphans, returning home.
 - - [x] Don't repeat song.
+- - [ ] Should credits be interruptible? Currently they are. I believe the convention is No.
 - [ ] Settings menu.
 - - [ ] Fullscreen
 - - [ ] Driver selection
@@ -32,6 +33,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### Further critical features and bugs. Finish before 15 September.
 
 - [x] Castle 3f, west of the OTP read, the upper stompbox spoils the whole puzzle.
+- [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map?
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.

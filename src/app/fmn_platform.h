@@ -500,6 +500,12 @@ int8_t fmn_load_map(
   )
 );
 
+/* This ought to have existed from the start, or really, some generic fmn_get_resource().
+ * A very poor design choice early on; I thought global state would generally belong to the platform rather than app.
+ * Anyway... I need this now as I'm writing the credits menu. A lot of the rest of the app could have used it, and would have been a lot neater. D'oh.
+ */
+int16_t fmn_get_map(void *dst,int16_t dsta,uint16_t mapid);
+
 /* Plant a seed or begin editing a sketch.
  * Both return <0 to reject, eg no space available.
  * fmn_begin_sketch() returns the existing bits (zero is normal), or 0xffffffff if we couldn't create one.

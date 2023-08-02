@@ -36,6 +36,10 @@ int8_t fmn_load_map(
   return 0;
 }
 
+int16_t fmn_get_map(void *dst,int16_t dsta,uint16_t mapid) {
+  return 0;
+}
+
 int8_t fmn_add_plant(uint16_t x,uint16_t y) {
   return 0;
 }

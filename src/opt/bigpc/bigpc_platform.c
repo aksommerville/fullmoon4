@@ -256,6 +256,14 @@ int8_t fmn_load_map(
   return 1;
 }
 
+int16_t fmn_get_map(void *dst,int16_t dsta,uint16_t mapid) {
+  const void *src=0;
+  int srcc=fmn_datafile_get_any(&src,bigpc.datafile,FMN_RESTYPE_MAP,mapid);
+  if (srcc<1) return 0;
+  if (srcc<=dsta) memcpy(dst,src,srcc);
+  return srcc;
+}
+
 /* Add a plant.
  */
  

@@ -56,6 +56,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_can_quit = () => 0;
     this.wasmLoader.env.fmn_reset = () => this.reset();
     this.wasmLoader.env.fmn_load_map = (mapId, cbSpawn) => this.loadMap(mapId, cbSpawn);
+    this.wasmLoader.env.fmn_get_map = (dstp, dsta, mapId) => this.getMap(dstp, dsta, mapId);
     this.wasmLoader.env.fmn_add_plant = (x, y) => this.addPlant(x, y);
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
@@ -223,6 +224,16 @@ export class Runtime {
     }
     this.savedGameStore.setDirty();
     return 1;
+  }
+  
+  getMap(dstp, dsta, mapId) {
+    const res = this.dataService.toc.find(r => r.type === 3 && r.id === mapId);
+    if (!res) return 0;
+    if (res.ser.length <= dsta) {
+      const dstview = new Uint8Array(this.wasmLoader.memU8.buffer, this.wasmLoader.memU8.byteOffset + dstp, res.ser.length);
+      dstview.set(res.ser);
+    }
+    return res.ser.length;
   }
   
   playSong(songid, loop) {

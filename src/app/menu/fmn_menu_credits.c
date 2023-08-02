@@ -1,4 +1,5 @@
 #include "fmn_menu_internal.h"
+#include "fmn_scene.h"
 #include "app/fmn_game.h"
 
 #define CREDITS_SUMMARY_W 320
@@ -33,6 +34,16 @@ static const struct credits_text {
   {{0,0,0,0,50},1}, // Dot Vine will return
 };
 
+static const struct fmn_scene_setup credits_setupv[]={
+  {146,FMN_SCENE_ACTION_DRAG_RL,20.0f}, // castle 3f
+  {147,FMN_SCENE_ACTION_DRAG_LR,20.0f}, // castle 2f
+  {148,FMN_SCENE_ACTION_DRAG_RL,20.0f}, // castle 1f
+  {149,FMN_SCENE_ACTION_DRAG_HOME,10.0f}, // outside dot's
+  //TODO butchering, sewing...
+  {150,FMN_SCENE_ACTION_CLOTHE,30.0f}, // village
+  //TODO go to bed, turn off lights
+};
+
 /* Globals. We need more context than the menu object will comfortably hold.
  */
  
@@ -42,6 +53,13 @@ static float credits_text_clock=0.0f; // counts down until the next message, onc
 static struct fmn_draw_mintile credits_messagev[CREDITS_MESSAGE_COLC*CREDITS_MESSAGE_ROWC];
 static int credits_messagec=0;
 static int credits_messagep=0; // typewriter position
+
+static struct fmn_scene credits_scene={0};
+static int credits_scenep=0; // next position in credits_setupv
+
+//XXX temporary, show four still frames. TODO: animated sequences
+static int credits_still_frame=0;
+static float credits_still_clock=0.0f;
 
 /* Prepare the next text message.
  */
@@ -57,7 +75,7 @@ static void credits_append_line(uint16_t stringid,int align,int row) {
   else if (align>0) x=CREDITS_MESSAGE_COLC*CREDITS_GLYPH_W-textw;
   else x=((CREDITS_MESSAGE_COLC*CREDITS_GLYPH_W)>>1)-(textw>>1);
   x+=CREDITS_GLYPH_W>>1;
-  int16_t y=CREDITS_SUMMARY_H+CREDITS_SCENE_H+row*CREDITS_GLYPH_H+(CREDITS_GLYPH_H>>1);
+  int16_t y=CREDITS_SUMMARY_H+CREDITS_SCENE_H+row*CREDITS_GLYPH_H+CREDITS_GLYPH_H; // we actually have room for 6 lines, but use 5 to allow some spacing
   
   // In order to align the "Cast" section, I pad edges with tildes. Now that we're measured, strip them.
   const char *src=text;
@@ -95,6 +113,21 @@ static void credits_text_next(struct fmn_menu *menu) {
   } else {
     credits_typewriter_clock=0.0f;
     credits_text_clock=CREDITS_MESSAGE_POST_DELAY;
+  }
+}
+
+/* Begin next scene.
+ */
+
+static void credits_scene_next(struct fmn_menu *menu) {
+  int c=sizeof(credits_setupv)/sizeof(struct fmn_scene_setup);
+  if (credits_scenep>=c) {
+    fmn_scene_blank(&credits_scene);
+    return;
+  }
+  if (fmn_scene_init(&credits_scene,credits_setupv+credits_scenep++)<0) {
+    fmn_scene_blank(&credits_scene);
+    return;
   }
 }
 
@@ -139,6 +172,19 @@ static void _credits_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
         credits_typewriter_clock=0.0f;
       }
     }
+  }
+  
+  if (credits_still_clock>0.0f) {
+    if ((credits_still_clock-=elapsed)<=0.0f) {
+      if (credits_still_frame<3) {
+        credits_still_frame++;
+        credits_still_clock=20.0f;
+      }
+    }
+  }
+  
+  if (fmn_scene_update(&credits_scene,elapsed)) {
+    credits_scene_next(menu);
   }
 }
 
@@ -224,14 +270,17 @@ static void _credits_render(struct fmn_menu *menu) {
     fmn_draw_decal(&decal,1,FMN_IMAGEID_CREDITS_SUMMARY);
   }
   
-  // Picture.
-  {
+  // Scene.
+  fmn_scene_render(0,CREDITS_SUMMARY_H,320,128,&credits_scene);
+  /*
+  if (credits_scene.blackout!=0xff) {
     struct fmn_draw_decal decal={
       0,CREDITS_SUMMARY_H,320,128,
-      0,384,320,128,
+      0,credits_still_frame*128,320,128,
     };
     fmn_draw_decal(&decal,1,26);
   }
+  /**/
   
   // Message.
   fmn_draw_mintile(credits_messagev,credits_messagep,20);
@@ -247,4 +296,8 @@ void fmn_menu_init_CREDITS(struct fmn_menu *menu) {
   fmn_play_song(7,0);
   credits_textp=0;
   credits_text_next(menu);
+  credits_still_frame=0;
+  credits_still_clock=20.0f;
+  credits_scenep=0;
+  credits_scene_next(menu);
 }
