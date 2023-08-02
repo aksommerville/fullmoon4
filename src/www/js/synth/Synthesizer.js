@@ -127,7 +127,7 @@ export class Synthesizer {
   /* MIDI and MIDI-ish events.
    *************************************************************/
    
-  playSong(song, force) {
+  playSong(song, force, loop) {
     this.song = song;
     if (this.songPlayer) {
       if ((this.songPlayer.song === song) && !force) return;
@@ -136,7 +136,7 @@ export class Synthesizer {
     }
     if (!song) return;
     this.volume15 = 0x40;
-    this.songPlayer = new SongPlayer(this, song);
+    this.songPlayer = new SongPlayer(this, song, loop);
     this.songPlayer.enable(this.preferences.prefs.musicEnable);
   }
   

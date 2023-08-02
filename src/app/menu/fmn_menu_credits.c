@@ -4,76 +4,98 @@
 #define CREDITS_SUMMARY_W 320
 #define CREDITS_SUMMARY_H 16
 #define FMN_IMAGEID_CREDITS_SUMMARY 312 /* fmn_render_internal.h */
+#define CREDITS_SCENE_W 320
+#define CREDITS_SCENE_H 128
+#define CREDITS_MESSAGE_COLC 40
+#define CREDITS_MESSAGE_ROWC 5
+#define CREDITS_GLYPH_W 8
+#define CREDITS_GLYPH_H 8
+#define CREDITS_MIN_UPTIME 1.0f
+#define CREDITS_TYPEWRITER_DELAY 0.300f
+#define CREDITS_MESSAGE_POST_DELAY 10.0f
 
 #define summary_ready menu->argv[1]
 #define clock menu->fv[0]
 
-#define CREDITS_MIN_UPTIME 1.0f
+/* Content schedule.
+ */
+
+static const struct credits_text {
+  uint16_t stringidv[CREDITS_MESSAGE_ROWC];
+  int align;
+} credits_textv[]={
+  {{0,0,0,0,0},0}, // wait a tasteful interval
+  {{34,35,36,37,38},0}, // cast
+  {{39,0,40,0,0},0}, // AK
+  {{41,0,42,43,44},0}, // open source
+  {{45,0,46,47,48},0}, // beta
+  {{0,49},0}, // gdex
+  {{0,0,0,0,50},1}, // Dot Vine will return
+};
 
 /* Globals. We need more context than the menu object will comfortably hold.
  */
  
-static char credits_message[256];
+static float credits_typewriter_clock=0.0f; // counts down for each character
+static int credits_textp=0;
+static float credits_text_clock=0.0f; // counts down until the next message, once the message is done typing.
+static struct fmn_draw_mintile credits_messagev[CREDITS_MESSAGE_COLC*CREDITS_MESSAGE_ROWC];
 static int credits_messagec=0;
-static int credits_messagep=0;
-static float credits_message_clock=0.0f; // counts down for each character
+static int credits_messagep=0; // typewriter position
 
-/* Break lines and prepare a new message.
+/* Prepare the next text message.
  */
  
-static void credits_set_message(struct fmn_menu *menu,const char *src,int srcc) {
-  if (!src) srcc=0; else if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
-  const int linew=39;
-  const int linelimit=5;
-  credits_messagec=0;
-  credits_messagep=0;
-  int linec=1;
-  int linelen=0;
-  int srcp=0;
-  for (;srcp<srcc;srcp++) {
+static void credits_append_line(uint16_t stringid,int align,int row) {
+  if (!stringid) return;
+  char text[64];
+  int textc=fmn_get_string(text,sizeof(text),stringid);
+  if ((textc<1)||(textc>sizeof(text))) return;
+  int textw=CREDITS_GLYPH_W*textc;
+  int16_t x;
+  if (align<0) x=0;
+  else if (align>0) x=CREDITS_MESSAGE_COLC*CREDITS_GLYPH_W-textw;
+  else x=((CREDITS_MESSAGE_COLC*CREDITS_GLYPH_W)>>1)-(textw>>1);
+  x+=CREDITS_GLYPH_W>>1;
+  int16_t y=CREDITS_SUMMARY_H+CREDITS_SCENE_H+row*CREDITS_GLYPH_H+(CREDITS_GLYPH_H>>1);
   
-    // Explicit LF, break the current line.
-    if (src[srcp]==0x0a) {
-      while (linelen<linew) {
-        linelen++;
-        credits_message[credits_messagec++]=' ';
-        if (credits_messagec>=sizeof(credits_message)) goto _done_;
-      }
-      linelen=0;
-      linec++;
-      if (linec>linelimit) break;
-      continue;
-    }
-    
-    // If we crossed the line width, jump to the next, at the first non-space character.
-    // Lines broken implicitly will never begin with a space.
-    if (linelen>=linew) {
-      if (src[srcp]==0x20) continue;
-      linelen=0;
-      linec++;
-      if (linec>linelimit) break;
-    }
+  // In order to align the "Cast" section, I pad edges with tildes. Now that we're measured, strip them.
+  const char *src=text;
+  while (textc&&(text[textc-1]=='~')) textc--;
+  while (textc&&(src[0]=='~')) { src++; textc--; x+=CREDITS_GLYPH_W; }
   
-    credits_message[credits_messagec++]=src[srcp];
-    if (credits_messagec>=sizeof(credits_message)) break;
-    linelen++;
-    
-    // If we just emitted a space, read ahead and break the line if the next word is too long.
-    int wordlen=0;
-    while ((srcp+1+wordlen<srcc)&&((unsigned char)src[srcp+1+wordlen]>0x20)) wordlen++;
-    if ((linelen+wordlen>linew)&&(wordlen<=linew)) {
-      while (linelen<linew) {
-        linelen++;
-        credits_message[credits_messagec++]=' ';
-        if (credits_messagec>=sizeof(credits_message)) goto _done_;
-      }
-      linelen=0;
-      linec++;
-      if (linec>linelimit) break;
-    }
+  int i=0; for (;i<textc;i++,src++,x+=CREDITS_GLYPH_W) {
+    if (*src<=0x20) continue;
+    struct fmn_draw_mintile *vtx=credits_messagev+credits_messagec++;
+    vtx->x=x;
+    vtx->y=y;
+    vtx->tileid=*src;
+    vtx->xform=0;
   }
- _done_:;
-  credits_message_clock=0.25f;
+}
+
+static void credits_text_next(struct fmn_menu *menu) {
+  credits_messagep=0;
+  credits_messagec=0;
+  int c=sizeof(credits_textv)/sizeof(struct credits_text);
+  if (credits_textp>=c) {
+    credits_messagep=0;
+    credits_messagec=0;
+    credits_typewriter_clock=0.0f;
+    credits_text_clock=999.9f;
+    return;
+  }
+  const struct credits_text *text=credits_textv+credits_textp++;
+  int row=0; for (;row<CREDITS_MESSAGE_ROWC;row++) {
+    credits_append_line(text->stringidv[row],text->align,row);
+  }
+  if (credits_messagec) {
+    credits_typewriter_clock=CREDITS_TYPEWRITER_DELAY;
+    credits_text_clock=CREDITS_MESSAGE_POST_DELAY;
+  } else {
+    credits_typewriter_clock=0.0f;
+    credits_text_clock=CREDITS_MESSAGE_POST_DELAY;
+  }
 }
 
 /* Dismiss.
@@ -102,13 +124,19 @@ static void _credits_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
     menu->pvinput=input;
   }
   
-  if (credits_message_clock>0.0f) {
-    if ((credits_message_clock-=elapsed)<=0.0f) {
-      while ((credits_messagep<credits_messagec)&&(credits_message[credits_messagep++]<=0x20)) ;
+  if (credits_messagep>=credits_messagec) {
+    if ((credits_text_clock-=elapsed)<=0.0f) {
+      credits_text_next(menu);
+    }
+  }
+  
+  if (credits_typewriter_clock>0.0f) {
+    if ((credits_typewriter_clock-=elapsed)<=0.0f) {
+      credits_messagep++;
       if (credits_messagep<credits_messagec) {
-        credits_message_clock=0.125f;
+        credits_typewriter_clock=CREDITS_TYPEWRITER_DELAY;
       } else {
-        credits_message_clock=0.0f;
+        credits_typewriter_clock=0.0f;
       }
     }
   }
@@ -122,8 +150,6 @@ static void credits_summary_generate(struct fmn_menu *menu) {
   if (fmn_draw_set_output(FMN_IMAGEID_CREDITS_SUMMARY)<0) return;
   fmn_draw_clear();
   
-  // Framebuffer is 320 pixels wide, exactly 40 characters. Plus one for snprintf's retarded NUL.
-  #define DIGIT_LIMIT 41
   uint32_t ms=fmn_game_get_play_time_ms();
   int sec=ms/1000; ms%=1000;
   int min=sec/60; sec%=60;
@@ -134,18 +160,32 @@ static void credits_summary_generate(struct fmn_menu *menu) {
   }
   int itemc=0; int i=0; for (;i<FMN_ITEM_COUNT;i++) if (fmn_global.itemv[i]) itemc++;
   int damagec=fmn_global.damage_count; // stored in 16 bits; can't exceed 5 digits.
-  char message[DIGIT_LIMIT];
-  int messagec=snprintf(message,sizeof(message),
-    " %2d:%02d:%02d.%03d       %2d/%02d         %5d ",
-    hour,min,sec,ms,itemc,FMN_ITEM_COUNT,damagec
-  );
-  if ((messagec<1)||(messagec>=sizeof(message))) return;
+  char message[CREDITS_MESSAGE_COLC]=" XX:XX:XX.XXX       XX/XX         XXXXX ";
+  message[1]=(hour>=10)?('0'+hour/10):' ';
+  message[2]='0'+hour%10;
+  message[4]='0'+min/10;
+  message[5]='0'+min%10;
+  message[7]='0'+sec/10;
+  message[8]='0'+sec%10;
+  message[10]='0'+ms/1000;
+  message[11]='0'+(ms/100)%10;
+  message[12]='0'+ms%10;
+  message[20]=(itemc>=10)?('0'+itemc/10):' ';
+  message[21]='0'+itemc%10;
+  message[23]='0'+FMN_ITEM_COUNT/10;
+  message[24]='0'+FMN_ITEM_COUNT%10;
+  message[34]=(damagec>=10000)?('0'+damagec/10000):' ';
+  message[35]=(damagec>=1000)?('0'+(damagec/1000)%10):' ';
+  message[36]=(damagec>=100)?('0'+(damagec/100)%10):' ';
+  message[37]=(damagec>=10)?('0'+(damagec/10)%10):' ';
+  message[38]='0'+damagec%10;
+  int messagec=40;
   
-  struct fmn_draw_mintile vtxv[DIGIT_LIMIT];
+  struct fmn_draw_mintile vtxv[CREDITS_MESSAGE_COLC];
   int vtxc=0;
   const char *src=message;
-  int x=4;
-  for (i=messagec;i-->0;src++,x+=8) {
+  int x=CREDITS_GLYPH_W>>1;
+  for (i=messagec;i-->0;src++,x+=CREDITS_GLYPH_W) {
     if (*src<=0x20) continue;
     struct fmn_draw_mintile *vtx=vtxv+vtxc++;
     vtx->x=x;
@@ -193,29 +233,8 @@ static void _credits_render(struct fmn_menu *menu) {
     fmn_draw_decal(&decal,1,26);
   }
   
-  // Message. Break when we exceed the right margin, which will happen every 39 characters.
-  {
-    struct fmn_draw_mintile vtxv[160];
-    int vtxc=0;
-    const char *src=credits_message;
-    int i=credits_messagep;
-    int16_t x=8;
-    int16_t y=CREDITS_SUMMARY_H+128+8;
-    for (;i-->0;src++,x+=8) {
-      if (x>312) {
-        x=8;
-        y+=8;
-      }
-      if (*src<=0x20) continue;
-      if (vtxc>=sizeof(vtxv)/sizeof(vtxv[0])) break;
-      struct fmn_draw_mintile *vtx=vtxv+vtxc++;
-      vtx->x=x;
-      vtx->y=y;
-      vtx->tileid=*src;
-      vtx->xform=0;
-    }
-    fmn_draw_mintile(vtxv,vtxc,20);
-  }
+  // Message.
+  fmn_draw_mintile(credits_messagev,credits_messagep,20);
 }
 
 /* Init.
@@ -225,6 +244,7 @@ void fmn_menu_init_CREDITS(struct fmn_menu *menu) {
   menu->update=_credits_update;
   menu->render=_credits_render;
   menu->opaque=1;
-  fmn_play_song(7);
-  credits_set_message(menu,"TODO: Decide what goes here.",-1);
+  fmn_play_song(7,0);
+  credits_textp=0;
+  credits_text_next(menu);
 }

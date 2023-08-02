@@ -101,10 +101,10 @@ void bigpc_synth_silence_all(struct bigpc_synth_driver *driver) {
   driver->type->event(driver,0xff,0xff,0,0);
 }
 
-int bigpc_synth_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force) {
+int bigpc_synth_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force,int loop) {
   if (!driver) return -1;
   if (!driver->type->play_song) return -1;
-  return driver->type->play_song(driver,src,srcc,force);
+  return driver->type->play_song(driver,src,srcc,force,loop);
 }
 
 void bigpc_synth_pause_song(struct bigpc_synth_driver *driver,int pause) {

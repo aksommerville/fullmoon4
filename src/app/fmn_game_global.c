@@ -32,8 +32,8 @@ int fmn_game_init() {
   fmn_global.active_item=0xff;
   
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
-  fmn_begin_menu(FMN_MENU_HELLO,0);
-  //fmn_begin_menu(FMN_MENU_CREDITS,0);
+  //fmn_begin_menu(FMN_MENU_HELLO,0);
+  fmn_begin_menu(FMN_MENU_CREDITS,0);
   
   return 0;
 }

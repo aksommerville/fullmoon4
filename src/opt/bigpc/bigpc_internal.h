@@ -132,7 +132,7 @@ int bigpc_input_init();
 // Force a player's state to all ones, so each key needs to release before we notice the change.
 void bigpc_ignore_next_button();
 
-void bigpc_play_song(uint8_t songid);
+void bigpc_play_song(uint8_t songid,uint8_t loop);
 
 // Nonzero if it's ok to play this sound. Updates all blackout state based on bigpc.clock.last_real_time_us.
 int bigpc_check_sound_blackout(uint16_t sfxid);

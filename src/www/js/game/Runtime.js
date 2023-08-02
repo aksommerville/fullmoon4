@@ -60,7 +60,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_begin_sketch = (x, y) => this.beginSketch(x, y);
     this.wasmLoader.env.fmn_sound_effect = (sfxid) => this.soundEffects.play(sfxid);
     this.wasmLoader.env.fmn_synth_event = (chid, opcode, a, b) => this.synthesizer.event(chid, opcode, a, b);
-    this.wasmLoader.env.fmn_play_song = (songid) => this.playSong(songid);
+    this.wasmLoader.env.fmn_play_song = (songid, loop) => this.playSong(songid, loop);
     this.wasmLoader.env.fmn_get_string = (dst, dsta, id) => this.getString(dst, dsta, id);
     this.wasmLoader.env.fmn_find_map_command = (dstp, mask, vp) => this.findMapCommand(dstp, mask, vp);
     this.wasmLoader.env.fmn_find_teleport_target = (spellid) => this.findTeleportTarget(spellid);
@@ -219,15 +219,15 @@ export class Runtime {
     this.triggerMapSetup(cbSpawn);
     if (map.songId) {
       const song = this.dataService.getSong(map.songId);
-      this.synthesizer.playSong(song);
+      this.synthesizer.playSong(song, false, true);
     }
     this.savedGameStore.setDirty();
     return 1;
   }
   
-  playSong(songid) {
+  playSong(songid, loop) {
     const song = this.dataService.getSong(songid);
-    this.synthesizer.playSong(song);
+    this.synthesizer.playSong(song, false, loop);
   }
   
   triggerMapSetup(cbSpawn) {

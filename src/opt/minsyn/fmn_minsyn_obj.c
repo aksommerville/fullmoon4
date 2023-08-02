@@ -194,7 +194,7 @@ void minsyn_silence_all(struct bigpc_synth_driver *driver) {
 /* Play song.
  */
  
-static int _minsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force) {
+static int _minsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force,int loop) {
   if (srcc<0) return -1;
   if (!srcc) {
     if (!DRIVER->song) return 0;
@@ -210,7 +210,7 @@ static int _minsyn_play_song(struct bigpc_synth_driver *driver,const void *src,i
   if (!srcc) return 0;
   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
   midi_file_set_output_rate(DRIVER->song,driver->rate);
-  midi_file_set_loop_point(DRIVER->song);
+  if (loop) midi_file_set_loop_point(DRIVER->song);
   return 0;
 }
 

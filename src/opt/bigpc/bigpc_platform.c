@@ -128,7 +128,7 @@ static void bigpc_load_cellphysics() {
   if (serialc<sizeof(fmn_global.cellphysics)) memset(fmn_global.cellphysics+serialc,0,sizeof(fmn_global.cellphysics)-serialc);
 }
 
-void bigpc_play_song(uint8_t songid) {
+void bigpc_play_song(uint8_t songid,uint8_t loop) {
   if (!songid) return; // 0 means "don't change", as opposed to "nothing" (TODO not sure that's correct)
   if (songid==fmn_global.songid) return;
   fmn_global.songid=songid;
@@ -136,7 +136,7 @@ void bigpc_play_song(uint8_t songid) {
   int serialc=fmn_datafile_get_any(&serial,bigpc.datafile,FMN_RESTYPE_SONG,songid);
   if (serialc<0) serialc=0;
   if (bigpc_audio_lock(bigpc.audio)>=0) {
-    bigpc_synth_play_song(bigpc.synth,serial,serialc,0);
+    bigpc_synth_play_song(bigpc.synth,serial,serialc,0,loop);
     bigpc_audio_unlock(bigpc.audio);
   }
 }
@@ -175,7 +175,7 @@ static int fmn_load_map_cb_command(uint8_t opcode,const uint8_t *arg,int argc,vo
   struct fmn_load_map_context *ctx=userdata;
   switch (opcode) {
       
-      case 0x20: bigpc_play_song(arg[0]); break;
+      case 0x20: bigpc_play_song(arg[0],1); break;
       case 0x21: {
           fmn_global.maptsid=arg[0]; 
           bigpc_load_cellphysics();
@@ -376,8 +376,8 @@ void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
   }
 }
 
-void fmn_play_song(uint8_t songid) {
-  bigpc_play_song(songid);
+void fmn_play_song(uint8_t songid,uint8_t loop) {
+  bigpc_play_song(songid,loop);
 }
 
 /* Get a string resource.

@@ -4,7 +4,7 @@
  */
  
 export class SongPlayer {
-  constructor(synthesizer, song) {
+  constructor(synthesizer, song, loop) {
     this.synthesizer = synthesizer;
     this.song = song;
     this.delay = 0; // ms
@@ -14,6 +14,7 @@ export class SongPlayer {
     this.notes = []; // as a safety net, we track all held notes
     this.foresightTime = 100; // Read ahead in time, up to so many ms. Zero is valid.
     this.enabled = true; // We track time regardless, but if disabled will not emit any events.
+    this.loop = loop;
   }
   
   update() {
@@ -53,7 +54,8 @@ export class SongPlayer {
     // End of song. Drop all notes, reset the event pointer, and hold all else steady.
     if (this.eventp >= this.song.events.length) {
       this.eventp = 0;
-      this.releaseAll();
+      if (this.loop) this.releaseAll();
+      else this.enable(false);
     }
     
     const event = this.song.events[this.eventp++];

@@ -21,4 +21,3 @@ sprite 12 7 stompbox gs:ww_fire18 0 0
 sprite 14 6 firenozzle_s 3 0 gs:ww_fire18
 sprite 14 5 firenozzle_n 3 1 gs:ww_fire18
 sprite 16 8 pushblock 0 0 0
-sprite 16 4 stompbox gs:ww_fire18 0 0

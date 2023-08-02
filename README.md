@@ -10,12 +10,12 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### Remaining major features. Finish before 31 August.
 
 - [ ] End credits.
-- - [ ] Text.
+- - [x] Text.
 - - [ ] Still frames.
 - - - [ ] Fade in and out
 - - - [ ] I'd really like these to be animated.
 - - [ ] Live frames: Dragging the werewolf, clothing the orphans, returning home.
-- - [ ] Don't repeat song.
+- - [x] Don't repeat song.
 - [ ] Settings menu.
 - - [ ] Fullscreen
 - - [ ] Driver selection
@@ -31,6 +31,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [x] Castle 3f, west of the OTP read, the upper stompbox spoils the whole puzzle.
 - [ ] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map?
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
@@ -49,6 +50,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Not critical.
 
+- [ ] After a 45-minute session: bigpc_quit, clock stats: Final game time 1800 ms (1800 ms real time). overflow=0 underflow=0 fault=0 wrap=0 cpu=0.036068
 - [ ] web: Language selection, figure out how that works
 - [ ] Soft render: Alpha problem with arrows in wand feedback.
 - [ ] Sound effect for coin toss
