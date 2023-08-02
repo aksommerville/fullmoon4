@@ -396,7 +396,7 @@ int fiddle_httpcb_post_song_play(struct http_xfer *req,struct http_xfer *rsp,voi
   if (serialc<0) serialc=0;
   if (fiddle.synth->type->play_song) {
     if (fiddle_drivers_lock()>=0) {
-      fiddle.synth->type->play_song(fiddle.synth,serial,serialc,1);
+      fiddle.synth->type->play_song(fiddle.synth,serial,serialc,1,1);
       fiddle_drivers_unlock();
       fiddle.songid=id;
     }
