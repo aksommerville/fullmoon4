@@ -11,6 +11,9 @@
 #define FMN_SCENE_ACTION_DRAG_LR 2
 #define FMN_SCENE_ACTION_DRAG_HOME 3
 #define FMN_SCENE_ACTION_CLOTHE 4
+#define FMN_SCENE_ACTION_GOODNIGHT 5
+#define FMN_SCENE_ACTION_BUTCHER 6
+#define FMN_SCENE_ACTION_SEW 7
 
 struct fmn_scene_setup {
   uint16_t mapid;

@@ -57,7 +57,7 @@ void fmn_sound_effect(uint16_t sfxid) {
 void fmn_synth_event(uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
 }
 
-void fmn_play_song(uint8_t songid) {
+void fmn_play_song(uint8_t songid,uint8_t loop) {
 }
 
 uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id) {

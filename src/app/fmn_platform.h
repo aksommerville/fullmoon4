@@ -184,6 +184,7 @@
 #define FMN_SFX_TREADMILL_INCREMENT 76
 #define FMN_SFX_TREADLE_TICK 77
 #define FMN_SFX_CHA_CHING 78
+#define FMN_SFX_CLAP 79
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */

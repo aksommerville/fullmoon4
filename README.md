@@ -9,14 +9,15 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Remaining major features. Finish before 31 August.
 
-- [ ] End credits.
+- [x] End credits.
 - - [x] Text.
-- - [ ] Still frames.
+- - [x] Still frames.
 - - - [x] Fade in and out
-- - - [ ] I'd really like these to be animated.
+- - - [x] I'd really like these to be animated.
 - - [x] Live frames: Dragging the werewolf, clothing the orphans, returning home.
 - - [x] Don't repeat song.
-- - [ ] Should credits be interruptible? Currently they are. I believe the convention is No.
+- - [x] Should credits be interruptible? Currently they are. I believe the convention is No. YES, but long delay.
+- - [x] Need some lead delay before the first map fades in.
 - [ ] Settings menu.
 - - [ ] Fullscreen
 - - [ ] Driver selection

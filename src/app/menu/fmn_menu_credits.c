@@ -11,7 +11,7 @@
 #define CREDITS_MESSAGE_ROWC 5
 #define CREDITS_GLYPH_W 8
 #define CREDITS_GLYPH_H 8
-#define CREDITS_MIN_UPTIME 1.0f
+#define CREDITS_MIN_UPTIME 10.0f /* very long, so you don't accidentally miss it, but don't make them wait the whole time */
 #define CREDITS_TYPEWRITER_DELAY 0.300f
 #define CREDITS_MESSAGE_POST_DELAY 10.0f
 
@@ -35,13 +35,15 @@ static const struct credits_text {
 };
 
 static const struct fmn_scene_setup credits_setupv[]={
+  {0,0,5.0f}, // take a deep breath
   {146,FMN_SCENE_ACTION_DRAG_RL,20.0f}, // castle 3f
   {147,FMN_SCENE_ACTION_DRAG_LR,20.0f}, // castle 2f
   {148,FMN_SCENE_ACTION_DRAG_RL,20.0f}, // castle 1f
   {149,FMN_SCENE_ACTION_DRAG_HOME,10.0f}, // outside dot's
-  //TODO butchering, sewing...
+  {0,FMN_SCENE_ACTION_BUTCHER,10.0f},
+  {0,FMN_SCENE_ACTION_SEW,10.0f},
   {150,FMN_SCENE_ACTION_CLOTHE,30.0f}, // village
-  //TODO go to bed, turn off lights
+  {151,FMN_SCENE_ACTION_GOODNIGHT,20.0f},
 };
 
 /* Globals. We need more context than the menu object will comfortably hold.
@@ -56,10 +58,6 @@ static int credits_messagep=0; // typewriter position
 
 static struct fmn_scene credits_scene={0};
 static int credits_scenep=0; // next position in credits_setupv
-
-//XXX temporary, show four still frames. TODO: animated sequences
-static int credits_still_frame=0;
-static float credits_still_clock=0.0f;
 
 /* Prepare the next text message.
  */
@@ -174,15 +172,6 @@ static void _credits_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
     }
   }
   
-  if (credits_still_clock>0.0f) {
-    if ((credits_still_clock-=elapsed)<=0.0f) {
-      if (credits_still_frame<3) {
-        credits_still_frame++;
-        credits_still_clock=20.0f;
-      }
-    }
-  }
-  
   if (fmn_scene_update(&credits_scene,elapsed)) {
     credits_scene_next(menu);
   }
@@ -272,15 +261,6 @@ static void _credits_render(struct fmn_menu *menu) {
   
   // Scene.
   fmn_scene_render(0,CREDITS_SUMMARY_H,320,128,&credits_scene);
-  /*
-  if (credits_scene.blackout!=0xff) {
-    struct fmn_draw_decal decal={
-      0,CREDITS_SUMMARY_H,320,128,
-      0,credits_still_frame*128,320,128,
-    };
-    fmn_draw_decal(&decal,1,26);
-  }
-  /**/
   
   // Message.
   fmn_draw_mintile(credits_messagev,credits_messagep,20);
@@ -296,8 +276,6 @@ void fmn_menu_init_CREDITS(struct fmn_menu *menu) {
   fmn_play_song(7,0);
   credits_textp=0;
   credits_text_next(menu);
-  credits_still_frame=0;
-  credits_still_clock=20.0f;
   credits_scenep=0;
   credits_scene_next(menu);
 }

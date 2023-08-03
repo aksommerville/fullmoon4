@@ -66,14 +66,17 @@ int fmn_scene_init(struct fmn_scene *scene,const struct fmn_scene_setup *setup) 
   scene->animframe=0;
   scene->stage=0;
   scene->stageextra=0;
+  scene->mapdirty=0;
+  scene->stageclock=0.0f;
   
-  uint8_t map[512];
-  int16_t mapc=fmn_get_map(map,sizeof(map),scene->setup->mapid);
-  if ((mapc<FMN_COLC*FMN_ROWC)||(mapc>sizeof(map))) return -1;
-  
-  fmn_scene_read_map_commands(scene,map+FMN_COLC*FMN_ROWC,mapc-FMN_COLC*FMN_ROWC);
-  memcpy(scene->map,map,sizeof(scene->map));
-  scene->mapdirty=1;
+  if (scene->setup->mapid) {
+    uint8_t map[512];
+    int16_t mapc=fmn_get_map(map,sizeof(map),scene->setup->mapid);
+    if ((mapc<FMN_COLC*FMN_ROWC)||(mapc>sizeof(map))) return -1;
+    fmn_scene_read_map_commands(scene,map+FMN_COLC*FMN_ROWC,mapc-FMN_COLC*FMN_ROWC);
+    memcpy(scene->map,map,sizeof(scene->map));
+    scene->mapdirty=1;
+  }
   
   return 0;
 }
@@ -254,25 +257,141 @@ static void fmn_scene_render_clothe(int16_t dstx,int16_t dsty,int16_t dstw,int16
   fmn_draw_mintile(dotvtxv,sizeof(dotvtxv)/sizeof(dotvtxv[0]),2);
 }
 
+/* Good night: Just a wee overlay when Dot claps, and an extra blackout after.
+ */
+ 
+static void fmn_scene_render_goodnight(int16_t dstx,int16_t dsty,int16_t dstw,int16_t dsth,struct fmn_scene *scene) {
+  const int16_t tilesize=16;
+  uint8_t dottile=0;
+  
+  if (scene->stageclock>=9.6f) { // dark
+    scene->stage=5;
+    struct fmn_draw_rect vtx={
+      dstx+4*tilesize,dsty,dstw-8*tilesize,dsth,
+      fmn_video_pixel_from_rgba(0x100820c0),
+    };
+    fmn_draw_rect(&vtx,1);
+    
+  } else if (scene->stageclock>=9.3f) { // end second clap
+    scene->stage=4;
+    dottile=0x5c;
+    
+  } else if (scene->stageclock>=9.0f) { // second clap enagaged
+    if (scene->stage<3) fmn_sound_effect(FMN_SFX_CLAP);
+    scene->stage=3;
+    dottile=0x6c;
+    
+  } else if (scene->stageclock>=8.7f) { // end first clap
+    scene->stage=2;
+    dottile=0x5c;
+    
+  } else if (scene->stageclock>=8.4f) { // first clap enagaged
+    if (scene->stage<1) fmn_sound_effect(FMN_SFX_CLAP);
+    scene->stage=1;
+    dottile=0x6c;
+  }
+    
+  if (dottile) {
+    struct fmn_draw_mintile vtx={
+      .x=dstx+14*tilesize,
+      .y=dsty+2*tilesize+4,
+      .tileid=dottile,//0x5c,
+      .xform=0,
+    };
+    fmn_draw_mintile(&vtx,1,21);
+  }
+}
+
+/* Butchering the wolf: Big animation.
+ */
+ 
+void fmn_scene_render_butcher(int16_t dstx,int16_t dsty,int16_t dstw,int16_t dsth,struct fmn_scene *scene) {
+  const int16_t saww=186;
+  const int16_t sawh=105;
+  const int16_t dotw=211;
+  const int16_t doth=128;
+  const int16_t pathx=0; // saw travels along a diagonal line
+  const int16_t pathw=80;
+  const int16_t pathy=102;
+  const int16_t pathh=-40;
+  const double sawperiod=1.5f;
+  float dummy;
+  float sawnorm=modff(scene->stageclock/sawperiod,&dummy);
+  float sawflat=sawnorm; // 0..1, full cycle
+  if (sawnorm>0.5f) sawnorm=1.0f-sawnorm;
+  sawnorm*=2.0f;
+  int16_t sawx=pathx+pathw*sawnorm;
+  int16_t sawy=pathy+pathh*sawnorm;
+  struct fmn_draw_decal decalv[]={
+    {dstx,dsty,dstw,dsth, 0,0,dstw,dsth}, // background
+    {sawx,sawy,saww,sawh, dstw-saww,384,saww,sawh}, // saw and arm
+    {dstx+dstw-dotw,dsty,dotw,doth, dstw-dotw,256,dotw,doth}, // dot minus right arm
+  };
+  fmn_draw_decal(decalv,sizeof(decalv)/sizeof(decalv[0]),26);
+  
+  if ((sawflat>=0.100f)&&(sawflat<0.400f)) {
+    float t=(sawflat-0.100f)/0.300f;
+    struct fmn_draw_decal splatv[]={
+      {dstx+30-t*10,dsty+dsth-t*20+10,7,11, 0,256,7,11},
+      {dstx+50     ,dsty+dsth-t*40+ 0,7,11, 0,256,7,11},
+      {dstx+70+t*10,dsty+dsth-t*20+10,7,11, 0,256,7,11},
+    };
+    fmn_draw_decal(splatv,sizeof(splatv)/sizeof(splatv[0]),26);
+  }
+  
+  // We exceed the lower limit, so black that out. fmn_menu_credits draws scene before text, don't worry.
+  struct fmn_draw_rect rect={dstx,dsty+dsth,dstw,256,fmn_video_pixel_from_rgba(0x000000ff)};
+  fmn_draw_rect(&rect,1);
+}
+
+/* Sewing: Big animation.
+ */
+ 
+void fmn_scene_render_sew(int16_t dstx,int16_t dsty,int16_t dstw,int16_t dsth,struct fmn_scene *scene) {
+  const int16_t lgw=78;
+  const int16_t lgh=109;
+  const int16_t smw=29;
+  const int16_t smh=37;
+  int16_t dotx=80;
+  int16_t doty=(dsth>>1)-(lgh>>1);
+  int16_t frame=0;
+  if (scene->stageclock>=1.5f) {
+    scene->stageclock-=1.5f;
+  } else if (scene->stageclock>=0.75f) {
+    frame=1;
+  }
+  struct fmn_draw_decal decalv[]={
+    {dstx,dsty,dstw,dsth, 0,128,dstw,dsth}, // background
+    {dstx+dotx,dsty+doty,lgw,lgh, 0,267,lgw,lgh}, // dot, minus right hand
+    {dstx+dotx+53,dsty+doty+26,smw,smh, frame*smw,376,smw,smh}, // right hand, animated
+  };
+  fmn_draw_decal(decalv,sizeof(decalv)/sizeof(decalv[0]),26);
+}
+
 /* Render.
  */
  
 void fmn_scene_render(int16_t dstx,int16_t dsty,int16_t dstw,int16_t dsth,struct fmn_scene *scene) {
   if (scene->blackout!=0xff) {
-    if (scene->mapdirty) {
-      fmn_scene_render_mapbits(scene,scene->map);
-      scene->mapdirty=0;
+    if (scene->setup->mapid) {
+      if (scene->mapdirty) {
+        fmn_scene_render_mapbits(scene,scene->map);
+        scene->mapdirty=0;
+      }
+      struct fmn_draw_decal decal={
+        dstx,dsty,dstw,dsth,
+        0,0,dstw,dsth,
+      };
+      fmn_draw_decal(&decal,1,FMN_IMAGEID_MAPBITS);
     }
-    struct fmn_draw_decal decal={
-      dstx,dsty,dstw,dsth,
-      0,0,dstw,dsth,
-    };
-    fmn_draw_decal(&decal,1,FMN_IMAGEID_MAPBITS);
     switch (scene->setup->action) {
       case FMN_SCENE_ACTION_DRAG_RL: fmn_scene_render_drag(dstx,dsty,dstw,dsth,scene,0); break;
       case FMN_SCENE_ACTION_DRAG_LR: fmn_scene_render_drag(dstx,dsty,dstw,dsth,scene,FMN_XFORM_XREV); break;
       case FMN_SCENE_ACTION_DRAG_HOME: fmn_scene_render_drag(dstx,dsty,dstw,dsth,scene,0); break;
       case FMN_SCENE_ACTION_CLOTHE: fmn_scene_render_clothe(dstx,dsty,dstw,dsth,scene); break;
+      case FMN_SCENE_ACTION_GOODNIGHT: fmn_scene_render_goodnight(dstx,dsty,dstw,dsth,scene); break;
+      case FMN_SCENE_ACTION_BUTCHER: fmn_scene_render_butcher(dstx,dsty,dstw,dsth,scene); break;
+      case FMN_SCENE_ACTION_SEW: fmn_scene_render_sew(dstx,dsty,dstw,dsth,scene); break;
     }
   }
   if (scene->blackout) {

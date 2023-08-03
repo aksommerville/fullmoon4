@@ -1010,3 +1010,11 @@ sound CHA_CHING
   env ( 0 50 0xc000 50 0xffff 50 0 50 0xffff * 0 )
   mlt 0.200
 end
+
+sound CLAP
+  len 0.200
+  #fm ( 500 ) 4.9 ( 3000 * 8000 ) sine
+  noise
+  env ( 0 10 0xc000 10 0x1000 * 0 )
+  mlt 0.500
+end

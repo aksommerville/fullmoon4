@@ -146,7 +146,7 @@ static int _stdsyn_set_sound(struct bigpc_synth_driver *driver,int id,const void
 /* Play song.
  */
  
-static int _stdsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force) {
+static int _stdsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force,int loop) {
   if (srcc<0) return -1;
   if (!srcc) {
     if (!DRIVER->song) return 0;
