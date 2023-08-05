@@ -71,7 +71,7 @@
 52 Musique
 53 Langue
 54 Putte d'inne
-55 Zapper Save
+55 
 56
 57
 58
@@ -82,3 +82,18 @@
 61 Non
 # 62 is the name of *this* language, for display. (don't translate the word "English").
 62 francais
+
+# Input.
+63 Restore defaults
+63 Test
+64 Configure
+65 Delete
+66 Press a button for:
+67 Press again:
+68 Fault!
+69 Left
+70 Right
+71 Up
+72 Down
+73 A (Use Item)
+74 B (Open Menu)

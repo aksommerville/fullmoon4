@@ -737,6 +737,17 @@ void fmn_platform_set_settings(struct fmn_platform_settings *settings);
 // Both of these should return the preferred, ie first, language if input zero.
 uint16_t fmn_platform_get_next_language(uint16_t language);
 uint16_t fmn_platform_get_prev_language(uint16_t language);
-  
+
+/* Input devices are identified by a zero-based index (p).
+ * Getting name: Zero means end of list. If >dsta, the available space must be populated, and caller can display that.
+ */
+uint8_t fmn_platform_get_input_device_name(char *dst,uint8_t dsta,uint8_t p);
+void fmn_platform_begin_input_configuration(uint8_t p);
+void fmn_platform_cancel_input_configuration();
+uint8_t fmn_platform_get_input_configuration_state(uint8_t *p,uint8_t *btnid);
+#define FMN_INCFG_STATE_NONE 0 /* Not configuring input. */
+#define FMN_INCFG_STATE_READY 1 /* Please press (btnid) */
+#define FMN_INCFG_STATE_CONFIRM 2 /* Press again to confirm */
+#define FMN_INCFG_STATE_FAULT 3 /* Invalid input; please press (btnid) */
 
 #endif

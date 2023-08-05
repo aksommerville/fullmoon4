@@ -92,6 +92,20 @@ static int _evdev_for_each_button(
   return evdev_device_enumerate(device,_evdev_for_each_button_cb,&ctx);
 }
 
+static int _evdev_for_each_device(
+  struct bigpc_input_driver *driver,
+  int (*cb)(struct bigpc_input_driver *driver,int devid,void *userdata),
+  void *userdata
+) {
+  int p=0,err;
+  for (;;p++) {
+    struct evdev_device *device=evdev_device_by_index(DRIVER->evdev,p);
+    if (!device) break;
+    if (err=cb(driver,evdev_device_get_devid(device),userdata)) return err;
+  }
+  return 0;
+}
+
 const struct bigpc_input_type bigpc_input_type_evdev={
   .name="evdev",
   .desc="Linux input via evdev.",
@@ -102,4 +116,5 @@ const struct bigpc_input_type bigpc_input_type_evdev={
   .update=_evdev_update,
   .get_ids=_evdev_get_ids,
   .for_each_button=_evdev_for_each_button,
+  .for_each_device=_evdev_for_each_device,
 };

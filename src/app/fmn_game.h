@@ -189,6 +189,7 @@ struct fmn_menu *fmn_begin_menu(int menuid,int arg0);
 #define FMN_MENU_HELLO 6
 #define FMN_MENU_SETTINGS 7
 #define FMN_MENU_CREDITS 8 /* Full only. Extended narrative sequence. */
+#define FMN_MENU_INPUT 9
 
 #define FMN_MENU_MESSAGE_CANCEL 1
 #define FMN_MENU_MESSAGE_SUBMIT 2

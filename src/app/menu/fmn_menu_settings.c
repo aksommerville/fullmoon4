@@ -25,8 +25,14 @@ static void settings_dismiss(struct fmn_menu *menu) {
  
 static void settings_activate(struct fmn_menu *menu) {
   switch (fmn_settings_model_get_field_id(&settings_model)) {
-    case FMN_SETTINGS_FIELD_INPUT: break;//TODO
-    case FMN_SETTINGS_FIELD_ZAP_SAVE: break;//TODO
+    // Boolean fields, activate is equivalent to adjust:
+    case FMN_SETTINGS_FIELD_FULLSCREEN: fmn_settings_model_adjust(&settings_model,1); break;
+    case FMN_SETTINGS_FIELD_MUSIC_ENABLE: fmn_settings_model_adjust(&settings_model,1); break;
+    // But mostly we care about the stateless actions:
+    case FMN_SETTINGS_FIELD_INPUT: {
+        fmn_begin_menu(FMN_MENU_INPUT,0); 
+        menu->pvinput=0xff;
+      } break;
   }
 }
 
@@ -35,19 +41,20 @@ static void settings_activate(struct fmn_menu *menu) {
  
 static void _settings_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
   if (input!=menu->pvinput) {
-    if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { settings_dismiss(menu); return; }
-    if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) settings_activate(menu);
+    uint8_t pv=menu->pvinput; // cache this; settings_activate() may adulterate it
+    menu->pvinput=input;
+    if ((input&FMN_INPUT_MENU)&&!(pv&FMN_INPUT_MENU)) { settings_dismiss(menu); return; }
+    if ((input&FMN_INPUT_USE)&&!(pv&FMN_INPUT_USE)) settings_activate(menu);
     const uint8_t verts=FMN_INPUT_UP|FMN_INPUT_DOWN;
     const uint8_t horzs=FMN_INPUT_LEFT|FMN_INPUT_RIGHT;
-    switch ((input&verts)&~menu->pvinput) {
+    switch ((input&verts)&~pv) {
       case FMN_INPUT_UP: fmn_settings_model_move(&settings_model,-1); break;
       case FMN_INPUT_DOWN: fmn_settings_model_move(&settings_model,1); break;
     }
-    switch ((input&horzs)&~menu->pvinput) {
+    switch ((input&horzs)&~pv) {
       case FMN_INPUT_LEFT: fmn_settings_model_adjust(&settings_model,-1); break;
       case FMN_INPUT_RIGHT: fmn_settings_model_adjust(&settings_model,1); break;
     }
-    menu->pvinput=input;
   }
 }
 

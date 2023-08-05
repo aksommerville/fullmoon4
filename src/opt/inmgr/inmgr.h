@@ -81,6 +81,8 @@ int inmgr_event(struct inmgr *inmgr,int devid,int btnid,int value);
  */
 void inmgr_force_input_state(struct inmgr *inmgr,uint8_t playerid,uint16_t mask,uint8_t value);
 
+void inmgr_drop_all_state(struct inmgr *inmgr);
+
 /* Device handshake and farewell.
  **************************************************************/
 
@@ -103,8 +105,60 @@ int inmgr_device_ready(struct inmgr *inmgr,int devid);
 int inmgr_connect_system_keyboard(struct inmgr *inmgr,int devid);
 
 /* Live reconfiguration.
+ * During live config, all mapping is suppressed.
+ * All states drop to zero at the start, and no states will begin, or actions fire, while enabled.
+ * Call inmgr_live_config_event() instead of inmgr_event() while in this state.
+ * (regular inmgr_event() becomes noop).
  **************************************************************/
  
-//TODO inmgr support for live reconfiguration.
+int inmgr_begin_live_config(struct inmgr *inmgr,int devid);
+void inmgr_end_live_config(struct inmgr *inmgr);
+int inmgr_get_live_config_devid(struct inmgr *inmgr);
+
+/* Returns zero if this is not the device under configuration, or INMGR_PREMAP_BTN_*.
+ * That's a quantized opinion of the value's meaning, so you can distinguish buttons, axes, and hats.
+ */
+int inmgr_live_config_event(struct inmgr *inmgr,int devid,int btnid,int value);
+#define INMGR_PREMAP_BTN_IGNORE 0 /* Wrong device or whatever. */
+#define INMGR_PREMAP_BTN_OFF 1 /* 2-state OFF */
+#define INMGR_PREMAP_BTN_ON 2 /* 2-state ON */
+#define INMGR_PREMAP_BTN_LO 3 /* 3-state LOW */
+#define INMGR_PREMAP_BTN_MID 4 /* 3-state OFF */
+#define INMGR_PREMAP_BTN_HI 5 /* 3-state HIGH */
+#define INMGR_PREMAP_BTN_OOB 6 /* 9-state OFF */
+#define INMGR_PREMAP_BTN_N 7 /* 9-state UP */
+#define INMGR_PREMAP_BTN_NE 8 /* 9-state UP+RIGHT */
+#define INMGR_PREMAP_BTN_E 9 /* 9-state RIGHT */
+#define INMGR_PREMAP_BTN_SE 10 /* 9-state DOWN+RIGHT */
+#define INMGR_PREMAP_BTN_S 11 /* 9-state DOWN */
+#define INMGR_PREMAP_BTN_SW 12 /* 9-state DOWN+LEFT */
+#define INMGR_PREMAP_BTN_W 13 /* 9-state LEFT */
+#define INMGR_PREMAP_BTN_NW 14 /* 9-state UP+LEFT */
+
+static inline int inmgr_premap_on(int value) {
+  switch (value) {
+    case INMGR_PREMAP_BTN_IGNORE:
+    case INMGR_PREMAP_BTN_OFF:
+    case INMGR_PREMAP_BTN_MID:
+    case INMGR_PREMAP_BTN_OOB:
+      return 0;
+  }
+  return 1;
+}
+
+static inline int inmgr_premap_single(int value) {
+  switch (value) {
+    case INMGR_PREMAP_BTN_IGNORE:
+    case INMGR_PREMAP_BTN_OFF:
+    case INMGR_PREMAP_BTN_MID:
+    case INMGR_PREMAP_BTN_OOB:
+    case INMGR_PREMAP_BTN_NE:
+    case INMGR_PREMAP_BTN_SE:
+    case INMGR_PREMAP_BTN_SW:
+    case INMGR_PREMAP_BTN_NW:
+      return 0;
+  }
+  return 1;
+}
 
 #endif

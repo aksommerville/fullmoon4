@@ -8,6 +8,7 @@
 void inmgr_device_del(struct inmgr_device *device) {
   if (!device) return;
   if (device->mapv) free(device->mapv);
+  if (device->capv) free(device->capv);
   free(device);
 }
 
@@ -41,7 +42,29 @@ struct inmgr_device *inmgr_device_new(int devid,uint16_t vid,uint16_t pid,const 
  */
  
 int inmgr_device_add_capability(struct inmgr_device *device,int btnid,uint32_t usage,int lo,int hi,int value) {
-  //TODO
+  if (device->capc>=device->capa) {
+    int na=device->capa+16;
+    if (na>INT_MAX/sizeof(struct inmgr_cap)) return -1;
+    void *nv=realloc(device->capv,sizeof(struct inmgr_cap)*na);
+    if (!nv) return -1;
+    device->capv=nv;
+    device->capa=na;
+  }
+  struct inmgr_cap *cap=device->capv+device->capc++;
+  cap->btnid=btnid;
+  cap->usage=usage;
+  cap->lo=lo;
+  cap->hi=hi;
+  cap->rest=value;
+  
+  if ((lo==0)&&(hi==1)) cap->premap=INMGR_PREMAP_BTN_OFF; // ordinary two-state button
+  else if ((lo==-1)&&(hi==1)) cap->premap=INMGR_PREMAP_BTN_MID; // two-way axis, likely half of a dpad
+  else if ((lo==0)&&(hi==2)) cap->premap=INMGR_PREMAP_BTN_OFF; // button (2 is common for auto-repeat)
+  else if ((lo<0)&&(hi>0)) cap->premap=INMGR_PREMAP_BTN_MID; // two-way axis
+  else if (hi-lo==7) cap->premap=INMGR_PREMAP_BTN_OOB; // hat
+  else if ((lo==0)&&(hi>0)) cap->premap=INMGR_PREMAP_BTN_OFF; // one-way axis
+  else cap->premap=INMGR_PREMAP_BTN_IGNORE; // who knows
+
   return 0;
 }
 
@@ -49,8 +72,14 @@ int inmgr_device_add_capability(struct inmgr_device *device,int btnid,uint32_t u
  */
  
 extern void inmgr_XXX_add_hardcoded_maps(struct inmgr_device *device);
+
+static int inmgr_cap_cmp(const void *a,const void *b) {
+  const struct inmgr_cap *A=a,*B=b;
+  return A->btnid-B->btnid;
+}
  
 int inmgr_device_finalize_maps(struct inmgr_device *device) {
+  qsort(device->capv,device->capc,sizeof(struct inmgr_cap),inmgr_cap_cmp);
   inmgr_XXX_add_hardcoded_maps(device);//TODO
   return 0;
 }
@@ -130,7 +159,8 @@ int inmgr_device_ready(struct inmgr *inmgr,int devid) {
     );
   }
   
-  inmgr_device_del(inmgr->pending_device);
+  if (inmgr_device_handoff(inmgr,inmgr->pending_device)<0) return -1;
+  //inmgr_device_del(inmgr->pending_device);
   inmgr->pending_device=0;
   return 0;
 }
@@ -164,5 +194,20 @@ int inmgr_connect_system_keyboard(struct inmgr *inmgr,int devid) {
   }
   if (inmgr_add_maps(inmgr,inmgr_keyboard_map,mapc)<0) return -1;
   fprintf(stderr,"inmgr: Mapped system keyboard.\n");
+  return 0;
+}
+
+/* Get capability.
+ */
+ 
+struct inmgr_cap *inmgr_device_get_cap(const struct inmgr_device *device,int btnid) {
+  int lo=0,hi=device->capc;
+  while (lo<hi) {
+    int ck=(lo+hi)>>1;
+    struct inmgr_cap *cap=device->capv+ck;
+         if (btnid<cap->btnid) hi=ck;
+    else if (btnid>cap->btnid) lo=ck+1;
+    else return cap;
+  }
   return 0;
 }

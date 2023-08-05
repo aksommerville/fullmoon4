@@ -15,8 +15,15 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] Driver settings
 - - [x] Music mute
 - - [ ] Input config
+- - - [ ] Commit to inmgr
+- - - [ ] Persist
+- - - [ ] Countdown in menu, abort interactive if no input.
+- - - [x] Handle analogue axes
+- - - [x] Ignore analogue noise
+- - - [x] Handle hats
+- - - [x] A is stuck on when returning from interactive config.
 - - [x] Language
-- - [ ] Zap saved game. And show details.
+- - xxx Zap saved game. And show details. ...we have a "New Game" option from Hello, this is pointless.
 - - [ ] bigpc: Persist settings.
 - - [ ] web: Expose settings.
 - - [ ] web: Persist settings.

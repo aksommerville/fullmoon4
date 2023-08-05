@@ -29,6 +29,13 @@ struct inmgr_map {
   int8_t dstvalue;
 };
 
+struct inmgr_cap {
+  int btnid;
+  uint32_t usage;
+  int lo,hi,rest;
+  uint8_t premap; // IGNORE,OFF,MID,OOB: What class of button is it?
+};
+
 struct inmgr_device {
   int devid;
   uint16_t vid,pid;
@@ -36,9 +43,8 @@ struct inmgr_device {
   int namec;
   struct inmgr_map *mapv;
   int mapc,mapa;
-  // Might need to record the complete button capability for everything reported,
-  // if we're going to make decisions scoped across multiple inputs.
-  // For now at least, let's see if we can keep the decision finite-state. Map each button as it gets reported.
+  struct inmgr_cap *capv;
+  int capc,capa;
   //TODO Definitely need to find and retain the rules template here.
 };
 
@@ -60,7 +66,12 @@ struct inmgr {
    */
   struct inmgr_device *pending_device;
   
+  struct inmgr_device **devicev;
+  int devicec,devicea;
+  
   //TODO "rule" for uninstantiated maps
+  
+  int live_config_devid;
 };
 
 int inmgr_maps_acceptable(struct inmgr *inmgr,const struct inmgr_map *mapv,int mapc);
@@ -96,5 +107,9 @@ void inmgr_device_del(struct inmgr_device *device);
 struct inmgr_device *inmgr_device_new(int devid,uint16_t vid,uint16_t pid,const char *name,int namec);
 int inmgr_device_add_capability(struct inmgr_device *device,int btnid,uint32_t usage,int lo,int hi,int value);
 int inmgr_device_finalize_maps(struct inmgr_device *device);
+struct inmgr_cap *inmgr_device_get_cap(const struct inmgr_device *device,int btnid);
+
+int inmgr_device_handoff(struct inmgr *inmgr,struct inmgr_device *device);
+struct inmgr_device *inmgr_device_by_devid(const struct inmgr *inmgr,int devid);
 
 #endif

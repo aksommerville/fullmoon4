@@ -66,7 +66,7 @@
 52 Music
 53 Language
 54 Input
-55 Zap Save
+55 
 56
 57
 58
@@ -77,3 +77,17 @@
 61 Disable
 # 62 is the name of *this* language, for display. (don't translate the word "English").
 62 English
+
+# Input.
+63 Test
+64 Configure
+65 Delete
+66 Press button for:
+67 Press again:
+68 Fault!
+69 Left
+70 Right
+71 Up
+72 Down
+73 A (Use Item)
+74 B (Open Menu)

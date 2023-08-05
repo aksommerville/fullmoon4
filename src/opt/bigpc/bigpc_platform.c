@@ -525,6 +525,120 @@ void bigpc_rebuild_language_list() {
   fmn_datafile_for_each_qualifier(bigpc.datafile,FMN_RESTYPE_STRING,bigpc_rebuild_language_list_cb,0);
 }
 
+/* Input configuration.
+ */
+ 
+struct fmn_platform_get_input_device_by_index_context {
+  uint8_t p;
+  struct bigpc_input_driver **driver;
+  int devid;
+};
+ 
+static int fmn_platform_get_input_device_by_index_cb(struct bigpc_input_driver *driver,int devid,void *userdata) {
+  struct fmn_platform_get_input_device_by_index_context *ctx=userdata;
+  if (ctx->p--) return 0;
+  *(ctx->driver)=driver;
+  ctx->devid=devid;
+  return 1;
+}
+ 
+static int bigpc_get_input_device_by_index(struct bigpc_input_driver **driver,uint8_t p) {
+  // If a system keyboard is present, it is always the first device.
+  if (bigpc.devid_keyboard) {
+    if (!p--) {
+      *driver=0;
+      return bigpc.devid_keyboard;
+    }
+  }
+  // Generic devices.
+  struct fmn_platform_get_input_device_by_index_context ctx={
+    .p=p,
+    .driver=driver,
+    .devid=0,
+  };
+  int inputi=0;
+  for (;inputi<bigpc.inputc;inputi++) {
+    struct bigpc_input_driver *driver=bigpc.inputv[inputi];
+    if (!driver->type->for_each_device) continue;
+    int result=driver->type->for_each_device(driver,fmn_platform_get_input_device_by_index_cb,&ctx);
+    if (result) return ctx.devid;
+  }
+  return 0;
+}
+
+uint8_t fmn_platform_get_input_device_name(char *dst,uint8_t dsta,uint8_t p) {
+  struct bigpc_input_driver *driver=0;
+  int devid=bigpc_get_input_device_by_index(&driver,p);
+  if (devid<1) return 0;
+  if (driver) {
+    uint16_t vid=0,pid=0;
+    char fallback[9];
+    const char *name=bigpc_input_device_get_ids(&vid,&pid,driver,devid);
+    if (!name||!name[0]) {
+      if (dsta>=9) {
+        dst[0]="0123456789abcdef"[(vid>>12)&0x0f];
+        dst[1]="0123456789abcdef"[(vid>> 8)&0x0f];
+        dst[2]="0123456789abcdef"[(vid>> 4)&0x0f];
+        dst[3]="0123456789abcdef"[(vid    )&0x0f];
+        dst[4]=':';
+        dst[5]="0123456789abcdef"[(pid>>12)&0x0f];
+        dst[6]="0123456789abcdef"[(pid>> 8)&0x0f];
+        dst[7]="0123456789abcdef"[(pid>> 4)&0x0f];
+        dst[8]="0123456789abcdef"[(pid    )&0x0f];
+      } else memset(dst,'?',dsta);
+      return 9;
+    }
+    int namec=0; while (name[namec]&&(namec<dsta)) namec++;
+    memcpy(dst,name,namec);
+    return namec;
+  } else {
+    const char src[]="System Keyboard";
+    int srcc=sizeof(src)-1;
+    if (srcc<=dsta) memcpy(dst,src,srcc);
+    else memcpy(dst,src,dsta);
+    return srcc;
+  }
+}
+
+void fmn_platform_begin_input_configuration(uint8_t p) {
+  fmn_log("%s p=%d",__func__,p);
+  if (
+    (bigpc.incfg_devid=bigpc_get_input_device_by_index(&bigpc.incfg_driver,p))&&
+    (inmgr_begin_live_config(bigpc.inmgr,bigpc.incfg_devid)>=0)
+  ) {
+    fmn_log("...ok begin config devid=%d",bigpc.incfg_devid);
+    bigpc.incfg_state=FMN_INCFG_STATE_READY;
+    bigpc.incfg_p=p;
+    bigpc.incfg_btnid=FMN_INPUT_LEFT;
+    bigpc.incfg_incoming_btnid=0;
+    //bigpc.input_state=0;
+  } else {
+    fmn_log("...invalid device index");
+    bigpc.incfg_state=FMN_INCFG_STATE_NONE;
+    bigpc.incfg_p=0;
+    bigpc.incfg_btnid=0;
+    bigpc.incfg_driver=0;
+    bigpc.incfg_incoming_btnid=0;
+  }
+}
+
+void fmn_platform_cancel_input_configuration() {
+  fmn_log("%s",__func__);
+  bigpc.incfg_state=FMN_INCFG_STATE_NONE;
+  bigpc.incfg_p=0;
+  bigpc.incfg_btnid=0;
+  bigpc.incfg_driver=0;
+  bigpc.incfg_devid=0;
+  bigpc.incfg_incoming_btnid=0;
+  inmgr_end_live_config(bigpc.inmgr);
+}
+
+uint8_t fmn_platform_get_input_configuration_state(uint8_t *p,uint8_t *btnid) {
+  *p=bigpc.incfg_p;
+  *btnid=bigpc.incfg_btnid;
+  return bigpc.incfg_state;
+}
+
 /* fmn_find_map_command, fmn_find_direction_to_item, fmn_find_direction_to_map
  * are part of the platform API, but have their own home in bigpc_map_analysis.c.
  * fmn_log and fmn_log_event live in bigpc_log.c.

@@ -69,6 +69,11 @@ struct bigpc_input_type {
     int (*cb)(int btnid,int usage,int lo,int hi,int value,void *userdata),
     void *userdata
   );
+  int (*for_each_device)(
+    struct bigpc_input_driver *driver,
+    int (*cb)(struct bigpc_input_driver *driver,int devid,void *userdata),
+    void *userdata
+  );
 };
 
 const struct bigpc_input_type *bigpc_input_type_by_index(int p);

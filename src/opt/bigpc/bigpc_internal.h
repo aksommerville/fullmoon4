@@ -88,6 +88,15 @@ extern struct bigpc {
   uint16_t *langv; // Built according to (datafile).
   int langc,langa;
   
+  uint8_t incfg_state;
+  uint8_t incfg_p;
+  uint8_t incfg_btnid;
+  int incfg_devid;
+  struct bigpc_input_driver *incfg_driver; // WEAK; can be null eg System Keyboard
+  int incfg_incoming_btnid;
+  int incfg_incoming_value;
+  int incfg_confirm_ready;
+  
   uint8_t input_state;
   int devid_keyboard;
   

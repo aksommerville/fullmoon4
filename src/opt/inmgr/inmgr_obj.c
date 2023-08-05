@@ -8,6 +8,11 @@ void inmgr_del(struct inmgr *inmgr) {
   
   if (inmgr->mapv) free(inmgr->mapv);
   
+  if (inmgr->devicev) {
+    while (inmgr->devicec-->0) inmgr_device_del(inmgr->devicev[inmgr->devicec]);
+    free(inmgr->devicev);
+  }
+  
   free(inmgr);
 }
 
@@ -53,6 +58,7 @@ int inmgr_ready(struct inmgr *inmgr) {
  */
 
 int inmgr_event(struct inmgr *inmgr,int devid,int btnid,int value) {
+  if (inmgr->live_config_devid) return 0;
   struct inmgr_map *map=0;
   int i=inmgr_mapv_search_srcdevid_srcbtnid(&map,inmgr,devid,btnid);
   for (;i-->0;map++) {
@@ -146,6 +152,20 @@ int inmgr_event(struct inmgr *inmgr,int devid,int btnid,int value) {
     }
   }
   return 0;
+}
+
+/* Drop all state.
+ */
+ 
+void inmgr_drop_all_state(struct inmgr *inmgr) {
+  int playerid=1+INMGR_PLAYER_LIMIT;
+  while (playerid-->0) {
+    if (!inmgr->player_statev[playerid]) continue;
+    inmgr_trigger_multiple_state_changes(inmgr,playerid,inmgr->player_statev[playerid],0);
+  }
+  struct inmgr_map *map=inmgr->mapv;
+  int i=inmgr->mapc;
+  for (;i-->0;map++) map->srcvalue=map->dstvalue=0;
 }
 
 /* Check whether a set of maps is OK to start using.
@@ -306,5 +326,94 @@ int inmgr_mapv_search_srcdevid_srcbtnid(struct inmgr_map **dstpp,const struct in
     }
   }
   *dstpp=inmgr->mapv+lo;
+  return 0;
+}
+
+/* Live config.
+ */
+ 
+int inmgr_begin_live_config(struct inmgr *inmgr,int devid) {
+  if (devid<1) return -1;
+  inmgr->live_config_devid=devid;
+  inmgr_drop_all_state(inmgr);
+  return 0;
+}
+
+void inmgr_end_live_config(struct inmgr *inmgr) {
+  inmgr->live_config_devid=0;
+}
+
+int inmgr_get_live_config_devid(struct inmgr *inmgr) {
+  return inmgr->live_config_devid;
+}
+
+int inmgr_live_config_event(struct inmgr *inmgr,int devid,int btnid,int value) {
+  if (devid!=inmgr->live_config_devid) return 0;
+  struct inmgr_device *device=inmgr_device_by_devid(inmgr,devid);
+  if (!device) {
+    // System keyboard won't record its caps, there's a ton of them and they're all the same.
+    // If we have a not-found request on page 7, call it a plain keyboard key.
+    if ((btnid>=0x00070000)&&(btnid<=0x000700ff)) {
+      if (value) return INMGR_PREMAP_BTN_ON;
+      return INMGR_PREMAP_BTN_OFF;
+    }
+    return INMGR_PREMAP_BTN_IGNORE;
+  }
+  struct inmgr_cap *cap=inmgr_device_get_cap(device,btnid);
+  if (!cap) return INMGR_PREMAP_BTN_IGNORE;
+  switch (cap->premap) {
+  
+    case INMGR_PREMAP_BTN_OFF: {
+        if (value>cap->lo) return INMGR_PREMAP_BTN_ON;
+        return INMGR_PREMAP_BTN_OFF;
+      }
+    
+    case INMGR_PREMAP_BTN_MID: {
+        int mid=(cap->lo+cap->hi)>>1;
+        int midlo=(cap->lo+mid)>>1;
+        int midhi=(cap->hi+mid)>>1;
+        if (midlo>=mid) midlo=mid-1;
+        if (midhi<=mid) midhi=mid+1;
+        if (value<=midlo) return INMGR_PREMAP_BTN_LO;
+        if (value>=midhi) return INMGR_PREMAP_BTN_HI;
+        return INMGR_PREMAP_BTN_MID;
+      }
+    
+    case INMGR_PREMAP_BTN_OOB: switch (value-cap->lo) {
+        case 0: return INMGR_PREMAP_BTN_N;
+        case 1: return INMGR_PREMAP_BTN_NE;
+        case 2: return INMGR_PREMAP_BTN_E;
+        case 3: return INMGR_PREMAP_BTN_SE;
+        case 4: return INMGR_PREMAP_BTN_S;
+        case 5: return INMGR_PREMAP_BTN_SW;
+        case 6: return INMGR_PREMAP_BTN_W;
+        case 7: return INMGR_PREMAP_BTN_NW;
+        default: return INMGR_PREMAP_BTN_OOB;
+      }
+    
+  }
+  return INMGR_PREMAP_BTN_IGNORE;
+}
+
+/* Device list.
+ */
+ 
+int inmgr_device_handoff(struct inmgr *inmgr,struct inmgr_device *device) {
+  if (inmgr->devicec>=inmgr->devicea) {
+    int na=inmgr->devicea+8;
+    if (na>INT_MAX/sizeof(void*)) return -1;
+    void *nv=realloc(inmgr->devicev,sizeof(void*)*na);
+    if (!nv) return -1;
+    inmgr->devicev=nv;
+    inmgr->devicea=na;
+  }
+  inmgr->devicev[inmgr->devicec++]=device;
+  return 0;
+}
+
+struct inmgr_device *inmgr_device_by_devid(const struct inmgr *inmgr,int devid) {
+  struct inmgr_device **p=inmgr->devicev;
+  int i=inmgr->devicec;
+  for (;i-->0;p++) if ((*p)->devid==devid) return *p;
   return 0;
 }

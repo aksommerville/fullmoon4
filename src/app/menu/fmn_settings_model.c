@@ -56,8 +56,7 @@ static void fmn_settings_field_write_value(
     case FMN_SETTINGS_FIELD_FULLSCREEN: fmn_settings_field_write_enabled(dst,dsta,model,model->platform.fullscreen_enable); break;
     case FMN_SETTINGS_FIELD_MUSIC_ENABLE: fmn_settings_field_write_enabled(dst,dsta,model,model->platform.music_enable); break;
     case FMN_SETTINGS_FIELD_LANGUAGE: fmn_settings_field_write_iso631(dst,dsta,model,model->platform.language); break;
-    case FMN_SETTINGS_FIELD_INPUT: break;
-    case FMN_SETTINGS_FIELD_ZAP_SAVE: break;
+    case FMN_SETTINGS_FIELD_INPUT: memset(dst,'.',3); break;
   }
 }
 
@@ -126,7 +125,6 @@ void fmn_settings_model_init(struct fmn_settings_model *model) {
   if (model->platform.fullscreen_available) fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_FULLSCREEN);
   if (model->platform.music_available) fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_MUSIC_ENABLE);
   fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_INPUT);
-  fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_ZAP_SAVE);
   
   fmn_settings_model_finalize_fields(model);
   
@@ -155,7 +153,6 @@ void fmn_settings_model_adjust(struct fmn_settings_model *model,int d) {
     case FMN_SETTINGS_FIELD_MUSIC_ENABLE: model->platform.music_enable^=1; break;
     case FMN_SETTINGS_FIELD_LANGUAGE: model->platform.language=(d>0)?fmn_platform_get_next_language(model->platform.language):fmn_platform_get_prev_language(model->platform.language); break;
     case FMN_SETTINGS_FIELD_INPUT: return; // no value
-    case FMN_SETTINGS_FIELD_ZAP_SAVE: return; // no value
     default: return;
   }
   fmn_settings_field_write_value(model,field,0,0);
