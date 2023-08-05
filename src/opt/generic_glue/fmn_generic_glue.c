@@ -181,3 +181,16 @@ void fmn_draw_decal(const struct fmn_draw_decal *v,int c,uint16_t srcimageid) {}
 void fmn_draw_decal_swap(const struct fmn_draw_decal *v,int c,uint16_t srcimageid) {}
 void fmn_draw_recal(const struct fmn_draw_recal *v,int c,uint16_t srcimageid) {}
 void fmn_draw_recal_swap(const struct fmn_draw_recal *v,int c,uint16_t srcimageid) {}
+
+/* Settings.
+ */
+
+void fmn_platform_get_settings(struct fmn_platform_settings *settings) {
+  settings->fullscreen_available=0;
+  settings->music_available=0;
+  settings->language=0;
+}
+
+void fmn_platform_set_settings(struct fmn_platform_settings *settings) {}
+uint16_t fmn_platform_get_next_language(uint16_t language) { return language; }
+uint16_t fmn_platform_get_prev_language(uint16_t language) { return language; }

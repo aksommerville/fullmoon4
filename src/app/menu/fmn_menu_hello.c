@@ -5,6 +5,7 @@
 #define bgcolor menu->argv[3]
 #define selp menu->argv[4]
 #define opt_available menu->argv[5]
+#define flash_text menu->argv[6]
 #define clock menu->fv[0]
 #define idleclock menu->fv[1]
 
@@ -295,13 +296,14 @@ static void _hello_render(struct fmn_menu *menu) {
   // Generate labels if we don't have them yet.
   // (selp==0xff) is our signal that we're not fully initialized yet. (have to wait until now to ensure the renderer is fully up).
   // The images persist for the program's life but we redraw every time this menu starts up. Not a big deal.
-  if (selp==0xff) {
+  if ((selp==0xff)||flash_text) {
     fmn_generate_string_image(FMN_IMAGEID_LABEL_CONTINUE,3,0,0);
     fmn_generate_string_image(FMN_IMAGEID_LABEL_NEW,4,0,0);
     fmn_generate_string_image(FMN_IMAGEID_LABEL_SETTINGS,5,0,0);
     fmn_generate_string_image(FMN_IMAGEID_LABEL_QUIT,6,0,0);
     fmn_generate_string_image(FMN_IMAGEID_LABEL_END_GAME,7,0,0);
-    selp=(opt_available&1)?0:1; // "Continue" if available, otherwise "New".
+    if (selp==0xff) selp=(opt_available&1)?0:1; // "Continue" if available, otherwise "New".
+    flash_text=0;
   }
   
   int16_t cursorx=0,cursory=-100;
@@ -335,12 +337,20 @@ static void _hello_render(struct fmn_menu *menu) {
   }
 }
 
+/* Language changed.
+ */
+ 
+static void _hello_language_changed(struct fmn_menu *menu) {
+  flash_text=1;
+}
+
 /* Init.
  */
  
 void fmn_menu_init_HELLO(struct fmn_menu *menu) {
   menu->update=_hello_update;
   menu->render=_hello_render;
+  menu->language_changed=_hello_language_changed;
   menu->opaque=1;
   selp=0xff;
   opt_available=0x06; // 0x01=continue 0x02=new 0x04=settings 0x08=quit

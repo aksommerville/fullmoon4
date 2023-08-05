@@ -395,6 +395,7 @@ uint8_t fmn_get_string(char *dst,uint8_t dsta,uint16_t id) {
   const uint16_t langid=bigpc.config.lang;
   const char *src=0;
   int srcc=fmn_datafile_get_qualified(&src,bigpc.datafile,FMN_RESTYPE_STRING,langid,id);
+  if ((srcc<1)&&(langid!=0x656e)) srcc=fmn_datafile_get_qualified(&src,bigpc.datafile,FMN_RESTYPE_STRING,0x656e,id);
   if (srcc<0) srcc=0;
   if (srcc>0xff) srcc=0xff;
   if (srcc<=dsta) {
@@ -448,6 +449,80 @@ uint16_t fmn_load_saved_game() {
 
 uint8_t fmn_is_demo() {
   return (fmn_datafile_count_type(bigpc.datafile,FMN_RESTYPE_MAP)<100)?1:0;
+}
+
+/* Settings.
+ */
+ 
+void fmn_platform_get_settings(struct fmn_platform_settings *settings) {
+  memcpy(settings,&bigpc.settings,sizeof(struct fmn_platform_settings));
+}
+
+void fmn_platform_set_settings(struct fmn_platform_settings *settings) {
+  if (settings->fullscreen_enable!=bigpc.settings.fullscreen_enable) {
+    bigpc_video_set_fullscreen(bigpc.video,settings->fullscreen_enable);
+    bigpc.settings.fullscreen_enable=settings->fullscreen_enable;
+  }
+  if (settings->music_enable!=bigpc.settings.music_enable) {
+    if (bigpc.synth->type->enable_music) {
+      if (bigpc_audio_lock(bigpc.audio)>=0) {
+        bigpc.synth->type->enable_music(bigpc.synth,settings->music_enable);
+        bigpc_audio_unlock(bigpc.audio);
+        bigpc.settings.music_enable=settings->music_enable;
+      }
+    }
+  }
+  if (settings->language!=bigpc.settings.language) {
+    bigpc.config.lang=settings->language;
+    bigpc.settings.language=settings->language;
+    fmn_language_changed();
+  }
+}
+
+uint16_t fmn_platform_get_next_language(uint16_t language) {
+  if (!bigpc.langc) return language;
+  if (!language) return bigpc.langv[0];
+  int i=0; for (;i<bigpc.langc;i++) {
+    if (bigpc.langv[i]!=language) continue;
+    if (i+1<bigpc.langc) return bigpc.langv[i+1];
+    return bigpc.langv[0];
+  }
+  return language;
+}
+
+uint16_t fmn_platform_get_prev_language(uint16_t language) {
+  if (!bigpc.langc) return language;
+  if (!language) return bigpc.langv[0];
+  int i=0; for (;i<bigpc.langc;i++) {
+    if (bigpc.langv[i]!=language) continue;
+    if (i) return bigpc.langv[i-1];
+    return bigpc.langv[bigpc.langc-1];
+  }
+  return language;
+}
+
+static int bigpc_rebuild_language_list_cb(uint16_t lang,void *userdata) {
+  uint8_t a=lang>>8,b=lang;
+  if ((a<'a')||(a>'z')) return 0;
+  if ((b<'a')||(b>'z')) return 0;
+  const uint16_t *existing=bigpc.langv;
+  int i=bigpc.langc;
+  for (;i-->0;existing++) if (*existing==lang) return 0;
+  if (bigpc.langc>=bigpc.langa) {
+    int na=bigpc.langa+8;
+    if (na>INT_MAX/sizeof(uint16_t)) return -1;
+    void *nv=realloc(bigpc.langv,sizeof(uint16_t)*na);
+    if (!nv) return -1;
+    bigpc.langv=nv;
+    bigpc.langa=na;
+  }
+  bigpc.langv[bigpc.langc++]=lang;
+  return 0;
+}
+
+void bigpc_rebuild_language_list() {
+  bigpc.langc=0;
+  fmn_datafile_for_each_qualifier(bigpc.datafile,FMN_RESTYPE_STRING,bigpc_rebuild_language_list_cb,0);
 }
 
 /* fmn_find_map_command, fmn_find_direction_to_item, fmn_find_direction_to_map

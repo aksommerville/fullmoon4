@@ -65,6 +65,7 @@ struct bigpc_synth_driver *bigpc_synth_new(
   driver->rate=config->rate;
   driver->chanc=config->chanc;
   driver->format=config->format;
+  driver->music_enable=1;
   if (type->init(driver)<0) {
     bigpc_synth_del(driver);
     return 0;

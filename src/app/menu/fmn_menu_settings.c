@@ -1,6 +1,13 @@
 #include "fmn_menu_internal.h"
+#include "fmn_settings_model.h"
 
 #define bgcolor menu->argv[0]
+#define selcolor menu->argv[1]
+
+/* Globals.
+ */
+ 
+static struct fmn_settings_model settings_model={0};
 
 /* Dismiss.
  */
@@ -17,21 +24,10 @@ static void settings_dismiss(struct fmn_menu *menu) {
  */
  
 static void settings_activate(struct fmn_menu *menu) {
-  //fprintf(stderr,"%s\n",__func__);//TODO
-}
-
-/* Adjust value of selection. (horz)
- */
- 
-static void settings_adjust(struct fmn_menu *menu,int8_t d) {
-  //fprintf(stderr,"%s %+d\n",__func__,d);//TODO
-}
-
-/* Move selection. (vert)
- */
- 
-static void settings_move(struct fmn_menu *menu,int8_t d) {
-  //fprintf(stderr,"%s %+d\n",__func__,d);//TODO
+  switch (fmn_settings_model_get_field_id(&settings_model)) {
+    case FMN_SETTINGS_FIELD_INPUT: break;//TODO
+    case FMN_SETTINGS_FIELD_ZAP_SAVE: break;//TODO
+  }
 }
 
 /* Update.
@@ -44,12 +40,12 @@ static void _settings_update(struct fmn_menu *menu,float elapsed,uint8_t input) 
     const uint8_t verts=FMN_INPUT_UP|FMN_INPUT_DOWN;
     const uint8_t horzs=FMN_INPUT_LEFT|FMN_INPUT_RIGHT;
     switch ((input&verts)&~menu->pvinput) {
-      case FMN_INPUT_UP: settings_move(menu,-1); break;
-      case FMN_INPUT_DOWN: settings_move(menu,1); break;
+      case FMN_INPUT_UP: fmn_settings_model_move(&settings_model,-1); break;
+      case FMN_INPUT_DOWN: fmn_settings_model_move(&settings_model,1); break;
     }
     switch ((input&horzs)&~menu->pvinput) {
-      case FMN_INPUT_LEFT: settings_adjust(menu,-1); break;
-      case FMN_INPUT_RIGHT: settings_adjust(menu,1); break;
+      case FMN_INPUT_LEFT: fmn_settings_model_adjust(&settings_model,-1); break;
+      case FMN_INPUT_RIGHT: fmn_settings_model_adjust(&settings_model,1); break;
     }
     menu->pvinput=input;
   }
@@ -60,14 +56,49 @@ static void _settings_update(struct fmn_menu *menu,float elapsed,uint8_t input) 
  
 static void _settings_render(struct fmn_menu *menu) {
   const int16_t tilesize=menu->fbw/FMN_COLC;
+  const int16_t glyphw=8,glyphh=8;
   
   // Blackout.
   {
-    struct fmn_draw_rect vtx={0,0,menu->fbw,menu->fbh,bgcolor};
-    fmn_draw_rect(&vtx,1);
+    struct fmn_draw_rect vtxv[]={
+      {0,0,menu->fbw,menu->fbh,bgcolor},
+      {0,settings_model.selrow*glyphh-1,menu->fbw,glyphh+1,selcolor},
+    };
+    fmn_draw_rect(vtxv,sizeof(vtxv)/sizeof(struct fmn_draw_rect));
   }
   
-  //TODO render settings menu
+  // Model's text grid.
+  {
+    struct fmn_draw_mintile vtxv[128];
+    int vtxc=0;
+    const char *src=settings_model.text;
+    int16_t y=glyphh>>1,yi=FMN_SETTINGS_ROWC;
+    for (;yi-->0;y+=glyphh) {
+      int16_t x=glyphw>>1,xi=FMN_SETTINGS_COLC;
+      for (;xi-->0;x+=glyphw,src++) {
+        if (!*src) continue;
+        struct fmn_draw_mintile *vtx=vtxv+vtxc++;
+        vtx->x=x;
+        vtx->y=y;
+        vtx->tileid=*src;
+        vtx->xform=0;
+        if (vtxc>=sizeof(vtxv)/sizeof(struct fmn_draw_mintile)) {
+          fmn_draw_mintile(vtxv,vtxc,20);
+          vtxc=0;
+        }
+      }
+    }
+    if (vtxc>0) {
+      fmn_draw_mintile(vtxv,vtxc,20);
+    }
+  }
+}
+
+/* Language changed.
+ */
+ 
+static void _settings_language_changed(struct fmn_menu *menu) {
+  fmn_settings_model_language_changed(&settings_model);
 }
 
 /* Init.
@@ -76,6 +107,9 @@ static void _settings_render(struct fmn_menu *menu) {
 void fmn_menu_init_SETTINGS(struct fmn_menu *menu) {
   menu->update=_settings_update;
   menu->render=_settings_render;
+  menu->language_changed=_settings_language_changed;
   menu->opaque=1;
   bgcolor=fmn_video_pixel_from_rgba(0x100020ff);
+  selcolor=fmn_video_pixel_from_rgba(0x402000ff);
+  fmn_settings_model_init(&settings_model);
 }

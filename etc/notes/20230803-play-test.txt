@@ -1,0 +1,44 @@
+2023-08-03 Play test, Alex.
+
+Startup
+Did not seek the treasure.
+Did not charm raccoons.
+Library: I don't get it.
+Art heist: Noticed the broken frame.
+(ak) Maybe farmer should be faster? We didn't see him emerge.
+Beach gate: Hilarity!
+(ak) It's not clear that you need to leave the beach after getting Compass. -- Move Compass to swamp, just give it away.
+(ak) North pole: Try not to allow blowback to engage while on land.
+Beach sign? Didn't get at first.
+(ak) We definitely need to give the shovel earlier.
+Two visits to village, and didn't enter Church.
+Violin: Feels like it doesn't work.
+(ak) Get violin at the music lesson shop? YES. Remove lock.
+Dammit Alex, go back to the swamp!
+(ak) Seeds are helpful if you're lost, but it takes some doing to even get them.
+(ak) Snow interior corners missing one pixel of outline.
+Gamma/alpha educator: Pushed pushblock off axis, and left.
+Static educator: "It's a feather" "How the fuck is that a feather?"
+Alpha block: Tried left*1 up*2 right*3 down*4. Can we communicate that that's not a count? Definitely don't use numbers. Arrows like a clover?
+(ak) Static educator: Use treadles, not a connecting pushblock.
+BUG! Can push alphablock via intervening pushblock.
+(ak) Don't trap in the wand part? Or lead to Umbrella first? Don't make them repeat the swamp.
+Desert dead space in the middle.
+Wand to lead to Shovel. (have Umbrella, Violin, Feather, Compass, Wand, Pitcher).
+(ak) Free seeds in Dot's house?
+(ak) Put Seamonster Pong near the Umbrella, duh.
+Music teacher: Broader range. Or seriously, why not just anywhere on screen?
+Farming one cell at a time.
+More hat trolls outside. It's just slightly too easy to get past without the hat. -- Put Hat in the caves.
+(ak) Allow "R" with negative slope
+Pumpkin on the wall in castle, doesn't read.
+Snuck past dragons. Can stand inside of the left-facing one.
+Tickle dragon on neck, in addition to head.
+Tight-corridor affordance for lambda and charmed pushblock. -- also stop briefly at cell boundaries.
+(ak) alphablocks should give some feedback, a positive and negative beep.
+Castle 2f inner switches: Got it by checking, didn't use broom.
+Really stumped by OTP, without having gotten to the write-point.
+2:51:09.019
+
+Castle 2f 2-alpha-blocks and water: Use a conveyor belt to prevent lambda from going down vertical.
+Music shop: Couple wrong tiles in the wall.

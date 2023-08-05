@@ -464,6 +464,13 @@ void fmn_prepare_transition(int transition);
 void fmn_commit_transition();
 void fmn_cancel_transition();
 
+/* Hacky signal from platform that the language changed.
+ * Rebuild any text images, etc.
+ * You won't get this initially, only live changes, and we don't say what the language actually is.
+ * For app's purposes, it just means "anything you got from fmn_get_string() previously might not be correct anymore".
+ */
+void fmn_language_changed();
+
 /* Platform implements the rest.
  *************************************************/
 
@@ -712,6 +719,24 @@ struct fmn_draw_recal {
 };
 void fmn_draw_recal(const struct fmn_draw_recal *v,int c,uint16_t srcimageid);
 void fmn_draw_recal_swap(const struct fmn_draw_recal *v,int c,uint16_t srcimageid);
+
+/* Extra tacked-on support for settings menu.
+ */
+ 
+struct fmn_platform_settings {
+  uint8_t fullscreen_available;
+  uint8_t fullscreen_enable;
+  uint8_t music_available;
+  uint8_t music_enable;
+  uint16_t language;
+};
+
+void fmn_platform_get_settings(struct fmn_platform_settings *settings);
+void fmn_platform_set_settings(struct fmn_platform_settings *settings);
+
+// Both of these should return the preferred, ie first, language if input zero.
+uint16_t fmn_platform_get_next_language(uint16_t language);
+uint16_t fmn_platform_get_prev_language(uint16_t language);
   
 
 #endif

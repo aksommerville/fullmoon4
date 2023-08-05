@@ -30,12 +30,20 @@ struct fmn_menu *fmn_begin_menu(int menuid,int arg0) {
   return menu;
 }
 
-/* Top menu.
+/* Read menu list.
  */
  
 struct fmn_menu *fmn_get_top_menu() {
   if (fmn_menu_global.c<1) return 0;
   return fmn_menu_global.v+fmn_menu_global.c-1;
+}
+
+int fmn_for_each_menu(int (*cb)(struct fmn_menu *menu,void *userdata),void *userdata) {
+  int i=0,err;
+  for (;i<fmn_menu_global.c;i++) {
+    if (err=cb(fmn_menu_global.v+i,userdata)) return err;
+  }
+  return 0;
 }
 
 /* Dismiss one menu.

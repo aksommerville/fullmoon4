@@ -76,6 +76,10 @@ export class Runtime {
     this.wasmLoader.env.fmn_delete_saved_game = () => this.savedGameStore.deleteSavedGame();
     this.wasmLoader.env.fmn_saved_game_dirty = () => this.savedGameStore.setDirty();
     this.wasmLoader.env.fmn_is_demo = () => this.dataService.mapCount < 100;
+    this.wasmLoader.env.fmn_platform_get_settings = (dstp) => this.getSettings(dstp);
+    this.wasmLoader.env.fmn_platform_set_settings = (srcp) => this.setSettings(srcp);
+    this.wasmLoader.env.fmn_platform_get_next_language = (lang) => this.getNextLanguage(lang, 1);
+    this.wasmLoader.env.fmn_platform_get_prev_language = (lang) => this.getNextLanguage(lang, -1);
     
     this.wasmLoader.env.fmn_video_init = (wmin, wmax, hmin, hmax, pixfmt) => this.renderer.fmn_video_init(wmin, wmax, hmin, hmax, pixfmt);
     this.wasmLoader.env.fmn_video_get_framebuffer_size = (wv, hv) => this.renderer.fmn_video_get_framebuffer_size(wv, hv);
@@ -547,6 +551,18 @@ export class Runtime {
     */
     // Our logs are formatted a little different.
     this.document._fmn_business_log.text += `${this.clock.lastGameTime}@${this.mapId} ${text}\n`;
+  }
+  
+  getSettings(dstp) {
+    //TODO
+  }
+  
+  setSettings(srcp) {
+    //TODO
+  }
+  
+  getNextLanguage(language, d) {
+    return ('e'<<8)|'n';//TODO
   }
 }
 

@@ -84,6 +84,10 @@ extern struct bigpc {
   struct inmgr *inmgr;
   struct bigpc_clock clock;
   
+  struct fmn_platform_settings settings;
+  uint16_t *langv; // Built according to (datafile).
+  int langc,langa;
+  
   uint8_t input_state;
   int devid_keyboard;
   
@@ -120,6 +124,7 @@ int bigpc_configure_argv(int argc,char **argv);
 int bigpc_configure_kv(const char *k,int kc,const char *v,int vc);
 int bigpc_config_ready();
 int bigpc_config_guess_data_path();
+void bigpc_settings_init(); // Owned by config, but separate. Call after drivers and datafile are created.
 
 void bigpc_signal_init();
 
@@ -128,6 +133,8 @@ int bigpc_video_init();
 int bigpc_audio_init();
 
 int bigpc_input_init();
+
+void bigpc_rebuild_language_list();
 
 // Force a player's state to all ones, so each key needs to release before we notice the change.
 void bigpc_ignore_next_button();

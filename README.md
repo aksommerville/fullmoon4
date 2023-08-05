@@ -9,27 +9,53 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Remaining major features. Finish before 31 August.
 
-- [x] End credits.
-- - [x] Text.
-- - [x] Still frames.
-- - - [x] Fade in and out
-- - - [x] I'd really like these to be animated.
-- - [x] Live frames: Dragging the werewolf, clothing the orphans, returning home.
-- - [x] Don't repeat song.
-- - [x] Should credits be interruptible? Currently they are. I believe the convention is No. YES, but long delay.
-- - [x] Need some lead delay before the first map fades in.
 - [ ] Settings menu.
-- - [ ] Fullscreen
+- - [x] Fullscreen
 - - [ ] Driver selection
 - - [ ] Driver settings
-- - [ ] Music mute
+- - [x] Music mute
 - - [ ] Input config
-- - [ ] Language
+- - [x] Language
 - - [ ] Zap saved game. And show details.
+- - [ ] bigpc: Persist settings.
+- - [ ] web: Expose settings.
+- - [ ] web: Persist settings.
+- [ ] Music channels went out of sync when toggling enable. (minsyn, tangled vine)
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] Windows
+
+### Little bugs and narrative concerns, after playtest 3 August.
+
+- [ ] Make the farmer emerge faster. Should be hard not to see him.
+- [ ] Move items around: Compass to Swamp. Umbrella and Wand to Beach? Violin to music shop. Shovel must come earlier
+- [ ] North pole: Shuffle land bridges south so no blowback while on dry land.
+- [ ] Can we make the beach sign more legible?
+- [ ] Violin is still too unforgiving.
+- [ ] Can the Swamp entrance be made more prominent?
+- [ ] Free seeds at Dot's house.
+- [ ] Snow: Interior corners missing one pixel of outline.
+- [ ] Music shop: Couple wrong tiles in the wall.
+- [ ] Static educator: Use treadles instead of connect-the-blocks.
+- [ ] Static educator: Make feather image more obvious.
+- [ ] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
+- [ ] Can push alphablock via intermediate pushblock.
+- [ ] Swap wand trap: Allow to get the Umbrella, don't trap them so tight.
+- [ ] Desert dead space, do something with it.
+- [ ] Move Seamonster Pong near the Umbrella. In the Swamp?
+- [ ] Music teacher: Engage from anywhere, not just right in front of me.
+- [ ] More hat trolls outside. Make it very difficult to get by without the Hat.
+- [ ] Put Hat in the Mountains.
+- [ ] "R" chalk, allow negative slope.
+- [ ] Castle pumpkin icon, make more legible.
+- [ ] Possible to stand inside the dragon's head. Fire should hit you there.
+- [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
+- [ ] Lambda and charmed pushblock: Hesitate briefly at cell boundaries.
+- [ ] All blocks: Fuzz movement off-axis, make easier to squeeze in tight corridors.
+- [ ] Positive and negative beeps from alphablocks as you encode.
+- [ ] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way.
+- [ ] Firewall: Respect invisibility.
 
 ### Further critical features and bugs. Finish before 15 September.
 
@@ -51,6 +77,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] UI for mapping.
 - [ ] minsyn drums too loud
 - [ ] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
+- [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 
 ### TODO: Not critical.
 

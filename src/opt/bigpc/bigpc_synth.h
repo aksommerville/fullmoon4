@@ -19,6 +19,7 @@ struct bigpc_synth_config {
   int rate;
   int chanc;
   int format; // BIGPC_AUDIO_FORMAT_*
+  int music_enable;
 };
 
 /* Instance.
@@ -30,6 +31,7 @@ struct bigpc_synth_driver {
   int rate;
   int chanc;
   int format;
+  int music_enable;
   
   /* Generate PCM.
    * (v) is an array of the type named by (config.format) at construction.
@@ -91,6 +93,7 @@ struct bigpc_synth_type {
   void (*event)(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
   int (*play_song)(struct bigpc_synth_driver *driver,const void *src,int srcc,int force,int loop);
   void (*pause_song)(struct bigpc_synth_driver *driver,int pause);
+  void (*enable_music)(struct bigpc_synth_driver *driver,int enable);
   int (*get_instrument_by_channel)(struct bigpc_synth_driver *driver,uint8_t chid);
 };
 

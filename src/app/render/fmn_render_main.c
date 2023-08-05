@@ -164,3 +164,15 @@ uint8_t fmn_render_transition_in_progress() {
  
 void fmn_render_init() {
 }
+
+/* Notification of language change.
+ */
+ 
+static int fmn_language_changed_menu_cb(struct fmn_menu *menu,void *userdata) {
+  if (menu->language_changed) menu->language_changed(menu);
+  return 0;
+}
+ 
+void fmn_language_changed() {
+  fmn_for_each_menu(fmn_language_changed_menu_cb,0);
+}

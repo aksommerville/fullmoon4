@@ -60,3 +60,20 @@
 48 Alex Hansen
 49 Many thanks to the GDEX crew!
 50 Dot Vine will return
+
+# Settings, field identifiers. Limit 20 characters.
+51 Fullscreen
+52 Music
+53 Language
+54 Input
+55 Zap Save
+56
+57
+58
+59
+
+# Settings, addl text.
+60 Enable
+61 Disable
+# 62 is the name of *this* language, for display. (don't translate the word "English").
+62 English

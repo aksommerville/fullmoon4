@@ -80,7 +80,7 @@ static void _minsyn_update_mono(int16_t *v,int c,struct bigpc_synth_driver *driv
   while (c>0) {
   
     int updc=c;
-    if (DRIVER->song&&!DRIVER->songpause) {
+    if (DRIVER->song&&!DRIVER->songpause&&driver->music_enable) {
       if (DRIVER->startup_delay>0) {
         if ((DRIVER->startup_delay-=c)<=0) DRIVER->startup_delay=0;
       }
@@ -331,6 +331,17 @@ static void _minsyn_pause_song(struct bigpc_synth_driver *driver,int pause) {
   }
 }
 
+static void _minsyn_enable_music(struct bigpc_synth_driver *driver,int enable) {
+  if (enable) {
+    if (driver->music_enable) return;
+    driver->music_enable=1;
+  } else {
+    if (!driver->music_enable) return;
+    driver->music_enable=0;
+    minsyn_release_all(driver);
+  }
+}
+
 /* Runtime examination.
  */
  
@@ -354,5 +365,6 @@ const struct bigpc_synth_type bigpc_synth_type_minsyn={
   .play_song=_minsyn_play_song,
   .event=_minsyn_event,
   .pause_song=_minsyn_pause_song,
+  .enable_music=_minsyn_enable_music,
   .get_instrument_by_channel=_minsyn_get_instrument_by_channel,
 };

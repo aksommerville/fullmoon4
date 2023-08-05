@@ -65,3 +65,20 @@
 48 Alex Hansen
 49 Merci au GDEX!
 50 Dot Vine reviendra
+
+# Settings, field identifiers. Limit 20 characters.
+51 Toutecran
+52 Musique
+53 Langue
+54 Putte d'inne
+55 Zapper Save
+56
+57
+58
+59
+
+# Settings, addl text.
+60 Oui
+61 Non
+# 62 is the name of *this* language, for display. (don't translate the word "English").
+62 francais

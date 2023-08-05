@@ -380,3 +380,14 @@ int bigpc_config_guess_data_path() {
   // Doubtless plenty of other guesses we could make, but I'm leaving it here for now.
   return -1;
 }
+
+/* Initialize app-visible settings from live state.
+ */
+ 
+void bigpc_settings_init() {
+  bigpc.settings.fullscreen_available=bigpc.video->type->set_fullscreen?1:0;
+  bigpc.settings.fullscreen_enable=bigpc.video->fullscreen?1:0;
+  bigpc.settings.music_available=bigpc.synth->type->enable_music?1:0;
+  bigpc.settings.music_enable=bigpc.synth->music_enable?1:0;
+  bigpc.settings.language=bigpc.config.lang;
+}

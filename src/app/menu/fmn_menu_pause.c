@@ -7,6 +7,7 @@
 #define fgcolor menu->argv[4]
 #define highlightcolor menu->argv[5]
 #define listselection menu->argv[6] /* <0 if ui active in item grid; >=0 in options list */
+#define flash_text menu->argv[7]
 
 #define FMN_IMAGEID_ITEM_LABEL 306 /* must agree with fmn_render_internal.h */
 #define FMN_IMAGEID_LABEL_SETTINGS 309 /* fmn_menu_hello preps SETTINGS and END_GAME for us */
@@ -257,7 +258,7 @@ static void _pause_render(struct fmn_menu *menu) {
   
   // Text label if the selected item is possessed.
   if (fmn_global.itemv[fmn_global.selected_item]) {
-    if (labelid!=fmn_global.selected_item) {
+    if ((labelid!=fmn_global.selected_item)||flash_text) {
       labelid=fmn_global.selected_item;
       labelw=textw-2;
       labelh=texth-2;
@@ -269,6 +270,10 @@ static void _pause_render(struct fmn_menu *menu) {
   
   // "Settings" and "End Game" options on the side.
   {
+    if (flash_text) {
+      fmn_generate_string_image(FMN_IMAGEID_LABEL_SETTINGS,5,0,0);
+      fmn_generate_string_image(FMN_IMAGEID_LABEL_END_GAME,7,0,0);
+    }
     int16_t imgw1,imgh1,imgw2,imgh2;
     fmn_video_get_image_size(&imgw1,&imgh1,FMN_IMAGEID_LABEL_SETTINGS);
     fmn_video_get_image_size(&imgw2,&imgh2,FMN_IMAGEID_LABEL_END_GAME);
@@ -283,6 +288,15 @@ static void _pause_render(struct fmn_menu *menu) {
     recal=(struct fmn_draw_recal){boxx+1,boxy+1+imgh1,imgw2,imgh2,0,0,imgw2,imgh2,(listselection==1)?highlightcolor:fgcolor};
     fmn_draw_recal(&recal,1,FMN_IMAGEID_LABEL_END_GAME);
   }
+  
+  flash_text=0;
+}
+
+/* Language changed.
+ */
+ 
+static void _pause_language_changed(struct fmn_menu *menu) {
+  flash_text=1;
 }
 
 /* Init.
@@ -291,6 +305,7 @@ static void _pause_render(struct fmn_menu *menu) {
 void fmn_menu_init_PAUSE(struct fmn_menu *menu) {
   menu->update=_pause_update;
   menu->render=_pause_render;
+  menu->language_changed=_pause_language_changed;
   bgcolor=fmn_video_pixel_from_rgba(0x000000ff);
   fgcolor=fmn_video_pixel_from_rgba(0xc0c0c0ff);
   highlightcolor=fmn_video_pixel_from_rgba(0xffff00ff);

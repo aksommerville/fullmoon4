@@ -167,6 +167,7 @@ struct fmn_menu {
   int16_t fbw,fbh; // ctor captures this before init, on the assumption that it will be needed often.
   void (*update)(struct fmn_menu *menu,float elapsed,uint8_t input);
   void (*render)(struct fmn_menu *menu);
+  void (*language_changed)(struct fmn_menu *menu);
   
   /* Whoever begins the menu may set a callback.
    * Menu types can make up (message) values 0x80 and above. Low values are defined here.
@@ -194,6 +195,7 @@ struct fmn_menu *fmn_begin_menu(int menuid,int arg0);
 #define FMN_MENU_MESSAGE_CHANGED 0x80
 
 struct fmn_menu *fmn_get_top_menu();
+int fmn_for_each_menu(int (*cb)(struct fmn_menu *menu,void *userdata),void *userdata);
 
 /* Menus dismissed this way do not trigger any callbacks.
  */
