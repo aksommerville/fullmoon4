@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
+#include <string.h>
 
 /* Log.
  */
@@ -52,6 +53,14 @@ void fmn_log_event(const char *key,const char *fmt,...) {
  */
  
 int bigpc_log_init() {
+
+  #if FMN_USE_macos
+  if (!bigpc.config.log_path) {
+    fprintf(stderr,"!!! Setting default business log path. This is a Mac-only temporary hack.\n");
+    bigpc.config.log_path=strdup("/Users/andy/proj/fullmoon4/out/macos/macbook");
+  }
+  #endif
+
   if (bigpc.config.log_path) {
     time_t now=time(0);
     struct tm tm={0};

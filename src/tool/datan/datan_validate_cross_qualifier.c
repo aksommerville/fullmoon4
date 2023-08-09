@@ -96,6 +96,7 @@ static int datan_validate_cross_qualifier_type(uint16_t type) {
   }
   id_list_cleanup(&idlist);
   id_list_cleanup(&pvlist);
+  return 0;
 }
  
 int datan_validate_cross_qualifier() {

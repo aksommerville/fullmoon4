@@ -516,7 +516,7 @@ void fmn_game_update(float elapsed) {
       fmn_global.terminate_time=0.0f;
       if (fmn_global.hero_dead) fmn_begin_menu(FMN_MENU_GAMEOVER,0);
       else {
-        if (0/*TODO: is demo*/) fmn_begin_menu(FMN_MENU_VICTORY,0);
+        if (1/*TODO: is demo*/) fmn_begin_menu(FMN_MENU_VICTORY,0);
         else fmn_begin_menu(FMN_MENU_CREDITS,0);
       }
       return;

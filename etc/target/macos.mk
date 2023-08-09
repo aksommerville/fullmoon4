@@ -46,5 +46,6 @@ $(eval $(call SINGLE_DATA_ARCHIVE,macos,$(macos_DATA_FULL),$(macos_DATA_DEMO),$(
 
 # TODO Smarten up the automatic data file detection; do not require a command-line arg!
 macos-run-full:$(macos_EXE) $(macos_DATA_FULL);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_FULL) $(macos_RUN_ARGS)
-macos-run-demo:$(macos_EXE) $(macos_DATA_DEMO);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_DEMO) $(macos_RUN_ARGS)
+#macos-run-demo:$(macos_EXE) $(macos_DATA_DEMO);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_DEMO) $(macos_RUN_ARGS)
+macos-run-demo:$(macos_EXE) $(macos_DATA_DEMO);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty)
 macos-run:macos-run-demo

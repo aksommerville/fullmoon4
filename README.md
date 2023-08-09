@@ -33,6 +33,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] macos: "Quit" from Hello makes app unresponsive but doesn't actually quit.
 - [x] Castle 3f, west of the OTP read, the upper stompbox spoils the whole puzzle.
 - [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Web reported play time runs short -- it doesn't match what gets saved.

@@ -361,10 +361,10 @@ int bigpc_config_guess_data_path() {
     // Little different for Macs: If dir ends "/Contents/MacOS", try ".../Contents/Resources/data"
     if ((eslashp>=15)&&!memcmp(bigpc.exename+eslashp-15,"/Contents/MacOS",15)) {
       eslashp-=5;
-      int pathlen=eslashp+14;
+      int pathlen=eslashp+19;
       if (!(bigpc.config.data_path=malloc(pathlen+1))) return -1;
       memcpy(bigpc.config.data_path,bigpc.exename,eslashp);
-      memcpy(bigpc.config.data_path+eslashp,"Resources/data",15);
+      memcpy(bigpc.config.data_path+eslashp,"Resources/data-demo",20);
       fprintf(stderr,"%s: '--data=PATH' not provided. Guessing '%s'\n",bigpc.exename,bigpc.config.data_path);
       return 0;
     }
