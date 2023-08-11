@@ -3,42 +3,6 @@
 
 #define BIGPC_SAVEDGAME_DEBOUNCE_TIME_S 3
 
-#if 0 //XXX bigpc_config_ready takes care of this now
-/* Guess path, at init.
- */
- 
-static void bigpc_savedgame_guess_path() {
-  if (bigpc.savedgame_path) return; // why did you call me?
-  
-  // If exename contains a slash, try its dirname plus "/data".
-  int eslashp=-1;
-  int i=0;
-  for (;bigpc.exename[i];i++) {
-    if (bigpc.exename[i]=='/') eslashp=i;
-  }
-  if (eslashp>=0) {
-
-    // Little different for Macs: If dir ends "/Contents/MacOS", back out one step beyond that.
-    // Aim for the directory hosting the application bundle, don't save inside the bundle.
-    if ((eslashp>=15)&&!memcmp(bigpc.exename+eslashp-15,"/Contents/MacOS",15)) {
-      eslashp-=15;
-      // Read backward over what is hopefully something like "/Users/mistermustard/my/games/FullMoon.app..."
-      while ((eslashp>=0)&&(bigpc.exename[eslashp]!='/')) eslashp--;
-      if (eslashp<0) return;
-    }
-  
-    // With that directory path in hand, append "/save".
-    int pathlen=eslashp+5;
-    if (!(bigpc.savedgame_path=malloc(pathlen+1))) return;
-    memcpy(bigpc.savedgame_path,bigpc.exename,eslashp);
-    memcpy(bigpc.savedgame_path+eslashp,"/save",6);
-    return;
-  }
-  
-  // Doubtless plenty of other guesses we could make, but I'm leaving it here for now.
-}
-#endif
-
 /* Init.
  */
  

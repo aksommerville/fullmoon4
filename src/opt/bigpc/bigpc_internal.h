@@ -90,16 +90,6 @@ extern struct bigpc {
   uint16_t *langv; // Built according to (datafile).
   int langc,langa;
   
-  /*XXX?
-  uint8_t incfg_state;
-  uint8_t incfg_p;
-  uint8_t incfg_btnid;
-  int incfg_devid;
-  struct bigpc_input_driver *incfg_driver; // WEAK; can be null eg System Keyboard
-  int incfg_incoming_btnid;
-  int incfg_incoming_value;
-  int incfg_confirm_ready;
-  /**/
   // Live input config state. Refreshed just before each input cycle.
   int incfg_status;
   uint16_t incfg_btnid;
@@ -141,7 +131,6 @@ void bigpc_config_init();
 int bigpc_configure_argv(int argc,char **argv);
 int bigpc_configure_kv(const char *k,int kc,const char *v,int vc);
 int bigpc_config_ready();
-//XXX int bigpc_config_guess_data_path();
 void bigpc_settings_init(); // Owned by config, but separate. Call after drivers and datafile are created.
 
 void bigpc_signal_init();
