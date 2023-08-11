@@ -7,109 +7,165 @@
 #include <string.h>
 #include <limits.h>
 
-#define INMGR_MAP_MODE_IGNORE     0 /* don't use; just don't add the map if it's disabled */
-#define INMGR_MAP_MODE_TWOSTATE   1 /* (srclo<=srcvalue<=srchi)?1:0 */
-#define INMGR_MAP_MODE_TWOREV     2 /* Same as TWOSTATE, but anything in bounds is OFF and out of bounds ON */
-#define INMGR_MAP_MODE_THREESTATE 3 /* (srcvalue<=srclo)?-1:(srcvalue>=srchi)?1:0, (dstbtnid) must be horz or vert */
-#define INMGR_MAP_MODE_THREEREV   4 /* Same as THREESTATE, but (RIGHT,0,LEFT) and (DOWN,0,UP) */
-#define INMGR_MAP_MODE_HAT        5 /* (srclo+7==srchi), (N,NE,E,SE,S,SW,W,NW), OOB means (0,0), (dstbtnid) must be dpad */
-#define INMGR_MAP_MODE_ACTION     6 /* TWOSTATE but (dstbtnid) is an action, not a button */
-#define INMGR_MAP_MODE_ACTIONREV  7 /* TWOREV but '' */
+struct inmgr_rules;
+struct inmgr_rules_button;
+struct inmgr_device;
+struct inmgr_cap;
+struct inmgr_map;
 
-#define INMGR_DEVICE_NAME_LIMIT 64
+#define INMGR_SRCPART_BUTTON_ON 1 /* The usual case; a 2-state input or 1-way axis */
+#define INMGR_SRCPART_BUTTON_OFF 2 /* Inverted 2-state */
+#define INMGR_SRCPART_AXIS_LOW 3 /* Lower values of a 3-way axis, usually left or up (but sometimes down). */
+#define INMGR_SRCPART_AXIS_MID 4 /* Middle range of a 3-way axis. It would be weird to map this. */
+#define INMGR_SRCPART_AXIS_HIGH 5 /* Higher values of a 3-way axis, usually right or down (but sometimes up). */
+#define INMGR_SRCPART_HAT_N 6 /* (0,1,7), UP on a hat */
+#define INMGR_SRCPART_HAT_E 7 /* (1,2,3), RIGHT on a hat */
+#define INMGR_SRCPART_HAT_S 8 /* (3,4,5), DOWN on a hat */
+#define INMGR_SRCPART_HAT_W 9 /* (5,6,7), LEFT on a hat */
 
-struct inmgr_map {
-  int srcdevid;
-  int srcbtnid;
-  int srcvalue;
-  int srclo,srchi;
-  uint8_t mode;
-  uint8_t dstplayerid;
-  uint16_t dstbtnid;
-  int8_t dstvalue;
+#define INMGR_DSTTYPE_BUTTON 1
+#define INMGR_DSTTYPE_ACTION 2
+
+/* Rules.
+ ********************************************************/
+ 
+struct inmgr_rules {
+  char *name; // with wildcards
+  int namec;
+  uint16_t vid,pid; // zero matches all
+  struct inmgr_rules_button { // sorted by (srcbtnid,srcpart), duplicates forbidden.
+    int srcbtnid;
+    uint8_t srcpart;
+    uint8_t dsttype;
+    uint16_t dstbtnid;
+  } *buttonv;
+  int buttonc,buttona;
 };
 
-struct inmgr_cap {
-  int btnid;
-  uint32_t usage;
-  int lo,hi,rest;
-  uint8_t premap; // IGNORE,OFF,MID,OOB: What class of button is it?
-};
+void inmgr_rules_del(struct inmgr_rules *rules);
+struct inmgr_rules *inmgr_rules_new();
 
+int inmgr_rules_set_name(struct inmgr_rules *rules,const char *src,int srcc);
+struct inmgr_rules_button *inmgr_rules_add_button(struct inmgr_rules *rules,int srcbtnid,uint8_t srcpart);
+
+int inmgr_rules_buttonv_search(const struct inmgr_rules *rules,int srcbtnid,uint8_t srcpart);
+struct inmgr_rules_button *inmgr_rules_buttonv_insert(struct inmgr_rules *rules,int p,int srcbtnid,uint8_t srcpart);
+
+int inmgr_rules_add_from_map(struct inmgr_rules *rules,const struct inmgr_map *map,const struct inmgr_device *device);
+
+/* Live devices.
+ ***********************************************************/
+ 
+#define INMGR_CAP_ROLE_IGNORE 0 /* Don't use this button, we don't know how. */
+#define INMGR_CAP_ROLE_BUTTON 1 /* Two-state button or one-way axis. */
+#define INMGR_CAP_ROLE_AXIS 2 /* Three-way axis. */
+#define INMGR_CAP_ROLE_HAT 3 /* Rotational 9-state hat. */
+ 
 struct inmgr_device {
   int devid;
-  uint16_t vid,pid;
-  char name[INMGR_DEVICE_NAME_LIMIT];
+  char *name;
   int namec;
-  struct inmgr_map *mapv;
-  int mapc,mapa;
-  struct inmgr_cap *capv;
+  uint16_t vid,pid;
+  struct inmgr_cap {
+    int btnid;
+    int usage;
+    int lo,hi,rest;
+    int role;
+  } *capv;
   int capc,capa;
-  //TODO Definitely need to find and retain the rules template here.
 };
 
+void inmgr_device_del(struct inmgr_device *device);
+struct inmgr_device *inmgr_device_new(int devid,const char *name,int namec,uint16_t vid,uint16_t pid);
+
+int inmgr_device_set_name(struct inmgr_device *device,const char *src,int srcc);
+struct inmgr_cap *inmgr_device_add_capability(struct inmgr_device *device,int btnid,int usage,int lo,int hi,int rest);
+
+struct inmgr_cap *inmgr_device_get_capability(const struct inmgr_device *device,int btnid);
+
+int inmgr_guess_capability_role(const struct inmgr_cap *cap);
+
+/* Live maps.
+ * During normal event processing, we do not examine rules or devices.
+ * All mappable inputs are stored in this flat list.
+ *****************************************************************/
+ 
+struct inmgr_map {
+  int devid;
+  int srcbtnid;
+  int srcvalue;
+  int srclo,srchi; // For N hats, range would be discontiguous. Those must have (srchi<srclo), and (srclo) is the middle value, normally zero.
+  uint8_t dsttype;
+  uint8_t dstvalue;
+  uint16_t dstbtnid;
+};
+
+/* Context.
+ *******************************************************************/
+ 
 struct inmgr {
   struct inmgr_delegate delegate;
-  int ready;
   
-  uint16_t btnid_horz,btnid_vert,btnid_dpad;
+  uint16_t state;
   
-  uint16_t player_statev[1+INMGR_PLAYER_LIMIT];
-  
-  /* Live input maps, one for each button on each device.
-   * Sorted by (srcdevid,srcbtnid) but there can be more than one per.
-   */
-  struct inmgr_map *mapv;
+  struct inmgr_map *mapv; // Sorted by (devid,srcbtnid), and duplicates permitted. (expected to occupy different src ranges)
   int mapc,mapa;
   
-  /* Null or the just-connected device in process of configuration. (strong)
-   */
-  struct inmgr_device *pending_device;
+  struct inmgr_rules **rulesv; // First match wins.
+  int rulesc,rulesa;
   
   struct inmgr_device **devicev;
   int devicec,devicea;
   
-  //TODO "rule" for uninstantiated maps
+  struct inmgr_device *device_pending; // STRONG, not listed yet, handshake in progress
+  struct inmgr_rules *rules_pending; // WEAK, listed, rules matching (device_pending), if any exists
   
-  int live_config_devid;
+  int live_config_status;
+  uint16_t live_config_btnid;
+  struct inmgr_device *live_config_device; // WEAK
+  int live_config_await_btnid; // given srcbtnid is pressed and must be released before we'll move on
+  int live_config_confirm_btnid; // populated during "AGAIN" stages and must match.
+  uint8_t live_config_await_srcpart;
+  uint8_t live_config_confirm_srcpart;
 };
 
-int inmgr_maps_acceptable(struct inmgr *inmgr,const struct inmgr_map *mapv,int mapc);
-
-/* Add multiple maps.
- * Incoming must be on the same (srcdevid), must be sorted, and that (srcdevid) must not be mapped yet.
+/* Searching maps always returns the lowest index, if any exists.
  */
-int inmgr_add_maps(struct inmgr *inmgr,const struct inmgr_map *mapv,int mapc);
+int inmgr_mapv_search(const struct inmgr *inmgr,int devid,int srcbtnid);
+struct inmgr_map *inmgr_mapv_insert(struct inmgr *inmgr,int p,int devid,int srcbtnid);
+void inmgr_mapv_remove_devid(struct inmgr *inmgr,int devid); // may trigger state callback
 
-/* Remove all live maps for a source device.
- * Returns a mask of playerid which had a map removed, caller should blank those player states.
- * *** This does not update states or fire callbacks. Caller is expected to. ***
+/* Convenience to add a mapping in one line.
+ * We violate isolation a little; you have to include fmn_platform.h for button IDs and bigpc_internal.h for action IDs.
  */
-uint16_t inmgr_remove_maps(struct inmgr *inmgr,int devid);
+int inmgr_mapv_add(struct inmgr *inmgr,int devid,int srcbtnid,int srcvalue,int srclo,int srchi,uint8_t dsttype,uint8_t dstvalue,uint16_t dstbtnid);
+#define inmgr_mapv_add_button(devid,srcbtnid,btntag) inmgr_mapv_add(inmgr,devid,srcbtnid,0,1,INT_MAX,INMGR_DSTTYPE_BUTTON,0,FMN_INPUT_##btntag)
+#define inmgr_mapv_add_action(devid,srcbtnid,actiontag) inmgr_mapv_add(inmgr,devid,srcbtnid,0,1,INT_MAX,INMGR_DSTTYPE_ACTION,0,BIGPC_ACTIONID_##actiontag)
 
-/* Update player state and fire callbacks for multiple button bits.
- * This does not update player zero (unless playerid is zero).
+/* Generate live maps for a new device.
  */
-void inmgr_trigger_multiple_state_changes(struct inmgr *inmgr,uint8_t playerid,uint16_t mask,uint8_t value);
+int inmgr_map_device(struct inmgr *inmgr,const struct inmgr_device *device,const struct inmgr_rules *rules);
+int inmgr_map_device_ruleless(struct inmgr *inmgr,const struct inmgr_device *device);
 
-/* Update player state and fire callbacks for one button bit.
- * This **does** update player zero too, if (playerid) nonzero.
+/* Set all the nonzero bits of (btnids) to (value).
+ * If current state already agrees, noop.
+ * Otherwise adjust state and trigger callbacks.
+ * For the 'single' version, caller promises to only call with single-bit (btnid).
  */
-void inmgr_change_player_state(struct inmgr *inmgr,uint8_t playerid,uint16_t mask,uint8_t value);
+void inmgr_set_state_multiple_with_callbacks(struct inmgr *inmgr,uint16_t btnids,uint8_t value);
+void inmgr_set_state_single_with_callbacks(struct inmgr *inmgr,uint16_t btnid,uint8_t value);
 
-/* Find all maps for a device or device+button.
- * Gives the correct insertion point at (*dstpp) even when result is zero.
+struct inmgr_rules *inmgr_rulesv_match_device(const struct inmgr *inmgr,const struct inmgr_device *device);
+struct inmgr_rules *inmgr_rulesv_new(struct inmgr *inmgr,int p); // (p==0) for start, (p<0) for end, or a real insertion point
+
+struct inmgr_device *inmgr_devicev_search_devid(const struct inmgr *inmgr,int devid);
+int inmgr_devicev_add(struct inmgr *inmgr,struct inmgr_device *device); // handoff
+void inmgr_devicev_remove_devid(struct inmgr *inmgr,int devid); // deletes device if present
+
+int inmgr_pattern_match(const char *pat,int patc,const char *src,int srcc);
+
+/* (devid) would already be checked and probly shouldn't even be a parameter here.
  */
-int inmgr_mapv_search_srcdevid(struct inmgr_map **dstpp,const struct inmgr *inmgr,int srcdevid);
-int inmgr_mapv_search_srcdevid_srcbtnid(struct inmgr_map **dstpp,const struct inmgr *inmgr,int srcdevid,int srcbtnid);
-
-void inmgr_device_del(struct inmgr_device *device);
-struct inmgr_device *inmgr_device_new(int devid,uint16_t vid,uint16_t pid,const char *name,int namec);
-int inmgr_device_add_capability(struct inmgr_device *device,int btnid,uint32_t usage,int lo,int hi,int value);
-int inmgr_device_finalize_maps(struct inmgr_device *device);
-struct inmgr_cap *inmgr_device_get_cap(const struct inmgr_device *device,int btnid);
-
-int inmgr_device_handoff(struct inmgr *inmgr,struct inmgr_device *device);
-struct inmgr_device *inmgr_device_by_devid(const struct inmgr *inmgr,int devid);
+void inmgr_live_config_event(struct inmgr *inmgr,int devid,int btnid,int value);
 
 #endif

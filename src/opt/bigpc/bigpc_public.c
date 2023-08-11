@@ -38,6 +38,7 @@ void bigpc_quit() {
   if (bigpc.savedgame_path) free(bigpc.savedgame_path);
   if (bigpc.savedgame_serial) free(bigpc.savedgame_serial);
   if (bigpc.langv) free(bigpc.langv);
+  bigpc_config_cleanup(&bigpc.config);
   
   memset(&bigpc,0,sizeof(struct bigpc));
   bigpc.exename="fullmoon";
@@ -52,13 +53,6 @@ int bigpc_init(int argc,char **argv) {
   if ((err=bigpc_configure_argv(argc,argv))<0) return err;
   if ((err=bigpc_config_ready())<0) return err;
   
-  if (!bigpc.config.data_path) {
-    bigpc_config_guess_data_path();
-    if (!bigpc.config.data_path) {
-      fprintf(stderr,"%s: Please indicate data file as '--data=PATH'\n",bigpc.exename);
-      return -2;
-    }
-  }
   if (!(bigpc.datafile=fmn_datafile_open(bigpc.config.data_path))) {
     fprintf(stderr,"%s: Failed to read data file.\n",bigpc.config.data_path);
     return -2;
@@ -77,7 +71,10 @@ int bigpc_init(int argc,char **argv) {
   // With video and input both online, check whether we need to map the System Keyboard.
   if (bigpc.video->type->has_wm) {
     bigpc.devid_keyboard=bigpc_input_devid_next();
-    inmgr_connect_system_keyboard(bigpc.inmgr,bigpc.devid_keyboard);
+    inmgr_connect(bigpc.inmgr,bigpc.devid_keyboard,"System keyboard",-1,0,0);
+    if (inmgr_ready(bigpc.inmgr)>0) {
+      bigpc_save_input_config();
+    }
   }
   
   if (fmn_init()<0) {
@@ -117,6 +114,14 @@ static void bigpc_check_violin() {
  
 int bigpc_update() {
   if (bigpc.sigc) return 0;
+  
+  // Acquire live input config state. Commit if just completed.
+  bigpc.incfg_status=inmgr_live_config_status(&bigpc.incfg_btnid,bigpc.inmgr);
+  if (bigpc.incfg_status==INMGR_LIVE_CONFIG_SUCCESS) {
+    inmgr_rewrite_rules_for_live_config(bigpc.inmgr);
+    inmgr_live_config_end(bigpc.inmgr);
+    bigpc_save_input_config();
+  }
   
   // Update drivers.
   if (bigpc_video_driver_update(bigpc.video)<0) return -1;

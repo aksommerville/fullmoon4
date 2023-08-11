@@ -59,9 +59,11 @@ struct bigpc_config {
   
   char *render_drivers;
   
-  char *data_path;
+  char *data_path; // guaranteed present after bigpc_config_ready
   char *log_path;
   char *savedgame_path; // per user. The one we actually use is (bigpc.savedgame_path).
+  char *input_path;
+  char *settings_path;
   int lang;
 };
 
@@ -88,6 +90,7 @@ extern struct bigpc {
   uint16_t *langv; // Built according to (datafile).
   int langc,langa;
   
+  /*XXX?
   uint8_t incfg_state;
   uint8_t incfg_p;
   uint8_t incfg_btnid;
@@ -96,6 +99,12 @@ extern struct bigpc {
   int incfg_incoming_btnid;
   int incfg_incoming_value;
   int incfg_confirm_ready;
+  /**/
+  // Live input config state. Refreshed just before each input cycle.
+  int incfg_status;
+  uint16_t incfg_btnid;
+  uint8_t incfg_p;
+  int incfg_devid;
   
   uint8_t input_state;
   int devid_keyboard;
@@ -132,7 +141,7 @@ void bigpc_config_init();
 int bigpc_configure_argv(int argc,char **argv);
 int bigpc_configure_kv(const char *k,int kc,const char *v,int vc);
 int bigpc_config_ready();
-int bigpc_config_guess_data_path();
+//XXX int bigpc_config_guess_data_path();
 void bigpc_settings_init(); // Owned by config, but separate. Call after drivers and datafile are created.
 
 void bigpc_signal_init();
@@ -142,6 +151,7 @@ int bigpc_video_init();
 int bigpc_audio_init();
 
 int bigpc_input_init();
+int bigpc_save_input_config();
 
 void bigpc_rebuild_language_list();
 
@@ -167,8 +177,8 @@ void bigpc_cb_pcm_out(void *v,int c,struct bigpc_audio_driver *driver);
 void bigpc_cb_connect(struct bigpc_input_driver *driver,int devid);
 void bigpc_cb_disconnect(struct bigpc_input_driver *driver,int devid);
 void bigpc_cb_event(struct bigpc_input_driver *driver,int devid,int btnid,int value);
-void bigpc_cb_state_change(void *userdata,uint8_t playerid,uint16_t btnid,uint8_t value,uint16_t state);
-void bigpc_cb_action(void *userdata,uint8_t playerid,uint16_t actionid);
+void bigpc_cb_state_change(struct inmgr *inmgr,uint16_t btnid,uint8_t value,uint16_t state);
+void bigpc_cb_action(struct inmgr *inmgr,uint16_t actionid);
 
 void bigpc_cap_screen();
 

@@ -281,7 +281,7 @@ static int bigpc_input_try_init(const struct bigpc_input_type *type) {
 /* Input button and action strings.
  */
  
-static uint16_t bigpc_btnid_eval(void *userdata,const char *src,int srcc) {
+static uint16_t bigpc_btnid_eval(/*void *userdata,*/const char *src,int srcc) {
   // Button ID tags are all upper-case. Evaluate case-insensitively.
   char norm[16];
   if ((srcc<0)||(srcc>sizeof(norm))) return 0;
@@ -299,7 +299,7 @@ static uint16_t bigpc_btnid_eval(void *userdata,const char *src,int srcc) {
   return 0;
 }
 
-static int bigpc_btnid_repr(char *dst,int dsta,void *userdata,uint16_t btnid) {
+static int bigpc_btnid_repr(char *dst,int dsta,/*void *userdata,*/uint16_t btnid) {
   const char *src=0;
   int srcc=0;
   switch (btnid) {
@@ -318,7 +318,7 @@ static int bigpc_btnid_repr(char *dst,int dsta,void *userdata,uint16_t btnid) {
   return srcc;
 }
 
-static uint16_t bigpc_actionid_eval(void *userdata,const char *src,int srcc) {
+static uint16_t bigpc_actionid_eval(/*void *userdata,*/const char *src,int srcc) {
   // Action ID tags are all lower-case. Evaluate case-insensitively.
   char norm[32];
   if ((srcc<0)||(srcc>sizeof(norm))) return 0;
@@ -331,7 +331,7 @@ static uint16_t bigpc_actionid_eval(void *userdata,const char *src,int srcc) {
   return 0;
 }
 
-static int bigpc_actionid_repr(char *dst,int dsta,void *userdata,uint16_t actionid) {
+static int bigpc_actionid_repr(char *dst,int dsta,/*void *userdata,*/uint16_t actionid) {
   const char *src=0;
   int srcc=0;
   switch (actionid) {
@@ -349,6 +349,11 @@ static int bigpc_actionid_repr(char *dst,int dsta,void *userdata,uint16_t action
 
 /* Init input.
  */
+ 
+static void bigpc_input_config_cb_error(const char *msg,int msgc,int lineno,void *userdata) {
+  const char *path=userdata;
+  fprintf(stderr,"%s:%d: %.*s\n",path,lineno,msgc,msg);
+}
 
 int bigpc_input_init() {
   
@@ -377,12 +382,8 @@ int bigpc_input_init() {
   // Initialize the mapper.
   const struct inmgr_delegate inmgr_delegate={
     .userdata=0,
-    .btnid_left=FMN_INPUT_LEFT,
-    .btnid_right=FMN_INPUT_RIGHT,
-    .btnid_up=FMN_INPUT_UP,
-    .btnid_down=FMN_INPUT_DOWN,
-    .btnid_required=FMN_INPUT_LEFT|FMN_INPUT_RIGHT|FMN_INPUT_UP|FMN_INPUT_DOWN|FMN_INPUT_USE|FMN_INPUT_MENU,
-    .state_change=bigpc_cb_state_change,
+    .all_btnid=FMN_INPUT_LEFT|FMN_INPUT_RIGHT|FMN_INPUT_UP|FMN_INPUT_DOWN|FMN_INPUT_USE|FMN_INPUT_MENU,
+    .state=bigpc_cb_state_change,
     .action=bigpc_cb_action,
     .btnid_eval=bigpc_btnid_eval,
     .btnid_repr=bigpc_btnid_repr,
@@ -390,8 +391,20 @@ int bigpc_input_init() {
     .actionid_repr=bigpc_actionid_repr,
   };
   if (!(bigpc.inmgr=inmgr_new(&inmgr_delegate))) return -1;
-  //TODO config file for inmgr
-  if (inmgr_ready(bigpc.inmgr)<0) return -1;
+  if (bigpc.config.input_path) {
+    char *src=0;
+    int srcc=fmn_file_read(&src,bigpc.config.input_path);
+    if (srcc>=0) {
+      int err=inmgr_receive_config(bigpc.inmgr,src,srcc,bigpc_input_config_cb_error,bigpc.config.input_path);
+      free(src);
+      if (err<0) return -2;
+      fprintf(stderr,"%s: Acquired input config.\n",bigpc.config.input_path);
+    } else {
+      fprintf(stderr,"%s: Failed to read input config. Proceeding with defaults only.\n",bigpc.config.input_path);
+    }
+  } else {
+    fprintf(stderr,"%s: Input config path not provided. We will use defaults and will not be able to save changes.\n",bigpc.exename);
+  }
   
   return 0;
 }

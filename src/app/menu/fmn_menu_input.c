@@ -53,7 +53,15 @@ static void input_adjust(struct fmn_menu *menu,int d) {
 static void _input_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
 
   if (input!=menu->pvinput) {
-    if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) { input_dismiss(menu); return; }
+    if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) {
+      uint8_t cfgp8=0,cfgbtn8=0;
+      if (fmn_platform_get_input_configuration_state(&cfgp8,&cfgbtn8)) {
+        fmn_platform_cancel_input_configuration();
+      } else {
+        input_dismiss(menu);
+        return;
+      }
+    }
     if ((input&FMN_INPUT_USE)&&!(menu->pvinput&FMN_INPUT_USE)) input_activate(menu);
     const uint8_t verts=FMN_INPUT_UP|FMN_INPUT_DOWN;
     const uint8_t horzs=FMN_INPUT_LEFT|FMN_INPUT_RIGHT;

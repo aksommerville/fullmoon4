@@ -1,4 +1,4 @@
-#include "bigpc_input.h"
+#include "bigpc_internal.h"
 #include <string.h>
 #include <stdlib.h>
 

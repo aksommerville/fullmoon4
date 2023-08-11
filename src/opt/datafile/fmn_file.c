@@ -136,3 +136,12 @@ void fmn_file_delete(const char *path) {
   if (!path||!path[0]) return;
   unlink(path);
 }
+
+/* Create directory.
+ */
+ 
+int fmn_mkdir(const char *path) {
+  if (!path||!path[0]) return -1;
+  if (mkdir(path,0775)<0) return -1;
+  return 0;
+}

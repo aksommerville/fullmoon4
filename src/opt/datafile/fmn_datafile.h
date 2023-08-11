@@ -92,6 +92,7 @@ int fmn_file_write(const char *path,const void *src,int srcc);
 int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,char type,void *userdata),void *userdata);
 char fmn_file_get_type(const char *path);
 void fmn_file_delete(const char *path);
+int fmn_mkdir(const char *path);
 
 /* Knowledge of specific resource type formats.
  ************************************************************/

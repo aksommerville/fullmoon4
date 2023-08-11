@@ -3,6 +3,7 @@
 
 #define BIGPC_SAVEDGAME_DEBOUNCE_TIME_S 3
 
+#if 0 //XXX bigpc_config_ready takes care of this now
 /* Guess path, at init.
  */
  
@@ -36,6 +37,7 @@ static void bigpc_savedgame_guess_path() {
   
   // Doubtless plenty of other guesses we could make, but I'm leaving it here for now.
 }
+#endif
 
 /* Init.
  */
@@ -45,12 +47,8 @@ void bigpc_savedgame_init() {
   bigpc.saveto_recent=FMN_SPELLID_HOME;
 
   if (!bigpc.savedgame_path) { // should not be set yet
-    // User gave us a path, don't question it:
-    if (bigpc.config.savedgame_path) {
+    if (bigpc.config.savedgame_path) { // should always be set after bigpc_config_ready
       if (!(bigpc.savedgame_path=strdup(bigpc.config.savedgame_path))) return;
-    // Otherwise, we can guess it somehow:
-    } else {
-      bigpc_savedgame_guess_path();
     }
   }
   

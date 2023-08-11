@@ -1,13 +1,20 @@
 /* inmgr.h
- * Generic input mapping.
- * The key concepts:
- *   - You supply raw input events and we call back with digested states and actions.
- *   - Inputs are associated with a nonzero "playerid".
- *   - playerid zero is the aggregate state of all players.
- *   - In addition to the per-player and aggregate states, there are stateless "actions".
- *   - States are 16 independent bits.
- *   - Actions are a 16-bit identifier.
- * This is fully generic. I'm writing it for Full Moon, but <-- that is the only time you'll hear "Full Moon". (and also <-- that one).
+ * Generic input manager.
+ * All devices are first canonicalized as a set of two-state buttons.
+ * Those buttons are then mappable to logical buttons and actions.
+ * Since Full Moon is a strictly 1-player game, we're not bothering with multiple players.
+ * (though logically that would be our domain).
+ *
+ * There is a global 16-bit state of player input, and a 16-bit set of stateless actions.
+ * (btnid) is a single bit.
+ * (actionid) is a nonzero integer.
+ *
+ * Source devices are identified by name or vid/pid for config purposes; and devid for live ones.
+ *
+ * Mapping decisions, in order of preference:
+ *  - First match from the config file (order matters).
+ *  - If no declared capabilities and "keyboard" in the name, assume HID page 7 is available.
+ *  - Use declared capabilities.
  */
  
 #ifndef INMGR_H
@@ -17,148 +24,116 @@
 
 struct inmgr;
 
-#define INMGR_PLAYER_LIMIT 15 /* We'll never use a playerid greater than this. (this doesn't count player zero). */
-
 struct inmgr_delegate {
   void *userdata;
-  
-  /* Tell us which bits are the dpad, so we can handle axes and hats appropriately.
-   * These may all be zero, otherwise they must each be a unique bit.
-   */
-  uint16_t btnid_left,btnid_right,btnid_up,btnid_down;
-  
-  /* If a device is missing any of these bits after mapping, it won't participate.
-   */
-  uint16_t btnid_required;
-  
-  /* Notification of a state change on some player.
-   * You will not get redundant notifications.
-   * State changes on a nonzero playerid will typically be followed by the same state change on player zero.
-   * (but again, not always, if player zero was already in that state).
-   */
-  void (*state_change)(void *userdata,uint8_t playerid,uint16_t btnid,uint8_t value,uint16_t state);
-  
-  /* Notification of a stateless action.
-   * (playerid) is nonzero if it came from a device mapped to just one player.
-   */
-  void (*action)(void *userdata,uint8_t playerid,uint16_t actionid);
-  
-  /* Hooks to manage your buttons and actions as text, for config files.
-   * (btnid) generally should be a single bit, but (left|right), (up|down), (left|right|up|down) are also permitted.
-   */
-  uint16_t (*btnid_eval)(void *userdata,const char *src,int srcc);
-  uint16_t (*actionid_eval)(void *userdata,const char *src,int srcc);
-  int (*btnid_repr)(char *dst,int dsta,void *userdata,uint16_t btnid);
-  int (*actionid_repr)(char *dst,int dsta,void *userdata,uint16_t actionid);
+  uint16_t all_btnid; // Mask of all valid btnid.
+  void (*state)(struct inmgr *inmgr,uint16_t btnid,uint8_t value,uint16_t state);
+  void (*action)(struct inmgr *inmgr,uint16_t actionid);
+  int (*btnid_repr)(char *dst,int dsta,uint16_t btnid);
+  uint16_t (*btnid_eval)(const char *src,int srcc);
+  int (*actionid_repr)(char *dst,int dsta,uint16_t actionid);
+  uint16_t (*actionid_eval)(const char *src,int srcc);
 };
 
 /* Global context.
- **********************************************************************/
+ ******************************************************************************/
 
 void inmgr_del(struct inmgr *inmgr);
 
-/* New unconfigured inmgr.
- * Both delegate hooks (state_change,action) are required.
- */
 struct inmgr *inmgr_new(const struct inmgr_delegate *delegate);
 
-/* Apply a config file.
- * If (refname) set, we will log errors to stderr. (even if it's empty).
- */
-int inmgr_configure_text(struct inmgr *inmgr,const char *src,int srcc,const char *refname);
+void *inmgr_get_userdata(const struct inmgr *inmgr);
+uint16_t inmgr_get_state(const struct inmgr *inmgr);
 
-/* Call once after applying all config, and before any events or connections.
+/* Pretend (state) is the current logical state, until anything changes.
+ * This will not fire any events. It causes a possible discontinuity in the states reported to the delegate.
  */
+void inmgr_force_state(struct inmgr *inmgr,uint16_t state);
+
+/* You already know about the devices, I mean, you provided them to us at some point.
+ * But it might be more convenient to retrieve the list from inmgr than to re-gather it from the drivers.
+ */
+int inmgr_for_each_device(
+  struct inmgr *inmgr,
+  int (*cb)(int devid,const char *name,int namec,uint16_t vid,uint16_t pid,void *userdata),
+  void *userdata
+);
+
+int inmgr_device_index_by_devid(const struct inmgr *inmgr,int devid);
+int inmgr_device_devid_by_index(const struct inmgr *inmgr,int index);
+
+uint8_t inmgr_device_name_by_index(char *dst,int dsta,const struct inmgr *inmgr,int p);
+
+/* Input processing.
+ *******************************************************************************/
+
+/* Pass all input events here, just as the drivers provide to you.
+ */
+void inmgr_event(struct inmgr *inmgr,int devid,int btnid,int value);
+
+/* Notify of a new device available.
+ * Call 'connect', then multiple 'add_capability', then 'ready'.
+ * Mapping is finalized during 'ready'.
+ * inmgr_ready() returns >0 if it added new rules; you might like to serialize and save the config then.
+ */
+void inmgr_connect(struct inmgr *inmgr,int devid,const char *name,int namec,uint16_t vid,uint16_t pid);
+void inmgr_add_capability(struct inmgr *inmgr,int btnid,int usage,int lo,int hi,int rest);
 int inmgr_ready(struct inmgr *inmgr);
 
-/* Call for all state changes on source devices.
- * Returns nonzero if the event is mapped. Zero, you might try other fallback behavior?
+/* Drop any state and mappings associated with this device.
  */
-int inmgr_event(struct inmgr *inmgr,int devid,int btnid,int value);
+void inmgr_disconnect(struct inmgr *inmgr,int devid);
 
-/* Force the given bits of the given player on or off, without firing callbacks or syncing player zero.
- * There are situations where you'll want to do this to ignore the next event.
+/* Config file.
+ ******************************************************************************/
+
+/* Drop configuration for all rules matching this ID.
+ * If you provide (0,0,0,0) we drop everything.
  */
-void inmgr_force_input_state(struct inmgr *inmgr,uint8_t playerid,uint16_t mask,uint8_t value);
+void inmgr_drop_configuration(struct inmgr *inmgr,const char *name,int namec,uint16_t vid,uint16_t pid);
 
-void inmgr_drop_all_state(struct inmgr *inmgr);
-
-/* Device handshake and farewell.
- **************************************************************/
-
-/* You must identify source devices by a unique positive "devid".
- * To inform inmgr of a new device, call inmgr_device_connect.
- * Immediately after that, you should call inmgr_device_capability for each button on it, then inmgr_device_ready.
- * If you don't "ready" a device, it will not participate in mapping.
- *
- * Currently, only one device at a time is permitted to be in connected-but-not-ready state.
+/* Provide the config file.
+ * Optionally we can report errors via (cb_error).
+ * You should decorate the message, eg: fprintf(stderr,"%s:%d: %.*s\n",my_file_name,lineno,msgc,msg);
+ * New rules from the file are appended to existing rules -- you probably want to drop first.
  */
-void inmgr_device_disconnect(struct inmgr *inmgr,int devid);
-int inmgr_device_connect(struct inmgr *inmgr,int devid,uint16_t vid,uint16_t pid,const char *name,int namec);
-void inmgr_device_capability(struct inmgr *inmgr,int devid,int btnid,uint32_t usage,int lo,int hi,int value);
-int inmgr_device_ready(struct inmgr *inmgr,int devid);
+int inmgr_receive_config(
+  struct inmgr *inmgr,
+  const char *src,int srcc,
+  void (*cb_error)(const char *msg,int msgc,int lineno,void *userdata),
+  void *userdata
+);
 
-/* Equivalent to "connect ... dozens of capabilities ... ready", but we can guess the capabilities.
- * A device connected this way is mapped like any other, with vid=0 pid=0 name="System Keyboard".
- * (btnid) are presumed to be fully qualified USB-HID, page 7, eg 0x00070004 is A.
+/* Generate a replacement for the config file.
+ * Any comments and formatting are lost.
  */
-int inmgr_connect_system_keyboard(struct inmgr *inmgr,int devid);
+int inmgr_generate_config(void *dstpp,const struct inmgr *inmgr);
 
-/* Live reconfiguration.
- * During live config, all mapping is suppressed.
- * All states drop to zero at the start, and no states will begin, or actions fire, while enabled.
- * Call inmgr_live_config_event() instead of inmgr_event() while in this state.
- * (regular inmgr_event() becomes noop).
- **************************************************************/
+/* Live configuration.
+ * This is a special state where you are prompting the user to configure each button on one device.
+ * Any existing maps for the device are dropped at begin.
+ * We generate new permanent rules. You should inmgr_generate_config and save that after ending.
+ * Other devices continue to operate as usual.
+ ************************************************************************/
  
-int inmgr_begin_live_config(struct inmgr *inmgr,int devid);
-void inmgr_end_live_config(struct inmgr *inmgr);
-int inmgr_get_live_config_devid(struct inmgr *inmgr);
+void inmgr_live_config_begin(struct inmgr *inmgr,int devid);
+void inmgr_live_config_end(struct inmgr *inmgr);
 
-/* Returns zero if this is not the device under configuration, or INMGR_PREMAP_BTN_*.
- * That's a quantized opinion of the value's meaning, so you can distinguish buttons, axes, and hats.
+/* Live-config state changes happen during the usual event processing.
+ * You should poll us each cycle to determine whether live-config is running.
  */
-int inmgr_live_config_event(struct inmgr *inmgr,int devid,int btnid,int value);
-#define INMGR_PREMAP_BTN_IGNORE 0 /* Wrong device or whatever. */
-#define INMGR_PREMAP_BTN_OFF 1 /* 2-state OFF */
-#define INMGR_PREMAP_BTN_ON 2 /* 2-state ON */
-#define INMGR_PREMAP_BTN_LO 3 /* 3-state LOW */
-#define INMGR_PREMAP_BTN_MID 4 /* 3-state OFF */
-#define INMGR_PREMAP_BTN_HI 5 /* 3-state HIGH */
-#define INMGR_PREMAP_BTN_OOB 6 /* 9-state OFF */
-#define INMGR_PREMAP_BTN_N 7 /* 9-state UP */
-#define INMGR_PREMAP_BTN_NE 8 /* 9-state UP+RIGHT */
-#define INMGR_PREMAP_BTN_E 9 /* 9-state RIGHT */
-#define INMGR_PREMAP_BTN_SE 10 /* 9-state DOWN+RIGHT */
-#define INMGR_PREMAP_BTN_S 11 /* 9-state DOWN */
-#define INMGR_PREMAP_BTN_SW 12 /* 9-state DOWN+LEFT */
-#define INMGR_PREMAP_BTN_W 13 /* 9-state LEFT */
-#define INMGR_PREMAP_BTN_NW 14 /* 9-state UP+LEFT */
+int inmgr_live_config_status(uint16_t *btnid,const struct inmgr *inmgr);
+#define INMGR_LIVE_CONFIG_NONE 0 /* Not running. */
+#define INMGR_LIVE_CONFIG_FAULT 1 /* Notify that we got something unexpected, otherwise same as PRESS state. */
+#define INMGR_LIVE_CONFIG_PRESS 2 /* Press the given button, first time. */
+#define INMGR_LIVE_CONFIG_RELEASE 3 /* Got a button, waiting to release it. */
+#define INMGR_LIVE_CONFIG_PRESS_AGAIN 4 /* Please press it again to confirm. */
+#define INMGR_LIVE_CONFIG_RELEASE_AGAIN 5 /* And release that... */
+#define INMGR_LIVE_CONFIG_SUCCESS 6 /* All inputs collected. You should end and save it. */
 
-static inline int inmgr_premap_on(int value) {
-  switch (value) {
-    case INMGR_PREMAP_BTN_IGNORE:
-    case INMGR_PREMAP_BTN_OFF:
-    case INMGR_PREMAP_BTN_MID:
-    case INMGR_PREMAP_BTN_OOB:
-      return 0;
-  }
-  return 1;
-}
-
-static inline int inmgr_premap_single(int value) {
-  switch (value) {
-    case INMGR_PREMAP_BTN_IGNORE:
-    case INMGR_PREMAP_BTN_OFF:
-    case INMGR_PREMAP_BTN_MID:
-    case INMGR_PREMAP_BTN_OOB:
-    case INMGR_PREMAP_BTN_NE:
-    case INMGR_PREMAP_BTN_SE:
-    case INMGR_PREMAP_BTN_SW:
-    case INMGR_PREMAP_BTN_NW:
-      return 0;
-  }
-  return 1;
-}
+/* Call while live config is running, normally when it enters SUCCESS state.
+ * This drops any rules for the configging device and generates a new rules set based on live mappings.
+ */
+int inmgr_rewrite_rules_for_live_config(struct inmgr *inmgr);
 
 #endif

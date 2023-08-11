@@ -15,8 +15,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] Driver settings
 - - [x] Music mute
 - - [ ] Input config
-- - - [ ] Commit to inmgr
-- - - [ ] Persist
+- - - [x] Commit to inmgr
+- - - [x] Persist
 - - - [ ] Countdown in menu, abort interactive if no input.
 - - - [x] Handle analogue axes
 - - - [x] Ignore analogue noise
@@ -35,6 +35,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 
+- [ ] credits: Sound effect on delivering the winter clothes
+- [ ] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
+- [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
+- [ ] Look for other hard-coded text.
 - [ ] Make the farmer emerge faster. Should be hard not to see him.
 - [ ] Move items around: Compass to Swamp. Umbrella and Wand to Beach? Violin to music shop. Shovel must come earlier
 - [ ] North pole: Shuffle land bridges south so no blowback while on dry land.

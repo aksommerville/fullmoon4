@@ -1,0 +1,24 @@
+Full Moon Input Config File Format
+Only applies to platforms using inmgr -- at the moment, that's everything except web.
+It's conceivable that highly-specific platforms might not use inmgr; in that case they likely wouldn't have any input config at all.
+
+A file "input" is created adjacent to the executable. (adjacent to the bundle for MacOS).
+
+Line-oriented text. Hash begins a line comment.
+Order matters! New devices are tested against each block in order and the first match wins.
+Comments and formatting will be lost when the game auto-saves, if you reconfigure a device in-game.
+*** All integers are hexadecimal with no prefix. ***
+
+Organized into blocks beginning:
+  device VID PID NAME
+  
+Followed by any number of rules:
+  SRCBTNID [SRCPART] [DSTTYPE] DSTBTNID
+  SRCBTNID is a plain integer.
+  DSTBTNID is a button or action string: LEFT RIGHT UP DOWN USE MENU ; quit fullscreen pause step screencap save restore mainmenu
+  (See src/app/fmn_platform.h:FMN_INPUT_* and src/opt/bigpc/bigpc_internal.h:BIGPC_ACTIONID_*)
+  SRCPART identifies the portion of SRCBTNID's range to use:
+    btn     : 2-state buttons. Default, you may omit.
+    lo hi   : 3-way axes.
+    n e s w : Hats
+  DSTTYPE is the namespace for DSTBTNID and may be omitted: button, action. If omitted, we try button first, then action.
