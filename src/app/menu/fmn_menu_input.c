@@ -10,6 +10,11 @@
 #define cfgbtn menu->argv[4]
 #define selp menu->argv[5]
 #define devc menu->argv[6]
+#define cfgstatepv menu->argv[7]
+#define cfgtime menu->fv[0] /* counts up during interactive config */
+
+#define INPUT_CFGTIME_WARN 5.0f
+#define INPUT_CFGTIME_ABORT 15.0f
 
 /* Dismiss.
  */
@@ -80,7 +85,21 @@ static void _input_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
   cfgstate=fmn_platform_get_input_configuration_state(&cfgp8,&cfgbtn8);
   cfgp=cfgp8;
   cfgbtn=cfgbtn8;
-  //if (cfgstate) menu->pvinput=0xff;
+  if (cfgstate&&(cfgstate!=cfgstatepv)) {
+    cfgstatepv=cfgstate;
+    cfgtime=0.0f;
+  }
+  if (cfgstate) {
+    cfgtime+=elapsed;
+    if (cfgtime>=INPUT_CFGTIME_ABORT) {
+      cfgtime=0.0f;
+      cfgstate=0;
+      cfgstatepv=0;
+      cfgp=0;
+      cfgbtn=0;
+      fmn_platform_cancel_input_configuration();
+    }
+  }
 }
 
 /* Render interactive configuration.
@@ -99,11 +118,8 @@ static uint16_t input_stringid_for_btnid(uint8_t btnid) {
 }
 
 // Returns full (vtxc). Flushes vertices if necessary.
-static int input_add_text_line(struct fmn_draw_mintile *vtxv,int vtxc,int vtxa,struct fmn_menu *menu,uint16_t stringid,int16_t y) {
-  char text[64];
-  int textc=fmn_get_string(text,sizeof(text),stringid);
+static int input_add_text_line(struct fmn_draw_mintile *vtxv,int vtxc,int vtxa,struct fmn_menu *menu,const char *text,int textc,int16_t y) {
   if (textc<1) return vtxc;
-  if (textc>sizeof(text)) textc=sizeof(text);
   int16_t x=(menu->fbw>>1)-((textc*INPUT_GLYPH_W)>>1)+(INPUT_GLYPH_W>>1);
   const char *src=text;
   int i=textc;
@@ -121,13 +137,32 @@ static int input_add_text_line(struct fmn_draw_mintile *vtxv,int vtxc,int vtxa,s
   }
   return vtxc;
 }
+
+static int input_add_string_line(struct fmn_draw_mintile *vtxv,int vtxc,int vtxa,struct fmn_menu *menu,uint16_t stringid,int16_t y) {
+  char text[64];
+  int textc=fmn_get_string(text,sizeof(text),stringid);
+  if (textc<1) return vtxc;
+  if (textc>sizeof(text)) textc=sizeof(text);
+  return input_add_text_line(vtxv,vtxc,vtxa,menu,text,textc,y);
+}
  
 static void input_render_interactive(struct fmn_menu *menu,uint16_t promptstringid,uint16_t addlstringid) {
   struct fmn_draw_mintile vtxv[128];
   int vtxc=0,vtxa=sizeof(vtxv)/sizeof(vtxv[0]);
-  vtxc=input_add_text_line(vtxv,vtxc,vtxa,menu,addlstringid,INPUT_GLYPH_H*9);
-  vtxc=input_add_text_line(vtxv,vtxc,vtxa,menu,promptstringid,INPUT_GLYPH_H*11);
-  vtxc=input_add_text_line(vtxv,vtxc,vtxa,menu,input_stringid_for_btnid(cfgbtn),INPUT_GLYPH_H*12);
+  vtxc=input_add_string_line(vtxv,vtxc,vtxa,menu,addlstringid,INPUT_GLYPH_H*9);
+  vtxc=input_add_string_line(vtxv,vtxc,vtxa,menu,promptstringid,INPUT_GLYPH_H*11);
+  vtxc=input_add_string_line(vtxv,vtxc,vtxa,menu,input_stringid_for_btnid(cfgbtn),INPUT_GLYPH_H*12);
+  if (cfgtime>=INPUT_CFGTIME_WARN) {
+    char msg[32]="Abort in ";
+    int msgc=9;
+    int s=INPUT_CFGTIME_ABORT-cfgtime;
+    if (s<0) s=0;
+    if (s>=10) {
+      msg[msgc++]='0'+s/10;
+    }
+    msg[msgc++]='0'+s%10;
+    vtxc=input_add_text_line(vtxv,vtxc,vtxa,menu,msg,msgc,INPUT_GLYPH_H*15);
+  }
   fmn_draw_mintile(vtxv,vtxc,20);
 }
 

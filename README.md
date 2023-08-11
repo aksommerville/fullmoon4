@@ -14,10 +14,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] Driver selection
 - - [ ] Driver settings
 - - [x] Music mute
-- - [ ] Input config
+- - [x] Input config
 - - - [x] Commit to inmgr
 - - - [x] Persist
-- - - [ ] Countdown in menu, abort interactive if no input. Also: Must restore maps as they were before live config.
+- - - [x] Countdown in menu, abort interactive if no input. Also: Must restore maps as they were before live config.
 - - - [x] Handle analogue axes
 - - - [x] Ignore analogue noise
 - - - [x] Handle hats

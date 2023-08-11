@@ -177,6 +177,7 @@ void inmgr_live_config_begin(struct inmgr *inmgr,int devid) {
   inmgr->live_config_await_btnid=0;
   inmgr->live_config_confirm_btnid=0;
   while (!(inmgr->live_config_btnid&inmgr->delegate.all_btnid)) inmgr->live_config_btnid<<=1;
+  inmgr_deathrow_mapv_rebuild(inmgr,devid);
   inmgr_mapv_remove_devid(inmgr,devid);
 }
 
@@ -184,11 +185,16 @@ void inmgr_live_config_begin(struct inmgr *inmgr,int devid) {
  */
  
 void inmgr_live_config_end(struct inmgr *inmgr) {
+  if (inmgr->live_config_status==INMGR_LIVE_CONFIG_NONE) return;
+  if (inmgr->live_config_status!=INMGR_LIVE_CONFIG_SUCCESS) {
+    inmgr_deathrow_mapv_restore(inmgr);
+  }
   inmgr->live_config_status=INMGR_LIVE_CONFIG_NONE;
   inmgr->live_config_btnid=0;
   inmgr->live_config_device=0;
   inmgr->live_config_await_btnid=0;
   inmgr->live_config_confirm_btnid=0;
+  inmgr->deathrow_mapc=0;
 }
 
 /* Get status.

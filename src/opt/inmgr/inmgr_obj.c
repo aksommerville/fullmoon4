@@ -15,6 +15,7 @@ void inmgr_del(struct inmgr *inmgr) {
     free(inmgr->devicev);
   }
   inmgr_device_del(inmgr->device_pending);
+  if (inmgr->deathrow_mapv) free(inmgr->deathrow_mapv);
   free(inmgr);
 }
 
@@ -138,6 +139,53 @@ int inmgr_mapv_add(struct inmgr *inmgr,int devid,int srcbtnid,int srcvalue,int s
   map->dsttype=dsttype;
   map->dstvalue=dstvalue;
   map->dstbtnid=dstbtnid;
+  return 0;
+}
+
+/* Maps death row: Maps for the device under live configuration, which we can restore if live config cancels.
+ */
+ 
+int inmgr_deathrow_mapv_rebuild(struct inmgr *inmgr,int devid) {
+  inmgr->deathrow_mapc=0;
+  int p=inmgr_mapv_search(inmgr,devid,0);
+  if (p<0) p=-p-1;
+  const struct inmgr_map *map=inmgr->mapv+p;
+  int c=0;
+  while ((p+c<inmgr->mapc)&&(map[c].devid==devid)) c++;
+  if (c>inmgr->deathrow_mapa) {
+    int na=c;
+    if (na>INT_MAX/sizeof(struct inmgr_map)) return -1;
+    void *nv=realloc(inmgr->deathrow_mapv,sizeof(struct inmgr_map)*na);
+    if (!nv) return -1;
+    inmgr->deathrow_mapv=nv;
+    inmgr->deathrow_mapa=na;
+  }
+  memcpy(inmgr->deathrow_mapv,map,sizeof(struct inmgr_map)*c);
+  inmgr->deathrow_mapc=c;
+  return 0;
+}
+
+int inmgr_deathrow_mapv_restore(struct inmgr *inmgr) {
+  if (!inmgr->live_config_device) return 0;
+  int devid=inmgr->live_config_device->devid;
+  int p=inmgr_mapv_search(inmgr,devid,0);
+  if (p<0) p=-p-1;
+  int rmc=0;
+  while ((p+rmc<inmgr->mapc)&&(inmgr->mapv[p+rmc].devid==devid)) rmc++;
+  if (rmc<inmgr->deathrow_mapc) {
+    int na=inmgr->mapc+inmgr->deathrow_mapc-rmc;
+    if (na<INT_MAX-64) na=(na+64)&~63;
+    if (na>INT_MAX/sizeof(struct inmgr_map)) return -1;
+    void *nv=realloc(inmgr->mapv,sizeof(struct inmgr_map)*na);
+    if (!nv) return -1;
+    inmgr->mapv=nv;
+    inmgr->mapa=na;
+  }
+  if (rmc!=inmgr->deathrow_mapc) {
+    memmove(inmgr->mapv+p+inmgr->deathrow_mapc,inmgr->mapv+p+rmc,sizeof(struct inmgr_map)*(inmgr->mapc-rmc-p));
+    inmgr->mapc+=inmgr->deathrow_mapc-rmc;
+  }
+  memcpy(inmgr->mapv+p,inmgr->deathrow_mapv,sizeof(struct inmgr_map)*inmgr->deathrow_mapc);
   return 0;
 }
 

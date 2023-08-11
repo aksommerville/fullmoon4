@@ -127,6 +127,8 @@ struct inmgr {
   int live_config_confirm_btnid; // populated during "AGAIN" stages and must match.
   uint8_t live_config_await_srcpart;
   uint8_t live_config_confirm_srcpart;
+  struct inmgr_map *deathrow_mapv; // maps removed at start of live config. will restore if cancelled.
+  int deathrow_mapc,deathrow_mapa;
 };
 
 /* Searching maps always returns the lowest index, if any exists.
@@ -167,5 +169,8 @@ int inmgr_pattern_match(const char *pat,int patc,const char *src,int srcc);
 /* (devid) would already be checked and probly shouldn't even be a parameter here.
  */
 void inmgr_live_config_event(struct inmgr *inmgr,int devid,int btnid,int value);
+
+int inmgr_deathrow_mapv_rebuild(struct inmgr *inmgr,int devid);
+int inmgr_deathrow_mapv_restore(struct inmgr *inmgr);
 
 #endif
