@@ -11,8 +11,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [ ] Settings menu.
 - - [x] Fullscreen
-- - [ ] Driver selection
-- - [ ] Driver settings
+- - xxx Driver selection ...leave these as configurable only at command line. too risky for casual users
+- - xxx Driver settings
 - - [x] Music mute
 - - [x] Input config
 - - - [x] Commit to inmgr

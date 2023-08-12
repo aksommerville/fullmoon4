@@ -360,6 +360,6 @@ void fmn_menu_init_HELLO(struct fmn_menu *menu) {
   if (fmn_can_quit()) {
     opt_available|=0x08;
   }
-  opt_available&=~0x0c; // XXX Suppress Quit and Settings, for kiosk at Matsuricon 2023.
+  //opt_available&=~0x0c; // XXX Suppress Quit and Settings, for kiosk at Matsuricon 2023.
   fmn_play_song(1,1);
 }
