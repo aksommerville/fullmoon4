@@ -542,6 +542,107 @@ int bigpc_config_ready() {
   return 0;
 }
 
+/* Encode and decode settings.
+ */
+ 
+static int bigpc_settings_encode(void *dstpp) {
+  char tmp[256];
+  int tmpc=snprintf(tmp,sizeof(tmp),
+    "fullscreen=%d\nmusic=%d\nlang=%c%c\n",
+    bigpc.settings.fullscreen_enable,
+    bigpc.settings.music_enable,
+    bigpc.settings.language>>8,bigpc.settings.language&0xff
+  );
+  if ((tmpc<0)||(tmpc>=sizeof(tmp))) return -1;
+  char *nv=malloc(tmpc+1);
+  if (!nv) return -1;
+  memcpy(nv,tmp,tmpc+1);
+  *(void**)dstpp=nv;
+  return tmpc;
+}
+
+static int bigpc_settings_eval_bool(const char *src,int srcc) {
+  for (;srcc-->0;src++) {
+    if (*src!='0') return 1;
+  }
+  return 0;
+}
+
+static int bigpc_settings_decode_line(struct fmn_platform_settings *settings,const char *src,int srcc) {
+  if (!src) srcc=0; else if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
+  int srcp=0;
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  if (srcp>=srcc) return 0;
+  const char *k=src+srcp;
+  int kc=0;
+  while ((srcp<srcc)&&(src[srcp++]!='=')) kc++;
+  while (kc&&((unsigned char)k[kc-1]<=0x20)) kc--;
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  const char *v=src+srcp;
+  int vc=srcc-srcp;
+  while (vc&&((unsigned char)v[vc-1]<=0x20)) vc--;
+  
+  if ((kc==10)&&!memcmp(k,"fullscreen",10)) {
+    if (bigpc.video->type->set_fullscreen) {
+      settings->fullscreen_enable=bigpc_settings_eval_bool(v,vc);
+      if (settings->fullscreen_enable!=bigpc.video->fullscreen) {
+        bigpc.video->type->set_fullscreen(bigpc.video,settings->fullscreen_enable);
+      }
+    }
+    return 0;
+  }
+  
+  if ((kc==5)&&!memcmp(k,"music",5)) {
+    if (bigpc.synth->type->enable_music) {
+      settings->music_enable=bigpc_settings_eval_bool(v,vc);
+      if (settings->music_enable!=bigpc.synth->music_enable) {
+        bigpc.synth->type->enable_music(bigpc.synth,settings->music_enable);
+      }
+    }
+    return 0;
+  }
+  
+  if ((kc==4)&&!memcmp(k,"lang",4)) {
+    if ((vc==2)&&(v[0]>='a')&&(v[0]<='z')&&(v[1]>='a')&&(v[1]<='z')) {
+      uint16_t lang=(v[0]<<8)|v[1];
+      if (lang!=settings->language) {
+        int i=bigpc.langc;
+        while (i-->0) {
+          if (bigpc.langv[i]==lang) {
+            settings->language=lang;
+            bigpc.config.lang=lang;
+            fmn_language_changed();
+            break;
+          }
+        }
+      }
+    }
+    return 0;
+  }
+  
+  fprintf(stderr,"%s: Unexpected settings key '%.*s'\n",bigpc.config.settings_path,kc,k);
+  return 0;
+}
+
+static int bigpc_settings_decode(struct fmn_platform_settings *settings,const char *src,int srcc) {
+  if (!src) srcc=0; else if (srcc<0) { srcc=0; while (src[srcc]) srcc++; }
+  int srcp=0;
+  while (srcp<srcc) {
+    if ((unsigned char)src[srcp]<=0x20) { srcp++; continue; }
+    const char *line=src+srcp;
+    int linec=0,comment=0;
+    while ((srcp<srcc)&&(src[srcp++]!=0x0a)) {
+      if (src[srcp-1]=='#') comment=1;
+      else if (!comment) linec++;
+    }
+    while (linec&&((unsigned char)line[linec-1]<=0x20)) linec--;
+    if (!linec) continue;
+    int err=bigpc_settings_decode_line(settings,line,linec);
+    if (err<0) return err;
+  }
+  return 0;
+}
+
 /* Initialize app-visible settings from live state.
  */
  
@@ -551,6 +652,44 @@ void bigpc_settings_init() {
   bigpc.settings.music_available=bigpc.synth->type->enable_music?1:0;
   bigpc.settings.music_enable=bigpc.synth->music_enable?1:0;
   bigpc.settings.language=bigpc.config.lang;
+  
+  if (bigpc.config.settings_path) {
+    char *serial=0;
+    int serialc=fmn_file_read(&serial,bigpc.config.settings_path);
+    if (serialc<0) {
+      fprintf(stderr,"%s: Failed to read file, using default settings.\n",bigpc.config.settings_path);
+    } else {
+      if (bigpc_settings_decode(&bigpc.settings,serial,serialc)<0) {
+        fprintf(stderr,"%s: Failed to decode or apply settings.\n",bigpc.config.settings_path);
+      }
+      free(serial);
+    }
+  }
+}
+
+/* Save settings.
+ */
+ 
+void bigpc_settings_dirty() {
+  bigpc.settings_dirty=1;
+}
+
+void bigpc_settings_save_if_dirty() {
+  if (!bigpc.settings_dirty) return;
+  bigpc.settings_dirty=0;
+  if (!bigpc.config.settings_path) return;
+  char *serial=0;
+  int serialc=bigpc_settings_encode(&serial);
+  if (serialc<0) {
+    fprintf(stderr,"%s: Failed to encode settings!\n",bigpc.exename);
+    return;
+  }
+  if (fmn_file_write(bigpc.config.settings_path,serial,serialc)<0) {
+    fprintf(stderr,"%s: Failed to save settings!\n",bigpc.config.settings_path);
+  } else {
+    fprintf(stderr,"%s: Saved settings\n",bigpc.config.settings_path);
+  }
+  free(serial);
 }
 
 /* Save input configuration.

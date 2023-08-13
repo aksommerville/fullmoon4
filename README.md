@@ -9,24 +9,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Remaining major features. Finish before 31 August.
 
-- [ ] Settings menu.
-- - [x] Fullscreen
-- - xxx Driver selection ...leave these as configurable only at command line. too risky for casual users
-- - xxx Driver settings
-- - [x] Music mute
-- - [x] Input config
-- - - [x] Commit to inmgr
-- - - [x] Persist
-- - - [x] Countdown in menu, abort interactive if no input. Also: Must restore maps as they were before live config.
-- - - [x] Handle analogue axes
-- - - [x] Ignore analogue noise
-- - - [x] Handle hats
-- - - [x] A is stuck on when returning from interactive config.
-- - [x] Language
-- - xxx Zap saved game. And show details. ...we have a "New Game" option from Hello, this is pointless.
-- - [ ] bigpc: Persist settings.
-- - [ ] web: Expose settings.
-- - [ ] web: Persist settings.
+- [ ] Settings for web.
 - [ ] Music channels went out of sync when toggling enable. (minsyn, tangled vine)
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
@@ -59,6 +42,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] More hat trolls outside. Make it very difficult to get by without the Hat.
 - [ ] Put Hat in the Mountains.
 - [ ] "R" chalk, allow negative slope.
+- [ ] "R" chalk: Accept narrow top bubble.
 - [ ] Castle pumpkin icon, make more legible.
 - [ ] Possible to stand inside the dragon's head. Fire should hit you there.
 - [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
@@ -67,6 +51,13 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Positive and negative beeps from alphablocks as you encode.
 - [ ] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way.
 - [ ] Firewall: Respect invisibility.
+- [ ] "Don't look" sign for firewall, nobody gets it on their own.
+- [ ] Konami code easter egg.
+- [ ] horz/vert indicator showed null initially.
+- [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
+- [ ] Speed up the velocity envelope's release a little?
+- [ ] Cut violin to 2 beats/measure or cut tempo, so we can play the click for every possible note slot.
+- [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
 
 ### Further critical features and bugs. Finish before 15 September.
 

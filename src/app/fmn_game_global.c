@@ -33,7 +33,6 @@ int fmn_game_init() {
   
   fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
   fmn_begin_menu(FMN_MENU_HELLO,0);
-  //fmn_begin_menu(FMN_MENU_CREDITS,0);
   
   return 0;
 }
@@ -516,7 +515,7 @@ void fmn_game_update(float elapsed) {
       fmn_global.terminate_time=0.0f;
       if (fmn_global.hero_dead) fmn_begin_menu(FMN_MENU_GAMEOVER,0);
       else {
-        if (1/*TODO: is demo*/) fmn_begin_menu(FMN_MENU_VICTORY,0);
+        if (fmn_is_demo()) fmn_begin_menu(FMN_MENU_VICTORY,0);
         else fmn_begin_menu(FMN_MENU_CREDITS,0);
       }
       return;

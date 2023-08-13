@@ -462,6 +462,7 @@ void fmn_platform_set_settings(struct fmn_platform_settings *settings) {
   if (settings->fullscreen_enable!=bigpc.settings.fullscreen_enable) {
     bigpc_video_set_fullscreen(bigpc.video,settings->fullscreen_enable);
     bigpc.settings.fullscreen_enable=settings->fullscreen_enable;
+    bigpc_settings_dirty();
   }
   if (settings->music_enable!=bigpc.settings.music_enable) {
     if (bigpc.synth->type->enable_music) {
@@ -469,6 +470,7 @@ void fmn_platform_set_settings(struct fmn_platform_settings *settings) {
         bigpc.synth->type->enable_music(bigpc.synth,settings->music_enable);
         bigpc_audio_unlock(bigpc.audio);
         bigpc.settings.music_enable=settings->music_enable;
+        bigpc_settings_dirty();
       }
     }
   }
@@ -476,6 +478,7 @@ void fmn_platform_set_settings(struct fmn_platform_settings *settings) {
     bigpc.config.lang=settings->language;
     bigpc.settings.language=settings->language;
     fmn_language_changed();
+    bigpc_settings_dirty();
   }
 }
 

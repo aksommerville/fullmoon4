@@ -87,6 +87,7 @@ extern struct bigpc {
   struct bigpc_clock clock;
   
   struct fmn_platform_settings settings;
+  int settings_dirty;
   uint16_t *langv; // Built according to (datafile).
   int langc,langa;
   
@@ -132,6 +133,8 @@ int bigpc_configure_argv(int argc,char **argv);
 int bigpc_configure_kv(const char *k,int kc,const char *v,int vc);
 int bigpc_config_ready();
 void bigpc_settings_init(); // Owned by config, but separate. Call after drivers and datafile are created.
+void bigpc_settings_dirty();
+void bigpc_settings_save_if_dirty();
 
 void bigpc_signal_init();
 
