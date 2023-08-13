@@ -3,6 +3,7 @@
 int mkd_compile_map(struct mkd_respath *respath);
 int mkd_compile_tileprops(struct mkd_respath *respath);
 int mkd_compile_sprite(struct mkd_respath *respath);
+int mkd_compile_image(struct mkd_respath *respath);
 
 /* Verbatim compile: Copy input to output.
  */
@@ -51,7 +52,7 @@ int mkd_main_single() {
   switch (respath.restype) {
   
     // Individual resource compilation:
-    case FMN_RESTYPE_IMAGE: err=mkd_compile_verbatim(&respath); break; //TODO
+    case FMN_RESTYPE_IMAGE: err=mkd_compile_image(&respath); break;
     case FMN_RESTYPE_MAP: err=mkd_compile_map(&respath); break;
     case FMN_RESTYPE_TILEPROPS: err=mkd_compile_tileprops(&respath); break;
     case FMN_RESTYPE_SPRITE: err=mkd_compile_sprite(&respath); break;

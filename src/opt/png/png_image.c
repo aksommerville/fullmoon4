@@ -474,3 +474,226 @@ int png_channel_count_for_colortype(uint8_t colortype) {
   }
   return 0;
 }
+
+/* Iterate.
+ */
+ 
+static int png_image_iterate_1(
+  struct png_image *image,
+  int (*cb)(struct png_image *image,int x,int y,uint32_t rgba,void *userdata),
+  void *userdata
+) {
+  uint32_t pixel0=0x000000ff,pixel1=0xffffffff;
+  if (image->colortype==3) {
+    //TODO indexed pixels
+  }
+  const uint8_t *row=image->pixels;
+  int yi=image->h,y=0,err;
+  for (;yi-->0;row+=image->stride,y++) {
+    const uint8_t *p=row;
+    uint8_t mask=0x80;
+    int xi=image->w,x=0;
+    for (;xi-->0;x++) {
+      if ((*p)&mask) {
+        if (err=cb(image,x,y,pixel1,userdata)) return err;
+      } else {
+        if (err=cb(image,x,y,pixel0,userdata)) return err;
+      }
+      if (mask==1) { mask=0x80; p++; }
+      else mask>>=1;
+    }
+  }
+  return 0;
+}
+ 
+static int png_image_iterate_2(
+  struct png_image *image,
+  int (*cb)(struct png_image *image,int x,int y,uint32_t rgba,void *userdata),
+  void *userdata
+) {
+  uint32_t pixelv[4]={
+    0x000000ff,
+    0x555555ff,
+    0xaaaaaaff,
+    0xffffffff,
+  };
+  if (image->colortype==3) {
+    //TODO indexed pixels
+  }
+  const uint8_t *row=image->pixels;
+  int yi=image->h,y=0,err;
+  for (;yi-->0;row+=image->stride,y++) {
+    const uint8_t *p=row;
+    int shift=6;
+    int xi=image->w,x=0;
+    for (;xi-->0;x++) {
+      if (err=cb(image,x,y,pixelv[((*p)>>shift)&3],userdata)) return err;
+      if (shift==0) { shift=6; p++; }
+      else shift-=2;
+    }
+  }
+  return 0;
+}
+ 
+static int png_image_iterate_4(
+  struct png_image *image,
+  int (*cb)(struct png_image *image,int x,int y,uint32_t rgba,void *userdata),
+  void *userdata
+) {
+  uint32_t pixelv[16]={
+    0x000000ff,
+    0x111111ff,
+    0x222222ff,
+    0x333333ff,
+    0x444444ff,
+    0x555555ff,
+    0x666666ff,
+    0x777777ff,
+    0x888888ff,
+    0x999999ff,
+    0xaaaaaaff,
+    0xbbbbbbff,
+    0xccccccff,
+    0xddddddff,
+    0xeeeeeeff,
+    0xffffffff,
+  };
+  if (image->colortype==3) {
+    //TODO indexed pixels
+  }
+  const uint8_t *row=image->pixels;
+  int yi=image->h,y=0,err;
+  for (;yi-->0;row+=image->stride,y++) {
+    const uint8_t *p=row;
+    int shift=4;
+    int xi=image->w,x=0;
+    for (;xi-->0;x++) {
+      if (err=cb(image,x,y,pixelv[((*p)>>shift)&15],userdata)) return err;
+      if (shift) shift=0;
+      else { shift=4; p++; }
+    }
+  }
+  return 0;
+}
+ 
+static int png_image_iterate_8(
+  struct png_image *image,
+  int (*cb)(struct png_image *image,int x,int y,uint32_t rgba,void *userdata),
+  void *userdata
+) {
+  int err;
+  const uint8_t *row=image->pixels;
+  int yi=image->h,y=0;
+  switch (image->colortype) {
+    case 3: //TODO indexed pixels; treat as gray
+    case 0: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p++) {
+            uint32_t pixel=((*p)<<24)|((*p)<<16)|((*p)<<8)|0xff;
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+    case 2: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p+=3) {
+            uint32_t pixel=(p[0]<<24)|(p[1]<<16)|(p[2]<<8)|0xff;
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+    case 4: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p+=2) {
+            uint32_t pixel=(p[0]<<24)|(p[0]<<16)|(p[0]<<8)|p[1];
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+    case 6: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p+=4) {
+            uint32_t pixel=(p[0]<<24)|(p[1]<<16)|(p[2]<<8)|p[3];
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+  }
+  return 0;
+}
+ 
+static int png_image_iterate_16(
+  struct png_image *image,
+  int (*cb)(struct png_image *image,int x,int y,uint32_t rgba,void *userdata),
+  void *userdata
+) {
+  int err;
+  const uint8_t *row=image->pixels;
+  int yi=image->h,y=0;
+  switch (image->colortype) {
+    case 0: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p+=2) {
+            uint32_t pixel=((*p)<<24)|((*p)<<16)|((*p)<<8)|0xff;
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+    case 2: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p+=6) {
+            uint32_t pixel=(p[0]<<24)|(p[2]<<16)|(p[4]<<8)|0xff;
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+    case 4: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p+=4) {
+            uint32_t pixel=(p[0]<<24)|(p[0]<<16)|(p[0]<<8)|p[2];
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+    case 6: {
+        for (;yi-->0;row+=image->stride,y++) {
+          const uint8_t *p=row;
+          int xi=image->w,x=0;
+          for (;xi-->0;x++,p+=8) {
+            uint32_t pixel=(p[0]<<24)|(p[2]<<16)|(p[4]<<8)|p[6];
+            if (err=cb(image,x,y,pixel,userdata)) return err;
+          }
+        }
+      } break;
+  }
+  return 0;
+}
+ 
+int png_image_iterate(
+  struct png_image *image,
+  int (*cb)(struct png_image *image,int x,int y,uint32_t rgba,void *userdata),
+  void *userdata
+) {
+  switch (image->depth) {
+    case 1: return png_image_iterate_1(image,cb,userdata);
+    case 2: return png_image_iterate_2(image,cb,userdata);
+    case 4: return png_image_iterate_4(image,cb,userdata);
+    case 8: return png_image_iterate_8(image,cb,userdata);
+    case 16: return png_image_iterate_16(image,cb,userdata);
+  }
+  return -1;
+}

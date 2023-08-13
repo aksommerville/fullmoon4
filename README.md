@@ -7,6 +7,25 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
+2023-08-12 Trying QOI.
+With PNG, copied verbatim from input: (linux)
+-rw-rw-r-- 1 andy andy 502003 Aug 12 19:48 data-demo
+-rw-rw-r-- 1 andy andy 530362 Aug 12 19:48 data-full
+With QOI (unverified): ***FAULTY***
+-rw-rw-r-- 1 andy andy 550375 Aug 12 20:24 data-demo
+-rw-rw-r-- 1 andy andy 578734 Aug 12 20:24 data-full
+With QOI. Unverified but more believable.
+-rw-rw-r-- 1 andy andy 699324 Aug 12 20:42 data-demo
+-rw-rw-r-- 1 andy andy 727683 Aug 12 20:42 data-full
+With empty images:
+-rw-rw-r-- 1 andy andy 105638 Aug 12 20:43 data-demo
+-rw-rw-r-- 1 andy andy 133997 Aug 12 20:43 data-full
+With headerless RGBA, just for reference:
+-rw-rw-r-- 1 andy andy 6501542 Aug 12 20:56 data-demo
+-rw-rw-r-- 1 andy andy 6529901 Aug 12 20:56 data-full
+...not bothering with the decoder; I'll stick with PNG.
+But assuming I got the encode right, these numbers aren't bad. 3/2 of PNG, but about 1/10 of raw RGBA.
+
 ### Remaining major features. Finish before 31 August.
 
 - [ ] Settings menu.
