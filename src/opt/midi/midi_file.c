@@ -437,8 +437,9 @@ static void midi_file_advance_tracks(struct midi_file *file,int tickc) {
     if (track->delay<0) {
       if (midi_track_read_delay(track)<0) continue;
     }
-    if (tickc>=track->delay) track->delay=0;
-    else track->delay-=tickc;
+    if (tickc>track->delay) {
+      track->delay=0;
+    } else track->delay-=tickc;
   }
 }
 

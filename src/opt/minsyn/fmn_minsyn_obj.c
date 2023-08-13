@@ -106,7 +106,7 @@ static void _minsyn_update_mono(int16_t *v,int c,struct bigpc_synth_driver *driv
     minsyn_generate_signal(v,updc,driver);
     v+=updc;
     c-=updc;
-    if (DRIVER->song&&!DRIVER->songpause) midi_file_advance(DRIVER->song,updc);
+    if (DRIVER->song&&!DRIVER->songpause&&driver->music_enable) midi_file_advance(DRIVER->song,updc);
   }
   minsyn_drop_defunct_voices(driver);
   DRIVER->update_in_progress_framec=0;

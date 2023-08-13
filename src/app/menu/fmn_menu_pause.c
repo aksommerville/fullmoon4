@@ -71,7 +71,6 @@ static void pause_move(struct fmn_menu *menu,int dx,int dy) {
 static void pause_activate(struct fmn_menu *menu) {
   switch (listselection) {
     case 0: { // Settings
-        return;//XXX Disable Settings during Matsuricon 2023 (it's not implemented yet)
         fmn_begin_menu(FMN_MENU_SETTINGS,0);
       } return;
     case 1: { // End Game

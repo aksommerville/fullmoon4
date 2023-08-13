@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### Remaining major features. Finish before 31 August.
 
 - [ ] Settings for web.
-- [ ] Music channels went out of sync when toggling enable. (minsyn, tangled vine)
+- [x] Music channels went out of sync when toggling enable. (minsyn, tangled vine)
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
