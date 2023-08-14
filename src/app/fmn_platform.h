@@ -729,7 +729,12 @@ struct fmn_platform_settings {
   uint8_t music_available;
   uint8_t music_enable;
   uint16_t language;
+  uint8_t scaler_available;
+  uint8_t scaler;
 };
+
+#define FMN_SCALER_PIXELLY 1
+#define FMN_SCALER_BLURRY 2
 
 void fmn_platform_get_settings(struct fmn_platform_settings *settings);
 void fmn_platform_set_settings(struct fmn_platform_settings *settings);

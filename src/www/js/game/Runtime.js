@@ -14,19 +14,22 @@ import { FullmoonMap } from "./FullmoonMap.js";
 import { Synthesizer } from "../synth/Synthesizer.js";
 import { SoundEffects } from "../synth/SoundEffects.js";
 import { SavedGameStore } from "./SavedGameStore.js";
+import { Preferences } from "./Preferences.js";
  
 export class Runtime {
   static getDependencies() {
     return [
       WasmLoader, DataService, InputManager, Window, 
       Renderer2d, /*RendererGl,*/ Clock, Globals,
-      Synthesizer, SoundEffects, Document, SavedGameStore
+      Synthesizer, SoundEffects, Document, SavedGameStore,
+      Preferences
     ];
   }
   constructor(
     wasmLoader, dataService, inputManager, window,
     renderer2d, /*rendererGl,*/ clock, globals,
-    synthesizer, soundEffects, document, savedGameStore
+    synthesizer, soundEffects, document, savedGameStore,
+    preferences
   ) {
     this.wasmLoader = wasmLoader;
     this.dataService = dataService;
@@ -39,15 +42,18 @@ export class Runtime {
     this.soundEffects = soundEffects;
     this.document = document;
     this.savedGameStore = savedGameStore;
+    this.preferences = preferences;
     
     this.onError = e => console.error(e); // RootUi should replace.
     this.onForcedPause = () => {}; // ''
+    this.requestFullscreen = (state) => {}; // ''; we assume it didn't change until RootUi calls setFullscreen() later.
     
     this.debugging = false; // when true, updates only happen explicitly via debugStep()
     this.running = false;
     this.animationFramePending = false;
     this.map = null;
     this.mapId = 0;
+    this.fullscreen = false;
     this.clock.reset();
     
     this.wasmLoader.env.fmn_web_log = p => this.window.console.log(`[wasm] ${this.wasmLoader.zstringFromMemory(p)}`);
@@ -80,6 +86,10 @@ export class Runtime {
     this.wasmLoader.env.fmn_platform_set_settings = (srcp) => this.setSettings(srcp);
     this.wasmLoader.env.fmn_platform_get_next_language = (lang) => this.getNextLanguage(lang, 1);
     this.wasmLoader.env.fmn_platform_get_prev_language = (lang) => this.getNextLanguage(lang, -1);
+    this.wasmLoader.env.fmn_platform_get_input_device_name = (dstp, dsta, devp) => this.getInputDeviceName(dstp, dsta, devp);
+    this.wasmLoader.env.fmn_platform_begin_input_configuration = (devp) => this.beginInputConfiguration(devp);
+    this.wasmLoader.env.fmn_platform_cancel_input_configuration = () => this.cancelInputConfiguration();
+    this.wasmLoader.env.fmn_platform_get_input_configuration_state = (devpp, btnidp) => this.getInputConfigurationState(devpp, btnidp);
     
     this.wasmLoader.env.fmn_video_init = (wmin, wmax, hmin, hmax, pixfmt) => this.renderer.fmn_video_init(wmin, wmax, hmin, hmax, pixfmt);
     this.wasmLoader.env.fmn_video_get_framebuffer_size = (wv, hv) => this.renderer.fmn_video_get_framebuffer_size(wv, hv);
@@ -109,6 +119,10 @@ export class Runtime {
   // RootUI should do this once, with the main canvas. OK to replace whenever.
   setRenderTarget(canvas) {
     this.renderer.setRenderTarget(canvas);
+  }
+  
+  setFullscreen(fs) {
+    this.fullscreen = !!fs;
   }
   
   reset() {
@@ -553,16 +567,94 @@ export class Runtime {
     this.document._fmn_business_log.text += `${this.clock.lastGameTime}@${this.mapId} ${text}\n`;
   }
   
+  /**
+struct fmn_platform_settings {
+  uint8_t fullscreen_available;
+  uint8_t fullscreen_enable;
+  uint8_t music_available;
+  uint8_t music_enable;
+  uint16_t language;
+  uint8_t scaler_available;
+  uint8_t scaler;
+};
+  /**/
+  
+  scalerCodeFromName(name) {
+    switch (name) {
+      case "nearest": return FMN.SCALER_PIXELLY;
+      case "linear": return FMN.SCALER_BLURRY;
+    }
+    return FMN.SCALER_PIXELLY;
+  }
+  
+  scalerNameFromCode(code) {
+    switch (code) {
+      case FMN.SCALER_PIXELLY: return "nearest";
+      case FMN.SCALER_BLURRY: return "linear";
+    }
+    return "nearest";
+  }
+  
   getSettings(dstp) {
-    //TODO
+    const dst = new Uint8Array(this.wasmLoader.memU8.buffer, this.wasmLoader.memU8.byteOffset + dstp, 8);
+    dst[0] = 1; // fullscreen_available
+    dst[1] = this.fullscreen ? 1 : 0; // fullscreen_enable
+    dst[2] = 1; // music_available
+    dst[3] = this.preferences.prefs.musicEnable ? 1 : 0; // music_enable
+    dst[4] = this.dataService.language; // wasm memory is little-endian
+    dst[5] = this.dataService.language >> 8;
+    dst[6] = 1; // scaler_available
+    dst[7] = this.scalerCodeFromName(this.preferences.prefs.scaling);
   }
   
   setSettings(srcp) {
-    //TODO
+    const src = new Uint8Array(this.wasmLoader.memU8.buffer, this.wasmLoader.memU8.byteOffset + srcp, 8);
+    const fullscreen = !!src[1];
+    const music = !!src[3];
+    const lang = src[4] | (src[5] << 8);
+    const scalerCode = src[7];
+    this.preferences.update({
+      musicEnable: music,
+      scaling: this.scalerNameFromCode(scalerCode),
+    });
+    if (fullscreen !== this.fullscreen) {
+      this.requestFullscreen(fullscreen);
+    }
+    if (lang !== this.dataService.language) {
+      this.dataService.language = lang;
+      this.wasmLoader.instance.exports.fmn_language_changed();
+    }
   }
   
   getNextLanguage(language, d) {
-    return ('e'<<8)|'n';//TODO
+    if (this.dataService.languages.length < 1) return language;
+    let p = this.dataService.languages.indexOf(language);
+    if (p < 0) {
+      p = 0;
+    } else {
+      p += d;
+      if (p < 0) p = this.dataService.languages.length - 1;
+      else if (p >= this.dataService.languages.length) p = 0;
+    }
+    return this.dataService.languages[p];
+  }
+
+  getInputDeviceName(dstp, dsta, devp) {
+    return 0;//TODO
+  }
+  
+  beginInputConfiguration(devp) {
+    //TODO
+  }
+  
+  cancelInputConfiguration() {
+    //TODO
+  }
+  
+  getInputConfigurationState(devpp, btnidp) {
+    this.wasmLoader.memU8[devpp] = FMN.INCFG_STATE_NONE; // NONE,READY,CONFIRM,FAULT
+    this.wasmLoader.memU8[btnidp] = 0;
+    //TODO
   }
 }
 

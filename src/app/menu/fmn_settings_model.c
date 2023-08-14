@@ -37,6 +37,25 @@ static void fmn_settings_field_write_iso631(char *dst,int dsta,struct fmn_settin
   }
 }
 
+static void fmn_settings_field_write_enum(char *dst,int dsta,int v,...) {
+  va_list vargs;
+  va_start(vargs,v);
+  char src[32];
+  int srcc=0;
+  while (v>0) {
+    v--;
+    int stringid=va_arg(vargs,int);
+    if (!stringid) break;
+    if (v) continue;
+    srcc=fmn_get_string(src,sizeof(src),stringid);
+    if ((srcc<0)||(srcc>sizeof(src))) srcc=0;
+    break;
+  }
+  if (srcc>dsta) srcc=dsta;
+  memcpy(dst,src,srcc);
+  memset(dst+srcc,0,dsta-srcc);
+}
+
 /* Overwrite text with field's current value.
  * (dst) null, we'll find it on our own.
  */
@@ -57,6 +76,7 @@ static void fmn_settings_field_write_value(
     case FMN_SETTINGS_FIELD_MUSIC_ENABLE: fmn_settings_field_write_enabled(dst,dsta,model,model->platform.music_enable); break;
     case FMN_SETTINGS_FIELD_LANGUAGE: fmn_settings_field_write_iso631(dst,dsta,model,model->platform.language); break;
     case FMN_SETTINGS_FIELD_INPUT: memset(dst,'.',3); break;
+    case FMN_SETTINGS_FIELD_SCALER: fmn_settings_field_write_enum(dst,dsta,model->platform.scaler,75,76,0); break;
   }
 }
 
@@ -123,6 +143,7 @@ void fmn_settings_model_init(struct fmn_settings_model *model) {
   
   fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_LANGUAGE);
   if (model->platform.fullscreen_available) fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_FULLSCREEN);
+  if (model->platform.scaler_available) fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_SCALER);
   if (model->platform.music_available) fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_MUSIC_ENABLE);
   fmn_settings_model_add_field(model,FMN_SETTINGS_FIELD_INPUT);
   
@@ -145,6 +166,13 @@ void fmn_settings_model_move(struct fmn_settings_model *model,int d) {
 /* Adjust value at current focus.
  */
  
+static uint8_t adjust_scaler(uint8_t src,int d) {
+  src+=d;
+  if (src==0xff) return 2;
+  if (src>=3) return 1;
+  return src;
+}
+ 
 void fmn_settings_model_adjust(struct fmn_settings_model *model,int d) {
   if (model->fieldc<1) return;
   struct fmn_settings_field *field=model->fieldv+model->fieldp;
@@ -153,6 +181,7 @@ void fmn_settings_model_adjust(struct fmn_settings_model *model,int d) {
     case FMN_SETTINGS_FIELD_MUSIC_ENABLE: model->platform.music_enable^=1; break;
     case FMN_SETTINGS_FIELD_LANGUAGE: model->platform.language=(d>0)?fmn_platform_get_next_language(model->platform.language):fmn_platform_get_prev_language(model->platform.language); break;
     case FMN_SETTINGS_FIELD_INPUT: return; // no value
+    case FMN_SETTINGS_FIELD_SCALER: model->platform.scaler=adjust_scaler(model->platform.scaler,d); break;
     default: return;
   }
   fmn_settings_field_write_value(model,field,0,0);

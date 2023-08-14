@@ -16,6 +16,7 @@
 #define FMN_SETTINGS_FIELD_MUSIC_ENABLE 52 /* boolean */
 #define FMN_SETTINGS_FIELD_LANGUAGE 53 /* enum */
 #define FMN_SETTINGS_FIELD_INPUT 54 /* interactive */
+#define FMN_SETTINGS_FIELD_SCALER 55 /* enum */
 //TODO video driver settings?
 //TODO audio driver settings?
 //TODO driver selection?

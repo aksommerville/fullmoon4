@@ -36,13 +36,14 @@ export class RootUi {
       
     this.runtime.onError = e => this.onError(e);
     this.runtime.onForcedPause = () => this.onForcedPause();
+    this.runtime.requestFullscreen = (state) => this.enterFullscreen(state);
   }
   
   buildUi() {
     this.element.innerHTML = "";
     this.game = this.dom.spawnController(this.element, GameUi);
     this.menu = this.dom.spawnController(this.element, MenuUi);
-    this.menu.onfullscreen = () => this.enterFullscreen();
+    this.menu.onfullscreen = () => this.enterFullscreen(true);
     this.menu.ondismiss = () => this.dismissMenu();
     this.runtime.setRenderTarget(this.game.getCanvas());
   }
@@ -91,7 +92,19 @@ export class RootUi {
     this.menu.show(false);
   }
   
-  enterFullscreen() {
-    this.dom.document.body.requestFullscreen();
+  enterFullscreen(state) {
+    if (state) {
+      this.dom.document.body.requestFullscreen().then(
+        () => this.runtime.setFullscreen(true)
+      ).catch(
+        err => console.error(err)
+      );
+    } else {
+      this.dom.document.exitFullscreen().then(
+        () => this.runtime.setFullscreen(false)
+      ).catch(
+        err => console.error(err)
+      );
+    }
   }
 }

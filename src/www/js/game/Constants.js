@@ -123,3 +123,11 @@ export const MAPFLAG_DARK = 0x01;
 export const MAPFLAG_INDOORS = 0x02;
 export const MAPFLAG_BLOWBACK = 0x04;
 export const MAPFLAG_ANCILLARY = 0x08;
+
+export const INCFG_STATE_NONE = 0; /* Not configuring input. */
+export const INCFG_STATE_READY = 1; /* Please press (btnid) */
+export const INCFG_STATE_CONFIRM = 2; /* Press again to confirm */
+export const INCFG_STATE_FAULT = 3; /* Invalid input; please press (btnid) */
+
+export const SCALER_PIXELLY = 1;
+export const SCALER_BLURRY = 2;

@@ -28,9 +28,20 @@ export class DataService {
     
     this.textDecoder = new this.window.TextDecoder("utf-8");
     this.toc = null; // null, Array, Promise, or Error. Array: { type, id, q, ser, obj }
+    this.languages = []; // string resource qualifiers as 16-bit big-endian integers, extracted at load as an optimization
+    this.language = this.languageFromIsoString(this.window.navigator.language) || 0x656e;
     this.plants = [];
     this.sketches = [];
     this.mapCount = 0;
+  }
+  
+  languageFromIsoString(src) {
+    if (!src || (src.length < 2)) return null;
+    src = src.toLowerCase();
+    const a = src.charCodeAt(0);
+    const b = src.charCodeAt(1);
+    if ((a < 0x61) || (a > 0x7a) || (b < 0x61) || (b > 0x7a)) return null;
+    return (a << 8) | b;
   }
   
   /* Access to resources.
@@ -44,7 +55,7 @@ export class DataService {
   getTileprops(id) { return this.getResource(RESTYPE_TILEPROPS, id); }
   getSong(id) { return this.getResource(RESTYPE_SONG, id); }
   getInstrument(id) { return this.getResource(RESTYPE_INSTRUMENT, id); }
-  getString(id) { return this.getResource(RESTYPE_STRING, id); } // TODO qualifier
+  getString(id) { return this.getResource(RESTYPE_STRING, id, this.language); }
   getSound(id) { return this.getResource(RESTYPE_SOUND, id); }
   
   getResource(type, id, qualifier) {
@@ -90,6 +101,7 @@ export class DataService {
    
   refresh() {
     this.toc = null;
+    this.languages = [];
     this.mapCount = 0;
     return this.load();
   }
@@ -116,6 +128,7 @@ export class DataService {
   _receiveArchive(serial) {
     const src = new Uint8Array(serial);
     this.toc = [];
+    this.languages = [];
     this.mapCount = 0;
     if (src.length < 12) throw new Error(`Short archive ${src.length}<12`);
     if ((src[0] !== 0xff) || (src[1] !== 0x41) || (src[2] !== 0x52) || (src[3] !== 0x00)) {
@@ -148,6 +161,9 @@ export class DataService {
           }
         }
         if (qualified) {
+          if ((nextType === RESTYPE_STRING) && (this.languages[this.languages.length - 1] !== nextQualifier)) {
+            this.languages.push(nextQualifier);
+          }
           prev = {
             type: nextType,
             q: nextQualifier,
@@ -168,6 +184,11 @@ export class DataService {
         prev.ser = new Uint8Array(len);
         prev.ser.set(srcView);
       }
+    }
+    if (this.languages.length && (this.languages.indexOf(this.language) < 0)) {
+      // Preferred language is not in our resource set. If we have English, use that. Otherwise whatever's first.
+      if (this.languages.indexOf(0x656e) >= 0) this.language = 0x656e;
+      else this.language = this.languages[0];
     }
     this._preloadAsNeeded();
   }
