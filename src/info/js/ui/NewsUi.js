@@ -18,6 +18,8 @@ export class NewsUi {
   buildUi() {
     this.element.innerHTML = "";
     //TODO Probly not the best presentation. Can we pretty this up a little?
+    this.addStory("2023-09-29", "Planned release date, and I'm still feeling good about being done in time.");
+    this.addStory("2023-08-11 .. 2023-08-13", "Presented at Matsuricon in Columbus. Big thanks to everyone who dropped by, we really had a blast!");
     this.addStory("2023-06-22 .. 2023-06-25", `Come see us at <a href="https://thegdex.com/">GDEX</a>!`);
     this.addStory("2023-05-09", "Redesigning this home page for Full Moon. Isn't it pretty?");
   }

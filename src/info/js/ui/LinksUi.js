@@ -39,8 +39,7 @@ export class LinksUi {
   buildUi() {
     this.element.innerHTML = "";
     
-    /* TODO Enable this once the Itch page is live.
-     *
+    // Itch demo.
     const itchIframe = this.dom.spawn(this.element, "IFRAME", {
       frameborder: "0",
       src: "https://itch.io/embed/2055668?linkback=true&amp;bg_color=000000&amp;fg_color=dcd6d6&amp;link_color=fa5c5c&amp;border_color=333333",
@@ -48,14 +47,14 @@ export class LinksUi {
       height: "167",
     });
     this.dom.spawn(itchIframe, "A", { href: "https://aksommerville.itch.io/full-moon" }, "Full Moon by aksommerville");
-    /**/
     
+    //TODO Itch full version, I assume we'll be doing two separate Itch apps.
     //TODO Steam widget, once I set it up.
     
     // GitHub
     this.dom.spawn(this.dom.spawn(this.element, "DIV"), "A",
       { href: "https://github.com/aksommerville/fullmoon4" },
-      "Source code (currently invitation-only, pending some license decisions)"
+      "Source code: https://github.com/aksommerville/fullmoon4"
     );
     
     // Packages

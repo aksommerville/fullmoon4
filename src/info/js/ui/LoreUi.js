@@ -17,9 +17,26 @@ export class LoreUi {
   
   buildUi() {
     this.element.innerHTML = "";
-    //TODO Fill this space with stories and pictures.
-    this.dom.spawn(this.element, "DIV", "Dot Vine is a witch.");
-    this.dom.spawn(this.element, "DIV", "Witches use magic and stuff.");
-    this.dom.spawn(this.element, "DIV", "Why would this pleasant, peaceful witch want to kill a werewolf?");
+    let imageSideToggle = true;
+    for (const content of [
+
+      "./img/look-i-found-a-feather.png",
+      "You are Dot Vine, the witch.",
+      "Normally you would never hurt anything, except sometimes, and especially when the anything is a werewolf.",
+      "<span></span>Werewolfs! They're the <i>worst</i>!",
+      "clear",
+      "./img/cast-a-spell.png",
+      "Witches use magic.",
+      "Sometimes that means casting a spell, sometimes it's a song, or maybe just a particular way of waggling a feather.",
+      "Find as much treasure as you can! Everything is useful.",
+
+    ]) {
+      switch (content[0]) {
+        case '.': this.dom.spawn(this.element, "IMG", [imageSideToggle ? "float-left" : "float-right"], { src: content }); imageSideToggle = !imageSideToggle; break;
+        case '<': this.dom.spawn(this.element, "DIV", ["content"]).innerHTML = content; break;
+        case 'c': this.dom.spawn(this.element, "BR", { clear: "left" }); break;
+        default: this.dom.spawn(this.element, "DIV", ["content"], content); break;
+      }
+    }
   }
 }

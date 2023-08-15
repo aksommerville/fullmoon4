@@ -29,6 +29,16 @@ footer {
   margin: 0.25em 0;
 }
 
+.float-left {
+  float: left;
+  margin-right: 1em;
+}
+
+.float-right {
+  float: right;
+  margin-left: 1em;
+}
+
 /* HomeTabber
  **************************************************/
 
@@ -127,6 +137,11 @@ footer {
  
 .LoreUi {
   padding: 0.5em;
+}
+
+.LoreUi .content {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 /* HintsUi
