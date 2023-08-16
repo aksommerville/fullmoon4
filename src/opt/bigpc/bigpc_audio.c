@@ -21,7 +21,7 @@ static const struct bigpc_audio_type *bigpc_audio_typev[]={
 #if FMN_USE_macaudio
   &bigpc_audio_type_macaudio,
 #endif
-#if FMN_USE_msaudio
+#if FMN_USE_mswin
   &bigpc_audio_type_msaudio,
 #endif
   &bigpc_audio_type_dummy,

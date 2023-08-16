@@ -22,15 +22,28 @@ int64_t bigpc_now_us() {
 }
 
 double bigpc_now_real_s() {
-  struct timespec tv={0};
-  clock_gettime(CLOCK_REALTIME,&tv);
-  return tv.tv_sec+tv.tv_nsec/1000000000.0;
+  #if FMN_USE_mswin
+    struct timeval tv={0};
+    gettimeofday(&tv,0);
+    return tv.tv_sec+tv.tv_usec/1000000.0;
+  #else
+    struct timespec tv={0};
+    clock_gettime(CLOCK_REALTIME,&tv);
+    return tv.tv_sec+tv.tv_nsec/1000000000.0;
+  #endif
 }
 
 double bigpc_now_cpu_s() {
-  struct timespec tv={0};
-  clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tv);
-  return tv.tv_sec+tv.tv_nsec/1000000000.0;
+  #if FMN_USE_mswin
+    // No clock_gettime in MinGW, whatever, just pretend real time is CPU time.
+    struct timeval tv={0};
+    gettimeofday(&tv,0);
+    return tv.tv_sec+tv.tv_usec/1000000.0;
+  #else
+    struct timespec tv={0};
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tv);
+    return tv.tv_sec+tv.tv_nsec/1000000000.0;
+  #endif
 }
 
 /* Reset clock.

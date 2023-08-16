@@ -16,9 +16,16 @@ static int64_t genioc_now() {
  */
  
 static int64_t genioc_now_cpu() {
-  struct timespec tv={0};
-  clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tv);
-  return (int64_t)tv.tv_sec*1000000ll+tv.tv_nsec/1000;
+  #if FMN_USE_mswin
+    // MinGW doesn't have clock_gettime, or I'm missing a library, or something. Whatever. CPU timing isn't critical.
+    struct timeval tv={0};
+    gettimeofday(&tv,0);
+    return (int64_t)tv.tv_sec*1000000ll+tv.tv_usec;
+  #else
+    struct timespec tv={0};
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tv);
+    return (int64_t)tv.tv_sec*1000000ll+tv.tv_nsec/1000;
+  #endif
 }
 
 /* Init.

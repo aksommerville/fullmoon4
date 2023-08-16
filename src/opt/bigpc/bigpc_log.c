@@ -64,7 +64,8 @@ int bigpc_log_init() {
   if (bigpc.config.log_path) {
     time_t now=time(0);
     struct tm tm={0};
-    localtime_r(&now,&tm);
+    struct tm *tmp=localtime(&now); // mswin apparently doesn't have localtime_r
+    if (tmp) tm=*tmp;
     char path[1024];
     int pathc=snprintf(path,sizeof(path),
       "%s-%04d%02d%02d%02d%02d%02d.txt",

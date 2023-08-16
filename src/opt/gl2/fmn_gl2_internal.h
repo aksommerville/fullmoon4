@@ -22,6 +22,7 @@
 #else
   #define GL_GLEXT_PROTOTYPES 1
   #include <GL/gl.h>
+  #include <GL/glext.h> // mswin needs this explicitly included; linux does not
 #endif
 
 //TODO What's the right way to determine the GLSL version?

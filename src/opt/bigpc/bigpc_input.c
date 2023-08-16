@@ -16,7 +16,7 @@ static const struct bigpc_input_type *bigpc_input_typev[]={
 #if FMN_USE_machid
   &bigpc_input_type_machid,
 #endif
-#if FMN_USE_mshid
+#if FMN_USE_mswin
   &bigpc_input_type_mshid,
 #endif
 };

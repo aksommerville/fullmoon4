@@ -47,3 +47,9 @@ linux_USE_GLX:=1
 linux_USE_DRM:=1
 linux_USE_ALSA:=1
 linux_USE_PULSE:=1
+linux_CC_EXTRA:=
+linux_RUN_ARGS:=
+
+mswin_TOOLCHAIN:=i686-w64-mingw32-
+mswin_CC_EXTRA:=
+mswin_RUN_ARGS:=

@@ -25,7 +25,7 @@ static const struct bigpc_video_type *bigpc_video_typev[]={
 #if FMN_USE_macwm
   &bigpc_video_type_macwm,
 #endif
-#if FMN_USE_mswm
+#if FMN_USE_mswin
   &bigpc_video_type_mswm,
 #endif
   &bigpc_video_type_dummy,

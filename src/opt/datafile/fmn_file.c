@@ -93,6 +93,7 @@ int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,ch
     memcpy(subpath+pathc,base,basec+1);
     
     char type=0;
+    #if !FMN_USE_mswin /* no d_type in mingw */
     switch (de->d_type) {
       case DT_REG: type='f'; break;
       case DT_DIR: type='d'; break;
@@ -102,6 +103,7 @@ int fmn_dir_read(const char *path,int (*cb)(const char *path,const char *base,ch
       case DT_SOCK: type='s'; break;
       default: type='?'; break;
     }
+    #endif
     
     int err=cb(subpath,base,type,userdata);
     if (err) {
@@ -122,10 +124,12 @@ char fmn_file_get_type(const char *path) {
   if (stat(path,&st)<0) return 0;
   if (S_ISREG(st.st_mode)) return 'f';
   if (S_ISDIR(st.st_mode)) return 'd';
-  if (S_ISLNK(st.st_mode)) return 'l'; // shouldn't happen; we used stat not lstat
   if (S_ISCHR(st.st_mode)) return 'c';
   if (S_ISBLK(st.st_mode)) return 'b';
-  if (S_ISSOCK(st.st_mode)) return 's';
+  #if !FMN_USE_mswin
+    if (S_ISLNK(st.st_mode)) return 'l'; // shouldn't happen; we used stat not lstat
+    if (S_ISSOCK(st.st_mode)) return 's';
+  #endif
   return '?';
 }
 
@@ -142,6 +146,10 @@ void fmn_file_delete(const char *path) {
  
 int fmn_mkdir(const char *path) {
   if (!path||!path[0]) return -1;
-  if (mkdir(path,0775)<0) return -1;
+  #if FMN_USE_mswin
+    if (mkdir(path)<0) return -1;
+  #else
+    if (mkdir(path,0775)<0) return -1;
+  #endif
   return 0;
 }

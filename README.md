@@ -18,6 +18,12 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 - [ ] Windows
+- - [ ] How to build for OpenGL 2 in MinGW? My installations seems to support only v1. Using gl1 and soft render for now.
+- - [x] Buttons sticking on or something? Weird behavior from the menu.
+- - - It's at fullscreen transitions, the key pressed at that time, we never get its OFF event.
+- - - Not at all clear whether this is a Windows thing, a Wine thing, or a Gnome thing, but my heart says it's Gnome jackassery. Fix anyway.
+- - [x] Getting small resize events after transition to fullscreen. ...an extra SetWindowPlacement seems to have fixed it.
+- - [ ] Timing screwy, noticeable in toil_and_trouble.
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 
