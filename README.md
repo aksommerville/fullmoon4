@@ -15,7 +15,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - - On closer examination, it is impossible to reproduce. Must have been due to cosmic rays interacting with swamp gas.
 - [x] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
-- [ ] MacOS: Build two independent app bundles. Demo and Full.
+- [x] MacOS: Build two independent app bundles. Demo and Full.
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 

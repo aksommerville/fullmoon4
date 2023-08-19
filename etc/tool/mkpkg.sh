@@ -66,9 +66,11 @@ linuxy() { # $1=TARGET $2=exe-suffix $3=archive-type("zip", or none for tar-gzip
 
 macbundle() { # $1=TARGET(macos) $2=selection(full,demo)
   mkdir $MIDDIR/fullmoon-$1-$2
-  cp -r out/$1/FullMoon.app $MIDDIR/fullmoon-$1-$2
-  mv $MIDDIR/fullmoon-$1-$2/FullMoon.app/Contents/Resources/data-$2 $MIDDIR/fullmoon-$1-$2/FullMoon.app/Contents/Resources/data
-  rm $MIDDIR/fullmoon-$1-$2/FullMoon.app/Contents/Resources/data-*
+  if [ "$2" = "demo" ] ; then
+    cp -r out/$1/FullMoonDemo.app $MIDDIR/fullmoon-$1-$2
+  else
+    cp -r out/$1/FullMoon.app $MIDDIR/fullmoon-$1-$2
+  fi
   
   cd $MIDDIR
   zip -r fullmoon-$1-$2-$BUILDTAG.zip fullmoon-$1-$2

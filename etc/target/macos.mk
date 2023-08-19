@@ -4,7 +4,6 @@
 macos_MIDDIR:=mid/macos
 macos_OUTDIR:=out/macos
 
-#TODO reenable gl2, it should be present but optional at runtime
 macos_OPT_ENABLE:=soft minsyn bigpc macos datafile png fmstore inmgr midi pcmprint macaudio machid macioc macwm gl2
 
 # TODO I guess the easier thing would be to make separate app bundles for Full and Demo.
@@ -12,19 +11,33 @@ macos_ICONS_DIR:=src/opt/macos/appicon.iconset
 macos_XIB:=src/opt/macos/Main.xib
 macos_PLIST_SRC:=src/opt/macos/Info.plist
 macos_ICONS:=$(wildcard $(macos_ICONS_DIR)/*)
-macos_BUNDLE:=$(macos_OUTDIR)/FullMoon.app
-macos_PLIST:=$(macos_BUNDLE)/Contents/Info.plist
-macos_NIB:=$(macos_BUNDLE)/Contents/Resources/Main.nib
-macos_EXE:=$(macos_BUNDLE)/Contents/MacOS/fullmoon
-macos_ICON:=$(macos_BUNDLE)/Contents/Resources/appicon.icns
-macos_DATA_FULL:=$(macos_BUNDLE)/Contents/Resources/data-full
-macos_DATA_DEMO:=$(macos_BUNDLE)/Contents/Resources/data-demo
 
-$(macos_NIB):$(macos_XIB);$(PRECMD) ibtool --compile $@ $<
-$(macos_PLIST):$(macos_PLIST_SRC);$(PRECMD) cp $< $@
-$(macos_ICON):$(macos_ICONS);$(PRECMD) iconutil -c icns -o $@ $(macos_ICONS_DIR)
+macos_BUNDLE_FULL:=$(macos_OUTDIR)/FullMoon.app
+macos_PLIST_FULL:=$(macos_BUNDLE_FULL)/Contents/Info.plist
+macos_NIB_FULL:=$(macos_BUNDLE_FULL)/Contents/Resources/Main.nib
+macos_EXE_FULL:=$(macos_BUNDLE_FULL)/Contents/MacOS/fullmoon
+macos_ICON_FULL:=$(macos_BUNDLE_FULL)/Contents/Resources/appicon.icns
+macos_DATA_FULL:=$(macos_BUNDLE_FULL)/Contents/Resources/data-full
 
-macos-all:$(macos_EXE) $(macos_DATA_FULL) $(macos_DATA_DEMO) $(macos_ICON) $(macos_NIB) $(macos_PLIST)
+macos_BUNDLE_DEMO:=$(macos_OUTDIR)/FullMoonDemo.app
+macos_PLIST_DEMO:=$(macos_BUNDLE_DEMO)/Contents/Info.plist
+macos_NIB_DEMO:=$(macos_BUNDLE_DEMO)/Contents/Resources/Main.nib
+macos_EXE_DEMO:=$(macos_BUNDLE_DEMO)/Contents/MacOS/fullmoon
+macos_ICON_DEMO:=$(macos_BUNDLE_DEMO)/Contents/Resources/appicon.icns
+macos_DATA_DEMO:=$(macos_BUNDLE_DEMO)/Contents/Resources/data-demo
+
+# NIB, PLIST, ICON: Same for Full and Demo. So Demo will copy out of Full.
+$(macos_NIB_FULL):$(macos_XIB);$(call PRECMD,macos) ibtool --compile $@ $<
+$(macos_PLIST_FULL):$(macos_PLIST_SRC);$(call PRECMD,macos) cp $< $@
+$(macos_ICON_FULL):$(macos_ICONS);$(call PRECMD,macos) iconutil -c icns -o $@ $(macos_ICONS_DIR)
+$(macos_NIB_DEMO):$(macos_NIB_FULL);$(call PRECMD,macos) cp $< $@
+$(macos_PLIST_DEMO):$(macos_PLIST_FULL);$(call PRECMD,macos) cp $< $@
+$(macos_ICON_DEMO):$(macos_ICON_FULL);$(call PRECMD,macos) cp $< $@
+$(macos_EXE_DEMO):$(macos_EXE_FULL);$(call PRECMD,macos) cp $< $@
+
+macos-all:$(macos_EXE_FULL) $(macos_DATA_FULL) $(macos_ICON_FULL) $(macos_NIB_FULL) $(macos_PLIST_FULL)
+macos-all:$(macos_EXE_DEMO) $(macos_DATA_DEMO) $(macos_ICON_DEMO) $(macos_NIB_DEMO) $(macos_PLIST_DEMO)
+macos_EXE:=$(macos_EXE_FULL)
 
 macos_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses \
   $(macos_CC_EXTRA) \
@@ -45,6 +58,6 @@ endif
 $(eval $(call SINGLE_DATA_ARCHIVE,macos,$(macos_DATA_FULL),$(macos_DATA_DEMO),$(macos_QFILTER)))
 
 # TODO Smarten up the automatic data file detection; do not require a command-line arg!
-macos-run-full:$(macos_EXE) $(macos_DATA_FULL);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_FULL) $(macos_RUN_ARGS)
-macos-run-demo:$(macos_EXE) $(macos_DATA_DEMO);open -W $(macos_BUNDLE) --args --reopen-tty=$$(tty) --chdir=$$(pwd) --data=$(macos_DATA_DEMO) $(macos_RUN_ARGS)
+macos-run-full:macos-all;open -W $(macos_BUNDLE_FULL) --args --reopen-tty=$$(tty) --chdir=$$(pwd) $(macos_RUN_ARGS)
+macos-run-demo:macos-all;open -W $(macos_BUNDLE_DEMO) --args --reopen-tty=$$(tty) --chdir=$$(pwd) $(macos_RUN_ARGS)
 macos-run:macos-run-demo
