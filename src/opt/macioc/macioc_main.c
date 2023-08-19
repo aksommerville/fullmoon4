@@ -33,8 +33,11 @@ static void cb_focus(void *userdata,int focus) {
  */
 
 static void cb_update(void *userdata) {
-  if (bigpc_update()<0) {
+  int err=bigpc_update();
+  if (err<0) {
     macioc_terminate(1);
+  } else if (!err) {
+    macioc_terminate(0);
   }
 }
 
