@@ -33,13 +33,26 @@ linuxy() { # $1=TARGET $2=exe-suffix $3=archive-type("zip", or none for tar-gzip
   mkdir $MIDDIR/fullmoon-$1-demo
   cp out/$1/fullmoon$2 $MIDDIR/fullmoon-$1-demo/fullmoon$2
   cp out/$1/data-demo $MIDDIR/fullmoon-$1-demo/data
+
+  for OPTFILE in icon.ico ; do # Add other optional errata here.
+    if [ -f "out/$1/$OPTFILE" ] ; then
+      cp out/$1/$OPTFILE $MIDDIR/fullmoon-$1-full/$OPTFILE
+      cp out/$1/$OPTFILE $MIDDIR/fullmoon-$1-demo/$OPTFILE
+    fi
+  done
+  
   cd $MIDDIR
   
   ARSFX=
   if [ "$3" = .zip ] ; then
     ARSFX=.zip
-    zip -r fullmoon-$1-full-$BUILDTAG$ARSFX fullmoon-$1-full
-    zip -r fullmoon-$1-demo-$BUILDTAG$ARSFX fullmoon-$1-demo
+    if [ -n "$JDK" ] ; then
+      "$JDK/bin/jar" -cMf fullmoon-$1-full-$BUILDTAG$ARSFX fullmoon-$1-full
+      "$JDK/bin/jar" -cMf fullmoon-$1-demo-$BUILDTAG$ARSFX fullmoon-$1-demo
+    else
+      zip -r fullmoon-$1-full-$BUILDTAG$ARSFX fullmoon-$1-full
+      zip -r fullmoon-$1-demo-$BUILDTAG$ARSFX fullmoon-$1-demo
+    fi
   else
     ARSFX=.tar.gz
     tar -czf fullmoon-$1-full-$BUILDTAG$ARSFX fullmoon-$1-full
@@ -79,7 +92,7 @@ single_target() { # $1=TARGET
     generic) linuxy $1 ;;
     linux) linuxy $1 ;;
     raspi) linuxy $1 ;;
-    mswin) linuxy $1 .exe zip ;;
+    mswin) linuxy $1 .exe .zip ;;
   
     macos)
       macbundle $1 full

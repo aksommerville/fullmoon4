@@ -117,6 +117,14 @@ static int _mswm_init(struct bigpc_video_driver *driver,const struct bigpc_video
     return -1;
   }
 
+  HANDLE hIcon=LoadImage(0,"icon.ico",IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_LOADFROMFILE);
+  if (hIcon) {
+    SendMessage(DRIVER->hwnd,WM_SETICON,ICON_SMALL,(LPARAM)hIcon);
+    SendMessage(DRIVER->hwnd,WM_SETICON,ICON_BIG,(LPARAM)hIcon);
+    SendMessage(GetWindow(DRIVER->hwnd,GW_OWNER),WM_SETICON,ICON_SMALL,(LPARAM)hIcon);
+    SendMessage(GetWindow(DRIVER->hwnd,GW_OWNER),WM_SETICON,ICON_BIG,(LPARAM)hIcon);
+  }
+
   if (0&&config&&config->fullscreen) {
     driver->fullscreen=1;
     ShowWindow(DRIVER->hwnd,SW_MAXIMIZE);

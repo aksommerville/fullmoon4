@@ -36,7 +36,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] Enter fullscreen: keyboard focus lost and WM status bar on top. Are we missing a "move to front" or something?
 - - [ ] Exit fullscreen: Background doesn't repaint. How the fuck is this my problem, Windows?
 - - [x] Tools are all relinking on every `make`, why? ...day 2, it's not happening. Some clock malarky, whatever.
-- - [ ] App icon eg Alt+Tab
+- - [x] App icon eg Alt+Tab
 - - [x] Initial window size incorrect? Apparent in text menus; some fb rows are shorter than others.
 - - ...the latest advances in cutting-edge mathematics have shown that 192*2=384. Not 360.
 - - [x] Force valid aspect ratio.
