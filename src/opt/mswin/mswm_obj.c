@@ -220,11 +220,13 @@ static void _mswm_show_cursor(struct bigpc_video_driver *driver,int show) {
 static void mswm_enter_fullscreen(struct bigpc_video_driver *driver) {
   DRIVER->fsrestore.length=sizeof(WINDOWPLACEMENT);
   GetWindowPlacement(DRIVER->hwnd,&DRIVER->fsrestore);
-  WINDOWPLACEMENT altplacement={
-    .length=sizeof(WINDOWPLACEMENT),
-  };
-  SetWindowPlacement(DRIVER->hwnd,&altplacement);
-  SetWindowLong(DRIVER->hwnd,GWL_STYLE,WS_POPUP);
+
+  int fullscreenWidth=GetDeviceCaps(DRIVER->hdc,DESKTOPHORZRES);
+  int fullscreenHeight=GetDeviceCaps(DRIVER->hdc,DESKTOPVERTRES);
+
+  SetWindowLongPtr(DRIVER->hwnd,GWL_EXSTYLE,WS_EX_APPWINDOW|WS_EX_TOPMOST);
+  SetWindowLongPtr(DRIVER->hwnd,GWL_STYLE,WS_POPUP|WS_VISIBLE);
+  SetWindowPos(DRIVER->hwnd,HWND_TOPMOST,0,0,fullscreenWidth,fullscreenHeight,SWP_SHOWWINDOW);
   ShowWindow(DRIVER->hwnd,SW_MAXIMIZE);
   driver->fullscreen=1;
 }
@@ -234,7 +236,6 @@ static void mswm_exit_fullscreen(struct bigpc_video_driver *driver) {
 
   /* If we started up in fullscreen mode, we don't know the appropriate size to restore to.
    * Make something up.
-   * TODO: Other windows don't get repainted when we resize. Giving up on that for now.
    */
   if (!DRIVER->fsrestore.length) {
     DRIVER->fsrestore.length=sizeof(WINDOWPLACEMENT);
@@ -246,9 +247,13 @@ static void mswm_exit_fullscreen(struct bigpc_video_driver *driver) {
     DRIVER->fsrestore.rcNormalPosition.bottom=100+(driver->fbh*2);
     AdjustWindowRect(&DRIVER->fsrestore.rcNormalPosition,WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN|WS_CLIPSIBLINGS,0);
   }
-  
+
+  SetWindowLongPtr(DRIVER->hwnd,GWL_EXSTYLE,WS_EX_LEFT);
+  SetWindowLongPtr(DRIVER->hwnd,GWL_STYLE,WS_OVERLAPPEDWINDOW|WS_VISIBLE);
   SetWindowPlacement(DRIVER->hwnd,&DRIVER->fsrestore);
-  SetWindowPos(DRIVER->hwnd,0,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_FRAMECHANGED);
+  SetWindowPos(DRIVER->hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE|SWP_FRAMECHANGED);
+  ShowWindow(DRIVER->hwnd,SW_RESTORE);
+
   driver->fullscreen=0;
 }
  

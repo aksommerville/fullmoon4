@@ -17,8 +17,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
 - [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
-- [ ] Windows
-- - [ ] How to build for OpenGL 2 in MinGW? My installations seems to support only v1. Using gl1 and soft render for now.
+- [x] Windows
+- - xxx How to build for OpenGL 2 in MinGW? My installations seems to support only v1. Using gl1 and soft render for now.
+- - - Soft render performs ok even on my low-end laptop. Let's not worry about it.
 - - [x] Buttons sticking on or something? Weird behavior from the menu.
 - - - It's at fullscreen transitions, the key pressed at that time, we never get its OFF event.
 - - - Not at all clear whether this is a Windows thing, a Wine thing, or a Gnome thing, but my heart says it's Gnome jackassery. Fix anyway.
@@ -33,8 +34,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [x] Can we lock to vsync? ...NO, seems the provided solutions are only for Direct3D.
 - - [x] HID ...not receiving WM_INPUT events but all else looks right. Is Wine broken? ...YES evidently just a Wine thing; it works on the Dell.
 - - [x] Our commands are too long for Windows. eg packing data archive. probly links too
-- - [ ] Enter fullscreen: keyboard focus lost and WM status bar on top. Are we missing a "move to front" or something?
-- - [ ] Exit fullscreen: Background doesn't repaint. How the fuck is this my problem, Windows?
+- - [x] Enter fullscreen: keyboard focus lost and WM status bar on top. Are we missing a "move to front" or something?
+- - [x] Exit fullscreen: Background doesn't repaint. How the fuck is this my problem, Windows?
+- - - Blindly copying from Stack Overflow was of course the solution.
 - - [x] Tools are all relinking on every `make`, why? ...day 2, it's not happening. Some clock malarky, whatever.
 - - [x] App icon eg Alt+Tab
 - - [x] Initial window size incorrect? Apparent in text menus; some fb rows are shorter than others.
