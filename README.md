@@ -25,6 +25,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [x] Getting small resize events after transition to fullscreen. ...an extra SetWindowPlacement seems to have fixed it.
 - - [ ] Timing screwy, noticeable in toil_and_trouble.
 - - [ ] HID ...not receiving WM_INPUT events but all else looks right. Is Wine broken?
+- - [ ] Our commands are too long for Windows. eg packing data archive. probly links too
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 

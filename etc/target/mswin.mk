@@ -22,7 +22,7 @@ mswin_CC:=$(mswin_TOOLCHAIN)gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-commen
   $(mswin_CC_EXTRA) \
   $(foreach U,$(mswin_OPT_ENABLE),-DFMN_USE_$U=1)
 mswin_LD:=$(mswin_TOOLCHAIN)gcc -m32 -mwindows -Wl,-static
-mswin_LDPOST:=-lm -lz -lopengl32 -lglut -lwinmm -lhid
+mswin_LDPOST:=-lm -lz -lopengl32 -lwinmm -lhid
 
 # From Plunder Squad:
 #WINDEF:=-m32 -mwindows -D_WIN32_WINNT=0x0501 -D_POSIX_THREAD_SAFE_FUNCTIONS=1 -D_PTW32_STATIC_LIB=1
@@ -38,8 +38,8 @@ endif
 
 $(eval $(call SINGLE_DATA_ARCHIVE,mswin,$(mswin_DATA_FULL),$(mswin_DATA_DEMO),$(mswin_QFILTER)))
 
-mswin-run-full:$(mswin_EXE) $(mswin_DATA_FULL);wine $(mswin_EXE) --data=$(mswin_DATA_FULL) $(mswin_RUN_ARGS)
-mswin-run-demo:$(mswin_EXE) $(mswin_DATA_DEMO);wine $(mswin_EXE) --data=$(mswin_DATA_DEMO) $(mswin_RUN_ARGS)
+mswin-run-full:$(mswin_EXE) $(mswin_DATA_FULL);$(mswin_EXE) --data=$(mswin_DATA_FULL) $(mswin_RUN_ARGS)
+mswin-run-demo:$(mswin_EXE) $(mswin_DATA_DEMO);$(mswin_EXE) --data=$(mswin_DATA_DEMO) $(mswin_RUN_ARGS)
 mswin-run:mswin-run-full
 
 mswin-verify:$(tools_EXE_datan) $(mswin_DATA_FULL) $(mswin_DATA_DEMO);$(tools_EXE_datan) --src=src/data --archive=$(mswin_DATA_FULL) --archive=$(mswin_DATA_DEMO)

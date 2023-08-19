@@ -8,7 +8,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
-#include <hidsdi.h>
+// On my Nuc, this should not have the "ddk/" prefix. Dell, it should. No idea who is right.
+#include <ddk/hidsdi.h>
+
+// Dell's headers don't have this. (though it should be supported since Vista, and this is 7).
+#ifndef RIDEV_DEVNOTIFY
+  #define RIDEV_DEVNOTIFY 0x00002000
+#endif
 
 #define PS_MSHID_HIDP_HEADER_SIZE 36
 #define PS_MSHID_HIDP_USAGE_SIZE 104

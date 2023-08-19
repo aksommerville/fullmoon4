@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#if FMN_USE_mswin
+  #include <Windows.h>
+#endif
+
 #define GENIOC_FRAME_RATE_MAX 100000
 #define GENIOC_DELAY_LIMIT_US 50000 /* Assume the clock is broken and don't delay longer than this. Effective minimum frame rate 20 hz */
 

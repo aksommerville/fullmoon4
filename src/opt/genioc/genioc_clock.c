@@ -51,7 +51,12 @@ void genioc_clock_update() {
       genioc.next_update_time=now+genioc.us_per_frame;
       return;
     }
-    usleep(delay);
+    #if FMN_USE_mswin
+      // mingw on my nuc does have usleep, but on the dell it does not
+      Sleep(delay/1000);
+    #else
+      usleep(delay);
+    #endif
   }
   genioc.next_update_time+=genioc.us_per_frame;
   if (genioc.next_update_time<=now) {

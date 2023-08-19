@@ -131,12 +131,18 @@ int http_update(struct http_context *context,int toms) {
   if (http_context_pollfdv_rebuild(context)<0) return -1;
   if (!context->pollfdc) {
     if (toms<0) {
-      while (1) usleep(1000000);
+      #if !FMN_USE_mswin
+        while (1) usleep(1000000);
+      #endif
       return -1;
     } else if (!toms) {
       return 0;
     } else {
-      usleep(toms/1000);
+      #if FMN_USE_mswin
+        Sleep(toms);
+      #else
+        usleep(toms*1000);
+      #endif
       return 0;
     }
   }

@@ -16,6 +16,10 @@
   #define WM_MOUSEHWHEEL 0x020e
 #endif
 
+#ifndef WM_INPUT_DEVICE_CHANGE
+  #define WM_INPUT_DEVICE_CHANGE 0x00fe
+#endif
+
 #define MSWM_AUTORELEASE_LIMIT 4
 
 struct bigpc_video_driver_mswm {

@@ -47,7 +47,8 @@ int http_server_init_tcp_stream(struct http_server *server) {
   if (!server||(server->fd>=0)) return -1;
   if ((server->fd=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP))<0) return -1;
   int one=1;
-  setsockopt(server->fd,SOL_SOCKET,SO_REUSEADDR,&one,sizeof(one));
+  // Cast to (void*) because in Windows it is typed 'char*' for fuck knows what reason...
+  setsockopt(server->fd,SOL_SOCKET,SO_REUSEADDR,(void*)&one,sizeof(one));
   return 0;
 }
 

@@ -5,12 +5,18 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdio.h>
-#include <sys/poll.h>
+#if FMN_USE_mswin
+  // MinGW doesn't give us sys/poll.h. Not going to bother figuring it out; I won't need the editor under Windows.
+  #include "fake_poll.h"
+  #include <Windows.h>
+#else
+  #include <sys/poll.h>
+  #include <netdb.h>
+  #include <sys/socket.h>
+#endif
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <netdb.h>
-#include <sys/socket.h>
 #include <stdarg.h>
 
 #include "http.h"

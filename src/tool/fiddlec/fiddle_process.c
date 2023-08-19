@@ -1,4 +1,14 @@
 #include "fiddle_internal.h"
+
+#if FMN_USE_mswin
+  // Fiddle is never going to run in Windows, but it's hard not to build it. Just stub things out until it compiles.
+  
+int fiddle_spawn_process_sync(const char *cmd,int (*cb)(int status,const char *log,int logc,void *userdata),void *userdata) {
+  return -1;
+}
+
+#else
+
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -159,3 +169,5 @@ int fiddle_spawn_process_sync(const char *cmd,int (*cb)(int status,const char *l
   }
   return 0;
 }
+
+#endif
