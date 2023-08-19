@@ -6,6 +6,7 @@
 static int mswm_cb_resize(struct bigpc_video_driver *driver,int hint,int w,int h) {
   driver->w=DRIVER->winw=w;
   driver->h=DRIVER->winh=h;
+  DRIVER->dstdirty=1;
   if (driver->delegate.cb_resize) driver->delegate.cb_resize(driver,w,h);
   return 0;
 }

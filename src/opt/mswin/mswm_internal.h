@@ -45,6 +45,10 @@ struct bigpc_video_driver_mswm {
    * But anyway, I'll fix by recording all held keys and auto-releasing them on fullscreen changes.
    */
   int autorelease[MSWM_AUTORELEASE_LIMIT];
+
+  // Output area.
+  GLfloat dstl,dstr,dstt,dstb;
+  int dstdirty;
 };
 
 #define DRIVER ((struct bigpc_video_driver_mswm*)driver)

@@ -61,6 +61,7 @@ static int _mswm_init(struct bigpc_video_driver *driver,const struct bigpc_video
   mswm_global_driver=driver;
   
   DRIVER->translate_events=1;
+  DRIVER->dstdirty=1;
 
   if (!(DRIVER->instance=GetModuleHandle(0))) return -1;
 
@@ -130,6 +131,43 @@ static int _mswm_init(struct bigpc_video_driver *driver,const struct bigpc_video
   return 0;
 }
 
+/* Recalculate output bounds if dirty.
+ */
+
+static void mswm_require_output_bounds(struct bigpc_video_driver *driver) {
+  if (!DRIVER->dstdirty) return;
+  DRIVER->dstdirty=0;
+  if ((driver->w<1)||(driver->h<1)||(driver->fbw<1)||(driver->fbh<1)) {
+    DRIVER->dstl=-1.0f;
+    DRIVER->dstb=-1.0f;
+    DRIVER->dstr=1.0f;
+    DRIVER->dstt=1.0f;
+    return;
+  }
+  int scale;
+  int wforh=(driver->fbw*driver->h)/driver->fbh;
+  if (wforh<=driver->w) {
+    DRIVER->dstr=(GLfloat)wforh/(GLfloat)driver->w;
+    DRIVER->dstt=1.0f;
+    scale=wforh/driver->fbw;
+  } else {
+    int hforw=(driver->w*driver->fbh)/driver->fbw;
+    DRIVER->dstr=1.0f;
+    DRIVER->dstt=(GLfloat)hforw/(GLfloat)driver->h;
+    scale=hforw/driver->fbh;
+  }
+  DRIVER->dstl=-DRIVER->dstr;
+  DRIVER->dstb=-DRIVER->dstt;
+  glBindTexture(GL_TEXTURE_2D,DRIVER->texid);
+  if (scale<4) {
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  } else {
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+  }
+}
+
 /* Frame control.
  */
 
@@ -138,17 +176,22 @@ static struct bigpc_image *_mswm_begin_soft(struct bigpc_video_driver *driver) {
 }
 
 static void _mswm_end(struct bigpc_video_driver *driver) {
+  mswm_require_output_bounds(driver);
   glViewport(0,0,driver->w,driver->h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
+  if ((DRIVER->dstl>-1.0f)||(DRIVER->dstb>-1.0f)) {
+    glClearColor(0.0f,0.0f,0.0f,1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+  }
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D,DRIVER->texid);
   glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,DRIVER->fb->w,DRIVER->fb->h,0,GL_RGBA,GL_UNSIGNED_BYTE,DRIVER->fb->v);
   glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2i(0,0); glVertex2i(-1,1);
-    glTexCoord2i(0,1); glVertex2i(-1,-1);
-    glTexCoord2i(1,0); glVertex2i(1,1);
-    glTexCoord2i(1,1); glVertex2i(1,-1);
+    glTexCoord2i(0,0); glVertex2f(DRIVER->dstl,DRIVER->dstt);
+    glTexCoord2i(0,1); glVertex2f(DRIVER->dstl,DRIVER->dstb);
+    glTexCoord2i(1,0); glVertex2f(DRIVER->dstr,DRIVER->dstt);
+    glTexCoord2i(1,1); glVertex2f(DRIVER->dstr,DRIVER->dstb);
   glEnd();
   glFlush();
   SwapBuffers(DRIVER->hdc);

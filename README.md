@@ -23,13 +23,14 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - It's at fullscreen transitions, the key pressed at that time, we never get its OFF event.
 - - - Not at all clear whether this is a Windows thing, a Wine thing, or a Gnome thing, but my heart says it's Gnome jackassery. Fix anyway.
 - - [x] Getting small resize events after transition to fullscreen. ...an extra SetWindowPlacement seems to have fixed it.
-- - [ ] Timing screwy, noticeable in toil_and_trouble.
+- - [x] Audio timing screwy, noticeable in toil_and_trouble. Also highly noticeable at delayed-release treadles.
+- - - Just the buffer size. Cut it in half and it sounds ok. Still little hiccups here and there, meh.
 - - [x] Low frame rate, can we do anything about it?
 - - [x] Assess performance. We're not tracking CPU time. taskmgr shows steady 0..1% CPU, no way is that correct.
 - - - GetProcessTimes shows CPU. We are eating about 15%, which sounds right.
 - - - The numbers don't show any loss of frame rate. Maybe it's in my head? Or all due to missing vsync?
 - - - D'oh! My monitor was set to 40 Hz. Bumping to 60 mostly fixes video. (vsync would still be worth some effort; there is tearing)
-- - [ ] Can we lock to vsync?
+- - [x] Can we lock to vsync? ...NO, seems the provided solutions are only for Direct3D.
 - - [x] HID ...not receiving WM_INPUT events but all else looks right. Is Wine broken? ...YES evidently just a Wine thing; it works on the Dell.
 - - [x] Our commands are too long for Windows. eg packing data archive. probly links too
 - - [ ] Enter fullscreen: keyboard focus lost and WM status bar on top. Are we missing a "move to front" or something?
@@ -38,7 +39,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] App icon eg Alt+Tab
 - - [x] Initial window size incorrect? Apparent in text menus; some fb rows are shorter than others.
 - - ...the latest advances in cutting-edge mathematics have shown that 192*2=384. Not 360.
-- - [ ] Force valid aspect ratio.
+- - [x] Force valid aspect ratio.
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 

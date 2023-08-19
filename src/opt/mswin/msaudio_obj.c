@@ -139,7 +139,7 @@ static int _msaudio_init(struct bigpc_audio_driver *driver,const struct bigpc_au
   );
   if (result!=MMSYSERR_NOERROR) return -1;
 
-  int buffer_size=8192; // bytes (TODO optimal size?)
+  int buffer_size=4096; // bytes. I get underruns at 2048, and noticeable quantization at 8192. 4096 seems ok.
   WAVEHDR *a=DRIVER->bufv+0;
   WAVEHDR *b=DRIVER->bufv+1;
   a->dwBufferLength=b->dwBufferLength=buffer_size;
