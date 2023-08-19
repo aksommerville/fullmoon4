@@ -86,7 +86,7 @@ static int mswm_evt_mmove(struct bigpc_video_driver *driver,int x,int y) {
  */
 
 LRESULT mswm_cb_msg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam) {
-  //fprintf(stderr,"%s %d %d %d\n",__func__,msg,wparam,lparam);
+  fprintf(stderr,"%s %d %d %d\n",__func__,msg,wparam,lparam);
   struct bigpc_video_driver *driver=mswm_global_driver;
   if (!driver) return DefWindowProc(hwnd,msg,wparam,lparam);
   switch (msg) {
@@ -141,11 +141,11 @@ LRESULT mswm_cb_msg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam) {
 
     case WM_MOUSEMOVE: return mswm_evt_mmove(driver,LOWORD(lparam),HIWORD(lparam));
 
-    //TODO HID events land here, and we need to get them to the mshid input driver somehow...
-    //case WM_INPUT: return mshid_event(driver,wparam,lparam);
+    case WM_INPUT_DEVICE_CHANGE: fprintf(stderr,"WM_INPUT_DEVICE_CHANGE 0x%08x 0x%08x\n",wparam,lparam); return 0;
+    case WM_INPUT: mshid_event(wparam,lparam); return 0;
     case WM_DEVICECHANGE: {
         if (wparam==7) { // DBT_DEVNODES_CHANGED
-          //if (ps_mshid_poll_disconnected_devices()<0) return -1;
+          mshid_poll_connections_later();
         }
       } break;
 

@@ -230,3 +230,12 @@ const struct bigpc_video_type bigpc_video_type_mswm={
   .show_cursor=_mswm_show_cursor,
   .set_fullscreen=_mswm_set_fullscreen,
 };
+
+/* Extra support for friend classes.
+ */
+ 
+HWND mswm_get_window_handle() {
+  struct bigpc_video_driver *driver=mswm_global_driver;
+  if (!driver) return 0;
+  return DRIVER->hwnd;
+}

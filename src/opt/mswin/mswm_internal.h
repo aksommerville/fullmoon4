@@ -57,4 +57,9 @@ void mswm_autorelease_add(struct bigpc_video_driver *driver,int usage);
 void mswm_autorelease_remove(struct bigpc_video_driver *driver,int usage);
 void mswm_autorelease(struct bigpc_video_driver *driver);
 
+/* Two semi-private functions from mshid.
+ */
+void mshid_event(int wparam,int lparam);
+void mshid_poll_connections_later();
+
 #endif
