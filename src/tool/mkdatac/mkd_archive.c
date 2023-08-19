@@ -322,6 +322,18 @@ static int mkd_archive_add_file(struct mkd_ar *ar,const char *path) {
   return 0;
 }
 
+static int mkd_archive_add_directory(struct mkd_ar *ar,const char *path);
+
+static int mkd_archive_add_directory_1(const char *path,const char *base,char ftype,void *userdata) {
+  if (!ftype) ftype=fmn_file_get_type(path);
+  if (ftype=='d') return mkd_archive_add_directory(userdata,path);
+  return mkd_archive_add_file(userdata,path);
+}
+
+static int mkd_archive_add_directory(struct mkd_ar *ar,const char *path) {
+  return fmn_dir_read(path,mkd_archive_add_directory_1,ar);
+}
+
 /* Archive packing, main entry point.
  */
  
@@ -330,9 +342,16 @@ int mkd_main_archive() {
   if (!ar) return -1;
   int i=0,err;
   for (;i<mkd.config.srcpathc;i++) {
-    if ((err=mkd_archive_add_file(ar,mkd.config.srcpathv[i]))<0) {
-      mkd_ar_del(ar);
-      return err;
+    if (fmn_file_get_type(mkd.config.srcpathv[i])=='d') {
+      if ((err=mkd_archive_add_directory(ar,mkd.config.srcpathv[i]))<0) {
+        mkd_ar_del(ar);
+        return err;
+      }
+    } else {
+      if ((err=mkd_archive_add_file(ar,mkd.config.srcpathv[i]))<0) {
+        mkd_ar_del(ar);
+        return err;
+      }
     }
   }
   if ((err=mkd_archive_digest(ar))<0) {

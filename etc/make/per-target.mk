@@ -70,10 +70,10 @@ ifeq ($2,$2$(strip $3)$(strip $4)) # demo and addl omitted. Include everything.
 else # Separate demo and full archives with optional extra filter.
   $1_DATA_QFILTER:=$$(foreach Q,$4,--qfilter=$$Q)
   ifneq (,$(strip $2))
-    $2:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $$($1_DATA_MID) --qfilter=map:full $$($1_DATA_QFILTER)
+    $2:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $($1_MIDDIR)/data --qfilter=map:full $$($1_DATA_QFILTER)
   endif
   ifneq (,$(strip $3))
-    $3:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $$($1_DATA_MID) --qfilter=map:demo $$($1_DATA_QFILTER)
+    $3:$$($1_DATA_MID) $(tools_EXE_mkdatac);$$(call PRECMD,$1) $(tools_EXE_mkdatac) --archive -o$$@ $($1_MIDDIR)/data --qfilter=map:demo $$($1_DATA_QFILTER)
   endif
 endif
   

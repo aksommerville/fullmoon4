@@ -24,8 +24,11 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - Not at all clear whether this is a Windows thing, a Wine thing, or a Gnome thing, but my heart says it's Gnome jackassery. Fix anyway.
 - - [x] Getting small resize events after transition to fullscreen. ...an extra SetWindowPlacement seems to have fixed it.
 - - [ ] Timing screwy, noticeable in toil_and_trouble.
-- - [ ] HID ...not receiving WM_INPUT events but all else looks right. Is Wine broken?
-- - [ ] Our commands are too long for Windows. eg packing data archive. probly links too
+- - [x] HID ...not receiving WM_INPUT events but all else looks right. Is Wine broken? ...YES evidently just a Wine thing; it works on the Dell.
+- - [x] Our commands are too long for Windows. eg packing data archive. probly links too
+- - [ ] Enter fullscreen: keyboard focus lost and WM status bar on top. Are we missing a "move to front" or something?
+- - [ ] Exit fullscreen: Background doesn't repaint. How the fuck is this my problem, Windows?
+- - [ ] Tools are all relinking on every `make`, why?
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 
