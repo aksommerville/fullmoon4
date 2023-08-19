@@ -246,7 +246,7 @@ static void _credits_render(struct fmn_menu *menu) {
 
   // Blackout.
   {
-    struct fmn_draw_rect vtx={0,0,menu->fbw,menu->fbh,0x000000ff};
+    struct fmn_draw_rect vtx={0,0,menu->fbw,menu->fbh,fmn_video_pixel_from_rgba(0x000000ff)};
     fmn_draw_rect(&vtx,1);
   }
   

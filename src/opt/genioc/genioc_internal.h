@@ -7,7 +7,7 @@
 #include <stdint.h>
 
 #if FMN_USE_mswin
-  #include <Windows.h>
+  #include <windows.h>
 #endif
 
 #define GENIOC_FRAME_RATE_MAX 100000

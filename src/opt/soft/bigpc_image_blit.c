@@ -91,13 +91,43 @@ static void bigpc_image_blit_noscale_noclip(
   struct bigpc_image_iterator srciter,dstiter;
   if (bigpc_image_iterate(&dstiter,dst,dstx,dsty,w,h,0)<0) return;
   if (bigpc_image_iterate(&srciter,src,srcx,srcy,w,h,xform)<0) return;
-  while (1) {
-    uint32_t pixel=BIGPC_IMAGE_ITERATOR_READ(&srciter);
-    if (pixel) {
-      BIGPC_IMAGE_ITERATOR_WRITE(&dstiter,pixel);
+  int alphashift=-1;
+  switch (src->pixfmt) {
+    case BIGPC_IMAGE_PIXFMT_RGBA: case BIGPC_IMAGE_PIXFMT_RGBX: alphashift=0; break;
+    case BIGPC_IMAGE_PIXFMT_BGRA: case BIGPC_IMAGE_PIXFMT_BGRX: alphashift=0; break;
+    case BIGPC_IMAGE_PIXFMT_ARGB: case BIGPC_IMAGE_PIXFMT_XRGB: alphashift=24; break;
+    case BIGPC_IMAGE_PIXFMT_ABGR: case BIGPC_IMAGE_PIXFMT_XBGR: alphashift=24; break;
+  }
+  if (alphashift<0) {
+    while (1) {
+      uint32_t pixel=BIGPC_IMAGE_ITERATOR_READ(&srciter);
+      if (pixel) {
+        BIGPC_IMAGE_ITERATOR_WRITE(&dstiter,pixel);
+      }
+      if (!BIGPC_IMAGE_ITERATOR_NEXT(&dstiter)) break;
+      if (!BIGPC_IMAGE_ITERATOR_NEXT(&srciter)) break;
     }
-    if (!BIGPC_IMAGE_ITERATOR_NEXT(&dstiter)) break;
-    if (!BIGPC_IMAGE_ITERATOR_NEXT(&srciter)) break;
+  } else {
+    while (1) {
+      uint32_t pixel=BIGPC_IMAGE_ITERATOR_READ(&srciter);
+      uint8_t alpha=pixel>>alphashift;
+      if (alpha==0x00) {
+      } else if (alpha==0xff) {
+        BIGPC_IMAGE_ITERATOR_WRITE(&dstiter,pixel);
+      } else {
+        uint32_t dstpixel=BIGPC_IMAGE_ITERATOR_READ(&dstiter);
+        uint32_t compose=0;
+        int i=4,shift=0;
+        for (;i-->0;shift+=8) {
+          int a=(pixel>>shift)&0xff,b=(dstpixel>>shift)&0xff;
+          int c=((a*alpha)+(b*(0xff-alpha)))>>8;
+          compose|=c<<shift;
+        }
+        BIGPC_IMAGE_ITERATOR_WRITE(&dstiter,compose);
+      }
+      if (!BIGPC_IMAGE_ITERATOR_NEXT(&dstiter)) break;
+      if (!BIGPC_IMAGE_ITERATOR_NEXT(&srciter)) break;
+    }
   }
 }
 
@@ -112,6 +142,13 @@ static void bigpc_image_blit_noscale(
 ) {
   if (dst->storage!=BIGPC_IMAGE_STORAGE_32) return;
   if (src->storage!=BIGPC_IMAGE_STORAGE_32) return;
+  int alphashift=-1;
+  switch (src->pixfmt) {
+    case BIGPC_IMAGE_PIXFMT_RGBA: case BIGPC_IMAGE_PIXFMT_RGBX: alphashift=0; break;
+    case BIGPC_IMAGE_PIXFMT_BGRA: case BIGPC_IMAGE_PIXFMT_BGRX: alphashift=0; break;
+    case BIGPC_IMAGE_PIXFMT_ARGB: case BIGPC_IMAGE_PIXFMT_XRGB: alphashift=24; break;
+    case BIGPC_IMAGE_PIXFMT_ABGR: case BIGPC_IMAGE_PIXFMT_XBGR: alphashift=24; break;
+  }
   int16_t srcdxx=1,srcdyx=0,srcdxy=0,srcdyy=1;
   if (xform&FMN_XFORM_XREV) {
     srcdxx=-1;
@@ -127,20 +164,55 @@ static void bigpc_image_blit_noscale(
     srcdyy=0;
     srcdxx=0;
   }
-  int16_t yi=0; for (;yi<h;yi++) {
-    int16_t dsty1=dsty+yi;
-    if ((dsty1>=0)&&(dsty1<dst->h)) {
-      uint32_t *dstrow=(uint32_t*)((uint8_t*)dst->v+dst->stride*dsty1);
-      int16_t xi=0; for (;xi<w;xi++) {
-        int16_t dstx1=dstx+xi;
-        if ((dstx1>=0)&&(dstx1<dst->w)) {
-          int16_t srcx1=srcx+srcdxx*xi+srcdyx*yi;
-          if ((srcx1>=0)&&(srcx1<src->w)) {
-            int16_t srcy1=srcy+srcdxy*xi+srcdyy*yi;
-            if ((srcy1>=0)&&(srcy1<src->h)) {
-              uint32_t pixel=((uint32_t*)((uint8_t*)src->v+src->stride*srcy1))[srcx1];
-              if (!pixel) continue; // TODO correct alpha check
-              dstrow[dstx1]=pixel;
+  if (alphashift<0) {
+    int16_t yi=0; for (;yi<h;yi++) {
+      int16_t dsty1=dsty+yi;
+      if ((dsty1>=0)&&(dsty1<dst->h)) {
+        uint32_t *dstrow=(uint32_t*)((uint8_t*)dst->v+dst->stride*dsty1);
+        int16_t xi=0; for (;xi<w;xi++) {
+          int16_t dstx1=dstx+xi;
+          if ((dstx1>=0)&&(dstx1<dst->w)) {
+            int16_t srcx1=srcx+srcdxx*xi+srcdyx*yi;
+            if ((srcx1>=0)&&(srcx1<src->w)) {
+              int16_t srcy1=srcy+srcdxy*xi+srcdyy*yi;
+              if ((srcy1>=0)&&(srcy1<src->h)) {
+                uint32_t pixel=((uint32_t*)((uint8_t*)src->v+src->stride*srcy1))[srcx1];
+                dstrow[dstx1]=pixel;
+              }
+            }
+          }
+        }
+      }
+    }
+  } else {
+    int16_t yi=0; for (;yi<h;yi++) {
+      int16_t dsty1=dsty+yi;
+      if ((dsty1>=0)&&(dsty1<dst->h)) {
+        uint32_t *dstrow=(uint32_t*)((uint8_t*)dst->v+dst->stride*dsty1);
+        int16_t xi=0; for (;xi<w;xi++) {
+          int16_t dstx1=dstx+xi;
+          if ((dstx1>=0)&&(dstx1<dst->w)) {
+            int16_t srcx1=srcx+srcdxx*xi+srcdyx*yi;
+            if ((srcx1>=0)&&(srcx1<src->w)) {
+              int16_t srcy1=srcy+srcdxy*xi+srcdyy*yi;
+              if ((srcy1>=0)&&(srcy1<src->h)) {
+                uint32_t pixel=((uint32_t*)((uint8_t*)src->v+src->stride*srcy1))[srcx1];
+                uint8_t alpha=pixel>>alphashift;
+                if (!alpha) continue;
+                if (alpha==0xff) {
+                  dstrow[dstx1]=pixel;
+                  continue;
+                }
+                uint32_t dstpixel=dstrow[dstx1];
+                uint32_t compose=0;
+                int i=4,shift=0;
+                for (;i-->0;shift+=8) {
+                  int a=(pixel>>shift)&0xff,b=(dstpixel>>shift)&0xff;
+                  int c=((a*alpha)+(b*(0xff-alpha)))>>8;
+                  compose|=c<<shift;
+                }
+                dstrow[dstx1]=compose;
+              }
             }
           }
         }
