@@ -36,6 +36,7 @@
  
 -(void)beginFrame {
   [self.openGLContext makeCurrentContext];
+  
 }
 
 -(void)endFrame {

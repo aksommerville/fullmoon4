@@ -1,6 +1,9 @@
 #include "macwm.h"
 #include "opt/bigpc/bigpc_video.h"
 #include "opt/bigpc/bigpc_image.h"
+#include <stdio.h>
+
+float NSScreen_backingScale();
 
 /* Instance definition.
  */
@@ -89,6 +92,8 @@ static int _macwm_init(struct bigpc_video_driver *driver,const struct bigpc_vide
   if (driver->renderer==BIGPC_RENDERER_rgb32) {
     if (!(DRIVER->fb=bigpc_image_new_alloc(driver->fbw,driver->fbh,BIGPC_IMAGE_STORAGE_32,DRIVER->pixfmt))) return -1;
   }
+  
+  driver->viewscale=NSScreen_backingScale();
   
   return 0;
 }

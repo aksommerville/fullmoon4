@@ -79,6 +79,7 @@ struct bigpc_video_driver *bigpc_video_driver_new(
   driver->h=config->h;
   driver->fbw=config->fbw;
   driver->fbh=config->fbh;
+  driver->viewscale=1.0f;
   
   if (type->init) {
     if (type->init(driver,config)<0) {

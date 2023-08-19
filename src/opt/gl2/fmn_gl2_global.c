@@ -202,7 +202,7 @@ int fmn_gl2_framebuffer_use_object(struct bigpc_render_driver *driver,struct fmn
     if (DRIVER->program) {
       glUniform2f(DRIVER->program->loc_screensize,driver->w,driver->h);
     }
-    glViewport(0,0,driver->w,driver->h);
+    glViewport(0,0,driver->w*DRIVER->viewscale,driver->h*DRIVER->viewscale);
   }
   DRIVER->framebuffer=framebuffer;
   return 0;

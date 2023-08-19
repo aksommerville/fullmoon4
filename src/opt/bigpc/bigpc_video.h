@@ -81,6 +81,7 @@ struct bigpc_video_driver {
   int fbw,fbh; // Preserved from config. Not necessarily what you'll get.
   int fullscreen;
   int renderer;
+  float viewscale;
 };
  
 void bigpc_video_driver_del(struct bigpc_video_driver *driver);

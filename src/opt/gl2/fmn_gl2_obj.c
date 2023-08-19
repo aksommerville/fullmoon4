@@ -20,6 +20,8 @@ static void _gl2_del(struct bigpc_render_driver *driver) {
  
 static int _gl2_init(struct bigpc_render_driver *driver,struct bigpc_video_driver *video) {
   int err;
+  
+  DRIVER->viewscale=video->viewscale;
 
   #define _(tag) if ((err=fmn_gl2_program_##tag##_init(&DRIVER->program_##tag,driver))<0) { \
     if (err!=-2) fprintf(stderr,"gl2:%s: Failed to initialize shader.\n",#tag); \

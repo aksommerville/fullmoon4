@@ -301,7 +301,6 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
  */
  
 void bigpc_config_init() {
-  bigpc.config.video_fullscreen=1;
 }
 
 /* Guess language from environment.

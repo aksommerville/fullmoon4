@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 //#include <MetalKit/MetalKit.h>
+#include <OpenGL/gl.h>
 
 #define MACWM_KEY_LIMIT 16
 
@@ -51,3 +52,5 @@ void macwm_unregister_key(struct macwm *macwm,int keycode);
 @end
 
 #endif
+
+float NSScreen_backingScale();

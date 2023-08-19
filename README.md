@@ -13,7 +13,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Web: Interactive input config.
 - [ ] bigpc: respect fmn_platform_settings.scaler
 - [ ] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
-- [ ] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
+- [x] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
 - [ ] MacOS: Build two independent app bundles. Demo and Full.
 
 ### Little bugs and narrative concerns, after playtest 3 August.

@@ -157,6 +157,8 @@ struct bigpc_render_driver_gl2 {
   
   struct fmn_gl2_vertex_raw *rawvtxv;
   int rawvtxa;
+  
+  GLfloat viewscale;
 };
 
 #define DRIVER ((struct bigpc_render_driver_gl2*)driver)

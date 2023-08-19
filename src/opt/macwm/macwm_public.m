@@ -194,3 +194,7 @@ void macwm_render_end(struct macwm *macwm) {
       }
   }
 }
+
+float NSScreen_backingScale() {
+  return NSScreen.mainScreen.backingScaleFactor;
+}
