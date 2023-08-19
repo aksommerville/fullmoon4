@@ -100,7 +100,7 @@ int inmgr_rules_add_from_map(struct inmgr_rules *rules,const struct inmgr_map *m
     if (!cap) {
       // No cap, so let's assume it's a simple button. This would be the case for keyboards, eg.
       srcpart=INMGR_SRCPART_BUTTON_ON;
-    } else if ((cap->lo==0)&&(map->srclo>0)) {
+    } else if ((cap->lo==0)&&((cap->hi==1)||(cap->hi==2)||((map->srclo<cap->hi>>1)&&(map->srclo!=INT_MIN)))) {
       // Typical button.
       srcpart=INMGR_SRCPART_BUTTON_ON;
     } else if (cap->lo==cap->hi-7) {

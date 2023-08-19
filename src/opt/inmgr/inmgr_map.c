@@ -70,7 +70,7 @@ int inmgr_map_device(struct inmgr *inmgr,const struct inmgr_device *device,const
  
 int inmgr_guess_capability_role(const struct inmgr_cap *cap) {
 
-  // If the range is smaller than 2, there's defnitely nothing we can do with it.
+  // If the range is smaller than 2, there's definitely nothing we can do with it.
   if (cap->hi<cap->lo+1) return 0;
 
   // Range of (0..1) or (0..2) is definitely a 2-state button.

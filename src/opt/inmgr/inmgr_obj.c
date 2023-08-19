@@ -327,10 +327,12 @@ int inmgr_device_devid_by_index(const struct inmgr *inmgr,int index) {
 uint8_t inmgr_device_name_by_index(char *dst,int dsta,const struct inmgr *inmgr,int p) {
   if (p<0) return 0;
   if (p>=inmgr->devicec) return 0;
+  if (dsta<0) dsta=0;
   const struct inmgr_device *device=inmgr->devicev[p];
   uint8_t dstc;
   if (device->namec>0xff) dstc=0xff;
   else dstc=device->namec;
   if (dstc<=dsta) memcpy(dst,device->name,dstc);
+  else memcpy(dst,device->name,dsta);
   return dstc;
 }
