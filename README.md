@@ -24,17 +24,25 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - Not at all clear whether this is a Windows thing, a Wine thing, or a Gnome thing, but my heart says it's Gnome jackassery. Fix anyway.
 - - [x] Getting small resize events after transition to fullscreen. ...an extra SetWindowPlacement seems to have fixed it.
 - - [ ] Timing screwy, noticeable in toil_and_trouble.
-- - [ ] Low frame rate, can we do anything about it?
+- - [x] Low frame rate, can we do anything about it?
+- - [x] Assess performance. We're not tracking CPU time. taskmgr shows steady 0..1% CPU, no way is that correct.
+- - - GetProcessTimes shows CPU. We are eating about 15%, which sounds right.
+- - - The numbers don't show any loss of frame rate. Maybe it's in my head? Or all due to missing vsync?
+- - - D'oh! My monitor was set to 40 Hz. Bumping to 60 mostly fixes video. (vsync would still be worth some effort; there is tearing)
+- - [ ] Can we lock to vsync?
 - - [x] HID ...not receiving WM_INPUT events but all else looks right. Is Wine broken? ...YES evidently just a Wine thing; it works on the Dell.
 - - [x] Our commands are too long for Windows. eg packing data archive. probly links too
 - - [ ] Enter fullscreen: keyboard focus lost and WM status bar on top. Are we missing a "move to front" or something?
 - - [ ] Exit fullscreen: Background doesn't repaint. How the fuck is this my problem, Windows?
 - - [x] Tools are all relinking on every `make`, why? ...day 2, it's not happening. Some clock malarky, whatever.
 - - [ ] App icon eg Alt+Tab
-- - [ ] Initial window size incorrect? Apparent in text menus; some fb rows are shorter than others.
+- - [x] Initial window size incorrect? Apparent in text menus; some fb rows are shorter than others.
+- - ...the latest advances in cutting-edge mathematics have shown that 192*2=384. Not 360.
+- - [ ] Force valid aspect ratio.
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 
+- [ ] Credits: Lower text is not erasing each time. (windows, soft render)
 - [ ] Soft render: Wand tattle arrows not using alpha. Up looks fine, all other directions are mixed up.
 - [ ] Mu block: (A) and (B) directions must be different! As is you can tickle 5 times in one direction.
 - [ ] credits: Sound effect on delivering the winter clothes

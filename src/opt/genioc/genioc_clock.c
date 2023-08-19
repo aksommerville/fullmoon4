@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
+#include <stdio.h>
 
 /* Current absolute time in microseconds.
  */
@@ -9,7 +10,8 @@
 static int64_t genioc_now() {
   struct timeval tv={0};
   gettimeofday(&tv,0);
-  return (int64_t)tv.tv_sec*1000000ll+tv.tv_usec;
+  int64_t now=(int64_t)tv.tv_sec*1000000ll+tv.tv_usec;
+  return now;
 }
 
 /* Current CPU time in microseconds.
@@ -18,6 +20,7 @@ static int64_t genioc_now() {
 static int64_t genioc_now_cpu() {
   #if FMN_USE_mswin
     // MinGW doesn't have clock_gettime, or I'm missing a library, or something. Whatever. CPU timing isn't critical.
+    // ...and also, we're not actually using this.
     struct timeval tv={0};
     gettimeofday(&tv,0);
     return (int64_t)tv.tv_sec*1000000ll+tv.tv_usec;

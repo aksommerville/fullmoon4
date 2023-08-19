@@ -78,7 +78,7 @@ static int _mswm_init(struct bigpc_video_driver *driver,const struct bigpc_video
   }
   if (!w&&!h) {
     w=640;
-    h=360;
+    h=384;
   } else {
     if (w<100) w=100;
     else if (w>2000) w=2000;
@@ -150,6 +150,7 @@ static void _mswm_end(struct bigpc_video_driver *driver) {
     glTexCoord2i(1,0); glVertex2i(1,1);
     glTexCoord2i(1,1); glVertex2i(1,-1);
   glEnd();
+  glFlush();
   SwapBuffers(DRIVER->hdc);
 }
 

@@ -11,11 +11,13 @@ void bigpc_quit() {
   bigpc_audio_play(bigpc.audio,0);
   
   int64_t elapsed_real_us=bigpc.clock.last_real_time_us-bigpc.clock.first_real_time_us;
+  double elapsed_real_f=elapsed_real_us/1000000.0;
   fprintf(stderr,
-    "%s, clock stats: Final game time %u ms (%u ms real time). overflow=%d underflow=%d fault=%d wrap=%d cpu=%.06f\n",
+    "%s, clock stats: Final game time %u ms (%u ms real time). overflow=%d underflow=%d fault=%d wrap=%d cpu=%.06f. Avg frame rate %.03f Hz.\n",
     __func__,bigpc.clock.last_game_time_ms,(int)(elapsed_real_us/1000),
     bigpc.clock.overflowc,bigpc.clock.underflowc,bigpc.clock.faultc,bigpc.clock.wrapc,
-    bigpc_clock_estimate_cpu_load(&bigpc.clock)
+    bigpc_clock_estimate_cpu_load(&bigpc.clock),
+    bigpc.clock.framec/elapsed_real_f
   );
   
   bigpc_video_driver_del(bigpc.video);

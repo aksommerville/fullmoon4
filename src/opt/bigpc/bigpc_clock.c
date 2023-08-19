@@ -2,6 +2,11 @@
 #include <sys/time.h>
 #include <time.h>
 
+#if FMN_USE_mswin
+  #include <windows.h>
+  #include <stdio.h>
+#endif
+
 // This is more about preventing 64-to-32-bit overflow than about timekeeping.
 // Five seconds is an extremely long interval between updates.
 #define BIGPC_UNREASONABLE_REAL_TIME_INTERVAL_US 5000000
@@ -35,7 +40,17 @@ double bigpc_now_real_s() {
 
 double bigpc_now_cpu_s() {
   #if FMN_USE_mswin
-    // No clock_gettime in MinGW, whatever, just pretend real time is CPU time.
+    // No clock_gettime in MinGW. Use GetProcessTimes() if possible, or fall back to real time.
+    FILETIME tcreate={0},texit={0},tkernel={0},tuser={0};
+    if (GetProcessTimes(GetCurrentProcess(),&tcreate,&texit,&tkernel,&tuser)) {
+      int64_t tk=tkernel.dwHighDateTime;
+      tk<<=32;
+      tk|=(uint32_t)tkernel.dwLowDateTime;
+      int64_t tu=tuser.dwHighDateTime;
+      tu<<=32;
+      tu|=(uint32_t)tuser.dwLowDateTime;
+      return (tk+tu)/10000000.0; // 100ns units
+    }
     struct timeval tv={0};
     gettimeofday(&tv,0);
     return tv.tv_sec+tv.tv_usec/1000000.0;
