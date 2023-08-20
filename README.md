@@ -11,8 +11,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [x] Speed up the velocity envelope's release a little?
 - [x] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
-- [ ] Can push alphablock via intermediate pushblock.
-- [ ] Positive and negative beeps from alphablocks as you encode.
+- [x] Can push alphablock via intermediate pushblock.
+- [x] Positive and negative beeps from alphablocks as you encode.
 - [ ] Static educator: Use treadles instead of connect-the-blocks.
 - [ ] Static educator: Make feather image more obvious.
 - [ ] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
@@ -31,6 +31,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
 - [ ] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
+- - Happened again. I started a sketch left of the F, but didn't draw anything.
 - [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
 - [ ] minsyn drums too loud
 - [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?

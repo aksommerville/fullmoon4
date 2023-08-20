@@ -1018,3 +1018,61 @@ sound CLAP
   env ( 0 10 0xc000 10 0x1000 * 0 )
   mlt 0.500
 end
+
+sound ALPHA_0
+  len 0.200
+  fm ( 150 * 100 ) 1.5 ( 2000 ) sine
+  env ( 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.500
+end
+
+sound ALPHA_1
+  len 0.200
+  fm ( 400 ) 2.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.300
+end
+
+sound ALPHA_2
+  len 0.200
+  fm ( 400 ) 2.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.200
+  new_channel
+  fm ( 504 ) 3.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 60 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.400
+end
+
+sound ALPHA_3
+  len 0.200
+  fm ( 400 ) 2.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.200
+  new_channel
+  fm ( 599 ) 3.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 60 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.400
+end
+
+sound ALPHA_4
+  len 0.200
+  fm ( 400 ) 2.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.200
+  new_channel
+  fm ( 713 ) 3.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 60 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.400
+end
+
+sound ALPHA_5
+  len 0.200
+  fm ( 400 ) 2.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.200
+  new_channel
+  fm ( 800 ) 3.0 ( 0 50 2000 * 0 ) sine
+  env ( 0 60 0 30 0xc000 50 0x2000 * 0 )
+  mlt 0.400
+end

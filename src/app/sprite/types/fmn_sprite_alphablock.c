@@ -133,19 +133,50 @@ static void fmn_alphablock_check_lambda(struct fmn_sprite *sprite,float elapsed)
   }
 }
 
+/* How much of a valid gesture has been encoded so far?
+ *   alpha: 1..4
+ *   gamma: 0..3
+ *   mu:    1..5
+ */
+ 
+static uint8_t fmn_alphablock_measure_alpha(const struct fmn_sprite *sprite) {
+  const uint8_t inorder[4]={FMN_DIR_N,FMN_DIR_E,FMN_DIR_S,FMN_DIR_W};
+  int cp=AB_CONTACT_SIZE-1;
+  int iop=0;
+  int i=4; while (i-->0) {
+    if (inorder[i]==sprite->bv[cp]) { iop=i; break; }
+  }
+  int c=1;
+  while (c<4) {
+    cp--;
+    iop--;
+    if (iop<0) iop=3;
+    if (inorder[iop]!=sprite->bv[cp]) break;
+    c++;
+  }
+  return c;
+}
+ 
+static uint8_t fmn_alphablock_measure_gamma(const struct fmn_sprite *sprite) {
+  const uint8_t *B=sprite->bv+AB_CONTACT_SIZE-3;
+  if ((B[0]==FMN_DIR_W)&&(B[1]==FMN_DIR_E)&&(B[2]==FMN_DIR_W)) return 3;
+  if ((B[1]==FMN_DIR_W)&&(B[2]==FMN_DIR_E)) return 2;
+  if (B[2]==FMN_DIR_W) return 1;
+  return 0;
+}
+ 
+static uint8_t fmn_alphablock_measure_mu(const struct fmn_sprite *sprite) {
+  const uint8_t *B=sprite->bv;
+  if (B[0]&&(B[0]==B[1])&&(B[1]==B[2])&&(B[2]!=B[3])&&(B[2]==B[4])) return 5;
+  if (B[1]&&(B[1]==B[2])&&(B[2]==B[3])&&(B[3]!=B[4])) return 4;
+  if (B[2]&&(B[2]==B[3])&&(B[3]==B[4])) return 3;
+  if (B[3]&&B[3]==B[4]) return 2;
+  return 1;
+}
+
 /* Something was just added to the contact history.
  * Check whether we should activate.
  */
- 
-static char _(uint8_t src) {
-  switch (src) {
-    case FMN_DIR_N: return 'N';
-    case FMN_DIR_S: return 'S';
-    case FMN_DIR_W: return 'W';
-    case FMN_DIR_E: return 'E';
-    default: return ' ';
-  }
-}
 
 static void fmn_alphablock_move(struct fmn_sprite *sprite,float ddx,float ddy) {
   dx=ddx;
@@ -157,38 +188,54 @@ static void fmn_alphablock_move(struct fmn_sprite *sprite,float ddx,float ddy) {
  
 static void fmn_alphablock_check_contact_history(struct fmn_sprite *sprite) {
   switch (sprite->tileid) {
+  
     case AB_MODE_ALPHA: {
-        const uint8_t *B=sprite->bv+1;
-             if ((B[0]==FMN_DIR_N)&&(B[1]==FMN_DIR_E)&&(B[2]==FMN_DIR_S)&&(B[3]==FMN_DIR_W)) fmn_alphablock_move(sprite,1.0f,0.0f);
-        else if ((B[0]==FMN_DIR_E)&&(B[1]==FMN_DIR_S)&&(B[2]==FMN_DIR_W)&&(B[3]==FMN_DIR_N)) fmn_alphablock_move(sprite,0.0f,1.0f);
-        else if ((B[0]==FMN_DIR_S)&&(B[1]==FMN_DIR_W)&&(B[2]==FMN_DIR_N)&&(B[3]==FMN_DIR_E)) fmn_alphablock_move(sprite,-1.0f,0.0f);
-        else if ((B[0]==FMN_DIR_W)&&(B[1]==FMN_DIR_N)&&(B[2]==FMN_DIR_E)&&(B[3]==FMN_DIR_S)) fmn_alphablock_move(sprite,0.0f,-1.0f);
-      } break;
-    case AB_MODE_GAMMA: {
-        if (
-          (sprite->bv[2]==FMN_DIR_W)&&
-          (sprite->bv[3]==FMN_DIR_E)&&
-          (sprite->bv[4]==FMN_DIR_W)
-        ) {
-          fmn_sound_effect(FMN_SFX_BLOCK_EXPLODE);
-          fmn_sprite_generate_soulballs(sprite->x,sprite->y,5,0);
-          fmn_sprite_kill(sprite);
-          fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,0);
+        switch (fmn_alphablock_measure_alpha(sprite)) {
+          case 1: fmn_sound_effect(FMN_SFX_ALPHA_1); break;
+          case 2: fmn_sound_effect(FMN_SFX_ALPHA_2); break;
+          case 3: fmn_sound_effect(FMN_SFX_ALPHA_3); break;
+          case 4: {
+              fmn_sound_effect(FMN_SFX_ALPHA_5);
+              switch (sprite->bv[4]) {
+                case FMN_DIR_W: fmn_alphablock_move(sprite,1.0f,0.0f); break;
+                case FMN_DIR_E: fmn_alphablock_move(sprite,-1.0f,0.0f); break;
+                case FMN_DIR_N: fmn_alphablock_move(sprite,0.0f,1.0f); break;
+                case FMN_DIR_S: fmn_alphablock_move(sprite,0.0f,-1.0f); break;
+              }
+            } break;
         }
       } break;
+
+    case AB_MODE_GAMMA: {
+        switch (fmn_alphablock_measure_gamma(sprite)) {
+          case 0: fmn_sound_effect(FMN_SFX_ALPHA_0); break;
+          case 1: fmn_sound_effect(FMN_SFX_ALPHA_1); break;
+          case 2: fmn_sound_effect(FMN_SFX_ALPHA_3); break;
+          case 3: {
+              fmn_sound_effect(FMN_SFX_ALPHA_5);
+              fmn_sound_effect(FMN_SFX_BLOCK_EXPLODE);
+              fmn_sprite_generate_soulballs(sprite->x,sprite->y,5,0);
+              fmn_sprite_kill(sprite);
+              fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,0);
+            } break;
+        }
+      } break;
+
     case AB_MODE_MU: {
-        if (
-          (sprite->bv[0]==sprite->bv[1])&&
-          (sprite->bv[1]==sprite->bv[2])&&
-          (sprite->bv[2]!=sprite->bv[3])&&
-          (sprite->bv[2]==sprite->bv[4])
-        ) {
-          switch (sprite->bv[0]) {
-            case FMN_DIR_N: fmn_alphablock_move(sprite,0.0f,1.0f); break;
-            case FMN_DIR_S: fmn_alphablock_move(sprite,0.0f,-1.0f); break;
-            case FMN_DIR_W: fmn_alphablock_move(sprite,1.0f,0.0f); break;
-            case FMN_DIR_E: fmn_alphablock_move(sprite,-1.0f,0.0f); break;
-          }
+        switch (fmn_alphablock_measure_mu(sprite)) {
+          case 1: fmn_sound_effect(FMN_SFX_ALPHA_1); break;
+          case 2: fmn_sound_effect(FMN_SFX_ALPHA_2); break;
+          case 3: fmn_sound_effect(FMN_SFX_ALPHA_3); break;
+          case 4: fmn_sound_effect(FMN_SFX_ALPHA_4); break;
+          case 5: {
+              fmn_sound_effect(FMN_SFX_ALPHA_5);
+              switch (sprite->bv[0]) {
+                case FMN_DIR_N: fmn_alphablock_move(sprite,0.0f,1.0f); break;
+                case FMN_DIR_S: fmn_alphablock_move(sprite,0.0f,-1.0f); break;
+                case FMN_DIR_W: fmn_alphablock_move(sprite,1.0f,0.0f); break;
+                case FMN_DIR_E: fmn_alphablock_move(sprite,-1.0f,0.0f); break;
+              }
+            } break;
         }
       } break;
   }

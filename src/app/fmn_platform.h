@@ -185,6 +185,12 @@
 #define FMN_SFX_TREADLE_TICK 77
 #define FMN_SFX_CHA_CHING 78
 #define FMN_SFX_CLAP 79
+#define FMN_SFX_ALPHA_0 80
+#define FMN_SFX_ALPHA_1 81
+#define FMN_SFX_ALPHA_2 82
+#define FMN_SFX_ALPHA_3 83
+#define FMN_SFX_ALPHA_4 84
+#define FMN_SFX_ALPHA_5 85
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */

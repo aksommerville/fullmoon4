@@ -4,4 +4,4 @@ tile 0
 style tile
 physics edge sprites solid hole blowable
 radius 0.5
-invmass 0
+invmass 1

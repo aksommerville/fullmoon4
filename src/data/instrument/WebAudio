@@ -1090,3 +1090,57 @@ sound CLAP
   env 0 ( 0 15 0xc000 30 0x3000 * 0 )
   norm 0 0.200
 end
+
+sound ALPHA_0
+  len 0.200
+  fm 0 ( 150 * 100 ) 1.5 ( 2000 ) sine
+  env 0 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 0 0.300
+end
+
+sound ALPHA_1
+  len 0.200
+  fm 0 ( 400 ) 2.0 ( 2000 ) sine
+  env 0 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 0 0.500
+end
+
+sound ALPHA_2
+  len 0.200
+  fm 0 ( 400 ) 2.0 ( 2000 ) sine
+  env 0 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 0 0.200
+  fm 1 ( 504 ) 2.0 ( 2000 ) sine
+  env 1 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 1 0.400
+end
+
+sound ALPHA_3
+  len 0.200
+  fm 0 ( 400 ) 2.0 ( 2000 ) sine
+  env 0 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 0 0.200
+  fm 1 ( 599 ) 2.0 ( 2000 ) sine
+  env 1 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 1 0.400
+end
+
+sound ALPHA_4
+  len 0.200
+  fm 0 ( 400 ) 2.0 ( 2000 ) sine
+  env 0 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 0 0.200
+  fm 1 ( 713 ) 2.0 ( 2000 ) sine
+  env 1 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 1 0.400
+end
+
+sound ALPHA_5
+  len 0.200
+  fm 0 ( 400 ) 2.0 ( 2000 ) sine
+  env 0 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 0 0.200
+  fm 1 ( 800 ) 2.0 ( 2000 ) sine
+  env 1 ( 0 30 0xc000 50 0x2000 * 0 )
+  norm 1 0.400
+end
