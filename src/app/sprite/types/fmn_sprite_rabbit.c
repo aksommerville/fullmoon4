@@ -1,24 +1,16 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/hero/fmn_hero.h"
 
-#define RABBIT_BEAT_TIME 0.250f
+#define RABBIT_BEAT_TIME 0.500f
 
 static const uint8_t rabbit_song[]={
   FMN_DIR_W,
   FMN_DIR_E,
   FMN_DIR_W,
   0,
-  FMN_DIR_W,
-  FMN_DIR_E,
-  FMN_DIR_W,
-  0,
   FMN_DIR_N,
-  0,
   FMN_DIR_N,
-  0,
   FMN_DIR_S,
-  0,
-  0,
   0,
 };
 

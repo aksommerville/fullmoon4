@@ -614,7 +614,7 @@ static void fmn_hero_violin_update(float elapsed) {
   // Because when we record a note, we floor time rather than rounding.
   if ((fmn_global.violin_songp==fmn_hero.next_metronome_songp)&&(fmn_global.violin_clock>=0.5f)) {
     fmn_sound_effect(FMN_SFX_COWBELL);
-    fmn_hero.next_metronome_songp+=2;
+    fmn_hero.next_metronome_songp++;
     if (fmn_hero.next_metronome_songp>=FMN_VIOLIN_SONG_LENGTH) {
       fmn_hero.next_metronome_songp-=FMN_VIOLIN_SONG_LENGTH;
     }
@@ -622,12 +622,12 @@ static void fmn_hero_violin_update(float elapsed) {
   
   while (fmn_global.violin_clock>=1.0f) {
     fmn_global.violin_clock-=1.0f;
-    fmn_global.violin_song[fmn_global.violin_songp]=0;
-    fmn_global.violin_shadow[fmn_global.violin_songp]=0;
     fmn_global.violin_songp++;
     if (fmn_global.violin_songp>=FMN_VIOLIN_SONG_LENGTH) {
       fmn_global.violin_songp=0;
     }
+    fmn_global.violin_song[fmn_global.violin_songp]=0;
+    fmn_global.violin_shadow[fmn_global.violin_songp]=0;
     fmn_violin_check_song();
   }
 }
@@ -658,6 +658,7 @@ static void fmn_hero_violin_motion(uint8_t bit,uint8_t value) {
     if (!fmn_hero.violin_spellid) {
       int8_t p=fmn_global.violin_songp-1;
       if (p<0) p=FMN_VIOLIN_SONG_LENGTH-1;
+      else if (p>=FMN_VIOLIN_SONG_LENGTH) p=0;
       fmn_global.violin_song[p]=ndir;
     }
     fmn_synth_event(0x0e,0x90,fmn_violin_note_from_dir(fmn_global.wand_dir),0x40);

@@ -226,7 +226,7 @@
 /* Size of the violin input buffer.
  * The longest song must be shorter than this. (not equal)
  */
-#define FMN_VIOLIN_SONG_LENGTH 20
+#define FMN_VIOLIN_SONG_LENGTH 10
 
 #define FMN_SPELLID_BLOOM 1
 #define FMN_SPELLID_RAIN 2
@@ -244,12 +244,9 @@
 #define FMN_SPELLID_INVISIBLE 14
 #define FMN_SPELLID_REVEILLE 15
 #define FMN_SPELLID_LULLABYE 16
-#define FMN_SPELLID_HITHER 17
-#define FMN_SPELLID_THITHER 18
-#define FMN_SPELLID_REVELATIONS 19
-#define FMN_SPELLID_PUMPKIN 21
-#define FMN_SPELLID_TELE5 22 /* desert */
-#define FMN_SPELLID_TELE6 23 /* steppe */
+#define FMN_SPELLID_PUMPKIN 17
+#define FMN_SPELLID_TELE5 18 /* desert */
+#define FMN_SPELLID_TELE6 19 /* steppe */
 
 #define FMN_MAPFLAG_DARK 0x01
 #define FMN_MAPFLAG_INDOORS 0x02

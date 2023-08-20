@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### TODO: Critical bugs, roughly sorted by effort
 
 - [x] Speed up the velocity envelope's release a little?
-- [ ] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
+- [x] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
 - [ ] Can push alphablock via intermediate pushblock.
 - [ ] Positive and negative beeps from alphablocks as you encode.
 - [ ] Static educator: Use treadles instead of connect-the-blocks.

@@ -12,12 +12,12 @@ static void _ms_treadmill(void *userdata,uint16_t eventid,void *payload) {
   if (!payload) return;
   struct fmn_sprite *sprite=userdata;
   selection+=*(int*)payload;
-  selection&=0x03;
+  if (selection==0xff) selection=2;
+  else if (selection>2) selection=0;
   switch (selection) {
     case 0: sprite->tileid=tileid0+0x00; break;
     case 1: sprite->tileid=tileid0+0x11; break;
-    case 2: sprite->tileid=tileid0+0x02; break;
-    case 3: sprite->tileid=tileid0+0x12; break;
+    case 2: sprite->tileid=tileid0+0x12; break;
   }
 }
 
@@ -34,8 +34,8 @@ static void _ms_init(struct fmn_sprite *sprite) {
   switch (selection=fmn_gs_get_word(gsbit_selection,2)) {
     case 0: sprite->tileid=tileid0+0x00; break;
     case 1: sprite->tileid=tileid0+0x11; break;
-    case 2: sprite->tileid=tileid0+0x02; break;
-    case 3: sprite->tileid=tileid0+0x12; break;
+    case 2: sprite->tileid=tileid0+0x12; break;
+    case 3: sprite->tileid=tileid0+0x00; break;
   }
   struct fmn_sprite *dep;
   if (dep=fmn_sprite_generate_noparam(FMN_SPRCTL_dummy,sprite->x+1.0f,sprite->y)) {

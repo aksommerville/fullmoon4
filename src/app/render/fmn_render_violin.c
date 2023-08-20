@@ -51,12 +51,12 @@ static void fmn_violin_begin(struct fmn_violin_context *ctx) {
   }
   
   int note_spacing=ctx->w/FMN_VIOLIN_SONG_LENGTH;
-  int bar_spacing=note_spacing<<2;
+  int bar_spacing=note_spacing<<1;
   if (bar_spacing<1) bar_spacing=1;
-  float position_in_bar=((fmn_global.violin_songp&3)+fmn_global.violin_clock)/4.0f;
+  float position_in_bar=((fmn_global.violin_songp&1)+fmn_global.violin_clock)/2.0f;
   int16_t x=ctx->x-(int16_t)(position_in_bar*bar_spacing);
   int16_t leftx=x+(note_spacing>>1);
-  x-=note_spacing;
+  x+=note_spacing;
   struct fmn_violin_bar *bar=ctx->barv;
   int barc=0;
   for (;(x<ctx->x+ctx->w)&&(barc<FMN_VIOLIN_BAR_LIMIT);x+=bar_spacing,bar++,barc++) {
@@ -66,7 +66,7 @@ static void fmn_violin_begin(struct fmn_violin_context *ctx) {
   
   // Shadow notes...
   uint8_t songp=fmn_global.violin_songp;
-  x=leftx+(songp&3)*note_spacing;
+  x=leftx+(songp&1)*note_spacing;
   ctx->notec=0;
   for (i=FMN_VIOLIN_SONG_LENGTH;i-->0;songp++,x+=note_spacing) {
     if (songp>=FMN_VIOLIN_SONG_LENGTH) songp=0;
@@ -84,7 +84,7 @@ static void fmn_violin_begin(struct fmn_violin_context *ctx) {
   
   // Live notes...
   songp=fmn_global.violin_songp;
-  x=leftx+(songp&3)*note_spacing;
+  x=leftx+(songp&1)*note_spacing;
   for (i=FMN_VIOLIN_SONG_LENGTH;i-->0;songp++,x+=note_spacing) {
     if (songp>=FMN_VIOLIN_SONG_LENGTH) songp=0;
     struct fmn_violin_note *note=ctx->notev+ctx->notec;
@@ -107,7 +107,7 @@ static void fmn_render_violin_context(struct fmn_violin_context *ctx) {
 
   // Background, top and bottom lines, bottom shadow.
   struct fmn_draw_rect rectv[4];
-  if ((fmn_global.violin_songp&1)&&(fmn_global.violin_clock<0.5f)) {
+  if (fmn_global.violin_clock<0.5f) {
     int aweight=fmn_global.violin_clock*512.0f; if (aweight>0xff) aweight=0xff;
     int bweight=0xff-aweight;
     int r=(0xd8*aweight+0xf8*bweight)>>8; if (r<0) r=0; else if (r>0xff) r=0xff;

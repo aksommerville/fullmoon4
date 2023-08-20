@@ -218,26 +218,25 @@ static const struct fmn_spell {
 #define SPELL(name,...) {FMN_SPELLID_##name,0,{__VA_ARGS__},sizeof((uint8_t[]){__VA_ARGS__})},
 #define SONG(name,...) {FMN_SPELLID_##name,1,{__VA_ARGS__},sizeof((uint8_t[]){__VA_ARGS__})},
 
-  SONG(BLOOM,W,E,W,_,W,E,W,_,N,_,N,_,S)
+  SONG(BLOOM,      W,E,W,_,N,N,S)
+  SONG(REVEILLE,   S,S,W,E,N,_,N)
+  SONG(LULLABYE,   W,_,S,_,W,S,E)
+  
   SPELL(RAIN,N,W,S,N,E,S)
   SPELL(WIND_W,E,N,W,S,E,W,S,W)
   SPELL(WIND_E,E,N,W,S,E,W,S,E)
   SPELL(WIND_N,E,N,W,S,E,W,S,N)
   SPELL(WIND_S,E,N,W,S,E,W,S,S)
   SPELL(SLOWMO,E,W,W,E,W,W,S,W)
+  SPELL(OPEN,W,E,W,N,N)
+  SPELL(INVISIBLE,W,N,S,E,W,W,E,E)
+  SPELL(PUMPKIN,N,S,N,S,W,W,E)
+  
   SPELL(HOME,S,S,S)
   SPELL(TELE1,W,S,E,W,S,E) /* beach (demo:Church) */
   SPELL(TELE2,E,W,E,S) /* swamp */
   SPELL(TELE3,W,N,E,W,N,E) /* mountains */
   SPELL(TELE4,W,E,W,E,S,N,N) /* castle */
-  SPELL(OPEN,W,E,W,N,N)
-  SPELL(INVISIBLE,W,N,S,E,W,W,E,E)
-  SONG(REVEILLE,S,_,N,N,E,_,N,_,N,_,_,E,N)
-  SONG(LULLABYE,W,_,_,_,S,_,_,_,W,_,S,_,E)
-  SONG(HITHER,W,W,E,W,N,_,_,_,W,W,E,W,N,_,N)
-  SONG(THITHER,N,E,W,S,E,E,W,S)
-  SONG(REVELATIONS,S,_,W,_,S,W,E,W,S,_,N,_,N)
-  SPELL(PUMPKIN,N,S,N,S,W,W,E)
   SPELL(TELE5,E,E,W,E,E) /* desert */
   SPELL(TELE6,N,N,S,N,N) /* steppe */
 

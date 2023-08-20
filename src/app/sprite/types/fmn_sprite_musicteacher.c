@@ -130,8 +130,7 @@ static void mt_set_stage_TEACH(struct fmn_sprite *sprite) {
   switch (fmn_gs_get_word(gsbit_selection,2)) {
     case 0: spellid=FMN_SPELLID_LULLABYE; break;
     case 1: spellid=FMN_SPELLID_REVEILLE; break;
-    case 2: spellid=FMN_SPELLID_REVELATIONS; break;
-    case 3: spellid=FMN_SPELLID_BLOOM; break;
+    case 2: spellid=FMN_SPELLID_BLOOM; break;
   }
 
   mt_songc=fmn_spell_get(mt_song,sizeof(mt_song),spellid);
@@ -163,13 +162,14 @@ static void mt_update_TEACH(struct fmn_sprite *sprite,float elapsed) {
   // If (violin_clock) decreased, it means one beat elapsed.
   // This could fail if the sprite's update interval goes longer than one beat, I think that's not likely.
   if (
-    (fmn_global.violin_clock>=0.5f)&&
-    (pvviolinclock<0.5f)
+    (fmn_global.violin_clock>=0.50f)&&
+    (pvviolinclock<0.50f)
   ) {
     mt_advance_beat(sprite);
   }
   if (fmn_global.violin_clock<pvviolinclock) {
     mt_advance_visual_beat(sprite);
+    //mt_advance_beat(sprite);
   }
   pvviolinclock=fmn_global.violin_clock;
 }
@@ -230,7 +230,8 @@ static void _mt_treadmill(void *userdata,uint16_t eventid,void *payload) {
   int d=*(int*)payload;
   int selection=fmn_gs_get_word(gsbit_selection,2);
   selection+=d;
-  selection&=3;
+  if (selection<0) selection=2;
+  else if (selection>2) selection=0;
   fmn_gs_set_word(gsbit_selection,2,selection);
 }
 

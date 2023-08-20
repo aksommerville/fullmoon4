@@ -654,23 +654,6 @@ static void fmn_invisibility_begin() {
   fmn_global.invisibility_time=FMN_INVISIBILITY_TIME;
 }
 
-/* Cast the Song of Revelations.
- */
- 
-static void fmn_cast_revelations() {
-  uint8_t *v=fmn_global.map;
-  uint8_t i=FMN_COLC*FMN_ROWC;
-  uint8_t dirty=0;
-  for (;i-->0;v++) {
-    if (fmn_global.cellphysics[*v]==FMN_CELLPHYSICS_REVELABLE) {
-      //TODO should there be some fireworks?
-      (*v)+=0x10;
-      dirty=1;
-    }
-  }
-  if (dirty) fmn_map_dirty();
-}
-
 /* The Spell of Opening: If any sketched doors are present, turn them into real doors.
  * We use similar plumbing to teleport targets for this, but keyed on FMN_SPELLID_OPEN.
  */
@@ -727,7 +710,6 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_WIND_S: fmn_wind_begin(FMN_DIR_S); break;
     case FMN_SPELLID_SLOWMO: fmn_slowmo_begin(); break;
     case FMN_SPELLID_INVISIBLE: fmn_invisibility_begin(); break;
-    case FMN_SPELLID_REVELATIONS: fmn_cast_revelations(); break;
     case FMN_SPELLID_OPEN: fmn_open_magic_doors(); break;
     case FMN_SPELLID_HOME:
     case FMN_SPELLID_TELE1:
