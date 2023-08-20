@@ -10,10 +10,11 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### Remaining major features. Finish before 31 August.
 
 - [x] Web: Persist Preferences. And sneak language into that too.
-- [ ] Web: Interactive input config.
+- [x] Web: Interactive input config.
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 
+- [ ] Settings: Can get "scaler=''" by pressing Left.
 - [ ] "R" chalk, allow negative slope.
 - [ ] "R" chalk: Accept narrow top bubble.
 - [ ] Mu block: (A) and (B) directions must be different! As is you can tickle 5 times in one direction.
@@ -58,6 +59,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] web: Sometimes images don't load after a rebuild.
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
 - [ ] Orphans should keep their winter clothes after your first victory.
@@ -74,6 +76,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Not critical.
 
+- [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] After a 45-minute session: bigpc_quit, clock stats: Final game time 1800 ms (1800 ms real time). overflow=0 underflow=0 fault=0 wrap=0 cpu=0.036068
 - [ ] web: Language selection, figure out how that works
 - [ ] Sound effect for coin toss

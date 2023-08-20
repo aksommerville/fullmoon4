@@ -653,21 +653,28 @@ export class Runtime {
   }
 
   getInputDeviceName(dstp, dsta, devp) {
-    return 0;//TODO
+    let src = this.inputManager.getInputDeviceName(devp);
+    if (!src) return 0;
+    if (src.length > dsta) src = src.substring(0, dsta);
+    for (let i=0; i<src.length; i++, dstp++) {
+      this.wasmLoader.memU8[dstp] = src.charCodeAt(i);
+    }
+    return src.length;
   }
   
   beginInputConfiguration(devp) {
-    //TODO
+    this.inputManager.beginInputConfiguration(devp);
   }
   
   cancelInputConfiguration() {
-    //TODO
+    this.inputManager.cancelInputConfiguration();
   }
   
   getInputConfigurationState(devpp, btnidp) {
-    this.wasmLoader.memU8[devpp] = FMN.INCFG_STATE_NONE; // NONE,READY,CONFIRM,FAULT
-    this.wasmLoader.memU8[btnidp] = 0;
-    //TODO
+    const state = this.inputManager.getInputConfigurationState();
+    this.wasmLoader.memU8[devpp] = state.devp;
+    this.wasmLoader.memU8[btnidp] = state.btnid;
+    return state.state;
   }
 }
 
