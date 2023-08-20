@@ -9,26 +9,14 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- [x] Settings: Can get "scaler=''" by pressing Left.
-- [x] "R" chalk, allow negative slope.
-- [x] "R" chalk: Accept narrow top bubble.
-- [x] Mu block: (A) and (B) directions must be different! As is you can tickle 5 times in one direction.
-- [x] Make the farmer emerge faster. Should be hard not to see him.
-- [x] credits: Sound effect on delivering the winter clothes
-- [x] Free seeds at Dot's house.
-- - Not at Dot's, it's too easy to saturate your inventory. Put by the Rabbit, with a pull-block or something to slow it down.
-- [x] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map? (eg 2 screens south of home)
-- [x] Music teacher: Engage from anywhere, not just right in front of me.
-- [x] Snow: Interior corners missing one pixel of outline.
-- [x] Music shop: Couple wrong tiles in the wall.
-- [x] Castle pumpkin icon, make more legible.
-- [ ] Speed up the velocity envelope's release a little?
+- [x] Speed up the velocity envelope's release a little?
 - [ ] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
 - [ ] Can push alphablock via intermediate pushblock.
 - [ ] Positive and negative beeps from alphablocks as you encode.
 - [ ] Static educator: Use treadles instead of connect-the-blocks.
 - [ ] Static educator: Make feather image more obvious.
 - [ ] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
+- [ ] Soulballs track badly when respawning.
 - [ ] Konami code easter egg.
 - [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).

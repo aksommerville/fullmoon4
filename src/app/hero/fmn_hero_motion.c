@@ -155,9 +155,17 @@ void fmn_hero_motion_update(float elapsed) {
   }
   
   // Accelerate toward the target with a maximum rate per axis.
-  //TODO Different acceleration constants eg when riding the broom, standing on ice, ...
-  // Will we ever need to accelerate at different rates toward vs away from zero?
-  float limit=FMN_HERO_ACCELERATION*elapsed;
+  float limit=elapsed;
+  const float basically_zero=0.001f;
+  if ((tvx>=-basically_zero)&&(tvx<=basically_zero)&&(tvy>=-basically_zero)&&(tvy<=basically_zero)) {
+    if (fmn_global.active_item==FMN_ITEM_BROOM) {
+      limit*=FMN_HERO_DECELERATION_BROOM;
+    } else {
+      limit*=FMN_HERO_DECELERATION;
+    }
+  } else {
+    limit*=FMN_HERO_ACCELERATION;
+  }
   float dx=tvx-fmn_hero.sprite->velx;
   if (dx>limit) dx=limit; else if (dx<-limit) dx=-limit;
   float dy=tvy-fmn_hero.sprite->vely;
