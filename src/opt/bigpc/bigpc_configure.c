@@ -547,10 +547,11 @@ int bigpc_config_ready() {
 static int bigpc_settings_encode(void *dstpp) {
   char tmp[256];
   int tmpc=snprintf(tmp,sizeof(tmp),
-    "fullscreen=%d\nmusic=%d\nlang=%c%c\n",
+    "fullscreen=%d\nmusic=%d\nlang=%c%c\nscaler=%s\n",
     bigpc.settings.fullscreen_enable,
     bigpc.settings.music_enable,
-    bigpc.settings.language>>8,bigpc.settings.language&0xff
+    bigpc.settings.language>>8,bigpc.settings.language&0xff,
+    (bigpc.settings.scaler==FMN_SCALER_BLURRY)?"blurry":"pixelly"
   );
   if ((tmpc<0)||(tmpc>=sizeof(tmp))) return -1;
   char *nv=malloc(tmpc+1);
@@ -619,6 +620,14 @@ static int bigpc_settings_decode_line(struct fmn_platform_settings *settings,con
     return 0;
   }
   
+  if ((kc==6)&&!memcmp(k,"scaler",6)) {
+    if ((vc==7)&&!memcmp(v,"pixelly",7)) settings->scaler=FMN_SCALER_PIXELLY;
+    else if ((vc==6)&&!memcmp(v,"blurry",6)) settings->scaler=FMN_SCALER_BLURRY;
+    if (bigpc.video&&bigpc.video->type->set_scaler) bigpc.video->type->set_scaler(bigpc.video,settings->scaler);
+    if (bigpc.render&&bigpc.render->type->set_scaler) bigpc.render->type->set_scaler(bigpc.render,settings->scaler);
+    return 0;
+  }
+  
   fprintf(stderr,"%s: Unexpected settings key '%.*s'\n",bigpc.config.settings_path,kc,k);
   return 0;
 }
@@ -651,6 +660,8 @@ void bigpc_settings_init() {
   bigpc.settings.music_available=bigpc.synth->type->enable_music?1:0;
   bigpc.settings.music_enable=bigpc.synth->music_enable?1:0;
   bigpc.settings.language=bigpc.config.lang;
+  bigpc.settings.scaler_available=1;
+  bigpc.settings.scaler=FMN_SCALER_PIXELLY;
   
   if (bigpc.config.settings_path) {
     char *serial=0;

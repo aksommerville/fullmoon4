@@ -480,6 +480,12 @@ void fmn_platform_set_settings(struct fmn_platform_settings *settings) {
     fmn_language_changed();
     bigpc_settings_dirty();
   }
+  if (settings->scaler!=bigpc.settings.scaler) {
+    bigpc.settings.scaler=settings->scaler;
+    if (bigpc.video&&bigpc.video->type->set_scaler) bigpc.video->type->set_scaler(bigpc.video,settings->scaler);
+    if (bigpc.render&&bigpc.render->type->set_scaler) bigpc.render->type->set_scaler(bigpc.render,settings->scaler);
+    bigpc_settings_dirty();
+  }
 }
 
 uint16_t fmn_platform_get_next_language(uint16_t language) {

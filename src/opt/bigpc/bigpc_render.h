@@ -81,6 +81,8 @@ struct bigpc_render_type {
   // For begin, (fb) will be null in GX cases or the main framebuffer in soft-render cases.
   void (*begin)(struct bigpc_render_driver *driver,struct bigpc_image *fb);
   void (*end)(struct bigpc_render_driver *driver,uint8_t client_result);
+  
+  void (*set_scaler)(struct bigpc_render_driver *driver,int scaler);
 };
 
 const struct bigpc_render_type *bigpc_render_type_by_index(int p);

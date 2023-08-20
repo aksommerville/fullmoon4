@@ -96,4 +96,6 @@ int fmn_glx_fbfmt_measure_buffer(int fbfmt,int w,int h);
 int fmn_glx_video_mode_is_gx(int video_mode);
 int fmn_glx_video_mode_is_fb(int video_mode);
 
+void fmn_glx_set_final_filter(struct fmn_glx *glx,int linear_filter); // for FMN_GLX_VIDEO_MODE_FB_GX only
+
 #endif

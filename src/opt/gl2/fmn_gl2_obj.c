@@ -84,17 +84,12 @@ static void fmn_gl2_require_output_bounds(struct bigpc_render_driver *driver) {
   }
   int scale=DRIVER->dstw/fbw;
   
-  // If we ended up within 10 pixels below or 20 above an integer multiple, cheat it out and use nearest-neighbor filter.
-  // Otherwise, use linear interpolation below 4x and nearest-neighbor above.
+  // If we ended up within 10 pixels below or 20 above an integer multiple, cheat it out.
+  // Used to reset the filter here, but now the user can do that manually.
   int perfectw=fbw*scale;
   if ((scale>0)&&(DRIVER->dstw>=perfectw-10)&&(DRIVER->dstw<=perfectw+20)) {
     DRIVER->dstw=perfectw;
     DRIVER->dsth=fbh*scale;
-    fmn_gl2_set_main_filter(driver,GL_NEAREST);
-  } else if (scale<4) {
-    fmn_gl2_set_main_filter(driver,GL_LINEAR);
-  } else {
-    fmn_gl2_set_main_filter(driver,GL_NEAREST);
   }
   
   DRIVER->dstx=(driver->w>>1)-(DRIVER->dstw>>1);
@@ -365,6 +360,16 @@ static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_d
   return 0;
 }
 
+/* Set scaler.
+ */
+ 
+static void _gl2_set_scaler(struct bigpc_render_driver *driver,int scaler) {
+  switch (scaler) {
+    case FMN_SCALER_PIXELLY: fmn_gl2_set_main_filter(driver,GL_NEAREST); break;
+    case FMN_SCALER_BLURRY: fmn_gl2_set_main_filter(driver,GL_LINEAR); break;
+  }
+}
+
 /* Type.
  */
  
@@ -396,4 +401,5 @@ const struct bigpc_render_type bigpc_render_type_gl2={
   .draw_recal_swap=_gl2_draw_recal_swap,
   .begin=_gl2_begin,
   .end=_gl2_end,
+  .set_scaler=_gl2_set_scaler,
 };

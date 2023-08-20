@@ -135,6 +135,13 @@ static void _glx_suppress_screensaver(struct bigpc_video_driver *driver) {
   fmn_glx_suppress_screensaver(DRIVER->glx);
 }
 
+static void _glx_set_scaler(struct bigpc_video_driver *driver,int scaler) {
+  switch (scaler) {
+    case FMN_SCALER_PIXELLY: fmn_glx_set_final_filter(DRIVER->glx,0); break;
+    case FMN_SCALER_BLURRY: fmn_glx_set_final_filter(DRIVER->glx,1); break;
+  }
+}
+
 const struct bigpc_video_type bigpc_video_type_glx={
   .name="glx",
   .desc="Video and input for Linux via X11 and GLX, prefer for most systems.",
@@ -151,4 +158,5 @@ const struct bigpc_video_type bigpc_video_type_glx={
   .show_cursor=_glx_show_cursor,
   .set_fullscreen=_glx_set_fullscreen,
   .suppress_screensaver=_glx_suppress_screensaver,
+  .set_scaler=_glx_set_scaler,
 };

@@ -269,6 +269,16 @@ static void _mswm_set_fullscreen(struct bigpc_video_driver *driver,int fullscree
   mswm_autorelease(driver);
 }
 
+/* Set scaler.
+ */
+ 
+static void _mswm_set_scaler(struct bigpc_video_driver *driver,int scaler) {
+  glBindTexture(GL_TEXTURE_2D,DRIVER->texid);
+  int v=linear_filter?GL_LINEAR:GL_NEAREST;
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,v);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,v);
+}
+
 /* Type definition.
  */
  
@@ -286,6 +296,7 @@ const struct bigpc_video_type bigpc_video_type_mswm={
   .cancel=_mswm_cancel,
   .show_cursor=_mswm_show_cursor,
   .set_fullscreen=_mswm_set_fullscreen,
+  .set_scaler=_mswm_set_scaler,
 };
 
 /* Extra support for friend classes.

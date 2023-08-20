@@ -420,3 +420,14 @@ void fmn_glx_coord_win_from_fb(int *x,int *y,const struct fmn_glx *fmn_glx) {
   *x=((*x)*fmn_glx->dstw)/fmn_glx->fbw+fmn_glx->dstx;
   *y=((*y)*fmn_glx->dsth)/fmn_glx->fbh+fmn_glx->dsty;
 }
+
+/* Scale-up filter.
+ */
+ 
+void fmn_glx_set_final_filter(struct fmn_glx *glx,int linear_filter) {
+  if (!glx->fbtexid) return;
+  glBindTexture(GL_TEXTURE_2D,glx->fbtexid);
+  int v=linear_filter?GL_LINEAR:GL_NEAREST;
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,v);
+  glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,v);
+}

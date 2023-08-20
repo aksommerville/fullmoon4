@@ -135,6 +135,7 @@ struct bigpc_video_type {
   void (*show_cursor)(struct bigpc_video_driver *driver,int show);
   void (*set_fullscreen)(struct bigpc_video_driver *driver,int fullscreen);
   void (*suppress_screensaver)(struct bigpc_video_driver *driver);
+  void (*set_scaler)(struct bigpc_video_driver *driver,int scaler);
 };
 
 const struct bigpc_video_type *bigpc_video_type_by_index(int p);
