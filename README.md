@@ -11,77 +11,61 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [ ] Web: Persist Preferences. And sneak language into that too.
 - [ ] Web: Interactive input config.
-- [x] bigpc: respect fmn_platform_settings.scaler
-- [x] macos (on iMac only), crash on quit. Can we cause it to close the window instead? The implicit quit on window close doesn't crash.
-- - On closer examination, it is impossible to reproduce. Must have been due to cosmic rays interacting with swamp gas.
-- [x] macos (on iMac only), glViewport needs to scale by NSScreen.backingScale.
-- [x] MacOS: Build two independent app bundles. Demo and Full.
 
 ### Little bugs and narrative concerns, after playtest 3 August.
 
-- [x] Credits: Lower text is not erasing each time. (soft render, windows and linux)
-- [x] Also, Dot and Wolf render incorrectly when slightly offscreen during the yellow floor of credits.
-- [x] Soft render: Wand tattle arrows not using alpha. Up looks fine, all other directions are mixed up.
+- [ ] "R" chalk, allow negative slope.
+- [ ] "R" chalk: Accept narrow top bubble.
 - [ ] Mu block: (A) and (B) directions must be different! As is you can tickle 5 times in one direction.
+- [ ] Make the farmer emerge faster. Should be hard not to see him.
 - [ ] credits: Sound effect on delivering the winter clothes
+- [ ] Free seeds at Dot's house.
+- [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map? (eg 2 screens south of home)
+- [ ] Music teacher: Engage from anywhere, not just right in front of me.
+- [ ] Snow: Interior corners missing one pixel of outline.
+- [ ] Music shop: Couple wrong tiles in the wall.
+- [ ] Castle pumpkin icon, make more legible.
+- [ ] Possible to stand inside the dragon's head. Fire should hit you there.
+- [ ] Firewall: Respect invisibility.
+- [ ] "Don't look" sign for firewall, nobody gets it on their own.
+- [ ] Speed up the velocity envelope's release a little?
+- [ ] Positive and negative beeps from alphablocks as you encode.
 - [ ] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
 - [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
 - [ ] Look for other hard-coded text.
-- [ ] Make the farmer emerge faster. Should be hard not to see him.
 - [ ] Move items around: Compass to Swamp. Umbrella and Wand to Beach? Violin to music shop. Shovel must come earlier
 - [ ] North pole: Shuffle land bridges south so no blowback while on dry land.
 - [ ] Can we make the beach sign more legible?
-- [ ] Violin is still too unforgiving.
+- [ ] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
 - [ ] Can the Swamp entrance be made more prominent?
-- [ ] Free seeds at Dot's house.
-- [ ] Snow: Interior corners missing one pixel of outline.
-- [ ] Music shop: Couple wrong tiles in the wall.
 - [ ] Static educator: Use treadles instead of connect-the-blocks.
 - [ ] Static educator: Make feather image more obvious.
 - [ ] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
 - [ ] Can push alphablock via intermediate pushblock.
-- [ ] Swap wand trap: Allow to get the Umbrella, don't trap them so tight.
+- [ ] Swamp wand trap: Allow to get the Umbrella, don't trap them so tight.
 - [ ] Desert dead space, do something with it.
 - [ ] Move Seamonster Pong near the Umbrella. In the Swamp?
-- [ ] Music teacher: Engage from anywhere, not just right in front of me.
 - [ ] More hat trolls outside. Make it very difficult to get by without the Hat.
 - [ ] Put Hat in the Mountains.
-- [ ] "R" chalk, allow negative slope.
-- [ ] "R" chalk: Accept narrow top bubble.
-- [ ] Castle pumpkin icon, make more legible.
-- [ ] Possible to stand inside the dragon's head. Fire should hit you there.
 - [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
 - [ ] Lambda and charmed pushblock: Hesitate briefly at cell boundaries.
 - [ ] All blocks: Fuzz movement off-axis, make easier to squeeze in tight corridors.
-- [ ] Positive and negative beeps from alphablocks as you encode.
 - [ ] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way.
-- [ ] Firewall: Respect invisibility.
-- [ ] "Don't look" sign for firewall, nobody gets it on their own.
 - [ ] Konami code easter egg.
 - [ ] horz/vert indicator showed null initially.
 - [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
-- [ ] Speed up the velocity envelope's release a little?
-- [ ] Cut violin to 2 beats/measure or cut tempo, so we can play the click for every possible note slot.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
 
 ### Further critical features and bugs. Finish before 15 September.
 
-- [ ] macos: "Quit" from Hello makes app unresponsive but doesn't actually quit.
-- [x] Castle 3f, west of the OTP read, the upper stompbox spoils the whole puzzle.
 - [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Web reported play time runs short -- it doesn't match what gets saved.
-- [ ] treadle-driven firenozzles, can we ensure they bump back to the OFF state instantly when re-entering the map?
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
-- [ ] Arriving at swamp the first time, seems I can't guess wrong in the first mazelet. Is that my imagination? Or is it not getting set?
-- [ ] Crow guidance for full version. fmn_secrets.c:fmn_secrets_get_guide_dir()
 - [ ] UI sound effects, eg change menu selection.
 - [ ] web: Sound effects too quiet relative to music.
-- [ ] Metal
 - [ ] inmgr: Real input mapping.
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
 - [ ] Touch input.
-- [ ] Input configuration.
-- - [ ] UI for mapping.
 - [ ] minsyn drums too loud
 - [ ] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
 - [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
@@ -90,7 +74,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [ ] After a 45-minute session: bigpc_quit, clock stats: Final game time 1800 ms (1800 ms real time). overflow=0 underflow=0 fault=0 wrap=0 cpu=0.036068
 - [ ] web: Language selection, figure out how that works
-- [ ] Soft render: Alpha problem with arrows in wand feedback.
 - [ ] Sound effect for coin toss
 - [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
 - [ ] Tree-shake resources when packing.
