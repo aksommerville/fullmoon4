@@ -7,12 +7,20 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### Remaining major features. Finish before 31 August.
+### TODO: Map changes
 
-- [x] Web: Persist Preferences. And sneak language into that too.
-- [x] Web: Interactive input config.
+- [ ] "Don't look" sign for firewall, nobody gets it on their own.
+- [ ] Move items around: Compass to Swamp. Umbrella and Wand to Beach? Violin to music shop. Shovel must come earlier
+- [ ] North pole: Shuffle land bridges south so no blowback while on dry land.
+- [ ] Can we make the beach sign more legible?
+- [ ] Can the Swamp entrance be made more prominent?
+- [ ] Swamp wand trap: Allow to get the Umbrella, don't trap them so tight.
+- [ ] Desert dead space, do something with it.
+- [ ] Move Seamonster Pong near the Umbrella. In the Swamp?
+- [ ] More hat trolls outside. Make it very difficult to get by without the Hat.
+- [ ] Put Hat in the Mountains.
 
-### Little bugs and narrative concerns, after playtest 3 August.
+### TODO: Critical bugs, roughly sorted by effort
 
 - [ ] Settings: Can get "scaler=''" by pressing Left.
 - [ ] "R" chalk, allow negative slope.
@@ -26,56 +34,42 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Snow: Interior corners missing one pixel of outline.
 - [ ] Music shop: Couple wrong tiles in the wall.
 - [ ] Castle pumpkin icon, make more legible.
-- [ ] Possible to stand inside the dragon's head. Fire should hit you there.
-- [ ] Firewall: Respect invisibility.
-- [ ] "Don't look" sign for firewall, nobody gets it on their own.
 - [ ] Speed up the velocity envelope's release a little?
-- [ ] Positive and negative beeps from alphablocks as you encode.
-- [ ] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
-- [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
-- [ ] Look for other hard-coded text.
-- [ ] Move items around: Compass to Swamp. Umbrella and Wand to Beach? Violin to music shop. Shovel must come earlier
-- [ ] North pole: Shuffle land bridges south so no blowback while on dry land.
-- [ ] Can we make the beach sign more legible?
 - [ ] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
-- [ ] Can the Swamp entrance be made more prominent?
+- [ ] Can push alphablock via intermediate pushblock.
+- [ ] Positive and negative beeps from alphablocks as you encode.
 - [ ] Static educator: Use treadles instead of connect-the-blocks.
 - [ ] Static educator: Make feather image more obvious.
 - [ ] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
-- [ ] Can push alphablock via intermediate pushblock.
-- [ ] Swamp wand trap: Allow to get the Umbrella, don't trap them so tight.
-- [ ] Desert dead space, do something with it.
-- [ ] Move Seamonster Pong near the Umbrella. In the Swamp?
-- [ ] More hat trolls outside. Make it very difficult to get by without the Hat.
-- [ ] Put Hat in the Mountains.
+- [ ] Konami code easter egg.
+- [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
+- [ ] Possible to stand inside the dragon's head. Fire should hit you there.
+- [ ] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way. And move button to more convenient spot.
+- [ ] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
+- [ ] Firewall: Respect invisibility.
 - [ ] Lambda and charmed pushblock: Hesitate briefly at cell boundaries.
 - [ ] All blocks: Fuzz movement off-axis, make easier to squeeze in tight corridors.
-- [ ] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way.
-- [ ] Konami code easter egg.
 - [ ] horz/vert indicator showed null initially.
-- [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
+- [ ] UI sound effects, eg change menu selection.
+- [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
-
-### Further critical features and bugs. Finish before 15 September.
-
+- [ ] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
+- [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
+- [ ] minsyn drums too loud
+- [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
+- [ ] Look for other hard-coded text.
+- [ ] web: Sound effects too quiet relative to music.
+- [ ] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] web: Sometimes images don't load after a rebuild.
+- [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal. (note: This was some time ago; reassess)
+- [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
-- [ ] Orphans should keep their winter clothes after your first victory.
-- [ ] Web reported play time runs short -- it doesn't match what gets saved.
-- [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
-- [ ] UI sound effects, eg change menu selection.
-- [ ] web: Sound effects too quiet relative to music.
-- [ ] inmgr: Real input mapping.
-- [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal.
-- [ ] Touch input.
-- [ ] minsyn drums too loud
-- [ ] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
-- [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 
 ### TODO: Not critical.
 
+- [ ] Touch input.
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] After a 45-minute session: bigpc_quit, clock stats: Final game time 1800 ms (1800 ms real time). overflow=0 underflow=0 fault=0 wrap=0 cpu=0.036068
 - [ ] web: Language selection, figure out how that works
