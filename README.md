@@ -9,13 +9,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- [x] Speed up the velocity envelope's release a little?
-- [x] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
-- [x] Can push alphablock via intermediate pushblock.
-- [x] Positive and negative beeps from alphablocks as you encode.
-- [x] Static educator: Use treadles instead of connect-the-blocks.
-- [x] Static educator: Make feather image more obvious.
-- [x] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
 - [ ] Soulballs track badly when respawning.
 - [ ] Konami code easter egg.
 - [ ] Orphans should keep their winter clothes after your first victory.
@@ -30,8 +23,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] UI sound effects, eg change menu selection.
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
-- [ ] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
-- - Happened again. I started a sketch left of the F, but didn't draw anything.
+- [x] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
+- - Happened again. I started a sketch left of the F, but didn't draw anything. -- the other two chalks, that would not be possible.
+- - CONFIRMED: Just start a sketch left of the F, and cancel it right away: Guard changes from left-open to none-open.
 - [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
 - [ ] minsyn drums too loud
 - [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?

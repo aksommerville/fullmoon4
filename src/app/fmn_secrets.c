@@ -302,6 +302,15 @@ static int8_t fmn_sketch_cmp(const struct fmn_sketch *a,const struct fmn_sketch 
 }
  
 static void fmn_sort_sketches(struct fmn_sketch *v,uint8_t c) {
+
+  // Eliminate blanks. (blanks can exist, easily, just engage the chalk and immediately cancel).
+  int i=c; while (i-->0) {
+    if (!v[i].bits) {
+      c--;
+      memmove(v+i,v+i+1,sizeof(struct fmn_sketch)*(c-i));
+    }
+  }
+
   if (c<1) return;
   uint8_t lo=0,hi=c-1;
   int8_t d=1;
