@@ -9,16 +9,18 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Map changes
 
-- [ ] "Don't look" sign for firewall, nobody gets it on their own.
+- [x] "Don't look" sign for firewall, nobody gets it on their own.
 - [ ] Move items around: Compass to Swamp. Umbrella and Wand to Beach? Violin to music shop. Shovel must come earlier
-- [ ] North pole: Shuffle land bridges south so no blowback while on dry land.
-- [ ] Can we make the beach sign more legible?
-- [ ] Can the Swamp entrance be made more prominent?
-- [ ] Swamp wand trap: Allow to get the Umbrella, don't trap them so tight.
+- [x] North pole: Shuffle land bridges south so no blowback while on dry land.
+- [x] Can we make the beach sign more legible?
+- [x] Can the Swamp entrance be made more prominent?
+- [x] Swamp wand trap: Allow to get the Umbrella, don't trap them so tight.
 - [ ] Desert dead space, do something with it.
 - [ ] Move Seamonster Pong near the Umbrella. In the Swamp?
-- [ ] More hat trolls outside. Make it very difficult to get by without the Hat.
-- [ ] Put Hat in the Mountains.
+- [x] More hat trolls outside. Make it very difficult to get by without the Hat.
+- - Still possible, but god damn.
+- [x] Put Hat in the Mountains.
+- - Leaving it also in the village. Player's call.
 
 ### TODO: Critical bugs, roughly sorted by effort
 

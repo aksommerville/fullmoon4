@@ -20,4 +20,7 @@ sprite 6 3 hattroll 0 0 0
 sprite 14 4 hattroll 0 0 0
 sprite 7 8 hattroll 0 0 0
 sprite 5 4 skyleton 0 0 0
+sprite 3 7 hattroll 0 0 0
+sprite 6 5 hattroll 0 0 0
+sprite 17 9 hattroll 0 0 0
 song nearer_the_sky
