@@ -91,6 +91,7 @@ void fmn_game_event_unlisten_all();
 #define FMN_GAME_EVENT_TREADMILL 5 /* payload=int *delta */
 #define FMN_GAME_EVENT_BLOCKS_MOVED 6
 #define FMN_GAME_EVENT_SONG_OK 7 /* payload=uint8_t *spellid; sent as soon as the song is played; it's not cast yet */
+#define FMN_GAME_EVENT_TREADLE_CHANGE 8
 
 /* Extra mechanism for arbitrary update logic.
  * I'm adding this for conveyor belts' sake, but one imagines there will be lots of uses.

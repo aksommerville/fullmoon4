@@ -50,10 +50,10 @@ static void sted_retile(uint8_t col) {
 #define STED_SPACE_FUDGE 0.125f
  
 struct sted_find_connection_context {
-  struct fmn_sprite *pushblock;
+  struct fmn_sprite *treadle;
   struct fmn_sprite *alphablock;
   float midx,midy; // (sted.[xy]) but floated at the cell's center
-  float targetx,targety; // expected position of alphablock, depends on pushblock
+  float targetx,targety; // expected position of alphablock, depends on treadle
 };
 
 static int _sted_find_connection_final(struct fmn_sprite *sprite,void *userdata) {
@@ -73,9 +73,10 @@ static int _sted_find_connection_final(struct fmn_sprite *sprite,void *userdata)
  
 static int _sted_find_connection_1(struct fmn_sprite *sprite,void *userdata) {
   struct sted_find_connection_context *ctx=userdata;
-  if (sprite->controller!=FMN_SPRCTL_pushblock) return 0;
+  if (sprite->controller!=FMN_SPRCTL_treadle) return 0;
+  if (!sprite->bv[0]) return 0; // not pressed
   
-  // Determine which cardinal edge the block abuts. If none, return zero.
+  // Determine which cardinal edge the treadle abuts. If none, return zero.
   ctx->targetx=sprite->x;
   ctx->targety=sprite->y;
   float dx=sprite->x-ctx->midx;
@@ -94,7 +95,7 @@ static int _sted_find_connection_1(struct fmn_sprite *sprite,void *userdata) {
     } else return 0;
   } else return 0;
   
-  ctx->pushblock=sprite;
+  ctx->treadle=sprite;
   return fmn_sprites_for_each(_sted_find_connection_final,ctx);
 }
  
@@ -141,7 +142,8 @@ static void _sted_init(struct fmn_sprite *sprite) {
   if (sted.y<1) sted.y=1;
   else if (sted.y>=FMN_ROWC-1) sted.y=FMN_ROWC-2;
   
-  uint16_t listener=fmn_game_event_listen(FMN_GAME_EVENT_BLOCKS_MOVED,_sted_blocks_moved,0);
+  fmn_game_event_listen(FMN_GAME_EVENT_BLOCKS_MOVED,_sted_blocks_moved,0);
+  fmn_game_event_listen(FMN_GAME_EVENT_TREADLE_CHANGE,_sted_blocks_moved,0);
   fmn_sprite_kill(sprite);
 }
 

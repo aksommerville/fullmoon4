@@ -64,6 +64,7 @@ static void _treadle_press(struct fmn_sprite *sprite) {
     if (gsbit) fmn_gs_set_bit(gsbit,1);
     fmn_sound_effect(FMN_SFX_TREADLE_PRESS);
     countdown=0.0f;
+    fmn_game_event_broadcast(FMN_GAME_EVENT_TREADLE_CHANGE,sprite);
   }
 }
  
@@ -78,6 +79,7 @@ static void _treadle_release(struct fmn_sprite *sprite) {
     state=0;
     if (gsbit) fmn_gs_set_bit(gsbit,0);
     fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
+    fmn_game_event_broadcast(FMN_GAME_EVENT_TREADLE_CHANGE,sprite);
   }
 }
 
@@ -87,6 +89,7 @@ static void _treadle_commit_delayed_release(struct fmn_sprite *sprite) {
     state=0;
     if (gsbit) fmn_gs_set_bit(gsbit,0);
     fmn_sound_effect(FMN_SFX_TREADLE_RELEASE);
+    fmn_game_event_broadcast(FMN_GAME_EVENT_TREADLE_CHANGE,sprite);
   }
 }
  
@@ -96,10 +99,12 @@ static void _stompbox_press(struct fmn_sprite *sprite) {
     state=0;
     sprite->tileid=tileid0+1;
     if (gsbit) fmn_gs_set_bit(gsbit,0);
+    fmn_game_event_broadcast(FMN_GAME_EVENT_TREADLE_CHANGE,sprite);
   } else {
     state=1;
     sprite->tileid=tileid0+3;
     if (gsbit) fmn_gs_set_bit(gsbit,1);
+    fmn_game_event_broadcast(FMN_GAME_EVENT_TREADLE_CHANGE,sprite);
   }
 }
  

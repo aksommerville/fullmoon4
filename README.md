@@ -13,9 +13,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] Violin is still too unforgiving. Rewrite songs with only 2 beats/measure. (ie every metronome click)
 - [x] Can push alphablock via intermediate pushblock.
 - [x] Positive and negative beeps from alphablocks as you encode.
-- [ ] Static educator: Use treadles instead of connect-the-blocks.
-- [ ] Static educator: Make feather image more obvious.
-- [ ] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
+- [x] Static educator: Use treadles instead of connect-the-blocks.
+- [x] Static educator: Make feather image more obvious.
+- [x] Static educator: Don't use numbers on the alphablock slide. Use a cloverleaf of arrows.
 - [ ] Soulballs track badly when respawning.
 - [ ] Konami code easter egg.
 - [ ] Orphans should keep their winter clothes after your first victory.
