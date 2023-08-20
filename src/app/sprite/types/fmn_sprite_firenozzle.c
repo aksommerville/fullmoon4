@@ -27,6 +27,7 @@
 #define tileid0 sprite->bv[0]
 #define status sprite->bv[1]
 #define flamec sprite->bv[2]
+#define starting_up sprite->bv[3]
 
 #define on_time 1.0f
 #define huff_time 0.80f
@@ -47,10 +48,12 @@ static void _firenozzle_gsbit(void *userdata,uint16_t p,uint8_t v) {
   if (off_time_ds==1) v=!v;
   if (v) {
     if (status==FIRENOZZLE_STATUS_IDLE) return;
-    change_clock=min_stage_time-stage_clock;
+    if (starting_up) status=FIRENOZZLE_STATUS_IDLE;
+    else change_clock=min_stage_time-stage_clock;
   } else {
     if (status==FIRENOZZLE_STATUS_PUFF) return;
-    change_clock=min_stage_time-stage_clock;
+    if (starting_up) status=FIRENOZZLE_STATUS_PUFF;
+    else change_clock=min_stage_time-stage_clock;
   }
 }
 
@@ -58,6 +61,7 @@ static void _firenozzle_gsbit(void *userdata,uint16_t p,uint8_t v) {
  */
  
 static void _firenozzle_init(struct fmn_sprite *sprite) {
+  starting_up=1;
   switch (sprite->xform) {
     case 0: { // facing east
         dx=1;
@@ -146,6 +150,7 @@ static void firenozzle_check_hero(struct fmn_sprite *sprite) {
  */
  
 static void _firenozzle_update(struct fmn_sprite *sprite,float elapsed) {
+  starting_up=0;
   stage_clock+=elapsed;
   if (off_time_ds>1) { // timer in play
     clock+=elapsed;

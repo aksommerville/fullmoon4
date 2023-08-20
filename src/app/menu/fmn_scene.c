@@ -196,6 +196,7 @@ static void fmn_scene_render_clothe(int16_t dstx,int16_t dsty,int16_t dstw,int16
         if (dotx<=ovtxv[1].x) {
           scene->stage=1;
           scene->stageclock=0.0f;
+          fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);
         }
       } break;
     case 1: { // Clothing Janie.
@@ -217,6 +218,7 @@ static void fmn_scene_render_clothe(int16_t dstx,int16_t dsty,int16_t dstw,int16
         if (dotvtxv[0].x<=ovtxv[0].x) {
           scene->stage=3;
           scene->stageclock=0.0f;
+          fmn_sound_effect(FMN_SFX_ENCHANT_ANIMAL);
         }
       } break;
     case 3: { // Clothing Billy.

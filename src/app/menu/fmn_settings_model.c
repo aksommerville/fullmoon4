@@ -168,7 +168,7 @@ void fmn_settings_model_move(struct fmn_settings_model *model,int d) {
  
 static uint8_t adjust_scaler(uint8_t src,int d) {
   src+=d;
-  if (src==0xff) return 2;
+  if (src==0) return 2;
   if (src>=3) return 1;
   return src;
 }

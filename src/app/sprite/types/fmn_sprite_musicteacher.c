@@ -24,25 +24,6 @@
 static uint8_t mt_song[FMN_VIOLIN_SONG_LENGTH];
 static uint8_t mt_songc=0;
 
-/* Is the hero in range where we can teach her?
- */
- 
-#define MT_HERO_RANGE_Y 0.75f /* in either direction */
-#define MT_HERO_RANGE_X_MIN -2.5f /* always negative; we face left always */
-#define MT_HERO_RANGE_X_MAX -1.0f
- 
-static uint8_t mt_hero_in_range(struct fmn_sprite *sprite) {
-  float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  float dy=heroy-sprite->y;
-  if (dy<0.0f) dy=-dy;
-  if (dy>MT_HERO_RANGE_Y) return 0;
-  float dx=herox-sprite->x;
-  if (dx<MT_HERO_RANGE_X_MIN) return 0;
-  if (dx>MT_HERO_RANGE_X_MAX) return 0;
-  return 1;
-}
-
 /* Word bubble.
  */
  
@@ -199,10 +180,7 @@ static void mt_update_TEACH(struct fmn_sprite *sprite,float elapsed) {
 static void _mt_update(struct fmn_sprite *sprite,float elapsed) {
 
   // Check for stage changes.
-  if (!mt_hero_in_range(sprite)) {
-    mt_set_stage_IDLE(sprite);
-    songcomplete=0;
-  } else if (fmn_global.active_item==FMN_ITEM_VIOLIN) {
+  if (fmn_global.active_item==FMN_ITEM_VIOLIN) {
     if (!songcomplete) {
       mt_set_stage_TEACH(sprite);
     }

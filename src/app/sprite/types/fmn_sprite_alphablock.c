@@ -180,6 +180,7 @@ static void fmn_alphablock_check_contact_history(struct fmn_sprite *sprite) {
         if (
           (sprite->bv[0]==sprite->bv[1])&&
           (sprite->bv[1]==sprite->bv[2])&&
+          (sprite->bv[2]!=sprite->bv[3])&&
           (sprite->bv[2]==sprite->bv[4])
         ) {
           switch (sprite->bv[0]) {

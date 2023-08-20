@@ -329,6 +329,7 @@ static void _farmer_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
   physics0=sprite->physics;
   farmer_begin_HOME(sprite);
+  stagetime=2.0f; // First trip only; don't wait the full 5 seconds.
 }
 
 /* Type definition.
