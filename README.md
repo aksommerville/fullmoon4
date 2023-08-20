@@ -7,21 +7,6 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### TODO: Map changes
-
-- [x] "Don't look" sign for firewall, nobody gets it on their own.
-- [ ] Move items around: Compass to Swamp. Umbrella and Wand to Beach? Violin to music shop. Shovel must come earlier
-- [x] North pole: Shuffle land bridges south so no blowback while on dry land.
-- [x] Can we make the beach sign more legible?
-- [x] Can the Swamp entrance be made more prominent?
-- [x] Swamp wand trap: Allow to get the Umbrella, don't trap them so tight.
-- [ ] Desert dead space, do something with it.
-- [ ] Move Seamonster Pong near the Umbrella. In the Swamp?
-- [x] More hat trolls outside. Make it very difficult to get by without the Hat.
-- - Still possible, but god damn.
-- [x] Put Hat in the Mountains.
-- - Leaving it also in the village. Player's call.
-
 ### TODO: Critical bugs, roughly sorted by effort
 
 - [ ] Settings: Can get "scaler=''" by pressing Left.
@@ -64,6 +49,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] web: Sound effects too quiet relative to music.
 - [ ] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] web: Sometimes images don't load after a rebuild.
+- [ ] web: Validate crow guidance
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal. (note: This was some time ago; reassess)
 - [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 - [ ] Windows: Must sign executable.

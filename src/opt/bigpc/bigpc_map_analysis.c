@@ -118,7 +118,7 @@ uint16_t fmn_find_teleport_target(uint8_t spellid) {
 static int fmn_any_mapid_with_item_command_cb(uint8_t opcode,const uint8_t *argv,int argc,void *userdata) {
   uint8_t itemid=*(uint8_t*)userdata;
   switch (opcode) {
-    case 0x04: return -1; // ANCILLARY. Hopefully this command comes before any BURIED_TREASURE or SPRITE...
+    case 0x24: if (argv[0]&0x08) return -1; break; // FLAGS:ANCILLARY. Hopefully this command comes before any BURIED_TREASURE or SPRITE...
     case 0x62: if (argv[3]==itemid) return 1; // BURIED_TREASURE
     case 0x80: { // SPRITE
         uint16_t spriteid=(argv[1]<<8)|argv[2];

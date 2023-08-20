@@ -11,7 +11,7 @@
 0000001a1b1b2e2b2b2b2d1b1b2e2b2d1b1b2e2b
 1b1b1b2e2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b
 tilesheet caves
-flags dark
+flags dark indoors
 neighborw 139
 neighborn 137
 sprite 14 6 firenozzle_s 2 0 gs:mtn_fire1

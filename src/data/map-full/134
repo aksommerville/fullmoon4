@@ -11,7 +11,7 @@
 00000000000000001a2e2b2b2b2b2b2b2b2b2b2b
 1b1b1c00001a1b1b2e2b2b2b2b2b2b2b2b2b2b2b
 tilesheet caves
-flags dark
+flags dark indoors
 neighborw 133
 neighbors 137
 door 4 5 47 4 5

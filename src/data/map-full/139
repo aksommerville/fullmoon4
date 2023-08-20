@@ -11,7 +11,7 @@
 2b2b2b2b2b2b2b2b2c0000000000000000000000
 2b2b2b2b2b2b2b2b2d1b1b1b1b1b1b1b1b1b1b1b
 tilesheet caves
-flags dark
+flags dark indoors
 neighborw 138
 neighborn 136
 neighbore 140

@@ -114,7 +114,7 @@ uint8_t fmn_secrets_get_guide_dir_full() {
   
   
   // Welp that's all I got. Kaaaa, thanks for the corn.
-  fmn_log("...no response");
+  //fmn_log("...no response");
   return 0;
   #undef RESPOND
   #undef SIMPLE_ITEM

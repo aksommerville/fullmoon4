@@ -11,7 +11,7 @@
 2c000000000000000000000000003a1e2d1c0000
 2c00001a1b1b1b1b1b1b1b1c0000002a2b2d1b1b
 tilesheet caves
-flags dark
+flags dark indoors
 neighbore 133
 neighbors 135
 sprite 2 2 hattroll 0 0 0
