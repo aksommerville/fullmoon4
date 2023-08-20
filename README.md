@@ -9,7 +9,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Remaining major features. Finish before 31 August.
 
-- [ ] Web: Persist Preferences. And sneak language into that too.
+- [x] Web: Persist Preferences. And sneak language into that too.
 - [ ] Web: Interactive input config.
 
 ### Little bugs and narrative concerns, after playtest 3 August.
@@ -58,6 +58,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Further critical features and bugs. Finish before 15 September.
 
+- [ ] Windows: Must sign executable.
+- [ ] MacOS: Must sign executable.
 - [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.

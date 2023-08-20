@@ -60,6 +60,26 @@ export class Preferences {
     }
     return outgoing;
   }
+  
+  /* Caller supplies (prefs) because there are fields we don't manage.
+   * (What jackass designed this thing...)
+   * Roll (this.prefs) into a new object also containing the extra fields.
+   * Runtime calls this.
+   */
+  save(prefs) {
+    this.window.localStorage.setItem("settings", JSON.stringify(prefs));
+  }
+  
+  /* Read prefs from localStorage but don't do anything with them.
+   * If you want to keep them, call my 'update()' after.
+   */
+  load() {
+    try {
+      return JSON.parse(this.window.localStorage.getItem("settings")) || {};
+    } catch (e) {
+      return {};
+    }
+  }
 }
 
 Preferences.singleton = true;

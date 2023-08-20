@@ -127,6 +127,7 @@ export class Runtime {
   
   reset() {
     this.dropAllState();
+    this.reloadSettingsFromStorage();
     return this.wasmLoader.load("./fullmoon.wasm")
       .then(() => this.dataService.load())
       .then(() => {
@@ -549,7 +550,8 @@ export class Runtime {
   }
   
   logBusinessEvent(text) {
-    //TODO This shouldn't exist in prod, just stub it out.
+    // This shouldn't exist in prod, just stub it out.
+    return;
     // For now, gathering all business events for inclusion in an email, if the user opts to.
     if (!this.document._fmn_business_log) {
       this.document._fmn_business_log = { text: "" };
@@ -566,18 +568,6 @@ export class Runtime {
     // Our logs are formatted a little different.
     this.document._fmn_business_log.text += `${this.clock.lastGameTime}@${this.mapId} ${text}\n`;
   }
-  
-  /**
-struct fmn_platform_settings {
-  uint8_t fullscreen_available;
-  uint8_t fullscreen_enable;
-  uint8_t music_available;
-  uint8_t music_enable;
-  uint16_t language;
-  uint8_t scaler_available;
-  uint8_t scaler;
-};
-  /**/
   
   scalerCodeFromName(name) {
     switch (name) {
@@ -623,6 +613,29 @@ struct fmn_platform_settings {
     if (lang !== this.dataService.language) {
       this.dataService.language = lang;
       this.wasmLoader.instance.exports.fmn_language_changed();
+    }
+    this.preferences.save({
+      ...this.preferences.prefs,
+      fullscreen,
+      lang,
+    });
+  }
+  
+  reloadSettingsFromStorage() {
+    const prefs = {
+      ...this.preferences.prefs,
+      fullscreen: this.fullscreen,
+      lang: this.dataService.language,
+      ...this.preferences.load(),
+    };
+    this.preferences.update(prefs);
+    if (prefs.fullscreen !== this.fullscreen) {
+      // "API can only be initiated by a user gesture.", that's fair.
+      //this.requestFullscreen(prefs.fullscreen);
+    }
+    if (prefs.lang !== this.dataService.language) {
+      this.dataService.language = prefs.lang;
+      // Don't call fmn_language_checked(); reload settings only happens before loading the wasm app.
     }
   }
   
