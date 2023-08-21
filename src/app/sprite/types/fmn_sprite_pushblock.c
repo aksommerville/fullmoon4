@@ -19,6 +19,7 @@
 #define slidetime sprite->fv[1]
 #define slidedst sprite->fv[2]
 #define time_since_charm_toast sprite->fv[3]
+#define snap_clock sprite->fv[4]
 
 /* Init.
  */
@@ -103,23 +104,51 @@ static void pushblock_push(struct fmn_sprite *sprite) {
   presstime=0.0f;
 }
 
+/* Check snap.
+ */
+ 
+static void pushblock_snap(struct fmn_sprite *sprite,float *p) {
+  if (snap_clock<0.0f) return;
+  float whole;
+  float m=modff(*p,&whole);
+  float d=m-0.5f;
+  if (d<0.0f) d=-d;
+  if (d<1.0f/16.0f) {
+    *p=whole+0.5f;
+    snap_clock=0.250f;
+  }
+}
+
 /* Move due to charm.
  */
  
 static void pushblock_move_charm(struct fmn_sprite *sprite,float elapsed) {
+  if (snap_clock>0.0f) {
+    if ((snap_clock-=elapsed)<=0.0f) {
+      snap_clock=-0.125f;
+    } else {
+      return;
+    }
+  } else if (snap_clock<0.0f) {
+    if ((snap_clock+=elapsed)>=0.0f) {
+      snap_clock=0.0f;
+    }
+  }
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   int moved=0;
   #define BARREL(axis) ((hero##axis>=sprite->axis-FMN_PUSHBLOCK_CHARM_RADIUS)&&(hero##axis<=sprite->axis+FMN_PUSHBLOCK_CHARM_RADIUS))
   switch (charmdir) {
-    case FMN_DIR_N: if (BARREL(x)&&(heroy<sprite->y-FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->y-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
-    case FMN_DIR_S: if (BARREL(x)&&(heroy>sprite->y+FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->y+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
-    case FMN_DIR_W: if (BARREL(y)&&(herox<sprite->x-FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->x-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
-    case FMN_DIR_E: if (BARREL(y)&&(herox>sprite->x+FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->x+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; } break;
+    case FMN_DIR_N: if (BARREL(x)&&(heroy<sprite->y-FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->y-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; pushblock_snap(sprite,&sprite->y); } break;
+    case FMN_DIR_S: if (BARREL(x)&&(heroy>sprite->y+FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->y+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; pushblock_snap(sprite,&sprite->y); } break;
+    case FMN_DIR_W: if (BARREL(y)&&(herox<sprite->x-FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->x-=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; pushblock_snap(sprite,&sprite->x); } break;
+    case FMN_DIR_E: if (BARREL(y)&&(herox>sprite->x+FMN_PUSHBLOCK_CHARM_PROXIMITY)) { sprite->x+=FMN_PUSHBLOCK_CHARM_SPEED*elapsed; moved=1; pushblock_snap(sprite,&sprite->x); } break;
   }
   #undef BARREL
   if (moved) {
     fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,sprite);
+  } else {
+    snap_clock=0.0f;
   }
 }
 

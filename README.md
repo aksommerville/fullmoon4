@@ -9,24 +9,12 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- [x] Soulballs track badly when respawning.
-- [x] Konami code easter egg.
-- [x] Orphans should keep their winter clothes after your first victory.
-- [x] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
-- [x] Possible to stand inside the dragon's head. Fire should hit you there.
-- [x] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way. And move button to more convenient spot.
-- [x] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
-- [x] Firewall: Respect invisibility.
-- - ...+hattroll,duck,missile,pitchfork,rabbit,raccoon,seamonster,skyleton,watchduck
-- [ ] Lambda and charmed pushblock: Hesitate briefly at cell boundaries.
-- [ ] All blocks: Fuzz movement off-axis, make easier to squeeze in tight corridors.
+- [x] Lambda and charmed pushblock: Hesitate briefly at cell boundaries.
+- xxx All blocks: Fuzz movement off-axis, make easier to squeeze in tight corridors.
 - [ ] horz/vert indicator showed null initially.
 - [ ] UI sound effects, eg change menu selection.
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
-- [x] FIRE/MOON chalkguard: Didn't open the first time I entered MOON. Clear and redo, and it worked. etc/notes/20230806-chalkguard.save (saved after proceeding)
-- - Happened again. I started a sketch left of the F, but didn't draw anything. -- the other two chalks, that would not be possible.
-- - CONFIRMED: Just start a sketch left of the F, and cancel it right away: Guard changes from left-open to none-open.
 - [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
 - [ ] minsyn drums too loud
 - [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?

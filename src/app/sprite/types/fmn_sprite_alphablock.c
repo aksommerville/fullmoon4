@@ -21,6 +21,7 @@
 #define dx sprite->fv[0]
 #define dy sprite->fv[1]
 #define motion_clock sprite->fv[2]
+#define snap_clock sprite->fv[3]
 
 /* Init.
  */
@@ -182,6 +183,7 @@ static void fmn_alphablock_move(struct fmn_sprite *sprite,float ddx,float ddy) {
   dx=ddx;
   dy=ddy;
   motion_clock=1.0f/AB_SPEED;
+  snap_clock=-0.125f;
   memset(sprite->bv,0,AB_CONTACT_SIZE);
   fmn_sound_effect(FMN_SFX_PUSH);
 }
@@ -271,17 +273,46 @@ static void fmn_alphablock_check_edge_encoding(struct fmn_sprite *sprite) {
   }
 }
 
+/* Check whether to snap to a cell boundary in the direction of travel.
+ */
+
+static void alphablock_check_snap(struct fmn_sprite *sprite,float *p) {
+  float whole;
+  float m=modff(*p,&whole);
+  float d=m-0.5f;
+  if (d<0.0f) d=-d;
+  if (d<1.0f/16.0f) {
+    *p=whole+0.5f;
+    snap_clock=0.250f;
+    // Alpha and mu always try to move exactly one cell.
+    switch (sprite->tileid) {
+      case AB_MODE_ALPHA:
+      case AB_MODE_MU: motion_clock=0.0f; break;
+    }
+  }
+}
+
 /* Update.
  */
 
 static void _alphablock_update(struct fmn_sprite *sprite,float elapsed) {
 
-  if (motion_clock>0.0f) {
+  if (snap_clock>0.0f) {
+    if ((snap_clock-=elapsed)<=0.0f) {
+      snap_clock=-0.125f; // resume motion, and don't check snap for a little bit
+    }
+  } else if (motion_clock>0.0f) {
     float motion_time=motion_clock;
     if (motion_time>elapsed) motion_time=elapsed;
     motion_clock-=motion_time;
     sprite->x+=AB_SPEED*dx*motion_time;
     sprite->y+=AB_SPEED*dy*motion_time;
+    
+    if (snap_clock<0.0f) {
+      if ((snap_clock+=elapsed)>=0.0f) snap_clock=0.0f;
+    } else if ((dx<-0.5f)||(dx>0.5f)) alphablock_check_snap(sprite,&sprite->x);
+    else if ((dy<-0.5f)||(dy>0.5f)) alphablock_check_snap(sprite,&sprite->y);
+    
     fmn_game_event_broadcast(FMN_GAME_EVENT_BLOCKS_MOVED,sprite);
   }
 
