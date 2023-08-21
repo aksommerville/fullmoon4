@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### TODO: Critical bugs, roughly sorted by effort
 
 - [x] Soulballs track badly when respawning.
-- [ ] Konami code easter egg.
+- [x] Konami code easter egg.
 - [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
 - [ ] Possible to stand inside the dragon's head. Fire should hit you there.

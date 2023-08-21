@@ -687,6 +687,25 @@ static void fmn_open_magic_doors() {
   }
 }
 
+/* Toggle hat in response to the Konami code, for no particular reason.
+ */
+ 
+static void fmn_toggle_hat() {
+  switch (fmn_global.transmogrification) {
+    case 0: {
+        fmn_global.transmogrification=2;
+        fmn_sound_effect(FMN_SFX_TOM_1);
+        fmn_saved_game_dirty();
+      } break;
+    // 1 (pumpkin) isn't possible, and that's good because I'm not sure what we ought to do.
+    case 2: {
+        fmn_global.transmogrification=0;
+        fmn_sound_effect(FMN_SFX_TOM_6);
+        fmn_saved_game_dirty();
+      } break;
+  }
+}
+
 /* Cast spell or song.
  */
  
@@ -718,6 +737,7 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_TELE4: 
     case FMN_SPELLID_TELE5:
     case FMN_SPELLID_TELE6: fmn_teleport(spellid); break;
+    case FMN_SPELLID_KONAMI: fmn_toggle_hat(); break;
   }
 }
 

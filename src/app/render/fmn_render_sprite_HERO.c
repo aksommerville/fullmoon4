@@ -95,6 +95,7 @@ static int fmn_render_hero_injury() {
       tileid_hat=(fmn_rh.framec&4)?0x03:0x33;
       tileid_head=tileid_hat+0x10;
       tileid_body=tileid_hat+0x20;
+      if (fmn_global.transmogrification==2) tileid_hat=0;
     }
     hatdy=-0.75f;
   }
@@ -140,7 +141,9 @@ static int fmn_render_hero_spell_repudiation() {
   uint8_t frame=(fmn_global.spell_repudiation&0x10)?1:0;
   fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.000f,0x20,0);
   fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.4375f,0x2b+frame,0);
-  fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.750f,0x1b+frame,0);
+  if (fmn_global.transmogrification!=2) { // hat
+    fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.750f,0x1b+frame,0);
+  }
   return fmn_rh.vtxc;
 }
 
@@ -149,13 +152,17 @@ static int fmn_render_hero_broom() {
   float dy=(fmn_rh.framec&0x20)?(-1.0f/fmn_rh.tilesize):0.0f;
   fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.1875f+dy,0x57,xform);
   fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.5625f+dy,0x12,xform);
-  fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.8750f+dy,0x02,xform);
+  if (fmn_global.transmogrification!=2) { // hat
+    fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.8750f+dy,0x02,xform);
+  }
   return fmn_rh.vtxc;
 }
 
 static int fmn_render_hero_snowglobe() {
   fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.1875f,0x09,0);
-  fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.75f,0x00,0);
+  if (fmn_global.transmogrification!=2) { // hat
+    fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.75f,0x00,0);
+  }
   switch (fmn_global.wand_dir) {
     case FMN_DIR_W: fmn_hero_vtx(fmn_rh.sprite->x-0.1875f,fmn_rh.sprite->y-0.1875f,0x5c,0); break;
     case FMN_DIR_E: fmn_hero_vtx(fmn_rh.sprite->x+0.1875f,fmn_rh.sprite->y-0.1875f,0x6c,0); break;
@@ -168,7 +175,9 @@ static int fmn_render_hero_snowglobe() {
 
 static int fmn_render_hero_wand() {
   fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.1875f,0x09,0);
-  fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.75f,0x00,0);
+  if (fmn_global.transmogrification!=2) { // hat
+    fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.75f,0x00,0);
+  }
   switch (fmn_global.wand_dir) {
     case FMN_DIR_W: fmn_hero_vtx(fmn_rh.sprite->x-0.1875f,fmn_rh.sprite->y-0.1875f,0x29,0); break;
     case FMN_DIR_E: fmn_hero_vtx(fmn_rh.sprite->x+0.1875f,fmn_rh.sprite->y-0.1875f,0x39,0); break;
@@ -181,7 +190,9 @@ static int fmn_render_hero_wand() {
 
 static int fmn_render_hero_violin() {
   fmn_hero_vtx(fmn_rh.sprite->x+0.125f,fmn_rh.sprite->y-0.1875f,0x28,0);
-  fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.750f,0x00,0);
+  if (fmn_global.transmogrification!=2) { // hat
+    fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y-0.750f,0x00,0);
+  }
   if (fmn_global.wand_dir) { // "wand_dir" nonzero when stroking violin
     const float xrange=5.0f/fmn_rh.tilesize;
     const float yrange=-2.0f/fmn_rh.tilesize;
@@ -234,6 +245,8 @@ static void fmn_render_hero_hat(uint8_t tileid,uint8_t xform) {
       case 0x1b: tileid=0x3c; break;
       case 0x1c: tileid=0x3f; break;
     }
+  } else if (fmn_global.transmogrification==2) {
+    return;
   }
   fmn_hero_vtx(fmn_rh.sprite->x,fmn_rh.sprite->y+dy,tileid,xform);
 }

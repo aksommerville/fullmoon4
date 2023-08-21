@@ -253,6 +253,7 @@
 #define FMN_SPELLID_PUMPKIN 17
 #define FMN_SPELLID_TELE5 18 /* desert */
 #define FMN_SPELLID_TELE6 19 /* steppe */
+#define FMN_SPELLID_KONAMI 20
 
 #define FMN_MAPFLAG_DARK 0x01
 #define FMN_MAPFLAG_INDOORS 0x02
@@ -373,7 +374,7 @@ extern struct fmn_global {
   float match_illumination_time; // From the match only.
   uint8_t cheesing;
   uint8_t spell_repudiation; // app sets to 0xff to begin repudiation (upon ending the wand action). platform handles from there.
-  uint8_t transmogrification; // 0=normal, 1=pumpkin
+  uint8_t transmogrification; // 0=normal, 1=pumpkin, 2=hatless
   uint8_t hero_dead;
   float invisibility_time;
   float curse_time;

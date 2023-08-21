@@ -789,8 +789,8 @@ void fmn_hero_item_begin() {
     return;
   }
   
-  // No actions while transformed.
-  if (fmn_global.transmogrification) {
+  // No actions while pumpkinned.
+  if (fmn_global.transmogrification==1) {
     fmn_sound_effect(FMN_SFX_REJECT_ITEM);
     return;
   }
