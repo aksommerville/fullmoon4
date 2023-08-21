@@ -21,6 +21,8 @@ static void _bittattle_change(void *userdata,uint16_t p,uint8_t v) {
  
 static void _bittattle_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
+  if (fmn_gs_get_bit(leftbit)) sprite->tileid=tileid0+1;
+  else if (fmn_gs_get_bit(rightbit)) sprite->tileid=tileid0+2;
   fmn_gs_listen_bit(leftbit,_bittattle_change,sprite);
   fmn_gs_listen_bit(rightbit,_bittattle_change,sprite);
 }
