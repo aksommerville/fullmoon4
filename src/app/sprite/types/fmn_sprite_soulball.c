@@ -13,29 +13,29 @@
 #define dx sprite->fv[0]
 #define dy sprite->fv[1]
 #define clock sprite->fv[2]
-#define fx sprite->fv[3]
-#define fy sprite->fv[4]
-#define px sprite->fv[5]
-#define py sprite->fv[6]
+#define x0 sprite->fv[3]
+#define y0 sprite->fv[4]
 
 #define SOULBALL_SPEED 6.0f
 #define SOULBALL_FRAME_TIME 5 /* counts in update frames, regardless of their true length */
 #define SOULBALL_FRAME_COUNT 6
-#define SOULBALL_RETURN_TIME 0.6f
-#define SOULBALL_FOCUS_SPEED 4.0f
-#define SOULBALL_TIME_LIMIT 1.5f /* in return-to-sender mode only */
+#define SOULBALL_TIME_LIMIT 1.0f /* in return-to-sender mode only */
+#define SOULBALL_RADIUS_MAX 3.0f /* return-to-sender; SPEED is not used */
 
 static void _soulball_init(struct fmn_sprite *sprite) {
   if (grpc<1) grpc=1;
   grpp%=grpc;
   
   float t=(grpp*M_PI*2.0f)/grpc;
-  dx=cosf(t)*SOULBALL_SPEED;
-  dy=sinf(t)*SOULBALL_SPEED;
-  fx=sprite->x;
-  fy=sprite->y;
-  px=0.0f;
-  py=0.0f;
+  if (return_to_sender) {
+    x0=sprite->x;
+    y0=sprite->y;
+    dx=cosf(t);
+    dy=sinf(t);
+  } else {
+    dx=cosf(t)*SOULBALL_SPEED;
+    dy=sinf(t)*SOULBALL_SPEED;
+  }
   
   tile0=sprite->tileid;
   animframe=(grpp*SOULBALL_FRAME_COUNT)/grpc;
@@ -53,33 +53,19 @@ static void soulball_update_coalescing(struct fmn_sprite *sprite,float elapsed) 
     fmn_sprite_kill(sprite);
     return;
   }
-  if (clock<SOULBALL_RETURN_TIME) {
-    px+=dx*elapsed;
-    py+=dy*elapsed;
-  } else {
-    if (((px>0.0f)&&(dx>0.0f))||((px<0.0f)&&(dx<0.0f))) px-=dx*elapsed;
-    if (((py>0.0f)&&(dy>0.0f))||((py<0.0f)&&(dy<0.0f))) py-=dy*elapsed;
-  }
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
-  float distx=sprite->x-herox,disty=sprite->y-heroy;
-  const float tolerance=0.250f;
-  if ((distx>=-tolerance)&&(distx<=tolerance)&&(disty>=-tolerance)&&(disty<=tolerance)) {
-    fmn_sprite_kill(sprite);
-    return;
+  float cx=x0+((herox-x0)*clock)/SOULBALL_TIME_LIMIT;
+  float cy=y0+((heroy-y0)*clock)/SOULBALL_TIME_LIMIT;
+  float r;
+  const float halfrange=SOULBALL_TIME_LIMIT*0.5f;
+  if (clock<halfrange) {
+    r=(clock*SOULBALL_RADIUS_MAX)/halfrange;
+  } else {
+    r=((SOULBALL_TIME_LIMIT-clock)*SOULBALL_RADIUS_MAX)/halfrange;
   }
-  if (fx<herox) {
-    if ((fx+=SOULBALL_FOCUS_SPEED*elapsed)>=herox) fx=herox;
-  } else if (fx>herox) {
-    if ((fx-=SOULBALL_FOCUS_SPEED*elapsed)<=herox) fx=herox;
-  }
-  if (fy<heroy) {
-    if ((fy+=SOULBALL_FOCUS_SPEED*elapsed)>=heroy) fy=heroy;
-  } else if (fy>heroy) {
-    if ((fy-=SOULBALL_FOCUS_SPEED*elapsed)<=heroy) fy=heroy;
-  }
-  sprite->x=fx+px;
-  sprite->y=fy+py;
+  sprite->x=cx+r*dx;
+  sprite->y=cy+r*dy;
 }
 
 /* Update, running out until offscreen. (default)

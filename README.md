@@ -9,7 +9,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- [ ] Soulballs track badly when respawning.
+- [x] Soulballs track badly when respawning.
 - [ ] Konami code easter egg.
 - [ ] Orphans should keep their winter clothes after your first victory.
 - [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
@@ -42,6 +42,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### TODO: Not critical.
 
 - [ ] Werewolf eats you, when you're a pumpkin, you pop back to human. This is kind of unlikely to arrange, but is possible. Does it matter?
+- - Werewolf himself behaves the same way, and that's important.
 - [ ] Touch input.
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] After a 45-minute session: bigpc_quit, clock stats: Final game time 1800 ms (1800 ms real time). overflow=0 underflow=0 fault=0 wrap=0 cpu=0.036068
