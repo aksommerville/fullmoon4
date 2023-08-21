@@ -33,7 +33,16 @@ static void _missile_init(struct fmn_sprite *sprite) {
  
 static void missile_calculate_trajectory(struct fmn_sprite *sprite) {
   float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
+  if (fmn_global.invisibility_time>0.0f) {
+    switch (rand()&3) {
+      case 0: herox=0.0f; heroy=0.0f; break;
+      case 1: herox=0.0f; heroy=FMN_ROWC; break;
+      case 2: herox=FMN_COLC; heroy=0.0f; break;
+      case 3: herox=FMN_COLC; heroy=FMN_ROWC; break;
+    }
+  } else {
+    fmn_hero_get_position(&herox,&heroy);
+  }
   float hdx=herox-sprite->x;
   float hdy=heroy-sprite->y;
   float distance=sqrtf(hdx*hdx+hdy*hdy);

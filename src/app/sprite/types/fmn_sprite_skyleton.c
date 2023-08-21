@@ -48,10 +48,15 @@ static void _skyleton_class_cleanup(void *userdata) {
 static void skyleton_instantiate() {
 
   // Select a starting point on the same row as the hero, somewhere there are three adjacent vacant cells.
+  uint8_t row;
   float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  if ((heroy<0.0f)||(heroy>=FMN_ROWC)) return;
-  uint8_t row=heroy;
+  if (fmn_global.invisibility_time>0.0f) {
+    row=rand()%FMN_ROWC;
+  } else {
+    fmn_hero_get_position(&herox,&heroy);
+    if ((heroy<0.0f)||(heroy>=FMN_ROWC)) return;
+    row=heroy;
+  }
   float y=row+0.5f;
   uint8_t xcandidatev[FMN_COLC];
   uint8_t xcandidatec=0;
@@ -86,7 +91,7 @@ static void skyleton_instantiate() {
   stage=SKYLETON_STAGE_FALL;
   sprite->physics=0;
   sprite->layer=200;
-  if (herox<sprite->x) sprite->xform=FMN_XFORM_XREV;
+  if ((fmn_global.invisibility_time<=0.0f)&&(herox<sprite->x)) sprite->xform=FMN_XFORM_XREV;
   
   struct fmn_sprite *shadow=fmn_sprite_generate_noparam(0,x,y);
   if (!shadow) {
@@ -163,10 +168,14 @@ static void skyleton_begin_BOUNCE(struct fmn_sprite *sprite) {
     fmn_sprite_kill(sprite->pv[0]);
     sprite->pv[0]=0;
   }
-  float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  if (herox<sprite->x) {
-    sprite->xform=FMN_XFORM_XREV;
+  if (fmn_global.invisibility_time>0.0f) {
+    if (rand()&1) sprite->xform=FMN_XFORM_XREV;
+  } else {
+    float herox,heroy;
+    fmn_hero_get_position(&herox,&heroy);
+    if (herox<sprite->x) {
+      sprite->xform=FMN_XFORM_XREV;
+    }
   }
 }
 

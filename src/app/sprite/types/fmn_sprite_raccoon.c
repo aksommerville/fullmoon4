@@ -300,11 +300,13 @@ static void _raccoon_update(struct fmn_sprite *sprite,float elapsed) {
     return;
   }
   
-  // Always face the hero, if we're awake.
-  float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  if (herox<sprite->x) sprite->xform=0;
-  else sprite->xform=FMN_XFORM_XREV;
+  // Always face the hero, if we're awake and she's visible.
+  if (fmn_global.invisibility_time<=0.0f) {
+    float herox,heroy;
+    fmn_hero_get_position(&herox,&heroy);
+    if (herox<sprite->x) sprite->xform=0;
+    else sprite->xform=FMN_XFORM_XREV;
+  }
   
   // In any stage except BRANDISH, try to catch flying acorns.
   if (stage!=RACCOON_STAGE_BRANDISH) {

@@ -104,7 +104,7 @@ static void duck_update_DECIDE(struct fmn_sprite *sprite) {
   sprite->tileid=tileid0;
   
   // If the hero is close to my throwing range, throw a ninja star at her.
-  if ((throw_blackout<=0.0f)&&!charmed) {
+  if ((throw_blackout<=0.0f)&&!charmed&&(fmn_global.invisibility_time<=0.0f)) {
     float herox,heroy;
     fmn_hero_get_position(&herox,&heroy);
     float dy=heroy-sprite->y;

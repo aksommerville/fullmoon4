@@ -262,16 +262,17 @@ static void seamonster_begin_SURFACE(struct fmn_sprite *sprite) {
   sprite->tileid=tileid0+tileextra+2;
   stage=SEAMONSTER_STAGE_SURFACE;
   clock=SEAMONSTER_SURFACE_TIME;
-  float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  if (herox<sprite->x) sprite->xform=FMN_XFORM_XREV;
-  else sprite->xform=0;
+  if (fmn_global.invisibility_time<=0.0f) {
+    float herox,heroy;
+    fmn_hero_get_position(&herox,&heroy);
+    if (herox<sprite->x) sprite->xform=FMN_XFORM_XREV;
+    else sprite->xform=0;
+  }
 }
 
 static void seamonster_begin_SPIT(struct fmn_sprite *sprite) {
 
-  if (charmed) {
-    // Can we do something else here? Maybe give him a word bubble with a heart in it? (the same open-mouth tile we already have)
+  if (charmed||(fmn_global.invisibility_time>0.0f)) {
     seamonster_begin_LURK(sprite);
     return;
   }

@@ -166,18 +166,20 @@ static uint8_t hattroll_face_hero(struct fmn_sprite *sprite) {
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   uint8_t result=(heroy>=sprite->y-HATTROLL_WAVE_RADIUS)&&(heroy<=sprite->y+HATTROLL_WAVE_RADIUS);
-  if (herox<sprite->x) {
-    if (sprite->xform&FMN_XFORM_XREV) return result;
-    sprite->xform|=FMN_XFORM_XREV;
-  } else {
-    if (!(sprite->xform&FMN_XFORM_XREV)) return result;
-    sprite->xform&=~FMN_XFORM_XREV;
-  }
-  if (state==HATTROLL_STATE_ANGRY) {
-    struct fmn_sprite *rock=hattroll_find_rock(sprite);
-    if (rock) {
-      rock->fv[3]*=-1.0f;
-      rock->xform^=FMN_XFORM_XREV;
+  if (fmn_global.invisibility_time<=0.0f) {
+    if (herox<sprite->x) {
+      if (sprite->xform&FMN_XFORM_XREV) return result;
+      sprite->xform|=FMN_XFORM_XREV;
+    } else {
+      if (!(sprite->xform&FMN_XFORM_XREV)) return result;
+      sprite->xform&=~FMN_XFORM_XREV;
+    }
+    if (state==HATTROLL_STATE_ANGRY) {
+      struct fmn_sprite *rock=hattroll_find_rock(sprite);
+      if (rock) {
+        rock->fv[3]*=-1.0f;
+        rock->xform^=FMN_XFORM_XREV;
+      }
     }
   }
   return result;

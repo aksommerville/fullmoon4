@@ -123,9 +123,13 @@ static void watchduck_update_walk(struct fmn_sprite *sprite,float elapsed,float 
  */
  
 static void _watchduck_update(struct fmn_sprite *sprite,float elapsed) {
-  //TODO check sleep
   float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
+  if (fmn_global.invisibility_time>0.0f) {
+    herox=sprite->x;
+    heroy=-99.99f;
+  } else {
+    fmn_hero_get_position(&herox,&heroy);
+  }
   if (
     (heroy>sprite->y)&&(heroy<sprite->y+WATCHDUCK_SPEAK_RANGE)&&
     (herox>=sprite->x-WATCHDUCK_SPEAK_RANGE_X)&&

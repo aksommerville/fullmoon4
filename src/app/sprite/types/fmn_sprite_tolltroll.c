@@ -126,24 +126,32 @@ static void tolltroll_begin_COLLECT(struct fmn_sprite *sprite) {
  
 static void tolltroll_update_COLLECT(struct fmn_sprite *sprite,float elapsed) {
   float herox,heroy;
-  fmn_hero_get_position(&herox,&heroy);
-  if (herox<sprite->x) {
-    sprite->xform=0;
-    if (pumpkinproof==1) {
-      fmn_sprite_kill(sprite);
-      return;
-    }
-  } else {
-    sprite->xform=FMN_XFORM_XREV;
-    if (pumpkinproof==2) {
-      fmn_sprite_kill(sprite);
-      return;
+  uint8_t visible=fmn_global.invisibility_time<=0.0f;
+  if (visible) {
+    fmn_hero_get_position(&herox,&heroy);
+    if (herox<sprite->x) {
+      sprite->xform=0;
+      if (pumpkinproof==1) {
+        fmn_sprite_kill(sprite);
+        return;
+      }
+    } else {
+      sprite->xform=FMN_XFORM_XREV;
+      if (pumpkinproof==2) {
+        fmn_sprite_kill(sprite);
+        return;
+      }
     }
   }
   sprite->tileid=tileid0;
   
   if (gsbit&&fmn_gs_get_bit(gsbit)) {
     tolltroll_begin_RETREAT(sprite);
+    return;
+  }
+  
+  if (!visible) {
+    tolltroll_demand_nothing(sprite);
     return;
   }
   

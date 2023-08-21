@@ -117,6 +117,9 @@ static uint8_t firewall_hero_is_peeking(const struct fmn_sprite *sprite,float he
   // If she's looking away, easy, no peek.
   if (facedir!=dir) return 0;
   
+  // If she's invisible it's irrelevant. Tree falling in the woods, etc, etc.
+  if (fmn_global.invisibility_time>0.0f) return 0;
+  
   // Check range on my long axis. The other axis doesn't matter; we are bound to one screen edge.
   if ((dir==FMN_DIR_W)||(dir==FMN_DIR_E)) {
     if (heroy<cellp) return 0;
@@ -184,7 +187,7 @@ static void _firewall_update(struct fmn_sprite *sprite,float elapsed) {
     }
   }
   
-  // Check for collisions in any state.
+  // Check for collisions in any state. (invisibility doesn't matter here)
   float x,y,w,h;
   switch (dir) {
     case FMN_DIR_W: x=0.0f; y=cellp; w=extent; h=cellc; break;

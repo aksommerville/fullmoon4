@@ -29,6 +29,7 @@ static void _pitchfork_init(struct fmn_sprite *sprite) {
  */
  
 static uint8_t pitchfork_check_hero(const struct fmn_sprite *sprite) {
+  if (fmn_global.invisibility_time>0.0f) return 0;
   float herox,heroy;
   fmn_hero_get_position(&herox,&heroy);
   if (orientation) {

@@ -19,6 +19,8 @@
 #define TREE_MARCH_SPEED 1.0f
 
 /* Hero stepped on the balcony or donned her hat.
+ * I'd like to have it not trigger while invisible, but we don't get a notification when invisibility ends.
+ * Just going to let that slide; trees can see you while invisible, whatever.
  */
  
 static void _tree_trigger(void *userdata,uint16_t eventid,void *payload) {
