@@ -1,5 +1,6 @@
 #include "app/sprite/fmn_sprite.h"
 #include "app/hero/fmn_hero.h"
+#include "app/fmn_game.h"
 #include <math.h>
 
 // Don't change stages; renderer depends on them!
@@ -19,6 +20,8 @@
 
 #define WEREWOLF_HADOUKEN_CONE_SLOPE 2.0f /* 1.0f=45deg, higher is narrower */
 #define WEREWOLF_HADOUKEN_SPEED 13.0f
+
+#define gsbit_defeated sprite->argv[0]
 
 #define stage sprite->bv[0]
 #define next_move sprite->bv[1] /* 0,1,2,3 = hadouken,walk,floorfire,walk */
@@ -163,6 +166,7 @@ static void werewolf_sleep(struct fmn_sprite *sprite,int sleep) {
  
 static void werewolf_die(struct fmn_sprite *sprite) {
   fmn_log_event("kill-werewolf","");
+  if (gsbit_defeated) fmn_gs_set_bit(gsbit_defeated,1);
   fmn_sprite_generate_soulballs(sprite->x,sprite->y,6,0);
   fmn_sound_effect(FMN_SFX_KILL_WEREWOLF);
   fmn_play_song(0xff,0);

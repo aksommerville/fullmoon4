@@ -1,4 +1,7 @@
 #include "app/sprite/fmn_sprite.h"
+#include "app/fmn_game.h"
+
+#define gsbit_clothed sprite->argv[0]
 
 #define tileid0 sprite->bv[0]
 #define clothed sprite->bv[1] /* orphans can't be both clothed and asleep -- clothed only happens in the non-interactive outtro sequence */
@@ -124,6 +127,10 @@ static int16_t _orphan_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t
  
 static void _orphan_init(struct fmn_sprite *sprite) {
   tileid0=sprite->tileid;
+  if (gsbit_clothed&&fmn_gs_get_bit(gsbit_clothed)) {
+    clothed=1;
+    sprite->tileid=tileid0+4;
+  }
   orphan_reset_animation(sprite);
   orphan_create_snowflake(sprite);
 }

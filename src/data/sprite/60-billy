@@ -6,3 +6,4 @@ layer 128
 physics edge sprites solid hole blowable
 radius 0.5
 invmass 128
+argtype 0 gsbit gsbit_clothed

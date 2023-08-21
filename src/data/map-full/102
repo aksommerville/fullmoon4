@@ -11,5 +11,5 @@
 909392f0f1f1f1f1f1f1f1f1f1f1f1f1f7939392
 93979292f1f1f1f1f1f1f1f1f1f1f1f192919292
 tilesheet castleext
-sprite 13 3 werewolf 0 0 0
+sprite 13 3 werewolf gs:orphans_clothed 0 0
 song jaws_of_wrath

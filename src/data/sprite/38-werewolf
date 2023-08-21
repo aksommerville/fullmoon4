@@ -1,3 +1,4 @@
 controller werewolf
 image werewolf
 style werewolf
+argtype 0 gsbit gsbit_defeated

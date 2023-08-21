@@ -11,10 +11,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [x] Soulballs track badly when respawning.
 - [x] Konami code easter egg.
-- [ ] Orphans should keep their winter clothes after your first victory.
-- [ ] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
-- [ ] Possible to stand inside the dragon's head. Fire should hit you there.
-- [ ] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way. And move button to more convenient spot.
+- [x] Orphans should keep their winter clothes after your first victory.
+- [x] Ensure feather actuates dragons on all exposed parts (possibly beyond the sprite).
+- [x] Possible to stand inside the dragon's head. Fire should hit you there.
+- [x] Castle 2f, the one with gamma, lambda, and water: Add a conveyor in the vertical corridor so lambda can't escape that way. And move button to more convenient spot.
 - [ ] Confirm tolltroll acknowledges invisible. And everything else sight-oriented.
 - [ ] Firewall: Respect invisibility.
 - [ ] Lambda and charmed pushblock: Hesitate briefly at cell boundaries.

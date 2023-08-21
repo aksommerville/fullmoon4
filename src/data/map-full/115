@@ -16,6 +16,8 @@ neighborw 100
 neighbors 116
 sprite 8 4 alphablock_gamma 0 0 0
 sprite 11 4 alphablock_lambda 0 0 0
-sprite 2 8 treadle gs:ww_fire11 0 0
+sprite 2 4 treadle gs:ww_fire11 0 0
 sprite 16 6 firenozzle_e 2 0 gs:ww_fire11
 sprite 17 8 treadle gs:ww_fire11 15 0
+sprite 9 5 conveyor 64 0 0
+sprite 9 6 conveyor 64 0 0
