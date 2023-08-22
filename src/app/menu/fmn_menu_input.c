@@ -20,6 +20,7 @@
  */
  
 static void input_dismiss(struct fmn_menu *menu) {
+  fmn_sound_effect(FMN_SFX_UI_NO);
   if (menu->cb) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
@@ -33,6 +34,7 @@ static void input_dismiss(struct fmn_menu *menu) {
 static void input_activate(struct fmn_menu *menu) {
   if (cfgstate) return;
   if ((selp>=0)&&(selp<devc)) {
+    fmn_sound_effect(FMN_SFX_UI_YES);
     fmn_platform_begin_input_configuration(selp);
   }
 }
@@ -43,6 +45,7 @@ static void input_activate(struct fmn_menu *menu) {
 static void input_move(struct fmn_menu *menu,int d) {
   if (cfgstate) return;
   if (devc<1) return;
+  fmn_sound_effect(FMN_SFX_UI_SHIFT);
   selp+=d;
   if (selp<0) selp=devc-1;
   else if (selp>=devc) selp=0;

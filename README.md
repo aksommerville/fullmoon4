@@ -9,11 +9,11 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- [ ] UI sound effects, eg change menu selection.
+- [x] UI sound effects, eg change menu selection.
 - [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
 - [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
-- [ ] minsyn drums too loud
+- [ ] minsyn drums too loud: Full audio review
 - [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
 - [ ] Look for other hard-coded text.
 - [ ] web: Sound effects too quiet relative to music.
@@ -24,6 +24,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
+- [ ] Pictures of werewolf's ancestors hanging in castle.
+- [ ] Pretty up the dragging scenes in credits.
 
 ### TODO: Not critical.
 

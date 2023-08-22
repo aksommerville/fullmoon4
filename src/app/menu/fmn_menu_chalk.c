@@ -14,6 +14,7 @@
  */
  
 static void chalk_dismiss(struct fmn_menu *menu) {
+  fmn_sound_effect(FMN_SFX_UI_NO);
   if (menu->cb) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
@@ -25,6 +26,7 @@ static void chalk_dismiss(struct fmn_menu *menu) {
  */
  
 static void chalk_move(struct fmn_menu *menu,int dx,int dy) {
+  fmn_sound_effect(FMN_SFX_UI_SHIFT);
   handx+=dx;
   handy+=dy;
   if ((handx==3)&&(handy==0)) {
@@ -46,6 +48,7 @@ static void chalk_press(struct fmn_menu *menu) {
   if (handx==3) {
     bitpic=0;
     if (menu->cb) menu->cb(menu,FMN_MENU_MESSAGE_CHANGED);
+    fmn_sound_effect(FMN_SFX_UI_NO);
   } else {
     anchorx=handx;
     anchory=handy;
@@ -55,6 +58,7 @@ static void chalk_press(struct fmn_menu *menu) {
 static void chalk_release(struct fmn_menu *menu) {
   if (handx<3) {
     if ((anchorx!=handx)||(anchory!=handy)) {
+      fmn_sound_effect(FMN_SFX_UI_YES);
       uint32_t bit=fmn_chalk_bit_from_points((anchorx<<12)|(anchory<<8)|(handx<<4)|handy);
       if (bit) {
         bitpic^=bit;

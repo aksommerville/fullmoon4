@@ -13,6 +13,7 @@ static struct fmn_settings_model settings_model={0};
  */
  
 static void settings_dismiss(struct fmn_menu *menu) {
+  fmn_sound_effect(FMN_SFX_UI_NO);
   if (menu->cb) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
@@ -24,6 +25,7 @@ static void settings_dismiss(struct fmn_menu *menu) {
  */
  
 static void settings_activate(struct fmn_menu *menu) {
+  fmn_sound_effect(FMN_SFX_UI_YES);
   switch (fmn_settings_model_get_field_id(&settings_model)) {
     // Boolean fields, activate is equivalent to adjust:
     case FMN_SETTINGS_FIELD_FULLSCREEN: fmn_settings_model_adjust(&settings_model,1); break;
@@ -48,12 +50,12 @@ static void _settings_update(struct fmn_menu *menu,float elapsed,uint8_t input) 
     const uint8_t verts=FMN_INPUT_UP|FMN_INPUT_DOWN;
     const uint8_t horzs=FMN_INPUT_LEFT|FMN_INPUT_RIGHT;
     switch ((input&verts)&~pv) {
-      case FMN_INPUT_UP: fmn_settings_model_move(&settings_model,-1); break;
-      case FMN_INPUT_DOWN: fmn_settings_model_move(&settings_model,1); break;
+      case FMN_INPUT_UP: fmn_sound_effect(FMN_SFX_UI_SHIFT); fmn_settings_model_move(&settings_model,-1); break;
+      case FMN_INPUT_DOWN: fmn_sound_effect(FMN_SFX_UI_SHIFT); fmn_settings_model_move(&settings_model,1); break;
     }
     switch ((input&horzs)&~pv) {
-      case FMN_INPUT_LEFT: fmn_settings_model_adjust(&settings_model,-1); break;
-      case FMN_INPUT_RIGHT: fmn_settings_model_adjust(&settings_model,1); break;
+      case FMN_INPUT_LEFT: fmn_sound_effect(FMN_SFX_UI_SHIFT); fmn_settings_model_adjust(&settings_model,-1); break;
+      case FMN_INPUT_RIGHT: fmn_sound_effect(FMN_SFX_UI_SHIFT); fmn_settings_model_adjust(&settings_model,1); break;
     }
   }
 }

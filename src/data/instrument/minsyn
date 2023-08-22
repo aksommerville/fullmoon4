@@ -1076,3 +1076,24 @@ sound ALPHA_5
   env ( 0 60 0 30 0xc000 50 0x2000 * 0 )
   mlt 0.400
 end
+
+sound UI_YES
+  len 0.200
+  fm ( 400 * 800 ) 1.0 ( 0 * 3000 ) sine
+  env ( 0 50 0xc000 50 0x2000 * 0 )
+  mlt 0.300
+end
+
+sound UI_NO
+  len 0.200
+  fm ( 200 * 100 ) 1.0 ( 3000 * 0 ) sine
+  env ( 0 50 0xc000 50 0x2000 * 0 )
+  mlt 0.300
+end
+
+sound UI_SHIFT
+  len 0.100
+  fm ( 300 25 320 50 280 25 300 ) 1.0 ( 2000 100 3000 * 0 ) sine
+  env ( 0 30 0x4000 30 0x0800 * 0 )
+  mlt 0.300
+end

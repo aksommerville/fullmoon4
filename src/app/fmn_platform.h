@@ -191,6 +191,9 @@
 #define FMN_SFX_ALPHA_3 83
 #define FMN_SFX_ALPHA_4 84
 #define FMN_SFX_ALPHA_5 85
+#define FMN_SFX_UI_YES 86
+#define FMN_SFX_UI_NO 87
+#define FMN_SFX_UI_SHIFT 88
 
 #define FMN_SPRITE_STYLE_HIDDEN      1 /* don't render */
 #define FMN_SPRITE_STYLE_TILE        2 /* single tile */

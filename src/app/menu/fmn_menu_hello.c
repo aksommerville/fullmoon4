@@ -24,8 +24,9 @@ static uint8_t hello_submit(struct fmn_menu *menu) {
   switch (selp) {
     case 0: { // Continue
         if (fmn_game_load_saved_game()<0) {
-          fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+          fmn_sound_effect(FMN_SFX_UI_NO);
         } else {
+          fmn_sound_effect(FMN_SFX_UI_YES);
           fmn_dismiss_menu(menu);
           return 1;
         }
@@ -34,6 +35,7 @@ static uint8_t hello_submit(struct fmn_menu *menu) {
         if (menu->cb) {
           menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
         } else {
+          fmn_sound_effect(FMN_SFX_UI_YES);
           fmn_dismiss_menu(menu);
           if (fmn_game_load_map(1,-1.0f,-1.0f)<0) fmn_abort();
           fmn_map_callbacks(FMN_MAP_EVID_LOADED,fmn_game_map_callback,0);
@@ -42,9 +44,10 @@ static uint8_t hello_submit(struct fmn_menu *menu) {
     case 2: { // Settings
         struct fmn_menu *settings=fmn_begin_menu(FMN_MENU_SETTINGS,0);
         if (settings) {
+          fmn_sound_effect(FMN_SFX_UI_YES);
           menu->pvinput=0xff;
         } else {
-          fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+          fmn_sound_effect(FMN_SFX_UI_NO);
         }
       } return 0;
     case 3: { // Quit
@@ -61,6 +64,7 @@ static uint8_t hello_submit(struct fmn_menu *menu) {
  
 static void hello_change_selection(struct fmn_menu *menu,int8_t d) {
   if (!(opt_available&0x0f)) return; // oh no
+  fmn_sound_effect(FMN_SFX_UI_SHIFT);
   while (1) {
     selp+=d;
     if (selp>=4) selp=0;
@@ -85,7 +89,7 @@ static void _hello_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
     // MENU means "cancel" in this context, but there's nothing to cancel out to.
     } else if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) {
       menu->pvinput=input;
-      fmn_sound_effect(FMN_SFX_REJECT_ITEM);
+      fmn_sound_effect(FMN_SFX_UI_NO);
       
     } else {
       const uint8_t verts=FMN_INPUT_UP|FMN_INPUT_DOWN;

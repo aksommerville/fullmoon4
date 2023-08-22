@@ -17,6 +17,7 @@
  */
  
 static void pause_dismiss(struct fmn_menu *menu) {
+  fmn_sound_effect(FMN_SFX_UI_NO);
   if (menu->cb) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
   } else {
@@ -28,6 +29,7 @@ static void pause_dismiss(struct fmn_menu *menu) {
  */
  
 static void pause_move(struct fmn_menu *menu,int dx,int dy) {
+  fmn_sound_effect(FMN_SFX_UI_SHIFT);
 
   // Focus in options list. Horz shifts focus back to items grid, either 0 or 3.
   // Vert moves in the list as you'd expect.
@@ -71,9 +73,11 @@ static void pause_move(struct fmn_menu *menu,int dx,int dy) {
 static void pause_activate(struct fmn_menu *menu) {
   switch (listselection) {
     case 0: { // Settings
+        fmn_sound_effect(FMN_SFX_UI_YES);
         fmn_begin_menu(FMN_MENU_SETTINGS,0);
       } return;
     case 1: { // End Game
+        fmn_sound_effect(FMN_SFX_UI_YES);
         fmn_dismiss_menu(menu);
         fmn_reset();
       } return;
@@ -302,6 +306,7 @@ static void _pause_language_changed(struct fmn_menu *menu) {
  */
  
 void fmn_menu_init_PAUSE(struct fmn_menu *menu) {
+  fmn_sound_effect(FMN_SFX_UI_YES);
   menu->update=_pause_update;
   menu->render=_pause_render;
   menu->language_changed=_pause_language_changed;
