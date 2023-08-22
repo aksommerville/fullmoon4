@@ -118,6 +118,17 @@ void fmn_hero_update(float elapsed) {
   fmn_hero.velx=fmn_hero.sprite->velx;
   fmn_hero.vely=fmn_hero.sprite->vely;
   
+  if (fmn_hero.spawn_blackout_time>0.0f) {
+    if ((fmn_hero.spawn_blackout_time-=elapsed)<=0.0f) {
+      fmn_hero.spawn_blackout_time=0.0f;
+    } else switch (fmn_hero.spawn_blackout_dir) {
+      case FMN_DIR_W: if (fmn_hero.velx<0.0f) fmn_hero.velx=fmn_hero.sprite->velx=0.0f; break;
+      case FMN_DIR_E: if (fmn_hero.velx>0.0f) fmn_hero.velx=fmn_hero.sprite->velx=0.0f; break;
+      case FMN_DIR_N: if (fmn_hero.vely<0.0f) fmn_hero.vely=fmn_hero.sprite->vely=0.0f; break;
+      case FMN_DIR_S: if (fmn_hero.vely>0.0f) fmn_hero.vely=fmn_hero.sprite->vely=0.0f; break;
+    }
+  }
+  
   // Update (shovelx,shovely) regardless of selected item. eg seed also uses it.
   float x=fmn_hero.sprite->x;
   float y=fmn_hero.sprite->y;

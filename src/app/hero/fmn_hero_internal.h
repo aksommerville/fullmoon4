@@ -38,6 +38,8 @@ extern struct fmn_hero {
   float walkforce;
   float velx,vely; // to cache across sprite rebuilds
   float cheesetime;
+  float spawn_blackout_time;
+  uint8_t spawn_blackout_dir;
   
   float item_active_time;
   uint8_t bell_count;

@@ -360,6 +360,13 @@ void fmn_hero_return_to_map_entry() {
   fmn_hero_force_escape_hazards();
   fmn_global.damage_count++;
   fmn_saved_game_dirty();
+  
+  fmn_hero.spawn_blackout_time=0.5f;
+  if (hero->x<1.0f) fmn_hero.spawn_blackout_dir=FMN_DIR_W;
+  else if (hero->y<1.0f) fmn_hero.spawn_blackout_dir=FMN_DIR_N;
+  else if (hero->x>FMN_COLC-1.0f) fmn_hero.spawn_blackout_dir=FMN_DIR_E;
+  else if (hero->y>FMN_ROWC-1.0f) fmn_hero.spawn_blackout_dir=FMN_DIR_S;
+  else fmn_hero.spawn_blackout_dir=0;
 }
 
 /* Begin injury.
