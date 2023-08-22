@@ -29,10 +29,19 @@ static int16_t fmn_hero_interact_locally(uint8_t itemid,uint8_t qualifier) {
     .x=fmn_hero.sprite->x,
     .y=fmn_hero.sprite->y,
   };
-  float dx,dy;
-  fmn_vector_from_dir(&dx,&dy,fmn_global.facedir);
-  ctx.x+=dx*0.5f;
-  ctx.y+=dy*0.5f;
+  if ((itemid==FMN_ITEM_SEED)||(itemid==FMN_ITEM_PITCHER)||(itemid==FMN_ITEM_SHOVEL)) {
+    // Using seed, pitcher, or shovel, there would be a visible guide at fmn_global.shovel[xy].
+    // That is likely to agree with our +0.5 method, but discrepancies have been observed.
+    // The visible guide trumps all else. Look for sprites at the center of the highlighted cell.
+    ctx.x=fmn_global.shovelx+0.5f;
+    ctx.y=fmn_global.shovely+0.5f;
+  } else {
+    // All else, the general case: 0.5 cells in the direction we're facing.
+    float dx,dy;
+    fmn_vector_from_dir(&dx,&dy,fmn_global.facedir);
+    ctx.x+=dx*0.5f;
+    ctx.y+=dy*0.5f;
+  }
   return fmn_sprites_for_each(fmn_hero_interact_locally_1,&ctx);
 }
 

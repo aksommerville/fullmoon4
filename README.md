@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### TODO: Critical bugs, roughly sorted by effort
 
 - [x] UI sound effects, eg change menu selection.
-- [ ] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
+- [x] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
 - [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
 - [ ] minsyn drums too loud: Full audio review
