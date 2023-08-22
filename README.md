@@ -11,12 +11,13 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [x] UI sound effects, eg change menu selection.
 - [x] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
+- [x] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
+- - ...can't reproduce. Don't obsess over this.
+- [x] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
+- - NO! The device name might be used for mapping. Leave it English.
+- [x] Look for other hard-coded text.
+- [ ] Careful review of game clock.
 - [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
-- [ ] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
-- [ ] minsyn drums too loud: Full audio review
-- [ ] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
-- [ ] Look for other hard-coded text.
-- [ ] web: Sound effects too quiet relative to music.
 - [ ] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] web: Sometimes images don't load after a rebuild.
 - [ ] web: Validate crow guidance
@@ -26,6 +27,13 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] MacOS: Must sign executable.
 - [ ] Pictures of werewolf's ancestors hanging in castle.
 - [ ] Pretty up the dragging scenes in credits.
+- [ ] web: Sound effects too quiet relative to music.
+- [ ] minsyn drums too loud: Full audio review
+- [ ] Translation. Try to freeload it all off Google.
+- - [ ] French
+- - [ ] Spanish
+- - [ ] Russian
+- - [ ] Telugu?
 
 ### TODO: Not critical.
 

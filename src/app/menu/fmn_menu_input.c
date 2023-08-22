@@ -156,15 +156,13 @@ static void input_render_interactive(struct fmn_menu *menu,uint16_t promptstring
   vtxc=input_add_string_line(vtxv,vtxc,vtxa,menu,promptstringid,INPUT_GLYPH_H*11);
   vtxc=input_add_string_line(vtxv,vtxc,vtxa,menu,input_stringid_for_btnid(cfgbtn),INPUT_GLYPH_H*12);
   if (cfgtime>=INPUT_CFGTIME_WARN) {
-    char msg[32]="Abort in ";
-    int msgc=9;
+    char msg[2]="  ";
     int s=INPUT_CFGTIME_ABORT-cfgtime;
     if (s<0) s=0;
-    if (s>=10) {
-      msg[msgc++]='0'+s/10;
-    }
-    msg[msgc++]='0'+s%10;
-    vtxc=input_add_text_line(vtxv,vtxc,vtxa,menu,msg,msgc,INPUT_GLYPH_H*15);
+    if (s>=10) msg[0]='0'+s/10;
+    else msg[0]=' ';
+    msg[1]='0'+s%10;
+    vtxc=input_add_text_line(vtxv,vtxc,vtxa,menu,msg,sizeof(msg),INPUT_GLYPH_H*15);
   }
   fmn_draw_mintile(vtxv,vtxc,20);
 }
