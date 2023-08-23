@@ -478,6 +478,11 @@ void fmn_cancel_transition();
  */
 void fmn_language_changed();
 
+/* Game must expose this because only a subset of the platform's time really counts as time.
+ * (platform includes time in modals and transitions; game does not).
+ */
+uint32_t fmn_game_get_play_time_ms();
+
 /* Platform implements the rest.
  *************************************************/
 

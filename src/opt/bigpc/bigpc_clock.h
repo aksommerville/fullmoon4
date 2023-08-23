@@ -12,7 +12,7 @@ double bigpc_now_cpu_s();
 
 struct bigpc_clock {
   int64_t last_real_time_us;
-  uint32_t last_game_time_ms;
+  uint32_t last_game_time_ms; // Includes modals and transitions. Probably don't use.
   int32_t skew_us;
   
   /* We track faults, that's any moment when real and game time unexpectedly skew.

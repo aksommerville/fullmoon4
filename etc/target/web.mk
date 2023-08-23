@@ -6,7 +6,7 @@ web_OUTDIR:=out/web
 
 web_OPT_ENABLE:=web_glue
 
-web_EXPORTED_SYMBOLS:=fmn_global fmn_init fmn_update fmn_render fmn_language_changed
+web_EXPORTED_SYMBOLS:=fmn_global fmn_init fmn_update fmn_render fmn_language_changed fmn_reset_clock fmn_game_get_play_time_ms
 
 # --allow-undefined replaced by --import-undefined around WASI 10, but my MacBook can't go above 8.
 web_LDOPT:=-nostdlib -Xlinker --no-entry -Xlinker --export-table \

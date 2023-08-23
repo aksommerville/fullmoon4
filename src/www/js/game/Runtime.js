@@ -134,7 +134,6 @@ export class Runtime {
         console.log(`Runtime: loaded wasm instance`, this.wasmLoader.instance);
         this.globals.refresh();
         this.running = true;
-        //TODO load saved game or initial state
         this.clock.reset(0);
         if (this.wasmLoader.instance.exports.fmn_init()) {
           this.dropAllState();

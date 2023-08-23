@@ -202,8 +202,8 @@ static void credits_summary_generate(struct fmn_menu *menu) {
   message[5]='0'+min%10;
   message[7]='0'+sec/10;
   message[8]='0'+sec%10;
-  message[10]='0'+ms/1000;
-  message[11]='0'+(ms/100)%10;
+  message[10]='0'+ms/100;
+  message[11]='0'+(ms/10)%10;
   message[12]='0'+ms%10;
   message[20]=(itemc>=10)?('0'+itemc/10):' ';
   message[21]='0'+itemc%10;

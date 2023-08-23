@@ -231,16 +231,16 @@ uint16_t bigpc_savedgame_load(const void *src,int srcc) {
 /* Encode to provided buffer from global state.
  */
  
-static int bigpc_savedgame_encode_header(uint8_t *dst,int dsta) {
+static int bigpc_savedgame_encode_header(uint8_t *dst,int dsta,uint32_t playtime) {
   // Length is fixed. 2 bytes chunk header and 27 bytes payload.
   if (dsta<29) return 29;
   dst[0]=0x01; // FIXED01
   dst[1]=27;
   dst[2]=bigpc_savedgame_spellid();
-  dst[3]=bigpc.clock.last_game_time_ms>>24;
-  dst[4]=bigpc.clock.last_game_time_ms>>16;
-  dst[5]=bigpc.clock.last_game_time_ms>>8;
-  dst[6]=bigpc.clock.last_game_time_ms;
+  dst[3]=playtime>>24;
+  dst[4]=playtime>>16;
+  dst[5]=playtime>>8;
+  dst[6]=playtime;
   dst[7]=fmn_global.damage_count>>8;
   dst[8]=fmn_global.damage_count;
   dst[9]=fmn_global.transmogrification;
@@ -274,6 +274,7 @@ static int bigpc_savedgame_encode_gsbit(uint8_t *dst,int dsta) {
 struct bigpc_savedgame_encode_context {
   uint8_t *dst;
   int dstc,dsta;
+  uint32_t playtime;
 };
 
 #define APPEND(v) if (ctx->dstc<ctx->dsta) ctx->dst[ctx->dstc]=(v); ctx->dstc++;
@@ -300,10 +301,19 @@ static int bigpc_savedgame_encode_plant(uint16_t mapid,struct fmn_plant *plant,v
   APPEND(plant->y*FMN_COLC+plant->x)
   APPEND(plant->state)
   APPEND(plant->fruit)
-  APPEND(plant->flower_time>>24)
-  APPEND(plant->flower_time>>16)
-  APPEND(plant->flower_time>>8)
-  APPEND(plant->flower_time)
+  
+  /* plant->flower_time is based on bigpc.clock.last_game_time_ms, 
+   * but the time saved and reported to user is based on fmn_game_get_play_time_ms(),
+   * and they're not the same. Adjust.
+   */
+  uint32_t ms=plant->flower_time;
+  uint32_t plattime=bigpc.clock.last_game_time_ms;
+  if (plattime>ctx->playtime) ms-=plattime-ctx->playtime;
+  APPEND(ms>>24)
+  APPEND(ms>>16)
+  APPEND(ms>>8)
+  APPEND(ms)
+  
   return 0;
 }
 
@@ -315,18 +325,19 @@ static int bigpc_savedgame_encode_sketches(uint8_t *dst,int dsta) {
   return ctx.dstc;
 }
  
-static int bigpc_savedgame_encode_plants(uint8_t *dst,int dsta) {
-  struct bigpc_savedgame_encode_context ctx={.dst=dst,.dsta=dsta};
+static int bigpc_savedgame_encode_plants(uint8_t *dst,int dsta,uint32_t playtime) {
+  struct bigpc_savedgame_encode_context ctx={.dst=dst,.dsta=dsta,.playtime=playtime};
   if (fmstore_for_each_plant(bigpc.fmstore,bigpc_savedgame_encode_plant,&ctx)<0) return -1;
   return ctx.dstc;
 }
  
 static int bigpc_savedgame_encode(uint8_t *dst,int dsta) {
   int dstc=0,err;
-  if ((err=bigpc_savedgame_encode_header(dst+dstc,dsta-dstc))<0) return err; dstc+=err;
+  uint32_t playtime=fmn_game_get_play_time_ms();
+  if ((err=bigpc_savedgame_encode_header(dst+dstc,dsta-dstc,playtime))<0) return err; dstc+=err;
   if ((err=bigpc_savedgame_encode_gsbit(dst+dstc,dsta-dstc))<0) return err; dstc+=err;
   if ((err=bigpc_savedgame_encode_sketches(dst+dstc,dsta-dstc))<0) return err; dstc+=err;
-  if ((err=bigpc_savedgame_encode_plants(dst+dstc,dsta-dstc))<0) return err; dstc+=err;
+  if ((err=bigpc_savedgame_encode_plants(dst+dstc,dsta-dstc,playtime))<0) return err; dstc+=err;
   return dstc;
 }
 

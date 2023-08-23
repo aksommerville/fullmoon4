@@ -16,9 +16,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
 - - NO! The device name might be used for mapping. Leave it English.
 - [x] Look for other hard-coded text.
-- [ ] Careful review of game clock.
-- [ ] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
-- [ ] Web reported play time runs short -- it doesn't match what gets saved.
+- [x] Careful review of game clock.
+- [x] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
+- [x] Web reported play time runs short -- it doesn't match what gets saved.
 - [ ] web: Sometimes images don't load after a rebuild.
 - [ ] web: Validate crow guidance
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal. (note: This was some time ago; reassess)

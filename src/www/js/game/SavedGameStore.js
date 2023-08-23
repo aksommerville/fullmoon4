@@ -8,16 +8,18 @@ import * as FMN from "./Constants.js";
 import { Clock } from "./Clock.js";
 import { Encoder } from "../util/Encoder.js";
 import { Decoder } from "../util/Decoder.js";
+import { WasmLoader } from "../util/WasmLoader.js";
 
 export class SavedGameStore {
   static getDependencies() {
-    return [Window, DataService, Globals, Clock];
+    return [Window, DataService, Globals, Clock, WasmLoader];
   }
-  constructor(window, dataService, globals, clock) {
+  constructor(window, dataService, globals, clock, wasmLoader) {
     this.window = window;
     this.dataService = dataService;
     this.globals = globals;
     this.clock = clock;
+    this.wasmLoader = wasmLoader;
     
     this.dirtyDebounceTimeMs = 2000;
     this.localStorageKey = "savedGame";
@@ -134,13 +136,29 @@ export class SavedGameStore {
         mapId, x, y, bits,
       })),
     };
+    /* gameTimeMs is the platform's idea of time, which will generally be future of the reported play time.
+     * Reported time does not include menus or transitions, and is known only to the game, until we ask:
+     */
+    const playTimeMs = this.wasmLoader.instance.exports.fmn_game_get_play_time_ms();
+    if ((playTimeMs > 0) && (playTimeMs < gameTimeMs)) {
+      this._adjustTimestamps(savedGame, playTimeMs - gameTimeMs);
+    }
     return savedGame;
+  }
+  
+  // in place
+  _adjustTimestamps(savedGame, dms) {
+    savedGame.gameTimeMs += dms;
+    for (const plant of savedGame.plants) {
+      plant.flowerTime += dms;
+    }
   }
   
   // => mapId
   _apply(savedGame) {
     this.globals.recentSpellId = savedGame.spellId;
-    this.clock.reset(savedGame.gameTimeMs);//TODO confirm that this time sticks... does Runtime reset it too?
+    this.clock.reset(savedGame.gameTimeMs);
+    this.wasmLoader.instance.exports.fmn_reset_clock(savedGame.gameTimeMs);
     this.globals.g_damage_count[0] = savedGame.damageCount;
     this.globals.g_transmogrification[0] = savedGame.transmogrification;
     this.globals.g_selected_item[0] = savedGame.selectedItem;
