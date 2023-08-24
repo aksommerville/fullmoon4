@@ -9,11 +9,6 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- xxx web: Sometimes images don't load after a rebuild.
-- - Can't reproduce. Every time it happened, a refresh fixed it. So let's write it off as "mysterious cache problem" and move on.
-- [x] Looks like facebit broke entirely, in web (desert SW) ...due to misalignment caused when i changed the violin song length.
-- [x] web: Validate crow guidance
-- [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal. (note: This was some time ago; reassess)
 - [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.

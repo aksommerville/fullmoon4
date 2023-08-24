@@ -132,7 +132,7 @@ $(web_INFO_FAVICON):src/info/favicon.ico;$(PRECMD) cp $< $@
 $(web_INFO_GAME_HTML):$(web_HTSA_HTML);$(PRECMD) cp $< $@
 $(web_INFO_GAME_EXE):$(web_HTSA_EXE);$(PRECMD) cp $< $@
 $(web_INFO_GAME_JS):$(web_HTSA_JS);$(PRECMD) cp $< $@
-$(web_INFO_GAME_DATA):$(web_HTSA_DATA);$(PRECMD) cp $< $@
+$(web_INFO_GAME_DATA):$(web_HTSA_DATA_DEMO);$(PRECMD) cp $< $@
 $(web_INFO_GAME_FMCHROME):$(web_HTSA_FMCHROME);$(PRECMD) cp $< $@
 $(web_INFO_DIR)/img/%:src/info/img/%;$(PRECMD) cp $< $@
 
@@ -155,12 +155,12 @@ web-run-routable:$(web_EXE) $(web_HTSA_DATA);$(NODE) src/tool/server/main.js \
   --htdocs=src/www --makeable=$(web_HTSA_DATA) --makeable=$(web_EXE) --host=0.0.0.0
   
 # Simulate aksommerville.com locally.
-web-run-info:$(web_HTSA_HTML) $(web_HTSA_JS) $(web_HTSA_EXE) $(web_HTSA_DATA) $(web_HTSA_FMCHROME); \
+web-run-info:$(web_HTSA_HTML) $(web_HTSA_JS) $(web_HTSA_EXE) $(web_HTSA_DATA_DEMO) $(web_HTSA_FMCHROME); \
   $(NODE) src/tool/server/main.js --htdocs=src/info \
   --makeable=$(web_HTSA_HTML):/game.html \
   --makeable=$(web_HTSA_JS) \
   --makeable=$(web_HTSA_EXE) \
-  --makeable=$(web_HTSA_DATA) \
+  --makeable=$(web_HTSA_DATA_DEMO):/fullmoon.data \
   --makeable=$(web_INFO_JS) \
   --makeable=$(web_HTSA_FMCHROME)
 

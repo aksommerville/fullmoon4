@@ -131,7 +131,6 @@ export class Runtime {
     return this.wasmLoader.load("./fullmoon.wasm")
       .then(() => this.dataService.load())
       .then(() => {
-        console.log(`Runtime: loaded wasm instance`, this.wasmLoader.instance);
         this.globals.refresh();
         this.running = true;
         this.clock.reset(0);

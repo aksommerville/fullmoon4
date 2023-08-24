@@ -32,7 +32,7 @@ export class InputManager {
     
     // If we don't get it from localStorage, set a sensible default configuration.
     if (!this.load()) {
-      console.log(`Failed to load inputConfig, using defaults.`);
+      //console.log(`Failed to load inputConfig, using defaults.`);
       this.keyMaps = [ // {code, btnid}
         { code: "ArrowLeft", btnid: InputManager.INPUT_LEFT },
         { code: "ArrowRight", btnid: InputManager.INPUT_RIGHT },
@@ -146,7 +146,7 @@ export class InputManager {
       this.dirtyTimeout = null;
     }
     this.window.localStorage.setItem("inputConfig", this.encodeConfig());
-    console.log(`Saved inputConfig`);
+    //console.log(`Saved inputConfig`);
   }
   
   load() {
@@ -397,9 +397,9 @@ export class InputManager {
     const map = this.gamepadMaps.find(m => m.id === gamepad.id);
     if (map) {
       this._applyGamepadMap(gamepad, map);
-      console.log(`gamepad ${JSON.stringify(gamepad.id)} mapped per config`);
+      //console.log(`gamepad ${JSON.stringify(gamepad.id)} mapped per config`);
     } else {
-      console.log(`gamepad ${JSON.stringify(gamepad.id)} no map. ${gamepad.axes.length} axes, ${gamepad.buttons.length} buttons`);
+      //console.log(`gamepad ${JSON.stringify(gamepad.id)} no map. ${gamepad.axes.length} axes, ${gamepad.buttons.length} buttons`);
     }
   }
   
@@ -419,7 +419,6 @@ export class InputManager {
       .replace(/[^a-zA-Z0-9 ]/g, ' ')
       .trim()
       .replace(/  /g, ' ');
-    console.log(`sanitized gamepad name`, { input, clean });
     return clean;
   }
   

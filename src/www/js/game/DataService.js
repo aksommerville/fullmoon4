@@ -115,7 +115,12 @@ export class DataService {
   
   _beginLoad() {
     return this.window.fetch("./fullmoon.data")
-      .then(rsp => { if (!rsp.ok) return rsp.json().then(t => { throw t.log; }); return rsp.arrayBuffer(); })
+      .then(rsp => {
+        if (!rsp.ok) return rsp.json()
+          .then(t => { throw t.log; })
+          .catch(e => { throw "Failed to download data"; });
+        return rsp.arrayBuffer();
+      })
       .then(serial => this._receiveArchive(serial))
       .then(() => this.toc)
       .catch(e => {
