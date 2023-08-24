@@ -95,7 +95,7 @@ export const SPRITE_PV_SIZE = 1;
     
 export const GS_SIZE = 64;
     
-export const VIOLIN_SONG_LENGTH = 20;
+export const VIOLIN_SONG_LENGTH = 12;
     
 export const AUDIO_FRAME_RATE = 44100;
 export const AUDIO_CHANNEL_COUNT = 16; // logical bus channels, not mono/stereo output
@@ -123,6 +123,8 @@ export const MAPFLAG_DARK = 0x01;
 export const MAPFLAG_INDOORS = 0x02;
 export const MAPFLAG_BLOWBACK = 0x04;
 export const MAPFLAG_ANCILLARY = 0x08;
+export const MAPFLAG_MULTIHOME = 0x10;
+export const MAPFLAG_NODOORS = 0x20;
 
 export const INCFG_STATE_NONE = 0; /* Not configuring input. */
 export const INCFG_STATE_READY = 1; /* Please press (btnid) */

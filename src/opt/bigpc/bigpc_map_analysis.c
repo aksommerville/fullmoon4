@@ -75,15 +75,17 @@ uint8_t fmn_find_map_command(int16_t *xy,uint8_t mask,const uint8_t *v) {
   if (fmn_global.neighborw&&fmn_find_map_command_1(xy,fmn_global.neighborw,mask,v,vc,-1,0)) return 1;
   if (fmn_global.neighbore&&fmn_find_map_command_1(xy,fmn_global.neighbore,mask,v,vc,1,0)) return 1;
   
-  const struct fmn_door *door=fmn_global.doorv;
-  int i=fmn_global.doorc;
-  for (;i-->0;door++) {
-    if (!door->mapid) continue;
-    if (fmn_find_map_command_1(xy,door->mapid,mask,v,vc,0,0)) {
-      // Point to the door's location in this map; location in the remote map is not important.
-      xy[0]=door->x;
-      xy[1]=door->y;
-      return 1;
+  if (!(fmn_global.mapflag&FMN_MAPFLAG_NODOORS)) {
+    const struct fmn_door *door=fmn_global.doorv;
+    int i=fmn_global.doorc;
+    for (;i-->0;door++) {
+      if (!door->mapid) continue;
+      if (fmn_find_map_command_1(xy,door->mapid,mask,v,vc,0,0)) {
+        // Point to the door's location in this map; location in the remote map is not important.
+        xy[0]=door->x;
+        xy[1]=door->y;
+        return 1;
+      }
     }
   }
   

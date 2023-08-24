@@ -66,9 +66,9 @@ uint8_t fmn_secrets_get_guide_dir_full() {
   #define SIMPLE_ITEM(tag) if (!fmn_global.itemv[FMN_ITEM_##tag]) { if (dir=fmn_find_direction_to_item(FMN_ITEM_##tag)) RESPOND(#tag) }
   
   SIMPLE_ITEM(FEATHER) // no prereqs, intended as the very first thing.
-  SIMPLE_ITEM(COMPASS) // only FEATHER required, and it's prereq to the swamp.
+  SIMPLE_ITEM(UMBRELLA) // requires FEATHER. arguably required for SHOVEL (to learn the Spell of Slow Motion).
+  SIMPLE_ITEM(COMPASS) // FEATHER required, plus either UMBRELLA or PITCHER (UMBRELLA is the simpler).
   SIMPLE_ITEM(WAND) // requires FEATHER,COMPASS
-  SIMPLE_ITEM(UMBRELLA) // requires FEATHER,COMPASS. arguably required for SHOVEL (to learn the Spell of Slow Motion).
   SIMPLE_ITEM(SHOVEL) // requires WAND and Slow Motion.
   SIMPLE_ITEM(PITCHER) // no prereqs, but also not useful before you have SHOVEL.
   SIMPLE_ITEM(VIOLIN) // requires FEATHER probably, and it's a fair bit of travel so WAND is recommended too. Acquire before we start recommending farming.

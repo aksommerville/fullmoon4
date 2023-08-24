@@ -9,18 +9,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- [x] UI sound effects, eg change menu selection.
-- [x] Ensure that pitcher, when it shows highlight under a bonfire, will actually hit the bonfire! I've seen it fail.
-- [x] Spawn in a wall after being killed by panda. (Macbook 2023-08-11T16:05)
-- - ...can't reproduce. Don't obsess over this.
-- [x] Hard-coded device name "System Keyboard". Can that be moved to a string resource for translation?
-- - NO! The device name might be used for mapping. Leave it English.
-- [x] Look for other hard-coded text.
-- [x] Careful review of game clock.
-- [x] Completed full version with VICTORY splash, said 10:14. Continued and completed fast with CREDITS splash, said 13:something, that can't be right. (reran with VICTORY, and 13:36)
-- [x] Web reported play time runs short -- it doesn't match what gets saved.
-- [ ] web: Sometimes images don't load after a rebuild.
-- [ ] web: Validate crow guidance
+- xxx web: Sometimes images don't load after a rebuild.
+- - Can't reproduce. Every time it happened, a refresh fixed it. So let's write it off as "mysterious cache problem" and move on.
+- [x] Looks like facebit broke entirely, in web (desert SW) ...due to misalignment caused when i changed the violin song length.
+- [x] web: Validate crow guidance
 - [ ] InputManager.js: Must handle unconfigured devices connected before launching config modal. (note: This was some time ago; reassess)
 - [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 - [ ] Windows: Must sign executable.

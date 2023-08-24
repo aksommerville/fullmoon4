@@ -73,7 +73,7 @@ export class Runtime {
     this.wasmLoader.env.fmn_find_teleport_target = (spellid) => this.findTeleportTarget(spellid);
     this.wasmLoader.env.fmn_find_direction_to_item = (itemid) => this.findDirectionToItem(itemid);
     this.wasmLoader.env.fmn_find_direction_to_map = (mapid) => this.findDirectionToMap(mapid);
-    this.wasmLoader.env.fmn_find_direction_to_teleport = (spellid) => this.findDirectionToTeleport(mapid);
+    this.wasmLoader.env.fmn_find_direction_to_teleport = (spellid) => this.findDirectionToTeleport(spellid);
     this.wasmLoader.env.fmn_find_direction_to_map_reference = (ref) => this.findDirectionToMapReference(ref);
     this.wasmLoader.env.fmn_map_callbacks = (evid, cb, userdata) => this.mapCallbacks(evid, cb, userdata);
     this.wasmLoader.env.fmn_web_log_event = p => this.logBusinessEvent(this.wasmLoader.zstringFromMemory(p));
@@ -420,15 +420,17 @@ export class Runtime {
             if (sprite.arg0 === itemid) return map;
           }
         }
-        for (const door of map.doors) {
-          if (door.mapId) continue;
-          if (door.dstx !== 0x30) continue;
-          if (door.dsty !== itemid) continue;
-          // Check whether we've already got it, which shouldn't be possible but hey.
-          if (door.extra && this.globals.getGsBit(door.extra)) continue;
-          return map;
+        if (!(map.flag & FMN.MAPFLAG_NODOORS)) {
+          for (const door of map.doors) {
+            if (door.mapId) continue;
+            if (door.dstx !== 0x30) continue;
+            if (door.dsty !== itemid) continue;
+            // Check whether we've already got it, which shouldn't be possible but hey.
+            if (door.extra && this.globals.getGsBit(door.extra)) continue;
+            return map;
+          }
+          return false;
         }
-        return false;
       })
     );
   }
@@ -484,13 +486,15 @@ export class Runtime {
     checkNeighbor(from.neighbore, 0x08); if (!distance) return dir;
     checkNeighbor(from.neighborn, 0x40); if (!distance) return dir;
     checkNeighbor(from.neighbors, 0x02); if (!distance) return dir;
-    for (const door of from.doors) {
-      if (!door.mapId) continue;
-      if (door.mapId === to.id) return 0xff;
-      let qdist = this.distanceFromMapToMap(this.dataService.getMap(door.mapId), to, [from.id], 10);
-      if (qdist < distance) {
-        distance = qdist;
-        dir = 0xff;
+    if (!(from.flag & FMN.MAPFLAG_NODOORS)) {
+      for (const door of from.doors) {
+        if (!door.mapId) continue;
+        if (door.mapId === to.id) return 0xff;
+        let qdist = this.distanceFromMapToMap(this.dataService.getMap(door.mapId), to, [from.id], 10);
+        if (qdist < distance) {
+          distance = qdist;
+          dir = 0xff;
+        }
       }
     }
     return dir;
@@ -530,11 +534,13 @@ export class Runtime {
       const q = this.distanceFromMapToMap(this.dataService.getMap(nid), to, poisonMapIds, limit);
       if (q < best) best = q;
     }
-    for (const door of from.doors) {
-      if (!door.mapId) continue;
-      // Buried doors (door.gsbit nonzero) count whether exposed or not.
-      const q = this.distanceFromMapToMap(this.dataService.getMap(door.mapId), to, poisonMapIds, limit);
-      if (q < best) best = q;
+    if (!(from.flag & FMN.MAPFLAG_NODOORS)) {
+      for (const door of from.doors) {
+        if (!door.mapId) continue;
+        // Buried doors (door.gsbit nonzero) count whether exposed or not.
+        const q = this.distanceFromMapToMap(this.dataService.getMap(door.mapId), to, poisonMapIds, limit);
+        if (q < best) best = q;
+      }
     }
     return best + 1;
   }

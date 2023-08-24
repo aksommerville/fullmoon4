@@ -235,7 +235,7 @@
 /* Size of the violin input buffer.
  * The longest song must be shorter than this. (not equal)
  */
-#define FMN_VIOLIN_SONG_LENGTH 10
+#define FMN_VIOLIN_SONG_LENGTH 12
 
 #define FMN_SPELLID_BLOOM 1
 #define FMN_SPELLID_RAIN 2
