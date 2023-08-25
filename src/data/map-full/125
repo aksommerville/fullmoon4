@@ -17,3 +17,5 @@ neighbore 126
 neighbors 128
 sprite 13 8 firenozzle_w 6 1 gs:ww_tw1
 sprite 9 8 treadle gs:ww_tw1 0 0
+sprite 7 2 firenozzle_s 6 10 0
+sprite 12 2 firenozzle_s 6 10 0

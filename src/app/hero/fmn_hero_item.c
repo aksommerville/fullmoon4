@@ -597,6 +597,7 @@ static void fmn_hero_violin_begin() {
   fmn_hero.next_metronome_songp=0;
   fmn_hero.violin_spellid=0;
   fmn_synth_event(0x0e,0xc0,1,0); // load violin program in channel 14
+  fmn_synth_event(0x0e,0xb0,0x07,0x7f);
 }
 
 static void fmn_hero_violin_end() {

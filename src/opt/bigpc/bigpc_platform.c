@@ -129,7 +129,6 @@ static void bigpc_load_cellphysics() {
 }
 
 void bigpc_play_song(uint8_t songid,uint8_t loop) {
-  if (!songid) return; // 0 means "don't change", as opposed to "nothing" (TODO not sure that's correct)
   if (songid==fmn_global.songid) return;
   fmn_global.songid=songid;
   const void *serial=0;

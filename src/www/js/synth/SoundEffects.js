@@ -24,7 +24,7 @@ export class SoundEffects {
   
   play(sfxid, level) {
     if (this._tooFrequent(sfxid)) return;
-    this.synthesizer.event(0x0f, 0x90, sfxid, level || 0x40);
+    this.synthesizer.event(0x0f, 0x90, sfxid, level || 0xff);
   }
   
   /* Returns false and updates lastPlayTimeBySfxid if it's OK to play this sound effect.

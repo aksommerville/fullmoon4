@@ -157,6 +157,21 @@ static void fmn_scene_render_drag(int16_t dstx,int16_t dsty,int16_t dstw,int16_t
     wolfvtx.dstx=dotx-8;
   }
   fmn_draw_decal(&wolfvtx,1,13);
+  
+  // Dragon's eyeballs, for the second "drag" scene only. Luckily that's the only scene with XREV, so cheat.
+  if (xform&FMN_XFORM_XREV) {
+    uint32_t eyecolor=fmn_video_pixel_from_rgba(0xa60c4eff);
+    int16_t eyedx=0,eyedy=0;
+    if (scene->clock<9.0f) eyedx=-1;
+    else if (scene->clock<11.0f) { eyedx=-1; eyedy=1; }
+    else if (scene->clock<13.0f) eyedy=1;
+    else { eyedx=1; eyedy=1; }
+    struct fmn_draw_rect vtxv[]={
+      {235+eyedx,46+eyedy,1,1,eyecolor},
+      {241+eyedx,47+eyedy,1,1,eyecolor},
+    };
+    fmn_draw_rect(vtxv,sizeof(vtxv)/sizeof(vtxv[0]));
+  }
 }
 
 /* Render Dot clothing the orphans.

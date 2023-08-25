@@ -16,3 +16,4 @@ neighborw 125
 neighbors 127
 sprite 12 7 firenozzle_w 7 1 gs:ww_fire7
 sprite 8 6 tripwire gs:ww_fire7 0 0
+sprite 5 2 firenozzle_s 5 10 0

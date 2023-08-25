@@ -88,8 +88,14 @@ static void _hello_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
       
     // MENU means "cancel" in this context, but there's nothing to cancel out to.
     } else if ((input&FMN_INPUT_MENU)&&!(menu->pvinput&FMN_INPUT_MENU)) {
-      menu->pvinput=input;
-      fmn_sound_effect(FMN_SFX_UI_NO);
+      if (0) { // ...or is there? Optionally use B to launch the secret sound-check menu.
+        fmn_begin_menu(FMN_MENU_SOUNDCHECK,0);
+        fmn_sound_effect(FMN_SFX_UI_YES);
+        menu->pvinput=0xff;
+      } else {
+        menu->pvinput=input;
+        fmn_sound_effect(FMN_SFX_UI_NO);
+      }
       
     } else {
       const uint8_t verts=FMN_INPUT_UP|FMN_INPUT_DOWN;
