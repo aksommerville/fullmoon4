@@ -10,7 +10,7 @@
 # Hello, pause
 3 Continuer
 4 Nouveau
-5 Parametres
+5 Paramètres
 6 Quitter
 7 Terminer
 
@@ -19,8 +19,8 @@
 9 Chapeau
 10 Cruche
 11 Pepins
-12 Pieces
-13 Incindies
+12 Pièces
+13 Allumette
 14 Balai
 15 Baton
 16 Parapluie
@@ -34,7 +34,7 @@
 24 Eau
 25 Lait
 26 Miele
-27 Seve
+27 Sève
 
 # More password puzzle: Do not translate
 28 FIRE
@@ -48,18 +48,18 @@
 # Dot Vine, Moon Song, Goody Grief: Translate only if the name sounds funny in your language, then make something up (and please let me know -AK).
 # Use tildes to force align where necessary -- They are invisible, but the layout code doesn't know that.
 # 40 character limit per line.
-34 - Cast -
+34 - Distribution -
 35 ~~~~~~~La sorciere  Dot Vine~~~~~~~~~~
 36 ~~~~La professeure  Goody Grief~~~~~~~
 37 La sorciere rivale  Moon Song~~~~~~~~~
-38 ~~~~~Le loup-garou  lui-meme~~~~~~~~~~
-39 - Logiciel, arte, musique -
+38 ~~~~~Le loup-garou  lui-même~~~~~~~~~~
+39 - Logiciel, graphique, musique -
 40 AK Sommerville
 41 - Logiciel open source -
 42 Egor Nepomnyaschih
 43 Steve Reid
 44 Christophe Devine
-45 - Testeurs d'beta -
+45 - Bêta testeurs -
 46 Rick Eubanks
 47 Kristen Popa
 48 Alex Hansen
@@ -67,11 +67,11 @@
 50 Dot Vine reviendra
 
 # Settings, field identifiers. Limit 20 characters.
-51 Toutecran
+51 Plein-écran
 52 Musique
 53 Langue
-54 Putte d'inne
-55 Scaleur
+54 Entrée
+55 Mise-échelle
 56
 57
 58
@@ -81,22 +81,22 @@
 60 Oui
 61 Non
 # 62 is the name of *this* language, for display. (don't translate the word "English").
-62 francais
+62 français
 
 # Input.
-63 Restore defaults
-63 Test
-64 Configure
-65 Delete
-66 Press a button for:
-67 Press again:
-68 Fault!
-69 Left
-70 Right
-71 Up
-72 Down
-73 A (Use Item)
-74 B (Open Menu)
+63 Réinitialiser
+63 Essayer
+64 Configurer
+65 Effacer
+66 Appuyer sur un bouton pour:
+67 Appuyer encore:
+68 Faute!
+69 Gauche
+70 Adroit
+71 Haut
+72 Bas
+73 A (Utilser)
+74 B (Menu)
 
-75 Pixelle
-76 Embleurre
+75 Gros
+76 Flou

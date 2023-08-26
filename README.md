@@ -9,22 +9,14 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO: Critical bugs, roughly sorted by effort
 
-- [ ] vcs: I'm still getting music problems on startup, the first few notes get clobbered.
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
-- [x] Pictures of werewolf's ancestors hanging in castle.
-- [x] Pretty up the dragging scenes in credits.
-- [x] web: Sound effects too quiet relative to music.
-- - Nearer the Sky: Louder
-- - Eye of Newt: Little quieter
-- - Blood for Silver: Little quieter?
-- [ ] minsyn drums too loud: Full audio review
 - [ ] Translation. Try to freeload it all off Google.
-- - [ ] French
+- - [x] Reencode text.
+- - [x] French
 - - [ ] Spanish
 - - [ ] Russian
 - - [ ] Telugu?
-- [ ] Static hazard bounces you onto another static hazard, the second one doesn't seem to matter.
 
 ### TODO: Not critical.
 

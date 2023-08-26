@@ -60,3 +60,5 @@ Image resources will also eventually get a qualifier but I haven't decided anyth
 
 Sound ID are currently restricted to 1..127.
 We could expand that in the future by using Program Change and Bank Select on the sound effects channel, but for now I think 127 will do.
+
+String resources are UTF-8 text in source, but get reencoded to a private 8-bit format.

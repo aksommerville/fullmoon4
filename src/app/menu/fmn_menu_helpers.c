@@ -26,7 +26,7 @@ void fmn_generate_text_image(uint16_t imageid,const char *src,int srcc,int16_t f
   struct fmn_draw_mintile vtxv[vtxa];
   int vtxc=0;
   for (;srcc-->0;src++,dstx+=glyphw) {
-    if ((unsigned char)(*src)<=0x20) continue;
+    if (!*src) continue;
     vtxv[vtxc++]=(struct fmn_draw_mintile){dstx,dsty,*src,0};
   }
   fmn_draw_mintile(vtxv,vtxc,font_imageid);

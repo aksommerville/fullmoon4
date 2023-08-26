@@ -188,11 +188,13 @@ static void input_render_list(struct fmn_menu *menu) {
     int16_t x=INPUT_GLYPH_W; // no '>>1'; half a glyph of left margin
     int16_t y=(devc+1)*INPUT_GLYPH_H; // half a glyph of top margin
     int i=0; for (;i<namec;i++,x+=INPUT_GLYPH_W) {
-      if (name[i]>0x20) {
+      char ch=name[i];
+      if ((ch>=0x61)&&(ch<=0x7a)) ch-=0x20; // lowercase
+      if ((ch>=0x20)&&(ch<=0x5f)) { // first 4 rows of ASCII only -- the rest of our font is nonstandard
         struct fmn_draw_mintile *vtx=vtxv+vtxc++;
         vtx->x=x;
         vtx->y=y;
-        vtx->tileid=name[i];
+        vtx->tileid=ch;
         vtx->xform=0;
       }
     }

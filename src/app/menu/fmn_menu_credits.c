@@ -12,8 +12,8 @@
 #define CREDITS_GLYPH_W 8
 #define CREDITS_GLYPH_H 8
 #define CREDITS_MIN_UPTIME 10.0f /* very long, so you don't accidentally miss it, but don't make them wait the whole time */
-#define CREDITS_TYPEWRITER_DELAY 0.300f
-#define CREDITS_MESSAGE_POST_DELAY 10.0f
+#define CREDITS_TYPEWRITER_DELAY 0.100f
+#define CREDITS_MESSAGE_POST_DELAY 18.0f
 
 #define summary_ready menu->argv[1]
 #define clock menu->fv[0]
@@ -81,7 +81,7 @@ static void credits_append_line(uint16_t stringid,int align,int row) {
   while (textc&&(src[0]=='~')) { src++; textc--; x+=CREDITS_GLYPH_W; }
   
   int i=0; for (;i<textc;i++,src++,x+=CREDITS_GLYPH_W) {
-    if (*src<=0x20) continue;
+    if (!*src) continue;
     struct fmn_draw_mintile *vtx=credits_messagev+credits_messagec++;
     vtx->x=x;
     vtx->y=y;
