@@ -1,0 +1,96 @@
+# Password puzzle: Do not translate
+1 FISH
+2 WORM
+
+# Hello, pause
+3 Continuar
+4 Nuevo
+5 Ajustes
+6 Abandonar
+7 Abandonar
+
+# Items
+8 Globonieve
+9 Sombrero
+10 Jarra
+11 Semilla
+12 Moneda
+13 Cerilla
+14 Escoba
+15 Varita
+16 Paraguas
+17 Pluma
+18 Pala
+19 Brújula
+20 Violín
+21 Tiza
+22 Campana
+23 Queso
+24 Agua
+25 Leche
+26 Miel
+27 Savia
+
+# More password puzzle: Do not translate
+28 FIRE
+29 MOON
+30 WINE
+31 LOVE
+32 HAND
+33 BIRD
+
+# Credits. Do not translate real people's names.
+# Dot Vine, Moon Song, Goody Grief: Translate only if the name sounds funny in your language, then make something up (and please let me know -AK).
+# Use tildes to force align where necessary -- They are invisible, but the layout code doesn't know that.
+# 40 character limit per line.
+34 - Elenco -
+35 ~~~~~~La Bruja  Dot Vine~~~~~
+36 ~~~~~~~Maestra  Goody Grief~~
+37 ~~~Bruja Rival  Moon Song~~~~
+38 ~~~Hombre-lobo  Él mismo~~~~~
+39 - código, gráficos, música -
+40 AK Sommerville
+41 - código fuente abierto -
+42 Egor Nepomnyaschih
+43 Steve Reid
+44 Christophe Devine
+45 - probadores beta -
+46 Rick Eubanks
+47 Kristen Popa
+48 Alex Hansen
+49 Gracias a GDEX!
+50 Dot vine volverá
+
+# Settings, field identifiers. Limit 20 characters.
+51 Pantalla completa
+52 Musica
+53 Lengua
+54 Entrada
+55 Interpolación
+56
+57
+58
+59
+
+# Settings, addl text.
+60 Sí
+61 No
+# 62 is the name of *this* language, for display. (don't translate the word "English").
+62 español
+
+# Input.
+63
+64
+65
+66 Presione el botón para:
+67 Presione de neuvo:
+68 Falla!
+69 Izquierdo
+70 Derecho
+71 Arriba
+72 Abajo
+73 A (Utilizar)
+74 B (menú abierto)
+
+75 Fornido
+76 Borroso

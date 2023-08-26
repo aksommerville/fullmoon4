@@ -311,6 +311,7 @@ static int mkd_string_compile(char *dst,int dsta,const char *src,int srcc) {
       case 0xd0: case 0xf0: ch=0x1c; break; // Eth
       case 0xde: case 0xfe: ch=0x1d; break; // Thorn
       case 0xdf: ch=0x1e; break; // Esszett (lowercase only)
+      case 0xd1: case 0xf1: ch=0x1f; break; // N-tilde
       
       case 0x401: case 0x451: ch=0x01; break; // Cyrillic Yo, same as E-diaresis
     

@@ -127,7 +127,8 @@ static int input_add_text_line(struct fmn_draw_mintile *vtxv,int vtxc,int vtxa,s
   const char *src=text;
   int i=textc;
   for (;i-->0;src++,x+=INPUT_GLYPH_W) {
-    if ((unsigned char)(*src)<=0x20) continue;
+    if (!*src) continue;
+    if (*src==0x20) continue;
     if (vtxc>=vtxa) {
       fmn_draw_mintile(vtxv,vtxc,20);
       vtxc=0;

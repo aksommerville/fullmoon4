@@ -14,7 +14,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Translation. Try to freeload it all off Google.
 - - [x] Reencode text.
 - - [x] French
-- - [ ] Spanish
+- - [x] Spanish
 - - [ ] Russian
 - - [ ] Telugu?
 
