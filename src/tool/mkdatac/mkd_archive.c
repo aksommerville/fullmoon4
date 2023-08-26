@@ -278,6 +278,17 @@ static int mkd_string_compile(char *dst,int dsta,const char *src,int srcc) {
     } else if ((ch>=0x430)&&(ch<0x450)) {
       ch=ch+0x60-0x430;
       
+    // 6 rows of Hiragana.
+    } else if ((ch>=0x3040)&&(ch<0x30a0)) {
+      ch=ch+0x80-0x3040;
+      
+    // Turn Katakana into Hiragana. This is probably unwise.
+    // (a) Is it comprehensible to a Japanese speaker, to see a word that would normally be Katakana written as Hiragana?
+    // (b) Are the K and H pages of Unicode arranged the same? We're assuming they are, without any particular evidence.
+    // But it's either this, or no Japanese -- Hira and Kata combined take 12 rows and we only have 8 to spare.
+    } else if ((ch>=0x30a0)&&(ch<0x3100)) {
+      ch=ch+0x80-0x30a0;
+      
     // Bunch of loose letters not in Unicode order. Mostly accented Roman letters.
     } else switch (ch) {
       

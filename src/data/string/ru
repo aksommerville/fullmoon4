@@ -1,0 +1,98 @@
+# Russian text translated from English via Google Translate. Expect errors.
+
+# Password puzzle: Do not translate
+1 FISH
+2 WORM
+
+# Hello, pause
+3 Продолжить
+4 новых
+5 настроек
+6 Выйти
+7 Конец игры
+
+# Items
+8 Снежны шар
+9 Шляпа
+10 кувшин
+11 семян
+12 монет
+13 Матчей
+14 Метла
+15 Жезл
+16 Зонтик
+17 Перо
+18 Лопата
+19 Компас
+20 скрипка
+21 Мел
+22 Белл
+23 сыра
+24 Вода
+25 Молоко
+26 Мед
+27 Сап
+
+# More password puzzle: Do not translate
+28 FIRE
+29 MOON
+30 WINE
+31 LOVE
+32 HAND
+33 BIRD
+
+# Credits. Do not translate real people's names.
+# Dot Vine, Moon Song, Goody Grief: Translate only if the name sounds funny in your language, then make something up (and please let me know -AK).
+# Use tildes to force align where necessary -- They are invisible, but the layout code doesn't know that.
+# 40 character limit per line.
+34 - В ролях -
+35 ~~~~~~~~~~~~~~Ведьмы  Dot Vine~~~~~~~
+36 ~~~~~~~~~Учительница  Goody Grief~~~~
+37 соперничающей ведьмы  Moon Song~~~~~~
+38 ~~~~~~~~~~~оборотень  Сам~~~~~~~~~~~~
+39 - Код, графика, музыка -
+40 AK Sommerville
+41 - Открытый исходный код -
+42 Egor Nepomnyaschih
+43 Steve Reid
+44 Christophe Devine
+45 - Бета-тестеры -
+46 Rick Eubanks
+47 Kristen Popa
+48 Alex Hansen
+49 Большое спасибо команде GDEX!
+50 Dot Vine вернется
+
+# Settings, field identifiers. Limit 20 characters.
+51 Полноэкранный режим
+52 Музыка
+53 Язык
+54 Вход
+55 Скейлер
+56
+57
+58
+59
+
+# Settings, addl text.
+60 Включить
+61 Отключить
+# 62 is the name of *this* language, for display. (don't translate the word "English").
+62 русский
+
+# Input.
+63
+64
+65
+66 Нажмите кнопку для:
+67 Нажмите еще раз:
+68 Ошибка!
+69 слева
+70 Справа
+71 Вверх
+72 Вниз
+73 A (Использовать предмет)
+74 B (Открыть меню)
+
+75 пикселей
+76 Размытие

@@ -11,12 +11,14 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
-- [ ] Translation. Try to freeload it all off Google.
+- [x] Translation. Try to freeload it all off Google.
 - - [x] Reencode text.
 - - [x] French
 - - [x] Spanish
-- - [ ] Russian
-- - [ ] Telugu?
+- - [x] Russian
+- - [x] Telugu? NO. We seem to have room for it, but the combining glyphs are hard to work with.
+- - [x] Japanese
+- - - [x] Web service that breaks up Kanji words? j-talk.com
 
 ### TODO: Not critical.
 
