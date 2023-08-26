@@ -83,6 +83,16 @@ static void fiddle_vumeter_update() {
 #if FMN_USE_inotify
  
 static int fiddle_inotify_make_complete(int status,const char *log,int logc,void *userdata) {
+
+  // Songs are borrowed by the synthesizer. That's by design and I don't want to change it.
+  // But we must stop the music before reloading data.
+  // Unfortunately this means we drop the song.
+  if (fiddle_drivers_lock()>=0) {
+    if (fiddle.synth&&fiddle.synth->type->play_song) fiddle.synth->type->play_song(fiddle.synth,0,0,1,0);
+    fiddle_drivers_unlock();
+    fiddle.songid=0;
+  }
+
   fmn_datafile_reopen(fiddle.datafile);
   if (fiddle.synth) {
     if (fiddle_drivers_lock()>=0) {
