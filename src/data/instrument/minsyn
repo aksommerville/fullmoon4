@@ -860,10 +860,10 @@ sound UNCURSE
 end
 
 sound QUACK
-  len 0.300
-  fm ( 100 150 200 150 190 ) 1.5 ( 0 20 4000 30 2000 100 3000 150 5000 ) sine
-  env ( 0 40 0xffff 40 0x4000 220 0 )
-  mlt 0.300
+  len 0.150
+  fm ( 500 50 700 * 600 ) 0.25 ( 0 50 2000 * 2000 ) sine
+  env ( 0 50 0x8000 30 0x4000 * 0 )
+  mlt 0.200
 end
 
 sound KILL_WEREWOLF
@@ -1096,4 +1096,18 @@ sound UI_SHIFT
   fm ( 300 25 320 50 280 25 300 ) 1.0 ( 2000 100 3000 * 0 ) sine
   env ( 0 30 0x4000 30 0x0800 * 0 )
   mlt 0.300
+end
+
+sound COIN_TOSS
+  len 0.150
+  fm ( 800 50 1100 * 900 ) 1.5 ( 0 50 2000 * 0 ) sine
+  env ( 0 50 0x8000 30 0x2000 * 0 )
+  mlt 0.200
+end
+
+sound COIN_LAND
+  len 0.100
+  fm ( 150 * 100 ) 1 ( 4000 * 0 ) sine
+  env ( 0 20 0xc000 20 0x2000 * 0 )
+  mlt 0.200
 end

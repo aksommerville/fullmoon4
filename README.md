@@ -7,41 +7,16 @@ Because there is definitely a werewolf-slaying involved.
 
 Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
 
-### TODO: Critical bugs, roughly sorted by effort
+### TODO
 
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
-- [x] Translation. Try to freeload it all off Google.
-- - [x] Reencode text.
-- - [x] French
-- - [x] Spanish
-- - [x] Russian
-- - [x] Telugu? NO. We seem to have room for it, but the combining glyphs are hard to work with.
-- - [x] Japanese
-- - - [x] Web service that breaks up Kanji words? j-talk.com
-
-### TODO: Not critical.
-
-- [ ] Werewolf eats you, when you're a pumpkin, you pop back to human. This is kind of unlikely to arrange, but is possible. Does it matter?
-- - Werewolf himself behaves the same way, and that's important.
-- [ ] Touch input.
+- [x] Touch input. ...already works. (i don't feel it's usable but it's not a technical problem)
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
-- [ ] After a 45-minute session: bigpc_quit, clock stats: Final game time 1800 ms (1800 ms real time). overflow=0 underflow=0 fault=0 wrap=0 cpu=0.036068
-- [ ] web: Language selection, figure out how that works
-- [ ] Sound effect for coin toss
+- [x] Sound effect for coin toss
 - [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
 - [ ] Tree-shake resources when packing.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?
-- [ ] Summoning the crow potentially examines every command in every map, every time. Can we pre-index all that by itemid?
-- [ ] Ensure maximum update interval is short enough to avoid physics errors, eg walking thru walls. Currently 1..50 ms per Clock.js
-- [ ] Extra mappable input actions, eg hard pause and fullscreen toggle. I specifically don't want these for the demo, so punt.
-- [ ] Consider WebGL for rendering. CanvasRenderingContext2D is not performing to my hopes.
-- - 2023-05-07: A quick test (no actual rendering, just clear the framebuffer), and WebGL is no better.
-- [ ] Unit tests.
-- - [ ] General-purpose test runner.
-- - [ ] C tests
-- - [ ] JS platform tests
-- [ ] Automation against headless native build.
 - [ ] Native fiddle tool.
 - - [ ] MIDI-In and PCM/synth config at command line? Would be cool to have some functionality without the web app.
 - - [ ] Broad support for level analysis -- I'd like to replace `assist` with this.

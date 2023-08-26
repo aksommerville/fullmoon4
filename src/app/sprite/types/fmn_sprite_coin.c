@@ -31,7 +31,7 @@ static void _coin_init(struct fmn_sprite *sprite) {
  
 static void _coin_update(struct fmn_sprite *sprite,float elapsed) {
 
-  // Kill if offscreen.
+  // Kill if offscreen. (no sound effect)
   if ((sprite->x<-1.0f)||(sprite->y<-1.0f)||(sprite->x>FMN_COLC+1.0f)||(sprite->y>FMN_ROWC+1.0f)) {
     fmn_sprite_kill(sprite);
     return;
@@ -51,10 +51,13 @@ static void _coin_pressure(struct fmn_sprite *sprite,struct fmn_sprite *presser,
         fmn_sprite_kill(sprite);
         return;
       }
-      sprite->tileid=0x2a;
-      sprite->velx=0.0f;
-      sprite->vely=0.0f;
-      sprite->physics&=~FMN_PHYSICS_MOTION;
+      if (sprite->tileid!=0x2a) {
+        fmn_sound_effect(FMN_SFX_COIN_LAND);
+        sprite->tileid=0x2a;
+        sprite->velx=0.0f;
+        sprite->vely=0.0f;
+        sprite->physics&=~FMN_PHYSICS_MOTION;
+      }
     }
   }
 }

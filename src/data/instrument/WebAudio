@@ -1169,3 +1169,17 @@ sound UI_SHIFT
   env 0 ( 0 30 0x4000 30 0x0800 * 0 )
   norm 0 0.150
 end
+
+sound COIN_TOSS
+  len 0.150
+  fm 0 ( 800 50 1100 * 900 ) 1.5 ( 0 50 2000 * 0 ) sine
+  env 0 ( 0 50 0x8000 30 0x2000 * 0 )
+  norm 0 0.200
+end
+
+sound COIN_LAND
+  len 0.100
+  fm 0 ( 150 * 100 ) 1 ( 4000 * 0 ) sine
+  env 0 ( 0 20 0xc000 20 0x2000 * 0 )
+  norm 0 0.200
+end

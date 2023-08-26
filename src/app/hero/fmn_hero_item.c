@@ -205,6 +205,7 @@ static void fmn_hero_coin_begin() {
     fmn_global.itemqv[FMN_ITEM_COIN]++;
     return;
   }
+  fmn_sound_effect(FMN_SFX_COIN_TOSS);
   fmn_saved_game_dirty();
 }
 
