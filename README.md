@@ -13,8 +13,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] MacOS: Must sign executable.
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?
-- [ ] Review Japanese text on takoboto.jp
-- [ ] Redraw projector in Dept of Agriculture
+- [x] Review Japanese text on takoboto.jp ...it will never be good, let it go
+- [x] Redraw projector in Dept of Agriculture
 
 ### Disambiguation
 
