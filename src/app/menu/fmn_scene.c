@@ -344,7 +344,7 @@ void fmn_scene_render_butcher(int16_t dstx,int16_t dsty,int16_t dstw,int16_t dst
     {sawx,sawy,saww,sawh, dstw-saww,384,saww,sawh}, // saw and arm
     {dstx+dstw-dotw,dsty,dotw,doth, dstw-dotw,256,dotw,doth}, // dot minus right arm
   };
-  fmn_draw_decal(decalv,sizeof(decalv)/sizeof(decalv[0]),26);
+  fmn_draw_decal(decalv,sizeof(decalv)/sizeof(decalv[0]),15);
   
   if ((sawflat>=0.100f)&&(sawflat<0.400f)) {
     float t=(sawflat-0.100f)/0.300f;
@@ -353,7 +353,7 @@ void fmn_scene_render_butcher(int16_t dstx,int16_t dsty,int16_t dstw,int16_t dst
       {dstx+50     ,dsty+dsth-t*40+ 0,7,11, 0,256,7,11},
       {dstx+70+t*10,dsty+dsth-t*20+10,7,11, 0,256,7,11},
     };
-    fmn_draw_decal(splatv,sizeof(splatv)/sizeof(splatv[0]),26);
+    fmn_draw_decal(splatv,sizeof(splatv)/sizeof(splatv[0]),15);
   }
   
   // We exceed the lower limit, so black that out. fmn_menu_credits draws scene before text, don't worry.
@@ -382,7 +382,7 @@ void fmn_scene_render_sew(int16_t dstx,int16_t dsty,int16_t dstw,int16_t dsth,st
     {dstx+dotx,dsty+doty,lgw,lgh, 0,267,lgw,lgh}, // dot, minus right hand
     {dstx+dotx+53,dsty+doty+26,smw,smh, frame*smw,376,smw,smh}, // right hand, animated
   };
-  fmn_draw_decal(decalv,sizeof(decalv)/sizeof(decalv[0]),26);
+  fmn_draw_decal(decalv,sizeof(decalv)/sizeof(decalv[0]),15);
 }
 
 /* Render.

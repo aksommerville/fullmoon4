@@ -67,30 +67,23 @@
 53 Language
 54 Input
 55 Scaler
-56
-57
-58
-59
 
 # Settings, addl text.
-60 Enable
-61 Disable
-# 62 is the name of *this* language, for display. (don't translate the word "English").
-62 English
+56 Enable
+57 Disable
+# 58 is the name of *this* language, for display. (don't translate the word "English").
+58 English
 
 # Input.
-63
-64
-65
-66 Press button for:
-67 Press again:
-68 Fault!
-69 Left
-70 Right
-71 Up
-72 Down
-73 A (Use Item)
-74 B (Open Menu)
+59 Press button for:
+60 Press again:
+61 Fault!
+62 Left
+63 Right
+64 Up
+65 Down
+66 A (Use Item)
+67 B (Open Menu)
 
-75 Pixelly
-76 Blurry
+68 Pixelly
+69 Blurry

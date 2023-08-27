@@ -68,17 +68,17 @@ static void victory_bits_prepare(struct fmn_menu *menu) {
     }
     #define EOL { px=tilesize>>1; py+=tilesize; }
     
-    for (message="         Time: ";*message;message++) CHR(*message)
+    for (message="         TIME: ";*message;message++) CHR(*message)
     CHR('0'+hour) CHR(':') CHR('0'+min/10) CHR('0'+min%10) CHR(':') CHR('0'+sec/10) CHR('0'+sec%10) CHR('.') CHR('0'+ms/100) CHR('0'+(ms/10)%10) CHR('0'+ms%10)
     EOL
     
-    for (message="        Items: ";*message;message++) CHR(*message)
+    for (message="        ITEMS: ";*message;message++) CHR(*message)
     if (itemc>=10) CHR('0'+itemc/10) CHR('0'+itemc%10) CHR('/') CHR('1') CHR('6')
     EOL
     
-    for (message="       Damage: ";*message;message++) CHR(*message)
+    for (message="       DAMAGE: ";*message;message++) CHR(*message)
     if (damagec>=10000) {
-      for (message="what the...";*message;message++) CHR(*message)
+      for (message="WHAT THE...";*message;message++) CHR(*message)
     } else {
       if (damagec>=1000) CHR('0'+(damagec/1000)%10)
       if (damagec>= 100) CHR('0'+(damagec/ 100)%10)
@@ -89,11 +89,11 @@ static void victory_bits_prepare(struct fmn_menu *menu) {
     
     EOL
     EOL
-    for (message="Thanks for playing Full Moon! ";*message;message++) CHR(*message) EOL
-    for (message="This was just a taste...      ";*message;message++) CHR(*message) EOL
-    for (message="Real thing will be available  ";*message;message++) CHR(*message) EOL
-    for (message="29 September 2023 on Itch.io. ";*message;message++) CHR(*message) EOL
-    for (message="               -AK Sommerville";*message;message++) CHR(*message) EOL
+    for (message="THANKS FOR PLAYING FULL MOON! ";*message;message++) CHR(*message) EOL
+    for (message="THIS WAS JUST A TASTE...      ";*message;message++) CHR(*message) EOL
+    for (message="REAL THING WILL BE AVAILABLE  ";*message;message++) CHR(*message) EOL
+    for (message="29 SEPTEMBER 2023 ON ITCH.IO. ";*message;message++) CHR(*message) EOL
+    for (message="               -AK SOMMERVILLE";*message;message++) CHR(*message) EOL
     
     #undef CHR
     #undef EOL

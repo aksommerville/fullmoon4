@@ -248,10 +248,18 @@ static int datan_reachability_visit_known(struct datan_reachability_context *ctx
       }
     }
   }
+  // 101 and 146..150 are referenced programmatically by credits. (not present in demo)
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,101))<0) return err;
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,146))<0) return err;
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,147))<0) return err;
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,148))<0) return err;
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,149))<0) return err;
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_MAP,150))<0) return err;
   
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,2))<0) return err; // hero
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,4))<0) return err; // items splash
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,14))<0) return err; // menu bits
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,15))<0) return err; // credits (demo doesn't use)
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,16))<0) return err; // uitiles (eg hello menu cursor)
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,17))<0) return err; // spotlight (door transitions)
   if ((err=datan_reachable(ctx,FMN_RESTYPE_IMAGE,18))<0) return err; // logo
@@ -261,6 +269,7 @@ static int datan_reachability_visit_known(struct datan_reachability_context *ctx
   if ((err=datan_reachable(ctx,FMN_RESTYPE_SONG,1))<0) return err; // tangled_vine (hello menu)
   if ((err=datan_reachable(ctx,FMN_RESTYPE_SONG,6))<0) return err; // truffles_in_forbidden_sauce (gameover menu)
   if ((err=datan_reachable(ctx,FMN_RESTYPE_SONG,7))<0) return err; // seventh_roots_of_unity (victory menu)
+  if ((err=datan_reachable(ctx,FMN_RESTYPE_SONG,14))<0) return err; // sky-gardening (arcade; not actually reachable in demo)
   
   if ((err=datan_reachable(ctx,FMN_RESTYPE_INSTRUMENT,1))<0) return err; // Dot's violin
   if ((err=datan_reachable(ctx,FMN_RESTYPE_INSTRUMENT,42))<0) return err; // Music teacher's saxophone
@@ -268,12 +277,15 @@ static int datan_reachability_visit_known(struct datan_reachability_context *ctx
   for (i=3;i<=27;i++) { // hard-coded for menus
     if ((err=datan_reachable(ctx,FMN_RESTYPE_STRING,i))<0) return err;
   }
+  for (i=34;i<=69;i++) { // hard-coded for menus
+    if ((err=datan_reachable(ctx,FMN_RESTYPE_STRING,i))<0) return err;
+  }
   
   for (i=1;i<=FMN_SFX_KICK_1;i++) {
     if ((err=datan_reachable(ctx,FMN_RESTYPE_SOUND,i))<0) return err;
   }
   // skip GM drums: Those are reachable only if a song uses them.
-  for (i=FMN_SFX_COWBELL+1;i<=FMN_SFX_PANDA_CRY;i++) { // sound effects. must keep up to date with fmn_platform.h
+  for (i=FMN_SFX_COWBELL+1;i<=FMN_SFX_COIN_LAND;i++) { // sound effects. must keep up to date with fmn_platform.h
     if ((err=datan_reachable(ctx,FMN_RESTYPE_SOUND,i))<0) return err;
   }
 

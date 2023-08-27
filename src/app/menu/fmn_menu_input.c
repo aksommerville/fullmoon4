@@ -110,12 +110,12 @@ static void _input_update(struct fmn_menu *menu,float elapsed,uint8_t input) {
  
 static uint16_t input_stringid_for_btnid(uint8_t btnid) {
   switch (btnid) {
-    case FMN_INPUT_LEFT: return 69;
-    case FMN_INPUT_RIGHT: return 70;
-    case FMN_INPUT_UP: return 71;
-    case FMN_INPUT_DOWN: return 72;
-    case FMN_INPUT_USE: return 73;
-    case FMN_INPUT_MENU: return 74;
+    case FMN_INPUT_LEFT: return 62;
+    case FMN_INPUT_RIGHT: return 63;
+    case FMN_INPUT_UP: return 64;
+    case FMN_INPUT_DOWN: return 65;
+    case FMN_INPUT_USE: return 66;
+    case FMN_INPUT_MENU: return 67;
   }
   return 0;
 }
@@ -174,6 +174,7 @@ static void input_render_interactive(struct fmn_menu *menu,uint16_t promptstring
 static void input_render_list(struct fmn_menu *menu) {
   // It's hacky, but I'm going to use this render pass as also the canonical "gather list of devices" poll.
   // We're polling for devices every video frame. Hopefully it's a trivial matter on the platform end.
+  // !!! Note that device names are ASCII, or maybe UTF-8, but we use a nonstandard glyph sheet. !!!
   devc=0;
   for (;devc<0x100;devc++) {
     char name[32];
@@ -217,9 +218,9 @@ static void _input_render(struct fmn_menu *menu) {
   
   switch (cfgstate) {
     case FMN_INCFG_STATE_NONE: input_render_list(menu); break;
-    case FMN_INCFG_STATE_READY: input_render_interactive(menu,66,0); break;
-    case FMN_INCFG_STATE_CONFIRM: input_render_interactive(menu,67,0); break;
-    case FMN_INCFG_STATE_FAULT: input_render_interactive(menu,66,68); break;
+    case FMN_INCFG_STATE_READY: input_render_interactive(menu,59,0); break;
+    case FMN_INCFG_STATE_CONFIRM: input_render_interactive(menu,60,0); break;
+    case FMN_INCFG_STATE_FAULT: input_render_interactive(menu,59,61); break;
   }
 }
 

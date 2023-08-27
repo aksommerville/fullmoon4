@@ -67,30 +67,23 @@
 53 Lengua
 54 Entrada
 55 Interpolación
-56
-57
-58
-59
 
 # Settings, addl text.
-60 Sí
-61 No
-# 62 is the name of *this* language, for display. (don't translate the word "English").
-62 español
+56 Sí
+57 No
+# 58 is the name of *this* language, for display. (don't translate the word "English").
+58 español
 
 # Input.
-63
-64
-65
-66 Presione el botón para:
-67 Presione de neuvo:
-68 Falla!
-69 Izquierdo
-70 Derecho
-71 Arriba
-72 Abajo
-73 A (Utilizar)
-74 B (menú abierto)
+59 Presione el botón para:
+60 Presione de neuvo:
+61 Falla!
+62 Izquierdo
+63 Derecho
+64 Arriba
+65 Abajo
+66 A (Utilizar)
+67 B (menú abierto)
 
-75 Fornido
-76 Borroso
+68 Fornido
+69 Borroso

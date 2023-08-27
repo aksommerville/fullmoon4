@@ -266,7 +266,10 @@ int datan_map_rect_contains_solid(const struct datan_map *map,int x,int y,int w,
 }
 
 int datan_map_rect_entirely_solid(const struct datan_map *map,int x,int y,int w,int h) {
-  if (!map->cellphysics) return 0;
+  if (!map->cellphysics) {
+    //fprintf(stderr,"%s: !!! cellphysics unset. Must assume a gap in (%d,%d,%d,%d)\n",__func__,x,y,w,h);
+    return 0;
+  }
   if (x<0) { w+=x; x=0; }
   if (y<0) { h+=y; y=0; }
   if (x>FMN_COLC-w) w=FMN_COLC-x;
@@ -285,7 +288,10 @@ int datan_map_rect_entirely_solid(const struct datan_map *map,int x,int y,int w,
         case FMN_CELLPHYSICS_SAP_NOCHALK:
         case FMN_CELLPHYSICS_REVELABLE:
           break;
-        default: return 0;
+        default: {
+            //fprintf(stderr,"%s: Gap r=(%d,%d,%d,%d), tile=0x%02x physics=%d\n",__func__,x,y,w,h,*p,map->cellphysics[*p]);
+            return 0;
+          }
       }
     }
   }

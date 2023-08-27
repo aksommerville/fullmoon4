@@ -43,7 +43,7 @@ static const struct fmn_scene_setup credits_setupv[]={
   {0,FMN_SCENE_ACTION_BUTCHER,10.0f},
   {0,FMN_SCENE_ACTION_SEW,10.0f},
   {150,FMN_SCENE_ACTION_CLOTHE,30.0f}, // village
-  {151,FMN_SCENE_ACTION_GOODNIGHT,20.0f},
+  {101,FMN_SCENE_ACTION_GOODNIGHT,20.0f},
 };
 
 /* Globals. We need more context than the menu object will comfortably hold.

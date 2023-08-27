@@ -20,7 +20,7 @@ static void fmn_settings_field_write_enabled(char *dst,int dsta,struct fmn_setti
 
 static void fmn_settings_field_write_iso631(char *dst,int dsta,struct fmn_settings_model *model,uint16_t lang) {
   char src[32];
-  int srcc=fmn_get_string(src,sizeof(src),62); // string 62 should be the language's native name
+  int srcc=fmn_get_string(src,sizeof(src),58); // string 58 should be the language's native name
   if ((srcc>0)&&(srcc<=sizeof(src))) {
     if (srcc>dsta) srcc=dsta;
     memcpy(dst,src,srcc);
@@ -76,7 +76,7 @@ static void fmn_settings_field_write_value(
     case FMN_SETTINGS_FIELD_MUSIC_ENABLE: fmn_settings_field_write_enabled(dst,dsta,model,model->platform.music_enable); break;
     case FMN_SETTINGS_FIELD_LANGUAGE: fmn_settings_field_write_iso631(dst,dsta,model,model->platform.language); break;
     case FMN_SETTINGS_FIELD_INPUT: memset(dst,'.',3); break;
-    case FMN_SETTINGS_FIELD_SCALER: fmn_settings_field_write_enum(dst,dsta,model->platform.scaler,75,76,0); break;
+    case FMN_SETTINGS_FIELD_SCALER: fmn_settings_field_write_enum(dst,dsta,model->platform.scaler,68,69,0); break;
   }
 }
 
@@ -119,11 +119,11 @@ static void fmn_settings_model_finalize_fields(struct fmn_settings_model *model)
  */
  
 static void fmn_settings_model_reload_helper_strings(struct fmn_settings_model *model) {
-  if ((model->enabletextc=fmn_get_string(model->enabletext,sizeof(model->enabletext),60))>sizeof(model->enabletext)) {
+  if ((model->enabletextc=fmn_get_string(model->enabletext,sizeof(model->enabletext),56))>sizeof(model->enabletext)) {
     model->enabletext[0]='1';
     model->enabletextc=1;
   }
-  if ((model->disabletextc=fmn_get_string(model->disabletext,sizeof(model->disabletext),61))>sizeof(model->disabletext)) {
+  if ((model->disabletextc=fmn_get_string(model->disabletext,sizeof(model->disabletext),57))>sizeof(model->disabletext)) {
     model->disabletext[0]='0';
     model->disabletextc=1;
   }
