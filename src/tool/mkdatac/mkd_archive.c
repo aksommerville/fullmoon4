@@ -2,6 +2,8 @@
 #include "mkd_ar.h"
 #include "mkd_instrument_format.h"
 
+int mkd_archive_shake_tree(struct mkd_ar *ar,const char *path);
+
 /* Helper for storing and applying type/qualifier filters.
  */
  
@@ -105,6 +107,13 @@ static int mkd_archive_digest(struct mkd_ar *ar) {
     }
   }
   mkd_qfilter_cleanup(&qfilter);
+  
+  // Shake tree.
+  int err=mkd_archive_shake_tree(ar,mkd.config.dstpath);
+  if (err<0) {
+    if (err!=-2) fprintf(stderr,"%s: Unspecified error during tree-shake.\n",mkd.config.dstpath);
+    return -2;
+  }
   
   return 0;
 }

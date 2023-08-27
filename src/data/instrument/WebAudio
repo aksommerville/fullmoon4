@@ -1005,7 +1005,7 @@ sound PUSH
   env 1 ( 0 120 0 60 0xffff 40 0x4000 * 0 )
   mix 0 1
   
-  norm 0 0.200
+  norm 0 0.150
 end
 
 sound FIRENOZZLE_ON

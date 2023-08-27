@@ -147,8 +147,9 @@ $(web_INFO_ARCHIVE):$(web_INFO_FILES);$(PRECMD) cd $(web_OUTDIR) ; tar -czf full
 # Commands.
 
 # This is what you want during development. You can edit C, JS and data files, and just refresh the browser to pick up the changes.
+# Add --host="" to serve on INADDR_ANY.
 web-run:$(web_EXE) $(web_HTSA_DATA);$(NODE) src/tool/server/main.js \
-  --host="" --htdocs=src/www --makeable=$(web_HTSA_DATA) --makeable=$(web_EXE)
+  --htdocs=src/www --makeable=$(web_HTSA_DATA) --makeable=$(web_EXE)
 
 # Same as web-run, but on INADDR_ANY, so other hosts on your network can reach it (eg mobile).
 web-run-routable:$(web_EXE) $(web_HTSA_DATA);$(NODE) src/tool/server/main.js \

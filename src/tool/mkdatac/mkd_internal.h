@@ -98,4 +98,9 @@ int assist_get_resource_id_by_name(const char *tname,const char *rname,int rname
 int assist_get_gsbit_by_name(const char *name,int namec);
 int assist_get_spell_id_by_name(const char *name,int namec);
 
+/* Call (cb) for each resource referenced by the given one.
+ * Used for tree shaking.
+ */
+int mkd_res_for_each_reference(int type,const void *v,int c,int (*cb)(int type,int id,void *userdata),void *userdata);
+
 #endif

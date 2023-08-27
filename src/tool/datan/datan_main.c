@@ -62,7 +62,7 @@ static int datan_process_archive(const char *path) {
   }
   TEST(datan_validate_individual_resources) // Must come first; this populates our live-resource list.
   TEST(datan_validate_spawn_points)
-  TEST(datan_validate_res_id_continuity)
+  //TEST(datan_validate_res_id_continuity) // This is expected to fail, now that we tree-shake. No big deal. Can reenable if curious.
   TEST(datan_validate_cross_qualifier)
   TEST(datan_validate_save_points)
   TEST(datan_validate_song_choice)
