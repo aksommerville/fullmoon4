@@ -24,6 +24,7 @@ void fmn_menu_init_SETTINGS(struct fmn_menu *menu);
 void fmn_menu_init_CREDITS(struct fmn_menu *menu);
 void fmn_menu_init_INPUT(struct fmn_menu *menu);
 void fmn_menu_init_SOUNDCHECK(struct fmn_menu *menu);
+void fmn_menu_init_ARCADE(struct fmn_menu *menu);
 
 /* Replace image content with a single line of text.
  * (forcew,forceh) (0,0) to use the minimum.

@@ -25,6 +25,7 @@ struct fmn_menu *fmn_begin_menu(int menuid,int arg0) {
     case FMN_MENU_CREDITS: fmn_menu_init_CREDITS(menu); break;
     case FMN_MENU_INPUT: fmn_menu_init_INPUT(menu); break;
     case FMN_MENU_SOUNDCHECK: fmn_menu_init_SOUNDCHECK(menu); break;
+    case FMN_MENU_ARCADE: fmn_menu_init_ARCADE(menu); break;
     default: {
         fmn_log("Unexpected menu id %d",menuid);
       }

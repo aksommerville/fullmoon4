@@ -13,4 +13,5 @@
 tilesheet dots
 flags indoors
 door 10 9 1 11 3
+sprite 6 4 arcade gs:arcade_coinc_3bit gs:arcade_hiscore_8bit 0
 song toil_and_trouble

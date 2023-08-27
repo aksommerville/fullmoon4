@@ -1,0 +1,9 @@
+controller arcade
+image moresprites
+tile 0x7d
+style hidden
+invmass 0
+radius 0.6
+physics sprites
+argtype 0 gsbit coinc_3bit
+argtype 1 gsbit hiscore_8bit
