@@ -98,6 +98,12 @@ struct http_listener *http_listen_websocket(
 int http_websocket_close(struct http_socket *socket);
 int http_websocket_send(struct http_socket *socket,int type,const void *v,int c);
 
+/* Userdata for all sockets is null by default.
+ * We never touch it.
+ */
+void *http_socket_get_userdata(struct http_socket *socket);
+void http_socket_set_userdata(struct http_socket *socket,void *userdata);
+
 /* Selected API for reading request xfers.
  * More details are available in http_xfer.h.
  * If you are reading a bunch of query params, it's way more efficient to iterate than to get each individually.

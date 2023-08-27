@@ -340,6 +340,18 @@ begin 42
   env 20 f0 150 20 100
 end
 
+#--- Sky Gardening ---
+begin 43 # lead
+  wave f000 0000 6000 0000 3000 0000 0800
+  #mixwave 0x80 0x40 0x30 0x10 0x20
+  #mixenv 100 0xff 100 0x80 100
+  env 10 e0 25 40 400
+end
+begin 44 # bass
+  wave c000 8000 5000 0000 2000 0000 0800
+  env 20 c0 25 30 200
+end
+
 #-------------------------------------- Final Sound Effects --------------------------------
 
 sound BELL
@@ -952,7 +964,7 @@ sound KILL_WEREWOLF
   env 0 ( 0 30 0xffff 400 0 )
   delay 0 0.200 0.5 0.5 0.5 0.5
   env 0 ( 0xffff 1500 0xffff * 0 )
-  norm 0 0.500
+  norm 0 0.300
 end
 
 sound UNBURY_TREASURE # Same as dig. Do we want some fanfare?

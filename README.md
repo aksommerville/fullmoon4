@@ -12,9 +12,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
-- [ ] _Enchanting Adventures: The Witch's Quest_ minigame.
-- - [ ] Music
-- - [ ] Sound effects
+- [x] _Enchanting Adventures: The Witch's Quest_ minigame.
+- - [x] Music
+- - [x] Sound effects
 - - [x] Summary
 - [ ] Tree-shake resources when packing.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?

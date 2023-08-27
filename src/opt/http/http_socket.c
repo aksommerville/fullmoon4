@@ -232,3 +232,16 @@ int http_websocket_send(struct http_socket *socket,int type,const void *v,int c)
   
   return 0;
 }
+
+/* Trivial accessors.
+ */
+ 
+void *http_socket_get_userdata(struct http_socket *socket) {
+  if (!socket) return 0;
+  return socket->userdata;
+}
+
+void http_socket_set_userdata(struct http_socket *socket,void *userdata) {
+  if (!socket) return;
+  socket->userdata=userdata;
+}

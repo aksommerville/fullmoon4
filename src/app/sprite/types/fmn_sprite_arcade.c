@@ -62,6 +62,7 @@ static int16_t _arcade_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t
     case FMN_ITEM_COIN: {
         int coinc=fmn_gs_get_word(gsbit_coinc,3);
         if (coinc<7) {
+          fmn_sound_effect(FMN_SFX_PAYMENT);
           coinc++;
           fmn_gs_set_word(gsbit_coinc,3,coinc);
           if (coinc==1) arcade_power_on(sprite);

@@ -46,6 +46,7 @@ export class Renderer2d {
     if (!this.images[0].image) return;
     if (!this.images[0].ctx) {
       this.images[0].ctx = this.images[0].image.getContext("2d", { alpha: false });
+      this.images[0].ctx.imageSmoothingEnabled = false;
     }
     this.ctx = this.images[0].ctx;
     this.dstimage = this.images[0].image;
@@ -121,6 +122,7 @@ export class Renderer2d {
     const r = this.images[imageid];
     if (!r.ctx) {
       r.ctx = r.image.getContext("2d", { alpha: imageid !== 0 }); // Image zero is opaque. Others, we can't assume.
+      r.ctx.imageSmoothingEnabled = false;
     }
     this.dstimage = r.image;
     this.ctx = r.ctx;

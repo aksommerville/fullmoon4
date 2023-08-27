@@ -18,6 +18,9 @@
   #include "opt/inotify/inotify.h"
 #endif
 
+extern const void *FIDDLE_SOCKET_MODE_FIDDLE;
+extern const void *FIDDLE_SOCKET_MODE_MIDI_IN;
+
 extern struct fiddle {
 
   const char *exename;

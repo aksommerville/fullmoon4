@@ -66,6 +66,7 @@ static void eatwq_explode(int16_t x,int16_t y) {
   boom->x=x;
   boom->y=y;
   boom->ttl=60;
+  fmn_sound_effect(FMN_SFX_BREAK_BONES);
   
   // Kill plants.
   const int16_t radius=6;
@@ -117,6 +118,7 @@ static void eatwq_drop_seed(int16_t x) {
     return;
   }
   
+  fmn_sound_effect(FMN_SFX_PLANT);
   plant=eatwq.plantv+eatwq.plantc++;
   plant->x=x;
   plant->y=EATWQ_FB_H-12;
@@ -134,6 +136,7 @@ static void eatwq_drop_rain(int16_t x) {
     if (plant->x<x-4) continue;
     if (plant->x>x+4) continue;
     plant->tileid=0xd1+(rand()&3);
+    fmn_sound_effect(FMN_SFX_BLOOM);
   }
 }
 
@@ -178,6 +181,7 @@ static void eatwq_check_bounce(struct eatwq_drop *drop) {
     drop->x-=8;
   }
   drop->y-=6;
+  fmn_sound_effect(FMN_SFX_INJURY_DEFLECTED);
 }
 
 /* If this drop collides with the hero, create an explosion and remove the drop.
@@ -205,7 +209,7 @@ static void eatwq_update_drops() {
   // New thing?
   if (!eatwq.dead&&(eatwq.dropc<EATWQ_DROP_LIMIT)&&!(eatwq.playtime%20)) {
     struct eatwq_drop *drop=eatwq.dropv+eatwq.dropc++;
-    drop->x=(rand()%(EATWQ_FB_W-8))+4;
+    drop->x=((rand()%(EATWQ_FB_W-8))&~7)+4;
     drop->y=-4;
     switch (rand()%10) {
       case 0: drop->tileid=0xc3; break; // bomb
@@ -281,6 +285,7 @@ static void eatwq_summary_update() {
     }
     
     // Add a point and initiate liftoff.
+    fmn_sound_effect(FMN_SFX_TOSS);
     eatwq.score++;
     if (eatwq.score>eatwq.hiscore) {
       eatwq.hiscore=eatwq.score;

@@ -187,9 +187,16 @@ int fiddle_drivers_reset() {
  */
  
 int fiddle_drivers_play(int play) {
-  if (!fiddle.audio) return 0;
-  if (!fiddle.audio->type->play) return 0;
-  fiddle.audio->type->play(fiddle.audio,play);
+  if (fiddle.synth) {
+    if (fiddle.synth->type->enable_music) {
+      fiddle.synth->type->enable_music(fiddle.synth,1);
+    }
+  }
+  if (fiddle.audio) {
+    if (fiddle.audio->type->play) {
+      fiddle.audio->type->play(fiddle.audio,play);
+    }
+  }
   return 0;
 }
 

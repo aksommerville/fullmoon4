@@ -8,6 +8,7 @@ static struct arcade_global {
 #define skycolor menu->argv[0]
 #define groundcolor menu->argv[1]
 #define hellocolor menu->argv[2]
+#define pvsongid menu->argv[4]
 #define clock menu->fv[0]
 #define nexttime menu->fv[1]
 
@@ -18,6 +19,7 @@ static struct arcade_global {
  
 static void arcade_dismiss(struct fmn_menu *menu) {
   fmn_sound_effect(FMN_SFX_UI_NO);
+  fmn_play_song(pvsongid,1);
   arcade_global.ctx=0;
   if (menu->cb) {
     menu->cb(menu,FMN_MENU_MESSAGE_SUBMIT);
@@ -143,7 +145,9 @@ void fmn_menu_init_ARCADE(struct fmn_menu *menu) {
   skycolor=fmn_video_pixel_from_rgba(0xa0c0f0ff);
   groundcolor=fmn_video_pixel_from_rgba(0x008020ff);
   hellocolor=fmn_video_pixel_from_rgba(0x391873ff);
+  pvsongid=fmn_global.songid;
   fmn_eatwq_init(arcade_global.ctx->creditc,arcade_global.ctx->hiscore,arcade_cb_creditc,arcade_cb_hiscore,menu);
+  fmn_play_song(14,1); // sky-gardening
 }
 
 /* Extra semi-private hooks.

@@ -32,6 +32,8 @@ struct http_socket {
   /* The listener that matched (req), if we've gotten that far.
    */
   struct http_listener *listener;
+  
+  void *userdata;
 };
  
 void http_socket_del(struct http_socket *socket);

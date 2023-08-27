@@ -5,6 +5,10 @@
 
 struct fiddle fiddle={0};
 
+// These are opaque pointers for identification only; they don't need to be strings.
+const void *FIDDLE_SOCKET_MODE_FIDDLE="FIDDLE";
+const void *FIDDLE_SOCKET_MODE_MIDI_IN="MIDI_IN";
+
 /* Cleanup.
  */
  
@@ -71,7 +75,10 @@ static void fiddle_vumeter_update() {
   if (msg.c) {
     int i=fiddle.websocketc;
     while (i-->0) {
-      http_websocket_send(fiddle.websocketv[i],1,msg.v,msg.c);
+      const void *mode=http_socket_get_userdata(fiddle.websocketv[i]);
+      if (mode==FIDDLE_SOCKET_MODE_FIDDLE) {
+        http_websocket_send(fiddle.websocketv[i],1,msg.v,msg.c);
+      }
     }
   }
   sr_encoder_cleanup(&msg);
@@ -170,6 +177,7 @@ int main(int argc,char **argv) {
     #define SERVE(method,path,cb) !http_listen(fiddle.http,HTTP_METHOD_##method,path,cb,0)||
     #define ALLMETH(path,cb) !http_listen(fiddle.http,0,path,cb,0)||
     !http_listen_websocket(fiddle.http,"/websocket",fiddle_wscb_connect,fiddle_wscb_disconnect,fiddle_wscb_message,0)||
+    !http_listen_websocket(fiddle.http,"/midi",fiddle_wscb_connect,fiddle_wscb_disconnect,fiddle_wscb_message,0)||
     SERVE(GET, "/api/status",fiddle_httpcb_get_status)
     SERVE(GET, "/api/synths",fiddle_httpcb_get_synths)
     SERVE(GET, "/api/sounds",fiddle_httpcb_get_sounds)
