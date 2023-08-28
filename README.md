@@ -11,10 +11,41 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
+- [ ] MacOS: Compare iMac to MacBook builds. Are they identical? Can each run on the other machine?
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] stdsyn. Or drop it, maybe minsyn is adequate?
-- [x] Review Japanese text on takoboto.jp ...it will never be good, let it go
-- [x] Redraw projector in Dept of Agriculture
+- [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
+- - Maybe hide old versions? Just a UI thing, you click and they appear.
+- [ ] Art and music for info site.
+- [ ] Itch site for full version
+- [ ] Steam
+- - [x] Provision app, bakshish.
+- - [ ] Must reach "Coming Soon" two weeks ahead of release -- 2023-09-15
+- - [ ] Can only accept Zip uploads. Update pack script.
+- [x] Promo graphics
+- - Itch banner: 630x500
+- - Steam banners?
+- - - Header Capsule: 460x215. Full branding.
+- - - Small Capsule: 231x87. Mostly logo.
+- - - Main Capsule: 616x353. Top of front page.
+- - - Vertical Capsule: 374x448. 
+- - - Page Background: 1438x810. Optional.
+- - - Screenshots x5.
+- - - Library Capsule: 600x900. Title but no other text.
+- - - Library Hero: 3840x1240. No text. 860x380 "safe zone" in the center.
+- - - Library Logo: 1280x720. Transparent background, will overlay Library Hero.
+- - - Client Image: 16x16. (In "Installation")
+- - - Client Icon: 32x32 ''
+- - [ ] PDF manual. Any point doing that?
+- - [ ] Video trailer
+- [ ] Freshen aksommerville.com landing page, link to both Plunder Squad and Full Moon.
+
+### Links
+
+- (Itch, Full)[https://aksommerville.itch.io/full-moon]
+- (Itch, Demo)[https://aksommerville.itch.io/full-moon-demo]
+- Steam: TODO
+- (My page)[https://aksommerville.com/fullmoon]
 
 ### Disambiguation
 

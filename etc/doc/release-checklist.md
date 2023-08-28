@@ -1,0 +1,26 @@
+# Full Moon Release Checklist
+
+- [ ] `make verify`
+- [ ] Noteworthy changes? Add to news for info site.
+- [ ] Build and validate on all test machines.
+- - [ ] Nuc (GLX)
+- - [ ] VCS (DRM)
+- - [ ] Asus (GLX)
+- - [ ] Windows
+- - [ ] iMac
+- - [ ] MacBook
+- - [ ] Pi
+- [ ] Tag in git "v0.0.0"
+- [ ] Build artifacts. `make pkg`, then upload to S3.
+- - [ ] Web - Nuc
+- - [ ] Linux - Nuc
+- - [ ] Windows
+- - [ ] MacOS - either machine?
+- - [ ] Pi
+- [ ] Confirm all builds present on aksommerville.com
+- [ ] Deploy info site: `make deploy` from Nuc.
+- [ ] Update Itch Demo
+- - [ ] Test Itch's web version at least once.
+- [ ] Update Itch Full
+- - [ ] Test Itch's web version at least once.
+- [ ] Update Steam
