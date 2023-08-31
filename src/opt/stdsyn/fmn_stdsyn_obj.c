@@ -5,71 +5,79 @@
  
 static void _stdsyn_del(struct bigpc_synth_driver *driver) {
   if (DRIVER->qbuf) free(DRIVER->qbuf);
-  
-  if (DRIVER->voicev) {
-    while (DRIVER->voicec-->0) {
-      stdsyn_voice_cleanup(DRIVER->voicev+DRIVER->voicec);
-    }
-    free(DRIVER->voicev);
-  }
-  
+  stdsyn_node_del(DRIVER->main);
   midi_file_del(DRIVER->song);
-}
-
-/* Drop voices that have run out of funk.
- */
- 
-static void stdsyn_drop_defunct_voices(struct bigpc_synth_driver *driver) {
-  int i=DRIVER->voicec;
-  struct stdsyn_voice *voice=DRIVER->voicev+i-1;
-  for (;i-->0;voice--) {
-    if (voice->halfperiod<1) {
-      stdsyn_voice_cleanup(voice);
-      DRIVER->voicec--;
-      memmove(voice,voice+1,sizeof(struct stdsyn_voice)*(DRIVER->voicec-i));
-    }
+  if (DRIVER->printerv) {
+    while (DRIVER->printerc-->0) stdsyn_printer_del(DRIVER->printerv[DRIVER->printerc]);
+    free(DRIVER->printerv);
   }
 }
 
 /* Update, main.
- * We only operate in mono with float samples.
- * But we also provide conversion after the fact, to stereo and s16.
+ * We may operate in mono or stereo -- the decision is mostly stdsyn_node_type_main's problem.
  */
  
-static void _stdsyn_update_mono_f32n(float *v,int c,struct bigpc_synth_driver *driver) {
-  memset(v,0,sizeof(float)*c);
+static void _stdsyn_update_f32n(float *v,int c,struct bigpc_synth_driver *driver) {
+
+  /* Advance PCM printers.
+   */
+  if (DRIVER->update_pending_framec) return;
+  DRIVER->update_pending_framec=c;
+  if (driver->chanc==2) DRIVER->update_pending_framec>>=1;
+  int i=DRIVER->printerc;
+  struct stdsyn_printer **p=DRIVER->printerv+i-1;
+  for (;i-->0;p--) {
+    if (stdsyn_printer_update(*p,c)<=0) {
+      stdsyn_printer_del(*p);
+      DRIVER->printerc--;
+      memmove(p,p+1,sizeof(void*)*(DRIVER->printerc-i));
+    }
+  }
+  
   while (c>0) {
   
     int updc=c;
-    if (DRIVER->song) {
+    if (updc>STDSYN_BUFFER_SIZE) updc=STDSYN_BUFFER_SIZE;
+    int updframec=updc;
+    if (driver->chanc==2) updframec>>=1;
+    
+    if (DRIVER->song&&!DRIVER->songpause&&driver->music_enable) {
       struct midi_event event={0};
-      updc=midi_file_next(&event,DRIVER->song,0);
-      if (updc<0) {
+      int songframec=midi_file_next(&event,DRIVER->song,0);
+      if (songframec<0) {
         fprintf(stderr,"stdsyn: song end or error\n");
         midi_file_del(DRIVER->song);
         DRIVER->song=0;
         continue;
       }
-      if (updc) { // no song event; proceed with signal
-        if (updc>c) updc=c;
+      if (songframec) { // no song event; proceed with signal
+        if (updframec>songframec) {
+          updframec=songframec;
+          c=updframec;
+          if (driver->chanc==2) c<<=1;
+        }
       } else {
         driver->type->event(driver,event.chid,event.opcode,event.a,event.b);
         continue;
       }
     }
     
-    stdsyn_generate_signal(v,updc,driver);
+    DRIVER->main->update(v,c,DRIVER->main);
+    
     v+=updc;
     c-=updc;
-    if (DRIVER->song) midi_file_advance(DRIVER->song,updc);
+    if (DRIVER->song&&!DRIVER->songpause&&driver->music_enable) {
+      midi_file_advance(DRIVER->song,updframec);
+    }
   }
-  stdsyn_drop_defunct_voices(driver);
+  DRIVER->update_pending_framec=0;
+  if (DRIVER->main->lfupdate) DRIVER->main->lfupdate(DRIVER->main);
 }
 
-/* Update wrappers: quantize or expand stereo.
+/* Update then quantize to integers.
  */
  
-static void _stdsyn_update_mono_s16n(int16_t *v,int c,struct bigpc_synth_driver *driver) {
+static void _stdsyn_update_s16n(int16_t *v,int c,struct bigpc_synth_driver *driver) {
   if (c>DRIVER->qbufa) {
     int na=(c+256)&~255;
     float *nv=realloc(DRIVER->qbuf,sizeof(float)*na);
@@ -80,34 +88,10 @@ static void _stdsyn_update_mono_s16n(int16_t *v,int c,struct bigpc_synth_driver 
     DRIVER->qbuf=nv;
     DRIVER->qbufa=na;
   }
-  _stdsyn_update_mono_f32n(DRIVER->qbuf,c,driver);
+  _stdsyn_update_f32n(DRIVER->qbuf,c,driver);
   const float *src=DRIVER->qbuf;
   for (;c-->0;v++,src++) {
     *v=(int16_t)((*src)*DRIVER->qlevel);
-  }
-}
-
-static void _stdsyn_update_stereo_s16n(int16_t *v,int c,struct bigpc_synth_driver *driver) {
-  int framec=c>>1;
-  _stdsyn_update_mono_s16n(v,framec,driver);
-  const int16_t *src=v+framec;
-  int16_t *dst=v+c;
-  while (framec-->0) {
-    src--;
-    *(--dst)=*src;
-    *(--dst)=*src;
-  }
-}
-
-static void _stdsyn_update_stereo_f32n(float *v,int c,struct bigpc_synth_driver *driver) {
-  int framec=c>>1;
-  _stdsyn_update_mono_f32n(v,framec,driver);
-  const float *src=v+framec;
-  float *dst=v+c;
-  while (framec-->0) {
-    src--;
-    *(--dst)=*src;
-    *(--dst)=*src;
   }
 }
 
@@ -115,19 +99,27 @@ static void _stdsyn_update_stereo_f32n(float *v,int c,struct bigpc_synth_driver 
  */
  
 static int _stdsyn_init(struct bigpc_synth_driver *driver) {
+
+  if (!(DRIVER->main=stdsyn_node_new(driver,&stdsyn_node_type_mixer,driver->chanc,1,0xff,0xff))) return -1;
+  if (
+    !DRIVER->main->update||
+    !DRIVER->main->event
+  ) return -1;
   
-  
-  if ((driver->chanc==1)&&(driver->format==BIGPC_AUDIO_FORMAT_s16n)) {
-    driver->update=(void*)_stdsyn_update_mono_s16n;
-  } else if ((driver->chanc==2)&&(driver->format==BIGPC_AUDIO_FORMAT_s16n)) {
-    driver->update=(void*)_stdsyn_update_stereo_s16n;
-  } else if ((driver->chanc==1)&&(driver->format==BIGPC_AUDIO_FORMAT_f32n)) {
-    driver->update=(void*)_stdsyn_update_mono_f32n;
-  } else if ((driver->chanc==2)&&(driver->format==BIGPC_AUDIO_FORMAT_f32n)) {
-    driver->update=(void*)_stdsyn_update_stereo_f32n;
-  } else return -1;
+  switch (driver->format) {
+    case BIGPC_AUDIO_FORMAT_s16n: driver->update=(void*)_stdsyn_update_s16n; break;
+    case BIGPC_AUDIO_FORMAT_f32n: driver->update=(void*)_stdsyn_update_f32n; break;
+    default: return -1;
+  }
   
   DRIVER->qlevel=32000.0f;
+  
+  DRIVER->instruments.driver=driver;
+  DRIVER->instruments.del=(void*)stdsyn_instrument_del;
+  DRIVER->instruments.decode=(void*)stdsyn_instrument_decode;
+  DRIVER->sounds.driver=driver;
+  DRIVER->sounds.del=(void*)stdsyn_pcm_del;
+  DRIVER->sounds.decode=(void*)stdsyn_sound_decode;
   
   return 0;
 }
@@ -136,11 +128,11 @@ static int _stdsyn_init(struct bigpc_synth_driver *driver) {
  */
  
 static int _stdsyn_set_instrument(struct bigpc_synth_driver *driver,int id,const void *src,int srcc) {
-  return -1;
+  return stdsyn_res_store_add(&DRIVER->instruments,id,src,srcc);
 }
 
 static int _stdsyn_set_sound(struct bigpc_synth_driver *driver,int id,const void *src,int srcc) {
-  return -1;
+  return stdsyn_res_store_add(&DRIVER->sounds,id,src,srcc);
 }
 
 /* Play song.
@@ -163,72 +155,75 @@ static int _stdsyn_play_song(struct bigpc_synth_driver *driver,const void *src,i
   
   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
   midi_file_set_output_rate(DRIVER->song,driver->rate);
-  midi_file_set_loop_point(DRIVER->song);
+  if (loop) midi_file_set_loop_point(DRIVER->song);
+  
+  if (DRIVER->main->tempo) {
+    DRIVER->main->tempo(DRIVER->main,DRIVER->song->frames_per_tick*DRIVER->song->division);
+  }
   
   return 0;
 }
 
-/* Allocate voice.
+/* Pause song.
  */
  
-static struct stdsyn_voice *stdsyn_voice_alloc(struct bigpc_synth_driver *driver) {
-  if (DRIVER->voicec<DRIVER->voicea) return DRIVER->voicev+DRIVER->voicec++;
-  int na=DRIVER->voicea+8;
-  if (na>STDSYN_VOICE_LIMIT) return 0;
-  void *nv=realloc(DRIVER->voicev,sizeof(struct stdsyn_voice)*na);
-  if (!nv) return 0;
-  DRIVER->voicev=nv;
-  DRIVER->voicea=na;
-  return DRIVER->voicev+DRIVER->voicec++;
-}
-
-/* Release note.
- */
- 
-static void stdsyn_release_chid_noteid(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t noteid) {
-  struct stdsyn_voice *voice=DRIVER->voicev;
-  int i=DRIVER->voicec;
-  for (;i-->0;voice++) {
-    if (voice->chid!=chid) continue;
-    if (voice->noteid!=noteid) continue;
-    stdsyn_voice_release(voice);
+static void _stdsyn_pause_song(struct bigpc_synth_driver *driver,int pause) {
+  if (pause) {
+    if (DRIVER->songpause) return;
+    DRIVER->songpause=1;
+    stdsyn_release_all(driver);
+  } else {
+    if (!DRIVER->songpause) return;
+    DRIVER->songpause=0;
   }
 }
 
-/* Begin note.
- */
- 
-static void stdsyn_note_on(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t noteid,uint8_t velocity) {
-  if (noteid>=128) return;
-  struct stdsyn_voice *voice=stdsyn_voice_alloc(driver);
-  if (!voice) return;
-  voice->chid=chid;
-  voice->noteid=noteid;
-  voice->level=0.100f;
-  voice->phase=0;
-  voice->halfperiod=(int)(driver->rate/(midi_note_frequency[noteid]*2.0f));
-  voice->t=0.0f;
-  voice->dt=(midi_note_frequency[noteid]*M_PI*2.0f)/driver->rate;
-  
-  voice->env.atktlo=  20; voice->env.atkthi=   5;
-  voice->env.dectlo=  20; voice->env.decthi=  15;
-  voice->env.rlstlo= 100; voice->env.rlsthi= 500;
-  voice->env.atkvlo=0.090f; voice->env.atkvhi=0.170f;
-  voice->env.susvlo=0.030f; voice->env.susvhi=0.050f;
-  stdsyn_env_reset(&voice->env,velocity,driver->rate);
+static void _stdsyn_enable_music(struct bigpc_synth_driver *driver,int enable) {
+  if (enable) {
+    if (driver->music_enable) return;
+    driver->music_enable=1;
+  } else {
+    if (!driver->music_enable) return;
+    driver->music_enable=0;
+    stdsyn_release_all(driver);
+  }
 }
 
-/* Event.
+/* Events.
  */
+
+void stdsyn_release_all(struct bigpc_synth_driver *driver) {
+  if (DRIVER->main->release) DRIVER->main->release(DRIVER->main,0x40);
+  else DRIVER->main->event(DRIVER->main,0xff,0xff,0,0);
+}
+
+void stdsyn_silence_all(struct bigpc_synth_driver *driver) {
+  DRIVER->main->event(DRIVER->main,0xff,0xff,0,0);
+}
  
 static void _stdsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
   //fprintf(stderr,"%s %02x %02x %02x %02x\n",__func__,chid,opcode,a,b);
-  if (chid==0x0f) return;//XXX throw away channel 15. we use it for sound effects and drums
-  switch (opcode) {
-    case MIDI_OPCODE_NOTE_OFF: stdsyn_release_chid_noteid(driver,chid,a); break;
-    case MIDI_OPCODE_NOTE_ON: stdsyn_note_on(driver,chid,a,b); break;
-    case MIDI_OPCODE_RESET: stdsyn_silence_all(driver); break;
+  DRIVER->main->event(DRIVER->main,chid,opcode,a,b);
+}
+
+/* Begin PCM print.
+ */
+ 
+struct stdsyn_printer *stdsyn_begin_print(struct bigpc_synth_driver *driver,int id,const void *src,int srcc) {
+  if (DRIVER->printerc>=DRIVER->printera) {
+    int na=DRIVER->printera+8;
+    if (na>INT_MAX/sizeof(void*)) return 0;
+    void *nv=realloc(DRIVER->printerv,sizeof(void*)*na);
+    if (!nv) return 0;
+    DRIVER->printerv=nv;
+    DRIVER->printera=na;
   }
+  struct stdsyn_printer *printer=stdsyn_printer_new(driver->rate,src,srcc);
+  if (!printer) return 0;
+  DRIVER->printerv[DRIVER->printerc++]=printer;
+  if (DRIVER->update_pending_framec) stdsyn_printer_update(printer,DRIVER->update_pending_framec);
+  printer->soundid=id;
+  return printer;
 }
 
 /* Type.
@@ -244,5 +239,7 @@ const struct bigpc_synth_type bigpc_synth_type_stdsyn={
   .set_instrument=_stdsyn_set_instrument,
   .set_sound=_stdsyn_set_sound,
   .play_song=_stdsyn_play_song,
+  .pause_song=_stdsyn_pause_song,
+  .enable_music=_stdsyn_enable_music,
   .event=_stdsyn_event,
 };

@@ -6,27 +6,206 @@
 #ifndef FMN_STDSYN_INTERNAL_H
 #define FMN_STDSYN_INTERNAL_H
 
+/* Memory/speed balance.
+ * No point going above the PCM driver's buffer size (1024 is typical).
+ * Nodes may assume that they'll never be asked to produce more than so many samples at a time.
+ */
+#define STDSYN_BUFFER_SIZE 512
+
+/* 1 M samples, about 24 seconds at 44.1 kHz. (but it's the limit regardless of rate).
+ * We forbid anything longer than this, as a general safety net.
+ */
+#define STDSYN_PCM_SANITY_LIMIT (1<<20)
+
 #include "opt/bigpc/bigpc_synth.h"
 #include "opt/bigpc/bigpc_audio.h"
 #include "opt/midi/midi.h"
+#include "opt/pcmprint/pcmprint.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <limits.h>
-#include "stdsyn_env.h"
+#include "opt/stdsyn/bits/stdsyn_env.h"
 
-#define STDSYN_VOICE_LIMIT 128
+struct stdsyn_node;
+struct stdsyn_node_type;
+struct stdsyn_pcm;
+struct stdsyn_printer;
+struct stdsyn_instrument;
+struct stdsyn_sound; // store unit
 
-struct stdsyn_voice {
-//XXX ridiculously simple voice implementation, just to get something happening
-  uint8_t chid,noteid;
-  float level;
-  int halfperiod;
-  int phase;
-  float t,dt;
-  struct stdsyn_env env;
+/* Generic node.
+ ***********************************************************************/
+ 
+struct stdsyn_node_type {
+  const char *name;
+  int objlen;
+  
+  void (*del)(struct stdsyn_node *node);
+  
+  /* Must fail if (chanc) or (overwrite) disagreeable.
+   */
+  int (*init)(
+    struct stdsyn_node *node,
+    uint8_t velocity
+  );
+  
+  // Most of what you'd expect to be type hooks live on instances instead.
+  // (So you can have different implementations per hook, depending on config).
 };
+ 
+struct stdsyn_node {
+
+  /* Managed by driver. Implementations must not modify.
+   */
+  const struct stdsyn_node_type *type;
+  struct bigpc_synth_driver *driver; // WEAK
+  int refc;
+  int chanc; // 1 or 2. Not necessarily the same as our output.
+  int overwrite; // Nonzero if (update) is required to overwrite content. Otherwise it is in+out.
+  uint8_t chid,noteid; // 0xff if unaddressable.
+  
+  /* Implementation sets nonzero once it becomes unable to generate any more signal.
+   * This would normally be a little after (release), when your envelope completes.
+   */
+  int defunct;
+  
+  /* All nodes that generate a signal must populate this at init.
+   * (c) is in samples -- mono or stereo was established before init.
+   * You must respect the (overwrite) flag set before init.
+   */
+  void (*update)(float *v,int c,struct stdsyn_node *node);
+  
+  /* Opportunity for routine maintenance at the end of each driver cycle.
+   * eg check for defunct sources.
+   * Better to use this hook than piggyback on regular (update), since that might happen at fairly high frequency.
+   */
+  void (*lfupdate)(struct stdsyn_node *node);
+  
+  /* Optional specific MIDI events.
+   * You should implement (release) if you're a voice controller.
+   */
+  void (*release)(struct stdsyn_node *node,uint8_t velocity);
+  void (*adjust)(struct stdsyn_node *node,uint8_t velocity);
+  void (*bend)(struct stdsyn_node *node,int16_t raw,float mlt); // (raw) -8192..8192, (mlt) scaled per outer config
+  
+  /* General MIDI events.
+   * Only channel controllers need to implement this.
+   */
+  void (*event)(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
+  void (*tempo)(struct stdsyn_node *node,int frames_per_qnote);
+  
+  /* Sources are managed by the implementation.
+   * Only their storage is at the generic level, as a convenience.
+   */
+  struct stdsyn_node **srcv;
+  int srcc,srca;
+};
+
+void stdsyn_node_del(struct stdsyn_node *node);
+int stdsyn_node_ref(struct stdsyn_node *node);
+
+struct stdsyn_node *stdsyn_node_new(
+  struct bigpc_synth_driver *driver,
+  const struct stdsyn_node_type *type,
+  int chanc,int overwrite,
+  uint8_t noteid,uint8_t velocity
+);
+
+struct stdsyn_node *stdsyn_node_spawn_source(
+  struct stdsyn_node *parent,
+  const struct stdsyn_node_type *type,
+  int chanc,int overwrite,
+  uint8_t noteid,uint8_t velocity
+);
+
+int stdsyn_node_srcv_insert(struct stdsyn_node *parent,int p,struct stdsyn_node *child); // (p<0) to append
+int stdsyn_node_srcv_remove_at(struct stdsyn_node *parent,int p,int c);
+int stdsyn_node_srcv_remove(struct stdsyn_node *parent,struct stdsyn_node *child);
+
+extern const struct stdsyn_node_type stdsyn_node_type_mixer; // Full bus. src are signal nodes.
+extern const struct stdsyn_node_type stdsyn_node_type_ctl3; // Multi-voice program with shared intro and outro legs.
+extern const struct stdsyn_node_type stdsyn_node_type_ctlv; // Voice controller. Produces 'basic' voices.
+extern const struct stdsyn_node_type stdsyn_node_type_ctlp; // PCM controller, eg drum kit. Each voice is plain PCM.
+extern const struct stdsyn_node_type stdsyn_node_type_basic; // Single voice with just oscillator and envelope.
+extern const struct stdsyn_node_type stdsyn_node_type_pcm; // Single voice dumping verbatim PCM.
+extern const struct stdsyn_node_type stdsyn_node_type_oscillator; // Primitive oscillators.
+extern const struct stdsyn_node_type stdsyn_node_type_subtract; // Pseudo-oscillator, can accept input (white noise).
+extern const struct stdsyn_node_type stdsyn_node_type_fm; // FM oscillator.
+extern const struct stdsyn_node_type stdsyn_node_type_env; // Envelope, can accept input.
+extern const struct stdsyn_node_type stdsyn_node_type_gain; // Filter.
+extern const struct stdsyn_node_type stdsyn_node_type_delay; // Filter.
+//TODO FIR? IIR? Detune? Reverb?
+
+int stdsyn_node_pcm_set_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm);
+
+/* PCM printer.
+ ****************************************************************/
+ 
+struct stdsyn_pcm {
+  int refc;
+  int c;
+  float v[];
+};
+
+void stdsyn_pcm_del(struct stdsyn_pcm *pcm);
+int stdsyn_pcm_ref(struct stdsyn_pcm *pcm);
+
+struct stdsyn_pcm *stdsyn_pcm_new(int framec);
+ 
+struct stdsyn_printer {
+  struct pcmprint *pcmprint;
+  struct stdsyn_pcm *pcm;
+  uint8_t soundid;
+  int p;
+};
+
+void stdsyn_printer_del(struct stdsyn_printer *printer);
+
+/* Allocates its (pcm) during construction. Never null after a success.
+ * PCM content is initially zeroed.
+ */
+struct stdsyn_printer *stdsyn_printer_new(
+  int rate,const void *src,int srcc
+);
+
+/* <0 on errors, 0 if complete, either of those you should stop calling.
+ */
+int stdsyn_printer_update(struct stdsyn_printer *printer,int framec);
+
+/* Resource store.
+ *********************************************************************/
+ 
+struct stdsyn_res_store {
+  struct bigpc_synth_driver *driver;
+  void (*del)(void *obj);
+  void *(*decode)(struct bigpc_synth_driver *driver,int id,const void *v,int c);
+  struct stdsyn_res {
+    int id;
+    void *v;
+    int c;
+    void *obj;
+  } *resv;
+  int resc,resa;
+};
+
+/* The resource stores decode objects only on the first get, and hold on to the first decode.
+ */
+void stdsyn_res_store_cleanup(struct stdsyn_res_store *store);
+int stdsyn_res_store_add(struct stdsyn_res_store *store,int id,const void *v,int c);
+void *stdsyn_res_store_get(struct stdsyn_res_store *store,int id);
+
+struct stdsyn_instrument {
+};
+
+void stdsyn_instrument_del(struct stdsyn_instrument *ins);
+struct stdsyn_instrument *stdsyn_instrument_decode(struct bigpc_synth_driver *driver,int id,const void *v,int c);
+
+struct stdsyn_pcm *stdsyn_sound_decode(struct bigpc_synth_driver *driver,int id,const void *v,int c);
+
+/* Driver globals.
+ ***********************************************************************/
 
 struct bigpc_synth_driver_stdsyn {
   struct bigpc_synth_driver hdr;
@@ -34,22 +213,23 @@ struct bigpc_synth_driver_stdsyn {
   int qbufa;
   float qlevel; // 0..32767
   struct midi_file *song;
-  struct stdsyn_voice *voicev;
-  int voicec,voicea;
+  int songpause;
+  struct stdsyn_node *main;
+  struct stdsyn_res_store instruments;
+  struct stdsyn_res_store sounds;
+  struct stdsyn_printer **printerv;
+  int printerc,printera;
+  int update_pending_framec;
 };
 
 #define DRIVER ((struct bigpc_synth_driver_stdsyn*)driver)
-
-/* Pump the signal graph for so many frames.
- * It must be zero initially.
- */
-void stdsyn_generate_signal(float *v,int c,struct bigpc_synth_driver *driver);
+#define NDRIVER ((struct bigpc_synth_driver_stdsyn*)(node->driver))
 
 void stdsyn_release_all(struct bigpc_synth_driver *driver);
 void stdsyn_silence_all(struct bigpc_synth_driver *driver);
 
-void stdsyn_voice_cleanup(struct stdsyn_voice *voice);
-void stdsyn_voice_update(float *v,int c,struct stdsyn_voice *voice);
-void stdsyn_voice_release(struct stdsyn_voice *voice);
+/* Instantiates and installs printer, and pre-runs if an update is in progress.
+ */
+struct stdsyn_printer *stdsyn_begin_print(struct bigpc_synth_driver *driver,int id,const void *src,int srcc);
 
 #endif

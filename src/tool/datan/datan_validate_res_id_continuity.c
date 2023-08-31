@@ -11,6 +11,7 @@ struct datan_continuity_context {
 };
 
 static int datan_continuity_cb(uint16_t type,uint16_t qualifier,uint32_t id,const void *v,int c,void *userdata) {
+  //fprintf(stderr,"%s[%d]:%d c=%d\n",fmn_restype_repr(type),qualifier,id,c);
   struct datan_continuity_context *ctx=userdata;
   if (type>ctx->type) {
     ctx->type=type;

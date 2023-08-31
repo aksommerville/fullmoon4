@@ -1,4 +1,4 @@
-#include "fmn_stdsyn_internal.h"
+#include "../fmn_stdsyn_internal.h"
 
 /* Reset.
  */
@@ -8,17 +8,21 @@ void stdsyn_env_reset(struct stdsyn_env *env,uint8_t velocity,int mainrate) {
   env->released=0;
   env->finished=0;
   if (velocity<=0) {
+    env->va=env->valo;
     env->atkt=env->atktlo;
     env->dect=env->dectlo;
     env->rlst=env->rlstlo;
     env->atkv=env->atkvlo;
     env->susv=env->susvlo;
+    env->vz=env->vzlo;
   } else if (velocity>=0x7f) {
+    env->va=env->vahi;
     env->atkt=env->atkthi;
     env->dect=env->decthi;
     env->rlst=env->rlsthi;
     env->atkv=env->atkvhi;
     env->susv=env->susvhi;
+    env->vz=env->vzhi;
   } else {
     uint8_t loweight=0x80-velocity;
     env->atkt=(env->atktlo*loweight+env->atkthi*velocity)>>7;
@@ -26,8 +30,10 @@ void stdsyn_env_reset(struct stdsyn_env *env,uint8_t velocity,int mainrate) {
     env->rlst=(env->rlstlo*loweight+env->rlsthi*velocity)>>7;
     float hi=velocity/127.0f;
     float lo=1.0f-hi;
+    env->va=env->valo*lo+env->vahi*hi;
     env->atkv=env->atkvlo*lo+env->atkvhi*hi;
     env->susv=env->susvlo*lo+env->susvhi*hi;
+    env->vz=env->vzlo*lo+env->vzhi*hi;
   }
   if ((env->atkt=(env->atkt*mainrate)/1000)<1) env->atkt=1;
   if ((env->dect=(env->dect*mainrate)/1000)<1) env->dect=1;
@@ -35,8 +41,8 @@ void stdsyn_env_reset(struct stdsyn_env *env,uint8_t velocity,int mainrate) {
   
   // Enter stage 0.
   env->c=env->atkt;
-  env->v=0.0f;
-  env->dv=env->atkv/env->c;
+  env->v=env->va;
+  env->dv=(env->atkv-env->va)/env->c;
   env->stage=0;
 }
 
@@ -54,7 +60,7 @@ void stdsyn_env_release(struct stdsyn_env *env) {
 void stdsyn_env_advance(struct stdsyn_env *env) {
   if (env->stage>=3) {
     env->c=INT_MAX;
-    env->v=0.0f;
+    env->v=env->vz;
     env->finished=1;
     return;
   }
@@ -74,7 +80,7 @@ void stdsyn_env_advance(struct stdsyn_env *env) {
     case 3: {
         env->v=env->susv;
         env->c=env->rlst;
-        env->dv=-env->v/env->c;
+        env->dv=(env->vz-env->v)/env->c;
       } break;
   }
 }

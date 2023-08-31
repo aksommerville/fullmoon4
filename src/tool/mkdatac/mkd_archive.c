@@ -133,7 +133,7 @@ static int mkd_archive_add_instruments(struct mkd_ar *ar,struct mkd_respath *res
         return -2;
       }
   }
-
+  
   struct sr_decoder decoder={.v=serial,.c=serialc};
   const char *line=0;
   int linec=0,lineno=1;

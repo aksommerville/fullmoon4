@@ -1,6 +1,5 @@
 /* stdsyn_env.h
  * Simple linear envelope generator.
- * These are only suitable for ADSR envelopes with initial and final level of zero.
  */
  
 #ifndef STDSYN_ENV_H
@@ -15,15 +14,17 @@ struct stdsyn_env {
   int released;
   int stage; // 0,1,2,3=attack,decay,sustain,release
   int atkt,dect,rlst; // attack, decay, release times in frames (NB not ms)
-  float atkv,susv; // attack, sustain levels in normal units
+  float va,atkv,susv,vz; // initial, attack, sustain, final levels in normal units
   int finished;
   
   // Constant config. "lo,hi" refer to Note On velocity; we scale linearly between them.
+  float valo,vahi; // initial level
   int atktlo,atkthi; // attack time, ms
   float atkvlo,atkvhi; // attack level in normal units
   int dectlo,decthi; // decay time, ms
   float susvlo,susvhi; // sustain level in normal units
   int rlstlo,rlsthi; // release time, ms
+  float vzlo,vzhi; // final level
   
 };
 

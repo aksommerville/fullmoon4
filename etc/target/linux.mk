@@ -1,13 +1,22 @@
 # linux.mk
 # Builds for Linux, whatever the host architecture is.
 # We'll use dynamic driver selection at runtime, so the same build will support eg GLX and DRM.
+#
+# Set these flags (empty=false, not-empty=true) in your config.mk, for optional units.
+# These all involve extra libraries.
+#   linux_USE_GLX
+#   linux_USE_XINERAMA: Only relevant if linux_USE_GLX
+#   linux_USE_DRM
+#   linux_USE_ALSA
+#   linux_USE_PULSE
+# If either GLX or DRM is requested, you'll get 'gl2' as well.
+# (and you must request at least one of those, otherwise there's no video!)
 
 linux_MIDDIR:=mid/linux
 linux_OUTDIR:=out/linux
 
-# Truly optional units, ie you can change these (remember to update LDPOST et al).
-# You must enable at least one of (glx,drm), otherwise you're not going to see anything.
-linux_OPT_ENABLE:=evdev gl2 soft minsyn
+# Optional units that I didn't bother exposing with "linux_USE_" flags.
+linux_OPT_ENABLE:=evdev soft minsyn stdsyn
 
 # The rest are mandatory, no alternatives:
 linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr midi pcmprint
@@ -19,25 +28,28 @@ linux-all:$(linux_EXE) $(linux_DATA_FULL) $(linux_DATA_DEMO)
 
 linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses \
   $(linux_CC_EXTRA) \
-  -I/usr/include/libdrm \
   $(foreach U,$(linux_OPT_ENABLE),-DFMN_USE_$U=1)
 linux_LD:=gcc
-linux_LDPOST:=-lm -lGL -lz -lpthread
+linux_LDPOST:=-lm -lz
 
-ifneq (,$(linux_USE_XINERAMA))
-  linux_OPT_ENABLE+=xinerama
-  linux_CC+=-DFMN_USE_xinerama
-  linux_LDPOST+=-lXinerama
-endif
 ifneq (,$(linux_USE_GLX))
   linux_OPT_ENABLE+=glx
   linux_CC+=-DFMN_USE_glx=1
   linux_LDPOST+=-lX11
+  ifneq (,$(linux_USE_XINERAMA))
+    linux_OPT_ENABLE+=xinerama
+    linux_CC+=-DFMN_USE_xinerama
+    linux_LDPOST+=-lXinerama
+  endif
 endif
 ifneq (,$(linux_USE_DRM))
   linux_OPT_ENABLE+=drm
-  linux_CC+=-DFMN_USE_drm=1
+  linux_CC+=-DFMN_USE_drm=1 -I/usr/include/libdrm
   linux_LDPOST+=-ldrm -lEGL -lgbm
+endif
+ifneq (,$(linux_USE_GLX)$(linux_USE_DRM))
+  linux_OPT_ENABLE+=gl2
+  linux_LDPOST+=-lGL
 endif
 ifneq (,$(linux_USE_ALSA))
   linux_OPT_ENABLE+=alsa
@@ -47,6 +59,9 @@ ifneq (,$(linux_USE_PULSE))
   linux_OPT_ENABLE+=pulse
   linux_CC+=-DFMN_USE_pulse=1
   linux_LDPOST+=-lpulse-simple
+endif
+ifneq (,$(linux_USE_ALSA)$(linux_USE_PULSE))
+  linux_LDPOST+=-lpthread
 endif
 
 # Always filter instrument and sound (0 means no resources produced, if no synthesizers enabled; these resources always have a qualifier).

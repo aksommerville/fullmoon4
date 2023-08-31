@@ -13,11 +13,16 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] MacOS: Must sign executable.
 - [ ] MacOS: Compare iMac to MacBook builds. Are they identical? Can each run on the other machine?
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
-- [ ] stdsyn. Or drop it, maybe minsyn is adequate?
+- [ ] stdsyn.
+- - [x] Ensure we implement music repeat (check end credits)
+- - [x] Also music suspend (check violin) and disable (via settings)
+- - [x] env: Can we do nonzero initial and final levels? Will want this for eg pitch bend, fm range
+- - [x] Generic node.
+- - [ ] Tuned nodes.
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.
-- [ ] Itch site for full version
+- [x] Itch site for full version
 - [ ] Steam
 - - [x] Provision app, bakshish.
 - - [ ] Must reach "Coming Soon" two weeks ahead of release -- 2023-09-15
@@ -39,6 +44,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] PDF manual. Any point doing that?
 - - [ ] Video trailer
 - [ ] Freshen aksommerville.com landing page, link to both Plunder Squad and Full Moon.
+- [ ] Slow motion vs conveyor belts
 
 ### Links
 
