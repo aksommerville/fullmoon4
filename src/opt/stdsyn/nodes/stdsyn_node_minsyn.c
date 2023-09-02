@@ -29,9 +29,11 @@ static void _minsyn_del(struct stdsyn_node *node) {
  
 static void _minsyn_update_single(float *v,int c,struct stdsyn_node *node) {
   stdsyn_wave_runner_update(v,c,&NODE->wave);
-  for (;c-->0;v++) (*v)*=stdsyn_env_update(NODE->env);
+  for (;c-->0;v++) {
+    float level=stdsyn_env_update(NODE->env);
+    (*v)*=level;
+  }
   if (NODE->env.finished) {
-    fprintf(stderr,"minsyn finished %02x\n",NODE->noteid);
     node->defunct=1;
   }
 }
@@ -45,13 +47,11 @@ static void _minsyn_update_mix(float *v,int c,struct stdsyn_node *node) {
     *v=((a*mix)+(b*(1.0f-mix)))*level;
   }
   if (NODE->env.finished) {
-    fprintf(stderr,"minsyn finished %02x\n",NODE->noteid);
     node->defunct=1;
   }
 }
 
 static void _minsyn_update_noop(float *v,int c,struct stdsyn_node *node) {
-  fprintf(stderr,"minsyn noop %02x\n",NODE->noteid);
   memset(v,0,sizeof(float)*c);
   node->defunct=1;
 }
@@ -60,7 +60,7 @@ static void _minsyn_update_noop(float *v,int c,struct stdsyn_node *node) {
  */
  
 static void _minsyn_release(struct stdsyn_node *node,uint8_t velocity) {
-  fprintf(stderr,"%s %02x\n",__func__,NODE->noteid);
+  //fprintf(stderr,"%s %02x\n",__func__,NODE->noteid);
   stdsyn_env_release(&NODE->env);
   stdsyn_env_release(&NODE->mixenv);
 }
@@ -95,16 +95,18 @@ int stdsyn_node_minsyn_setup(
   struct stdsyn_wave *wave,
   struct stdsyn_wave *mixwave,
   const struct stdsyn_env *env,
-  const struct stdsyn_env *mixenv
+  const struct stdsyn_env *mixenv,
+  float trim,float pan
 ) {
   if (!node||(node->type!=&stdsyn_node_type_minsyn)) return -1;
-  
-  fprintf(stderr,"%s %02x wave=%p mixwave=%p env=%p mixenv=%p\n",__func__,NODE->noteid,wave,mixwave,env,mixenv);
   
   if (wave) {
     if (!env) return -1;
     NODE->env=*env;
     if (stdsyn_wave_runner_set_wave(&NODE->wave,wave)<0) return -1;
+    //fprintf(stderr,"minsyn %02x attack level %f naturally\n",NODE->noteid,NODE->env.atkvhi);
+    stdsyn_env_multiply(&NODE->env,trim);
+    //fprintf(stderr,"...after applying trim %f: %f\n",trim,NODE->env.atkvhi);
     stdsyn_env_reset(&NODE->env,NODE->velocity,node->driver->rate);
   }
   
@@ -112,6 +114,7 @@ int stdsyn_node_minsyn_setup(
     if (!mixenv) return -1;
     if (stdsyn_wave_runner_set_wave(&NODE->mixwave,mixwave)<0) return -1;
     NODE->mixenv=*mixenv;
+    stdsyn_env_multiply(&NODE->env,trim);
     stdsyn_env_reset(&NODE->mixenv,NODE->velocity,node->driver->rate);
   }
   

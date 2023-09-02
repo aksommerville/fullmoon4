@@ -36,10 +36,12 @@ static void mixer_update_mono_mono(float *dst,int c,struct stdsyn_node *node,str
 static int srccpv=0;
  
 static void _mixer_update_mono(float *v,int c,struct stdsyn_node *node) {
+  /**
   if (node->srcc!=srccpv) {
-    fprintf(stderr,"mixer srcc=%d\n",node->srcc);
+    fprintf(stderr," mixer srcc %d\n",node->srcc);
     srccpv=node->srcc;
   }
+  /**/
   memset(v,0,sizeof(float)*c);
   int i=node->srcc;
   struct stdsyn_node **p=node->srcv+i-1;
@@ -95,6 +97,7 @@ static void _mixer_lfupdate(struct stdsyn_node *node) {
  */
  
 static void mixer_begin_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm) {
+  //return; // works, just muting to focus on tuned notes
   struct stdsyn_node *child=stdsyn_node_spawn_source(node,&stdsyn_node_type_pcm,node->chanc,0,0x40,0x40);
   if (!child) return;
   if (!child->update) {
@@ -108,7 +111,20 @@ static void mixer_begin_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm) {
  */
  
 static void _mixer_release(struct stdsyn_node *node,uint8_t velocity) {
-  //fprintf(stderr,"%s\n",__func__);
+  int i=node->srcc;
+  while (i-->0) {
+    struct stdsyn_node *child=node->srcv[i];
+    if (child->release) child->release(child,0x40);
+    else if (child->event) child->event(child,child->chid,MIDI_OPCODE_NOTE_OFF,child->noteid,0x40);
+    else child->defunct=1;
+  }
+  for (i=0x10;i-->0;) {
+    struct stdsyn_node *child=NODE->chanv[i];
+    if (!child) continue;
+    if (child->release) child->release(child,0x40);
+    else if (child->event) child->event(child,child->chid,MIDI_OPCODE_NOTE_OFF,child->noteid,0x40);
+    else child->defunct=1;
+  }
 }
 
 /* System reset.
@@ -144,7 +160,7 @@ static void _mixer_change_program(struct stdsyn_node *node,uint8_t chid) {
     stdsyn_node_del(old);
   }
   struct stdsyn_instrument *instrument=stdsyn_res_store_get(&NDRIVER->instruments,NODE->fqpidv[chid]);
-  fprintf(stderr,"!!! %s: Instantiate program 0x%x for channel %d. instrument=%p(%d)\n",__func__,NODE->fqpidv[chid],chid,instrument,instrument?instrument->c:0);//TODO
+  //fprintf(stderr,"!!! %s: Instantiate program 0x%x for channel %d. instrument=%p(%d)\n",__func__,NODE->fqpidv[chid],chid,instrument,instrument?instrument->c:0);//TODO
   if (!instrument||(instrument->c<1)) return;
   struct stdsyn_node *program=stdsyn_node_new_controller(node->driver,node->chanc,0,instrument->v,instrument->c);
   if (!program) {
@@ -268,7 +284,5 @@ int stdsyn_node_mixer_add_voice(struct stdsyn_node *node,struct stdsyn_node *voi
       } break;
     default: return -1;
   }
-  if (voice->overwrite) fprintf(stderr,"add voice OVERWRITE\n");
-  else fprintf(stderr,"add voice ADD\n");
   return stdsyn_node_srcv_insert(node,-1,voice);
 }

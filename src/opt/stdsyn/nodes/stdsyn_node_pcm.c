@@ -37,7 +37,6 @@ static void _pcm_update_mono_overwrite(float *v,int c,struct stdsyn_node *node) 
 static void _pcm_update_mono_add(float *v,int c,struct stdsyn_node *node) {
   if (!NODE->pcm||(NODE->p>=NODE->pcm->c)) {
     node->defunct=1;
-    memset(v,0,sizeof(float)*c);
     return;
   }
   int cpc=NODE->pcm->c-NODE->p;
@@ -47,7 +46,6 @@ static void _pcm_update_mono_add(float *v,int c,struct stdsyn_node *node) {
   int i=cpc;
   for (;i-->0;dst++,src++) (*dst)+=(*src);
   NODE->p+=cpc;
-  if (cpc<c) memset(v+cpc,0,sizeof(float)*(c-cpc));
 }
  
 static void _pcm_update_stereo_overwrite(float *v,int c,struct stdsyn_node *node) {
@@ -74,7 +72,6 @@ static void _pcm_update_stereo_overwrite(float *v,int c,struct stdsyn_node *node
 static void _pcm_update_stereo_add(float *v,int c,struct stdsyn_node *node) {
   if (!NODE->pcm||(NODE->p>=NODE->pcm->c)) {
     node->defunct=1;
-    memset(v,0,sizeof(float)*c);
     return;
   }
   int totalframec=c>>1;
@@ -89,7 +86,6 @@ static void _pcm_update_stereo_add(float *v,int c,struct stdsyn_node *node) {
     dst[1]+=*src;
   }
   NODE->p+=cpframec;
-  if (cpframec<totalframec) memset(v+(cpframec<<1),0,sizeof(float)*((totalframec-cpframec)<<1));
 }
 
 /* Init.

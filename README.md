@@ -19,11 +19,21 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [x] env: Can we do nonzero initial and final levels? Will want this for eg pitch bend, fm range
 - - [x] Generic node.
 - - [ ] Tuned nodes.
-- - [ ] Tangled Vine and Toil And Trouble both seem to terminate early, last few notes don't play.
-- - [ ] Are there stray notes playing in Sky Gardening?
-- - [ ] Clipping. Is there a general strategy we can use to mitigate?
-- - [ ] Channel volume.
+- - [x] Tangled Vine and Toil And Trouble both seem to terminate early, last few notes don't play.
+- - - Snowglobe, too, the last note kind of cuts off.
+- - - Due to misinterpretted Meta events, oops.
+- - [x] Are there stray notes playing in Sky Gardening?
+- - - There's some kind of buffer problem. I sometimes hear a note re-trigger quickly. Most apparent when using violin.
+- - [x] Clipping. Is there a general strategy we can use to mitigate?
+- - - What I was hearing was mostly noise introduced by faulty memsets in pcm node, and reset-to-sustain level when env releases.
+- - [x] Channel volume. I don't think any song actually uses it.
 - - [ ] Stereo.
+- - [x] Release notes when violin comes up.
+- - [x] I suspect waves are being produced beyond the nominal -1..1 range. eg Snowglobe song is way too loud.
+- - - Snowglobe, program 29 is loud (~0.94) but within range.
+- - - Let's not worry about this; I'm going to rewrite all the stdsyn instruments anyway.
+- - - (fwiw, Blood for Silver and Eye of Newt instruments do go OOB; I did that deliberately to clip at the wave level)
+- - [ ] Tangled Vine, there's a sour low note in the ornamental octave bits in the second A section.
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.

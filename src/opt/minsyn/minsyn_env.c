@@ -84,7 +84,7 @@ void minsyn_env_advance(struct minsyn_env *env) {
       } // pass
     case 2: {
         env->stage=3;
-        env->v=env->susv;
+        //env->v=env->susv;
         env->c=env->rlsc;
         env->dv=-env->v/env->c;
       } break;

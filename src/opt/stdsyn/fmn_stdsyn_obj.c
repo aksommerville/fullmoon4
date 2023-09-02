@@ -53,16 +53,18 @@ static void _stdsyn_update_f32n(float *v,int c,struct bigpc_synth_driver *driver
       if (songframec) { // no song event; proceed with signal
         if (updframec>songframec) {
           updframec=songframec;
-          c=updframec;
+          updc=updframec;
           if (driver->chanc==2) c<<=1;
         }
       } else {
-        driver->type->event(driver,event.chid,event.opcode,event.a,event.b);
+        if (event.opcode<0xf0) { // midi_file emits Meta and Sysex as events, opcode>=0xf0. Ignore them. (0xff would be interpretted as System Reset)
+          driver->type->event(driver,event.chid,event.opcode,event.a,event.b);
+        }
         continue;
       }
     }
     
-    DRIVER->main->update(v,c,DRIVER->main);
+    DRIVER->main->update(v,updc,DRIVER->main);
     
     v+=updc;
     c-=updc;

@@ -55,6 +55,20 @@ void stdsyn_env_default(struct stdsyn_env *env) {
   stdsyn_env_decode_hi(env,"\x10\xc0\x24\x40\x30");
 }
 
+/* Set master levels.
+ */
+ 
+void stdsyn_env_multiply(struct stdsyn_env *env,float v) {
+  env->valo*=v;
+  env->vahi*=v;
+  env->atkvlo*=v;
+  env->atkvhi*=v;
+  env->susvlo*=v;
+  env->susvhi*=v;
+  env->vzlo*=v;
+  env->vzhi*=v;
+}
+
 /* Reset.
  */
  
@@ -116,6 +130,7 @@ void stdsyn_env_advance(struct stdsyn_env *env) {
   if (env->stage>=3) {
     env->c=INT_MAX;
     env->v=env->vz;
+    env->dv=0.0f;
     env->finished=1;
     return;
   }
@@ -133,7 +148,6 @@ void stdsyn_env_advance(struct stdsyn_env *env) {
         break;
       } // else pass
     case 3: {
-        env->v=env->susv;
         env->c=env->rlst;
         env->dv=(env->vz-env->v)/env->c;
       } break;

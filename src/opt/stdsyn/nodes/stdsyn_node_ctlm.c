@@ -12,6 +12,8 @@ struct stdsyn_node_ctlm {
   struct stdsyn_wave *mixwave;
   struct stdsyn_env env;
   struct stdsyn_env mixenv;
+  float trim;
+  float pan;
 };
 
 #define NODE ((struct stdsyn_node_ctlm*)node)
@@ -29,8 +31,8 @@ static void _ctlm_del(struct stdsyn_node *node) {
  
 static void _ctlm_note_on(struct stdsyn_node *node,uint8_t noteid,uint8_t velocity) {
   struct stdsyn_node *voice=stdsyn_node_new(node->driver,&stdsyn_node_type_minsyn,1,1,noteid,velocity);
-  fprintf(stderr,"%s %02x %02x, voice=%p\n",__func__,noteid,velocity,voice);
-  if (stdsyn_node_minsyn_setup(voice,NODE->wave,NODE->mixwave,&NODE->env,&NODE->mixenv)<0) {
+  //fprintf(stderr,"%s %02x %02x, voice=%p\n",__func__,noteid,velocity,voice);
+  if (stdsyn_node_minsyn_setup(voice,NODE->wave,NODE->mixwave,&NODE->env,&NODE->mixenv,NODE->trim,NODE->pan)<0) {
     fprintf(stderr,"Failed to instantiate minsyn voice.\n");
     return;
   }
@@ -52,8 +54,8 @@ static int _ctlm_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint
     case MIDI_OPCODE_NOTE_OFF: return 0; // Let the mixer handle these.
     case MIDI_OPCODE_NOTE_ON: _ctlm_note_on(node,a,b); return 1;
     case MIDI_OPCODE_CONTROL: switch (a) {
-        //TODO level
-        //TODO pan?
+        case MIDI_CTL_VOLUME_MSB: NODE->trim=b/127.0f; fprintf(stderr,"***** channel volume %02x (%f)\n",b,NODE->trim); return 1;
+        case MIDI_CTL_PAN_MSB: NODE->pan=(b-0x40)/64.0f; return 1;
       } break;
     case MIDI_OPCODE_WHEEL: return 1; //TODO?
   }
@@ -65,6 +67,8 @@ static int _ctlm_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint
  
 static int _ctlm_init(struct stdsyn_node *node,uint8_t velocity) {
   node->event=_ctlm_event;
+  NODE->trim=1.0f;
+  NODE->pan=0.0f;
   return 0;
 }
 

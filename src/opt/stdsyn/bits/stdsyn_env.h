@@ -41,6 +41,9 @@ void stdsyn_env_decode_hi(struct stdsyn_env *env,const void *v);
 void stdsyn_env_decode_novelocity(struct stdsyn_env *env,const void *v);
 void stdsyn_env_default(struct stdsyn_env *env);
 
+// Multiply all levels. eg Channel Volume.
+void stdsyn_env_multiply(struct stdsyn_env *env,float v);
+
 void stdsyn_env_reset(struct stdsyn_env *env,uint8_t velocity,int mainrate);
 void stdsyn_env_release(struct stdsyn_env *env);
 

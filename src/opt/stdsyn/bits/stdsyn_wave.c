@@ -70,6 +70,19 @@ struct stdsyn_wave *stdsyn_wave_from_harmonics(const uint8_t *v,int c) {
       stdsyn_add_harmonic(wave->v,level,i+1,stdsyn_wave_sine->v);
     }
   }
+  
+  /* Level check. *
+  float lo=wave->v[0];
+  float hi=wave->v[0];
+  const float *p=wave->v;
+  int i=STDSYN_WAVE_SIZE_SAMPLES;
+  for (;i-->0;p++) {
+    if (*p<lo) lo=*p;
+    else if (*p>hi) hi=*p;
+  }
+  fprintf(stderr,"generated wave from harmonics. limits=%f..%f\n",lo,hi);
+  /**/
+  
   return wave;
 }
 

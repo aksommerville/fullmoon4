@@ -163,7 +163,8 @@ int stdsyn_node_minsyn_setup(
   struct stdsyn_wave *wave,
   struct stdsyn_wave *mixwave,
   const struct stdsyn_env *env,
-  const struct stdsyn_env *mixenv
+  const struct stdsyn_env *mixenv,
+  float trim,float pan
 );
 
 /* Single-period wave helper.
