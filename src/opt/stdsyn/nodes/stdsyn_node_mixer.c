@@ -161,10 +161,9 @@ static void _mixer_change_program(struct stdsyn_node *node,uint8_t chid) {
   }
   struct stdsyn_instrument *instrument=stdsyn_res_store_get(&NDRIVER->instruments,NODE->fqpidv[chid]);
   //fprintf(stderr,"!!! %s: Instantiate program 0x%x for channel %d. instrument=%p(%d)\n",__func__,NODE->fqpidv[chid],chid,instrument,instrument?instrument->c:0);//TODO
-  if (!instrument||(instrument->c<1)) return;
-  struct stdsyn_node *program=stdsyn_node_new_controller(node->driver,node->chanc,0,instrument->v,instrument->c);
+  struct stdsyn_node *program=stdsyn_node_new_controller(node->driver,node->chanc,0,instrument);
   if (!program) {
-    fprintf(stderr,"!!! Failed to instantiate instrument %d, c=%d\n",NODE->fqpidv[chid],instrument->c);
+    fprintf(stderr,"!!! Failed to instantiate instrument %d\n",NODE->fqpidv[chid]);
     return;
   }
   program->chid=chid;

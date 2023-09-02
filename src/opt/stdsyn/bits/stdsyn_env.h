@@ -25,6 +25,7 @@ struct stdsyn_env {
   float susvlo,susvhi; // sustain level in normal units
   int rlstlo,rlsthi; // release time, ms
   float vzlo,vzhi; // final level
+  int autorelease;
   
 };
 
@@ -40,6 +41,13 @@ void stdsyn_env_decode_lo(struct stdsyn_env *env,const void *v);
 void stdsyn_env_decode_hi(struct stdsyn_env *env,const void *v);
 void stdsyn_env_decode_novelocity(struct stdsyn_env *env,const void *v);
 void stdsyn_env_default(struct stdsyn_env *env);
+void stdsyn_env_init_constant(struct stdsyn_env *env,float v);
+
+/* Decode long-form envelopes (the kind we don't share with minsyn).
+ * Returns length consumed, or <0 on errors. Always <=srcc.
+ * OK to call with null (env) to measure only.
+ */
+int stdsyn_env_decode(struct stdsyn_env *env,const void *src,int srcc);
 
 // Multiply all levels. eg Channel Volume.
 void stdsyn_env_multiply(struct stdsyn_env *env,float v);

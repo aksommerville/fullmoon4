@@ -8,13 +8,20 @@ struct mkd_stdsyn_instrument {
   const char *path;
   int lineno;
   int id;
-  // All features, pre-encoded when we read them, in the order of their feature bit (little-endian):
+  
+  /* All minsyn features, pre-encoded when we read them, in the order of their feature bit (little-endian):
+   */
   uint8_t *wave; // 1..256
   uint8_t *loenv; // 5
   uint8_t *hienv; // 5
   uint8_t *mixwave; // 1..256
   uint8_t *lomixenv; // 5
   uint8_t *himixenv; // 5
+  
+  /* stdsyn features.
+   */
+  uint8_t fm[32]; int fmc; // opcode(1) + rate(2) + range(2..29) = 5..32. If present, preencoded with opcode and all.
+  uint8_t stdenv[30]; int stdenvc; // opcode(1) + env(5..29) = 6..30.
 };
 
 #define INS ((struct mkd_stdsyn_instrument*)instrument)
@@ -36,6 +43,22 @@ static void *_instrument_new(int id,const char *path,int lineno) {
   INS->lineno=lineno;
   INS->id=id;
   return instrument;
+}
+
+/* Text helpers.
+ */
+ 
+static int stdsyn_is_float_token(const char *src,int srcc) {
+  for (;srcc-->0;src++) if (*src=='.') return 1;
+  return 0;
+}
+
+static int stdsyn_env_time_eval(const char *src,int srcc) {
+  int ms;
+  if (sr_int_eval(&ms,src,srcc)<2) return -1;
+  if (ms<0) return -1;
+  if (ms>0xffff) return -1;
+  return ms;
 }
 
 /* "wave" and "mixwave".
@@ -121,6 +144,286 @@ static int _instrument_env(uint8_t **dstlo,uint8_t **dsthi,void *instrument,cons
   return 0;
 }
 
+/* Long-form stdsyn envelopes.
+ * Input may have leading and trailing whitespace but otherwise must be the full parenthesized envelope and nothing more.
+ * Output must have room for at least 29 bytes. Returns actual output length.
+ */
+ 
+static int stdsyn_env_compile(uint8_t *dst,const char *src,int srcc,const char *path,int lineno) {
+  int srcp=0;
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  if ((srcp>=srcc)||(src[srcp++]!='(')) return -1;
+  
+  /* Pop tokens into a "low" and "high" list until we meet the closing paren.
+   */
+  struct token { const char *v; int c; };
+  struct token lotokv[7],hitokv[7];
+  int lotokc=0,hitokc=-1; // (hitokc>=0) after we consume the separator.
+  while (1) {
+    while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+    if (srcp>=srcc) break;
+    if (src[srcp]==')') break;
+    const char *token=src+srcp;
+    int tokenc=0;
+    while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
+    if ((tokenc==2)&&!memcmp(token,"..",2)) {
+      if (hitokc>=0) {
+        fprintf(stderr,"%s:%d: Extra '..' separator in envelope.\n",path,lineno);
+        return -2;
+      }
+      hitokc=0;
+      continue;
+    }
+    if (hitokc<0) {
+      if (lotokc>=7) {
+        fprintf(stderr,"%s:%d: Expected '..' or ')' before '%.*s'\n",path,lineno,tokenc,token);
+        return -2;
+      }
+      lotokv[lotokc].v=token;
+      lotokv[lotokc].c=tokenc;
+      lotokc++;
+    } else {
+      if (hitokc>=7) {
+        fprintf(stderr,"%s:%d: Expected ')' before '%.*s'\n",path,lineno,tokenc,token);
+        return -2;
+      }
+      hitokv[hitokc].v=token;
+      hitokv[hitokc].c=tokenc;
+      hitokc++;
+    }
+  }
+  if ((srcp>=srcc)||(src[srcp++]!=')')) {
+    fprintf(stderr,"%s:%d: Unclosed envelope.\n",path,lineno);
+    return -2;
+  }
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  if (srcp<srcc) {
+    fprintf(stderr,"%s:%d: Unexpected tokens after envelope: %.*s\n",path,lineno,srcc-srcp,src+srcp);
+    return -2;
+  }
+  
+  /* Validate token counts.
+   */
+  if ((lotokc<5)||((hitokc>=0)&&(hitokc!=lotokc))) {
+    fprintf(stderr,"%s:%d: Invalid token counts in envelope. Must be 5..7 per edge, and edges must match. (%d,%d)\n",path,lineno,lotokc,hitokc);
+    return -2;
+  }
+
+  /* Determine features by examining token lists.
+   */
+  int velocity=(hitokc>=0);
+  int initial=stdsyn_is_float_token(lotokv[0].v,lotokv[0].c);
+  int final=stdsyn_is_float_token(lotokv[lotokc-1].v,lotokv[lotokc-1].c);
+  if (initial&&final) {
+    if (lotokc!=7) { fprintf(stderr,"%s:%d: Envelope with both initial and final must have 7 tokens.\n",path,lineno); return -2; }
+  } else if (initial||final) {
+    if (lotokc!=6) { fprintf(stderr,"%s:%d: Envelope with one initial or final must have 6 tokens.\n",path,lineno); return -2; }
+  } else {
+    if (lotokc!=5) { fprintf(stderr,"%s:%d: Envelope without initial or final must have 5 tokens.\n",path,lineno); return -2; }
+  }
+  int sustainp=initial?4:3;
+  int sustain=0;
+  if (lotokv[sustainp].v[lotokv[sustainp].c-1]=='*') { sustain=1; lotokv[sustainp].c--; }
+  if (velocity) {
+    if (hitokv[sustainp].v[hitokv[sustainp].c-1]=='*') { sustain=1; hitokv[sustainp].c--; }
+  }
+  // hires_time, hires_level, signed_level will be determined during evaluation.
+  
+  /* Evaluate times and decide whether to go hi-res.
+   * There are always 3 times per edge.
+   */
+  int hires_time=0;
+  int timev[6];
+  #define GETTIME(dstp,tokset,index) { \
+    const struct token *tok=tokset+initial+(index<<1); \
+    if ((timev[dstp]=stdsyn_env_time_eval(tok->v,tok->c))<0) { \
+      fprintf(stderr,"%s:%d: Expected time in ms (0..65535), found '%.*s'\n",path,lineno,tok->c,tok->v); \
+      return -2; \
+    } \
+    if (timev[dstp]>1020) hires_time=1; \
+  }
+  GETTIME(0,lotokv,0)
+  GETTIME(1,lotokv,1)
+  GETTIME(2,lotokv,2)
+  if (velocity) {
+    GETTIME(3,hitokv,0)
+    GETTIME(4,hitokv,1)
+    GETTIME(5,hitokv,2)
+  }
+  #undef GETTIME
+  
+  /* Evaluate levels and determine hi-res and signed.
+   * We'll fill this list as if initial and final are present, to keep indices constant.
+   */
+  int hires_level=0,signed_level=0;
+  float levelv[8];
+  #define GETLEVEL(dstp,token) { \
+    int frc=0,i=0,fr=0; \
+    for (;i<token.c;i++) { \
+      if (fr) frc++; \
+      else if (token.v[i]=='.') fr=1; \
+    } \
+    if (frc>3) hires_level=1; \
+    if (token.v[0]=='-') signed_level=1; \
+    if ((sr_float_eval(levelv+dstp,token.v,token.c)<0)||(levelv[dstp]<-1.0f)||(levelv[dstp]>1.0f)) { \
+      fprintf(stderr,"%s:%d: Expected floating-point level in -1..1, found '%.*s'\n",path,lineno,token.c,token.v); \
+      return -2; \
+    } \
+  }
+  if (initial) {
+    GETLEVEL(0,lotokv[0])
+    GETLEVEL(1,lotokv[2])
+    GETLEVEL(2,lotokv[4])
+    if (final) GETLEVEL(3,lotokv[6])
+  } else {
+    GETLEVEL(1,lotokv[1])
+    GETLEVEL(2,lotokv[3])
+    if (final) GETLEVEL(3,lotokv[5])
+  }
+  if (velocity) {
+    if (initial) {
+      GETLEVEL(4,hitokv[0])
+      GETLEVEL(5,hitokv[2])
+      GETLEVEL(6,hitokv[4])
+      if (final) GETLEVEL(7,hitokv[6])
+    } else {
+      GETLEVEL(5,hitokv[1])
+      GETLEVEL(6,hitokv[3])
+      if (final) GETLEVEL(7,hitokv[5])
+    }
+  }
+  #undef GETLEVEL
+
+  /* Compose output.
+   */
+  int dstc=0;
+  dst[dstc++]=
+    (velocity?    0x01:0)|
+    (sustain?     0x02:0)|
+    (initial?     0x04:0)|
+    (hires_time?  0x08:0)|
+    (hires_level? 0x10:0)|
+    (signed_level?0x20:0)|
+    (final?       0x40:0)|
+  0;
+  #define APPEND_LEVEL(v) { \
+    if (hires_level) { \
+      int n=(v)*65535.0f; \
+      dst[dstc++]=n>>8; \
+      dst[dstc++]=n; \
+    } else { \
+      dst[dstc++]=(v)*255.0f; \
+    } \
+  }
+  #define APPEND_TIME(v) { \
+    if (hires_time) { \
+      dst[dstc++]=(v)>>8; \
+      dst[dstc++]=(v); \
+    } else { \
+      dst[dstc++]=(v)>>2; \
+    } \
+  }
+  if (initial) APPEND_LEVEL(levelv[0])
+  APPEND_TIME(timev[0])
+  APPEND_LEVEL(levelv[1])
+  APPEND_TIME(timev[1])
+  APPEND_LEVEL(levelv[2])
+  APPEND_TIME(timev[2])
+  if (final) APPEND_LEVEL(levelv[3])
+  if (velocity) {
+    if (initial) APPEND_LEVEL(levelv[4])
+    APPEND_TIME(timev[3])
+    APPEND_LEVEL(levelv[5])
+    APPEND_TIME(timev[4])
+    APPEND_LEVEL(levelv[6])
+    APPEND_TIME(timev[5])
+    if (final) APPEND_LEVEL(levelv[7])
+  }
+  #undef APPEND_LEVEL
+  #undef APPEND_TIME
+  
+  return dstc;
+}
+
+/* "fm"
+ */
+ 
+static int _instrument_fm(void *instrument,const char *src,int srcc,const char *path,int lineno) {
+  if (INS->fmc) {
+    fprintf(stderr,"%s:%d: Duplicate 'fm' command.\n",path,lineno);
+    return -2;
+  }
+  int srcp=0,err;
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  
+  // rate
+  if (srcp>=srcc) return -1;
+  float rate_denominator;
+  if (src[srcp]=='*') { // relative rate, the typical case. u8.8
+    srcp++;
+    INS->fm[INS->fmc++]=0x02; // FM_R_S (assuming "S" for now)...
+    rate_denominator=256.0f;
+  } else { // absolute rate. u12.4
+    INS->fm[INS->fmc++]=0x01; // FM_A_S (assuming "S" for now)...
+    rate_denominator=16.0f;
+  }
+  const char *token=src+srcp;
+  int tokenc=0;
+  while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  float ratef;
+  if (sr_float_eval(&ratef,token,tokenc)<0) {
+    fprintf(stderr,"%s:%d: Failed to evaluate '%.*s' as float for fm rate.\n",path,lineno,tokenc,token);
+    return -2;
+  }
+  uint16_t ratei=ratef*rate_denominator;
+  INS->fm[INS->fmc++]=ratei>>8;
+  INS->fm[INS->fmc++]=ratei;
+  
+  // Range or range limit.
+  token=src+srcp;
+  tokenc=0;
+  while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  double range;
+  if (sr_double_eval(&range,token,tokenc)<0) {
+    fprintf(stderr,"%s:%d: Expected scalar 'range', found '%.*s'\n",path,lineno,tokenc,token);
+    return -2;
+  }
+  int rangen=range*256.0f;
+  INS->fm[INS->fmc++]=rangen>>8;
+  INS->fm[INS->fmc++]=rangen;
+  
+  // Optional range envelope.
+  if ((srcp<srcc)&&(src[srcp]=='(')) {
+    INS->fm[0]+=2; // "S"=>"E" for both Relative and Absolute.
+    if ((err=stdsyn_env_compile(INS->fm+INS->fmc,src+srcp,srcc-srcp,path,lineno))<0) return err;
+    INS->fmc+=err;
+    srcp=srcc;
+  }
+  
+  if (srcp<srcc) {
+    fprintf(stderr,"%s:%d: Unexpected tokens after fm command: %.*s\n",path,lineno,srcc-srcp,src+srcp);
+    return -2;
+  }
+  return 0;
+}
+
+/* "stdenv"
+ */
+ 
+static int _instrument_stdenv(void *instrument,const char *src,int srcc,const char *path,int lineno) {
+  if (INS->stdenvc) {
+    fprintf(stderr,"%s:%d: Duplicate 'stdenv' command\n",path,lineno);
+    return -2;
+  }
+  INS->stdenv[INS->stdenvc++]=0x05;
+  int err=stdsyn_env_compile(INS->stdenv+INS->stdenvc,src,srcc,path,lineno);
+  if (err<0) return err;
+  INS->stdenvc+=err;
+  return 0;
+}
+
 /* Instrument input.
  */
 
@@ -138,6 +441,12 @@ static int _instrument_line(void *instrument,const char *kw,int kwc,const char *
   } else if ((kwc==6)&&!memcmp(kw,"mixenv",6)) {
     return _instrument_env(&INS->lomixenv,&INS->himixenv,instrument,src,srcc,path,lineno);
     
+  } else if ((kwc==2)&&!memcmp(kw,"fm",2)) {
+    return _instrument_fm(instrument,src,srcc,path,lineno);
+    
+  } else if ((kwc==6)&&!memcmp(kw,"stdenv",6)) {
+    return _instrument_stdenv(instrument,src,srcc,path,lineno);
+    
   } else {
     fprintf(stderr,"%s:%d: Unexpected instrument command '%.*s'\n",path,lineno,kwc,kw);
     return -2;
@@ -145,10 +454,43 @@ static int _instrument_line(void *instrument,const char *kw,int kwc,const char *
   return 0;
 }
 
+/* Test features after decode complete.
+ */
+ 
+static int stdsyn_has_stdsyn_features(const void *instrument) {
+  if (INS->fmc) return 1;
+  if (INS->stdenvc) return 1;
+  return 0;
+}
+
+static int stdsyn_has_minsyn_features(const void *instrument) {
+  if (INS->wave) return 1;
+  if (INS->loenv) return 1;
+  if (INS->hienv) return 1;
+  if (INS->mixwave) return 1;
+  if (INS->lomixenv) return 1;
+  if (INS->himixenv) return 1;
+  return 0;
+}
+
 /* Instrument output.
  */
 
 static int _instrument_encode(struct sr_encoder *dst,void *instrument) {
+
+  if (stdsyn_has_stdsyn_features(instrument)) {
+    if (stdsyn_has_minsyn_features(instrument)) {
+      fprintf(stderr,"%s:%d: Instrument mixes minsyn and stdsyn features. Must use only one or the other set.\n",INS->path,INS->lineno);
+      return -2;
+    }
+    if (sr_encode_raw(dst,"\xc0",1)<0) return -1; // HELLO. Required leading byte for stdsyn.
+    #define PREENCODED(tag) if (INS->tag##c&&(sr_encode_raw(dst,INS->tag,INS->tag##c)<0)) return -1;
+    PREENCODED(fm)
+    PREENCODED(stdenv)
+    #undef PREENCODED
+    return 0;
+  }
+  // No need to check stdsyn_has_minsyn_features(). Empty is a valid minsyn instrument. ...i think?
 
   uint8_t flags=0;
   if (INS->wave) flags|=0x01;

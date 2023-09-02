@@ -54,10 +54,11 @@ struct stdsyn_node_type {
   
   /* Must fail if (chanc) or (overwrite) disagreeable.
    */
-  int (*init)(
-    struct stdsyn_node *node,
-    uint8_t velocity
-  );
+  int (*init)(struct stdsyn_node *node,uint8_t velocity);
+  
+  /* Channel controllers must implement.
+   */
+  int (*apply_instrument)(struct stdsyn_node *node,const struct stdsyn_instrument *ins);
   
   // Most of what you'd expect to be type hooks live on instances instead.
   // (So you can have different implementations per hook, depending on config).
@@ -132,7 +133,7 @@ struct stdsyn_node *stdsyn_node_spawn_source(
 struct stdsyn_node *stdsyn_node_new_controller(
   struct bigpc_synth_driver *driver,
   int chanc,int overwrite,
-  const void *src,int srcc
+  const struct stdsyn_instrument *ins
 );
 
 int stdsyn_node_srcv_insert(struct stdsyn_node *parent,int p,struct stdsyn_node *child); // (p<0) to append
@@ -157,13 +158,21 @@ extern const struct stdsyn_node_type stdsyn_node_type_delay; // Filter.
 
 int stdsyn_node_mixer_add_voice(struct stdsyn_node *node,struct stdsyn_node *voice);
 int stdsyn_node_pcm_set_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm);
-int stdsyn_node_ctlm_decode(struct stdsyn_node *node,const void *src,int srcc);
 int stdsyn_node_minsyn_setup(
   struct stdsyn_node *node,
   struct stdsyn_wave *wave,
   struct stdsyn_wave *mixwave,
   const struct stdsyn_env *env,
   const struct stdsyn_env *mixenv,
+  float trim,float pan
+);
+int stdsyn_node_basic_setup_fm(
+  struct stdsyn_node *node,
+  struct stdsyn_wave *carrier,
+  int abs_mod_rate,
+  float rate,
+  const struct stdsyn_env *rangeenv,
+  const struct stdsyn_env *env,
   float trim,float pan
 );
 
@@ -267,10 +276,19 @@ void stdsyn_res_store_cleanup(struct stdsyn_res_store *store);
 int stdsyn_res_store_add(struct stdsyn_res_store *store,int id,const void *v,int c);
 void *stdsyn_res_store_get(struct stdsyn_res_store *store,int id);
 
-// Instrument resource is just the serial data straight off the archive, copied.
 struct stdsyn_instrument {
-  int c;
-  uint8_t v[];
+  const struct stdsyn_node_type *type;
+  
+  // ctlm (minsyn):
+  struct stdsyn_wave *wave;
+  struct stdsyn_wave *mixwave;
+  struct stdsyn_env env; // both minsyn and stdsyn, but they'd be sourced by different data
+  struct stdsyn_env mixenv;
+  
+  // stdsyn features:
+  int fmabs;
+  float fmrate;
+  struct stdsyn_env fmenv;
 };
 
 void stdsyn_instrument_del(struct stdsyn_instrument *ins);

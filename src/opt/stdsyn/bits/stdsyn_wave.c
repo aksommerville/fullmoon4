@@ -91,6 +91,7 @@ struct stdsyn_wave *stdsyn_wave_from_harmonics(const uint8_t *v,int c) {
 
 void stdsyn_wave_runner_cleanup(struct stdsyn_wave_runner *runner) {
   stdsyn_wave_del(runner->wave);
+  runner->wave=0;
 }
 
 /* Runner setup.

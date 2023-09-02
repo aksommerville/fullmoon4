@@ -34,6 +34,25 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - Let's not worry about this; I'm going to rewrite all the stdsyn instruments anyway.
 - - - (fwiw, Blood for Silver and Eye of Newt instruments do go OOB; I did that deliberately to clip at the wave level)
 - - [ ] Tangled Vine, there's a sour low note in the ornamental octave bits in the second A section.
+- - [x] Some kind of memory fault on song repeat. Got unexpected behavior twice in a row from Toil and Trouble.
+- - - Reproducible by making a song play for the second time. eg leave area and return. Something about reusing the instrument?
+- - - Assigning 'wave' instead of 'mixwave', oops.
+- - [ ] Master trim per instrument.
+- - [ ] Fancify all instruments.
+- - - [x] 1-tangled_vine.mid
+- - - [x] 2-seven_circles.mid
+- - - [x] 3-toil_and_trouble.mid
+- - - [ ] 4-eye_of_newt.mid
+- - - [ ] 5-jaws_of_wrath.mid
+- - - [ ] 6-truffles_in_forbidden_sauce.mid
+- - - [ ] 7-seventh_roots_of_unity.mid
+- - - [ ] 8-snowglobe.mid
+- - - [ ] 9-choose_a_door.mid
+- - - [ ] 10-blood_for_silver.mid
+- - - [ ] 11-first_frost.mid
+- - - [ ] 12-gloom_for_company.mid
+- - - [ ] 13-nearer_the_sky.mid
+- - - [ ] 14-sky-gardening.mid
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.

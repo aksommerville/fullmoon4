@@ -329,3 +329,69 @@ Sound effects are exactly the same as minsyn.
 All minsyn instrument formats are valid too.
 
 Stdsyn instruments have the two high bits of their leading byte set. Otherwise it's minsyn.
+
+Text:
+
+| keyword | args
+|---------|------
+| fm      | `RATE RANGE [ENV]`: RATE is absolute Hz, or `*` and multiplier. RANGE is a scalar or parenthesized envelope (level/1000 and time in ms)
+| stdenv  | Envelope. The "std" is to distinguish from minsyn's "env" command.
+
+Binary:
+
+| opcode | name        | args
+|--------|-------------|------
+| 0x01   | FM_A_S      | (u12.4 rate_hz,u8.8 range)
+| 0x02   | FM_R_S      | (u8.8 rate_mlt,u8.8 range)
+| 0x03   | FM_A_E      | (u12.4 rate_hz,u8.8 range,...range_env)
+| 0x04   | FM_R_E      | (u8.8 rate_mlt,u8.8 range,...range_env)
+| 0x05   | STDENV      | (...env)
+| 0xc0   | HELLO       | () Must be first op, to distinguish from minsyn.
+
+Text Envelope:
+
+```
+( [VINITIAL] TATTACK VATTACK TDECAY VSUSTAIN[*] TRELEASE [VFINAL] [.. [V] T V T V[*] T [V]] )
+
+T are integers in ms.
+V are floats in 0..1 or -1..1.
+
+Initial and final level must be provided in both high and low edges, if present in one.
+It's OK to supply only initial or only final -- we know what's what based on float-vs-int.
+
+Star immediately after sustain level to indicate sustain is supported. (optional to repeat in high half)
+
+We decide automatically whether to use high-res times and signed levels.
+You may request hi-res levels by phrasing at least one "V" with more than 3 fractional digits.
+```
+
+Binary Envelope:
+
+```
+u8 features
+  0x01 velocity
+  0x02 sustain
+  0x04 initial
+  0x08 hires time: T=u16 ms if set, else T=u8 ms*4
+  0x10 hires level: V=i16 if set, else V=i8
+  0x20 signed level: Signed integers, and normalize to -1..1 instead of 0..1.
+  0x40 final
+  0x80 reserved
+If (initial): V initial lo
+T attack time lo
+V attack level lo
+T decay time lo
+V sustain level lo
+T release time lo
+If (final): V final lo
+If (velocity):
+  If (initial): V initial hi
+  T attack time hi
+  V attack level hi
+  T decay time hi
+  V sustain level hi
+  T release time hi
+  If (final): V final hi
+```
+
+Envelope length is determinable from the first byte. Range 6..29.

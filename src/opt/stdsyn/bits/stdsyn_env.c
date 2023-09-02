@@ -55,6 +55,123 @@ void stdsyn_env_default(struct stdsyn_env *env) {
   stdsyn_env_decode_hi(env,"\x10\xc0\x24\x40\x30");
 }
 
+void stdsyn_env_init_constant(struct stdsyn_env *env,float v) {
+  env->valo=env->vahi=v;
+  env->atkvlo=env->atkvhi=v;
+  env->susvlo=env->susvhi=v;
+  env->vzlo=env->vzhi=v;
+  env->atktlo=env->atkthi=1;
+  env->dectlo=env->decthi=1;
+  env->rlstlo=env->rlsthi=1;
+}
+
+/* Decode, long format.
+ */
+  
+typedef int (*stdsyn_env_time_decode_fn)(int *dst,const uint8_t *src);
+typedef int (*stdsyn_env_level_decode_fn)(float *dst,const uint8_t *src);
+
+static int stdsyn_env_time_decode_hires(int *dst,const uint8_t *src) {
+  *dst=(src[0]<<8)|src[1];
+  return 2;
+}
+
+static int stdsyn_env_time_decode_lores(int *dst,const uint8_t *src) {
+  *dst=src[0]<<2;
+  return 1;
+}
+
+static int stdsyn_env_level_decode_hires_signed(float *dst,const uint8_t *src) {
+  *dst=(((src[0]<<8)|src[1])-0x8000)/32768.0f;
+  return 2;
+}
+
+static int stdsyn_env_level_decode_hires_unsigned(float *dst,const uint8_t *src) {
+  *dst=((src[0]<<8)|src[1])/65535.0f;
+  return 2;
+}
+
+static int stdsyn_env_level_decode_lores_signed(float *dst,const uint8_t *src) {
+  *dst=(src[0]-0x80)/128.0f;
+  return 1;
+}
+
+static int stdsyn_env_level_decode_lores_unsigned(float *dst,const uint8_t *src) {
+  *dst=src[0]/255.0f;
+  return 1;
+}
+ 
+int stdsyn_env_decode(struct stdsyn_env *env,const void *src,int srcc) {
+  if (!src||(srcc<1)) return -1;
+  const uint8_t *SRC=src;
+  
+  /* Determine features and length from the first byte.
+   */
+  uint8_t velocity=SRC[0]&0x01;
+  uint8_t sustain=SRC[0]&0x02;
+  uint8_t initial=SRC[0]&0x04;
+  uint8_t hrtime=SRC[0]&0x08;
+  uint8_t hrlevel=SRC[0]&0x10;
+  uint8_t slevel=SRC[0]&0x20;
+  uint8_t final=SRC[0]&0x40;
+  if (SRC[0]&0x80) return -1;
+  int len=2; // count of levels
+  if (initial) len++;
+  if (final) len++;
+  if (hrlevel) len<<=1; // total size of levels in one edge, in bytes
+  if (hrtime) len+=6; else len+=3; // always 3 times per edge
+  if (velocity) len<<=1; // two edges if velocity
+  len++; // and also the leading byte
+  // sustain and slevel don't impact length
+  if (!src||(len>srcc)) return len;
+  
+  /* To keep things clean, use generic decoder functions for level and time.
+   */
+  stdsyn_env_time_decode_fn time_decode=hrtime?stdsyn_env_time_decode_hires:stdsyn_env_time_decode_lores;
+  stdsyn_env_level_decode_fn level_decode;
+  if (hrlevel) {
+    if (slevel) level_decode=stdsyn_env_level_decode_hires_signed;
+    else level_decode=stdsyn_env_level_decode_hires_unsigned;
+  } else {
+    if (slevel) level_decode=stdsyn_env_level_decode_lores_signed;
+    else level_decode=stdsyn_env_level_decode_lores_unsigned;
+  }
+  
+  /* Read the low edge.
+   */
+  int srcp=1;
+  if (initial) srcp+=level_decode(&env->valo,SRC+srcp); else env->valo=0.0f;
+  srcp+=time_decode(&env->atktlo,SRC+srcp);
+  srcp+=level_decode(&env->atkvlo,SRC+srcp);
+  srcp+=time_decode(&env->dectlo,SRC+srcp);
+  srcp+=level_decode(&env->susvlo,SRC+srcp);
+  srcp+=time_decode(&env->rlstlo,SRC+srcp);
+  if (final) srcp+=level_decode(&env->vzlo,SRC+srcp); else env->vzlo=0.0f;
+  
+  /* Read or copy high edge.
+   */
+  if (velocity) {
+    if (initial) srcp+=level_decode(&env->vahi,SRC+srcp); else env->vahi=0.0f;
+    srcp+=time_decode(&env->atkthi,SRC+srcp);
+    srcp+=level_decode(&env->atkvhi,SRC+srcp);
+    srcp+=time_decode(&env->decthi,SRC+srcp);
+    srcp+=level_decode(&env->susvhi,SRC+srcp);
+    srcp+=time_decode(&env->rlsthi,SRC+srcp);
+    if (final) srcp+=level_decode(&env->vzhi,SRC+srcp); else env->vzhi=0.0f;
+  } else {
+    env->vahi=env->valo;
+    env->atkthi=env->atktlo;
+    env->atkvhi=env->atkvlo;
+    env->decthi=env->dectlo;
+    env->susvhi=env->susvlo;
+    env->rlsthi=env->rlstlo;
+    env->vzhi=env->vzlo;
+  }
+  
+  if (srcp!=len) return -1; // oops
+  return len;
+}
+
 /* Set master levels.
  */
  
@@ -74,7 +191,7 @@ void stdsyn_env_multiply(struct stdsyn_env *env,float v) {
  
 void stdsyn_env_reset(struct stdsyn_env *env,uint8_t velocity,int mainrate) {
 
-  env->released=0;
+  env->released=env->autorelease;
   env->finished=0;
   if (velocity<=0) {
     env->va=env->valo;

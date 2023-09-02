@@ -34,6 +34,7 @@ static void _ctlm_note_on(struct stdsyn_node *node,uint8_t noteid,uint8_t veloci
   //fprintf(stderr,"%s %02x %02x, voice=%p\n",__func__,noteid,velocity,voice);
   if (stdsyn_node_minsyn_setup(voice,NODE->wave,NODE->mixwave,&NODE->env,&NODE->mixenv,NODE->trim,NODE->pan)<0) {
     fprintf(stderr,"Failed to instantiate minsyn voice.\n");
+    stdsyn_node_del(voice);
     return;
   }
   voice->chid=node->chid;
@@ -54,7 +55,7 @@ static int _ctlm_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint
     case MIDI_OPCODE_NOTE_OFF: return 0; // Let the mixer handle these.
     case MIDI_OPCODE_NOTE_ON: _ctlm_note_on(node,a,b); return 1;
     case MIDI_OPCODE_CONTROL: switch (a) {
-        case MIDI_CTL_VOLUME_MSB: NODE->trim=b/127.0f; fprintf(stderr,"***** channel volume %02x (%f)\n",b,NODE->trim); return 1;
+        case MIDI_CTL_VOLUME_MSB: NODE->trim=b/127.0f; return 1;
         case MIDI_CTL_PAN_MSB: NODE->pan=(b-0x40)/64.0f; return 1;
       } break;
     case MIDI_OPCODE_WHEEL: return 1; //TODO?
@@ -72,6 +73,21 @@ static int _ctlm_init(struct stdsyn_node *node,uint8_t velocity) {
   return 0;
 }
 
+/* Apply instrument.
+ */
+ 
+static int _ctlm_apply_instrument(struct stdsyn_node *node,const struct stdsyn_instrument *ins) {
+  if (NODE->wave) { stdsyn_wave_del(NODE->wave); NODE->wave=0; }
+  if (NODE->mixwave) { stdsyn_wave_del(NODE->mixwave); NODE->mixwave=0; }
+  if (ins->wave&&(stdsyn_wave_ref(ins->wave)<0)) return -1;
+  NODE->wave=ins->wave;
+  if (ins->mixwave&&(stdsyn_wave_ref(ins->mixwave)<0)) return -1;
+  NODE->mixwave=ins->mixwave;
+  NODE->env=ins->env;
+  NODE->mixenv=ins->mixenv;
+  return 0;
+}
+
 /* Type definition.
  */
  
@@ -80,84 +96,5 @@ const struct stdsyn_node_type stdsyn_node_type_ctlm={
   .objlen=sizeof(struct stdsyn_node_ctlm),
   .del=_ctlm_del,
   .init=_ctlm_init,
+  .apply_instrument=_ctlm_apply_instrument,
 };
-
-/* Decode.
- */
- 
-int stdsyn_node_ctlm_decode(struct stdsyn_node *node,const void *src,int srcc) {
-  if (!node||(node->type!=&stdsyn_node_type_ctlm)) return -1;
-  if (!src||(srcc<1)) return -1;
-  const uint8_t *SRC=src;
-  uint8_t features=SRC[0];
-  if (features&0xc0) return -1;
-  int srcp=1;
-  
-  if (features&0x01) { // main harmonics
-    if (srcp>srcc-1) return -1;
-    uint8_t coefc=SRC[srcp++];
-    if (srcp>srcc-coefc) return -1;
-    if (!(NODE->wave=stdsyn_wave_from_harmonics(SRC+srcp,coefc))) return -1;
-    srcp+=coefc;
-  } else {
-    if (!(NODE->wave=stdsyn_wave_from_harmonics("\xff",1))) return -1;
-  }
-  
-  switch (features&0x06) { // env
-    case 0: stdsyn_env_default(&NODE->env); break;
-    case 0x02: {
-        if (srcp>srcc-5) return -1;
-        stdsyn_env_decode_lo(&NODE->env,SRC+srcp);
-        stdsyn_env_decode_hi(&NODE->env,0);
-        srcp+=5;
-      } break;
-    case 0x04: {
-        if (srcp>srcc-5) return -1;
-        stdsyn_env_decode_hi(&NODE->env,SRC+srcp);
-        stdsyn_env_decode_lo(&NODE->env,0);
-        srcp+=5;
-      } break;
-    case 0x06: {
-        if (srcp>srcc-10) return -1;
-        stdsyn_env_decode_lo(&NODE->env,SRC+srcp);
-        srcp+=5;
-        stdsyn_env_decode_hi(&NODE->env,SRC+srcp);
-        srcp+=5;
-      } break;
-  }
-
-  if (features&0x08) { // mix harmonics
-    if (srcp>srcc-1) return -1;
-    uint8_t coefc=SRC[srcp++];
-    if (srcp>srcc-coefc) return -1;
-    if (!(NODE->mixwave=stdsyn_wave_from_harmonics(SRC+srcp,coefc))) return -1;
-    srcp+=coefc;
-  } else {
-    // null is ok, for no mixing
-  }
-  
-  switch (features&0x30) { // mix env
-    case 0: stdsyn_env_default(&NODE->env); break;
-    case 0x10: {
-        if (srcp>srcc-5) return -1;
-        stdsyn_env_decode_lo(&NODE->mixenv,SRC+srcp);
-        stdsyn_env_decode_hi(&NODE->mixenv,0);
-        srcp+=5;
-      } break;
-    case 0x20: {
-        if (srcp>srcc-5) return -1;
-        stdsyn_env_decode_hi(&NODE->mixenv,SRC+srcp);
-        stdsyn_env_decode_lo(&NODE->mixenv,0);
-        srcp+=5;
-      } break;
-    case 0x30: {
-        if (srcp>srcc-10) return -1;
-        stdsyn_env_decode_lo(&NODE->mixenv,SRC+srcp);
-        srcp+=5;
-        stdsyn_env_decode_hi(&NODE->mixenv,SRC+srcp);
-        srcp+=5;
-      } break;
-  }
-
-  return 0;
-}

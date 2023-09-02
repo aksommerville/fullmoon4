@@ -48,6 +48,12 @@ int sr_double_measure(const char *src,int srcc);
 int sr_double_eval(double *dst,const char *src,int srcc);
 int sr_double_repr(char *dst,int dsta,double src);
 int sr_double_repr_json(char *dst,int dsta,double src);
+static inline int sr_float_eval(float *dst,const char *src,int srcc) {
+  double d;
+  int err=sr_double_eval(&d,src,srcc);
+  if (err>=0) *dst=d;
+  return err;
+}
 
 /* String tokens.
  * Our format uses "\U" and "\x" escapes which are not valid in JSON.

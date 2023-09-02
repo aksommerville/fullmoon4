@@ -104,9 +104,7 @@ int stdsyn_node_minsyn_setup(
     if (!env) return -1;
     NODE->env=*env;
     if (stdsyn_wave_runner_set_wave(&NODE->wave,wave)<0) return -1;
-    //fprintf(stderr,"minsyn %02x attack level %f naturally\n",NODE->noteid,NODE->env.atkvhi);
     stdsyn_env_multiply(&NODE->env,trim);
-    //fprintf(stderr,"...after applying trim %f: %f\n",trim,NODE->env.atkvhi);
     stdsyn_env_reset(&NODE->env,NODE->velocity,node->driver->rate);
   }
   

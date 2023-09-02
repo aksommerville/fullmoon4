@@ -115,21 +115,15 @@ int stdsyn_node_srcv_remove(struct stdsyn_node *parent,struct stdsyn_node *child
 struct stdsyn_node *stdsyn_node_new_controller(
   struct bigpc_synth_driver *driver,
   int chanc,int overwrite,
-  const void *src,int srcc
+  const struct stdsyn_instrument *ins
 ) {
-  if (!src||(srcc<1)) return 0;
-  const uint8_t *SRC=src;
-  struct stdsyn_node *node=0;
- 
-  if (!(SRC[0]&0xc0)) { // minsyn
-    node=stdsyn_node_new(driver,&stdsyn_node_type_ctlm,chanc,overwrite,0x40,0x40);
-    if (stdsyn_node_ctlm_decode(node,src,srcc)<0) {
-      stdsyn_node_del(node);
-      return 0;
-    }
- 
-  } else { // stdsyn-specific formats
-    //TODO
+  if (!ins||!ins->type||!ins->type->apply_instrument) return 0;
+  struct stdsyn_node *node=stdsyn_node_new(driver,ins->type,chanc,overwrite,0x40,0x40);
+  if (!node) return 0;
+  if (node->type->apply_instrument(node,ins)<0) {
+    fprintf(stderr,"stdsyn: Failed to apply instrument to '%s' node.\n",node->type->name);
+    stdsyn_node_del(node);
+    return 0;
   }
   
   // If we're calling it "controller", it must have the "event" hook. Others are optional.

@@ -11,6 +11,8 @@ static void _stdsyn_del(struct bigpc_synth_driver *driver) {
     while (DRIVER->printerc-->0) stdsyn_printer_del(DRIVER->printerv[DRIVER->printerc]);
     free(DRIVER->printerv);
   }
+  stdsyn_res_store_cleanup(&DRIVER->sounds);
+  stdsyn_res_store_cleanup(&DRIVER->instruments);
 }
 
 /* Update, main.
