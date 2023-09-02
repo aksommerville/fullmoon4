@@ -19,6 +19,11 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [x] env: Can we do nonzero initial and final levels? Will want this for eg pitch bend, fm range
 - - [x] Generic node.
 - - [ ] Tuned nodes.
+- - [ ] Tangled Vine and Toil And Trouble both seem to terminate early, last few notes don't play.
+- - [ ] Are there stray notes playing in Sky Gardening?
+- - [ ] Clipping. Is there a general strategy we can use to mitigate?
+- - [ ] Channel volume.
+- - [ ] Stereo.
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.

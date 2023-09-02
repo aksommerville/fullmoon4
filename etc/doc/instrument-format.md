@@ -279,7 +279,7 @@ u8 Features present:
      0x08 Mix harmonics
      0x10 Low mix envelope
      0x20 High mix envelope
-     0xc0 reserved
+     0xc0 reserved, must be zero
 If (Harmonics):
   u8 Count
   u8... Coefficients
@@ -321,3 +321,11 @@ env: u16 level,u8 count,count*(u16 ms,u16 level)
 shape: u8 name: (200,201,202,203,204)=(sine,square,sawtooth,triangle,noise)
    OR: u8 coefc(<200),u8*coefc coefv
 ```
+
+## Stdsyn
+
+Adding this synthesizer pretty late in development, so I'm cutting some corners.
+Sound effects are exactly the same as minsyn.
+All minsyn instrument formats are valid too.
+
+Stdsyn instruments have the two high bits of their leading byte set. Otherwise it's minsyn.

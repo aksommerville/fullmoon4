@@ -28,6 +28,19 @@ struct stdsyn_env {
   
 };
 
+/* (v) must be 5 bytes:
+ *   u8 Attack time, ms
+ *   u8 Attack level
+ *   u8 Decay time, ms
+ *   u8 Sustain level
+ *   u8 Release time, 8ms
+ * Or null to copy from the other side.
+ */
+void stdsyn_env_decode_lo(struct stdsyn_env *env,const void *v);
+void stdsyn_env_decode_hi(struct stdsyn_env *env,const void *v);
+void stdsyn_env_decode_novelocity(struct stdsyn_env *env,const void *v);
+void stdsyn_env_default(struct stdsyn_env *env);
+
 void stdsyn_env_reset(struct stdsyn_env *env,uint8_t velocity,int mainrate);
 void stdsyn_env_release(struct stdsyn_env *env);
 

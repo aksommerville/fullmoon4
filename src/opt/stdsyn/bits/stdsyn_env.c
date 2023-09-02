@@ -1,5 +1,60 @@
 #include "../fmn_stdsyn_internal.h"
 
+/* Decode or copy other half.
+ */
+
+void stdsyn_env_decode_lo(struct stdsyn_env *env,const void *v) {
+  if (v) {
+    const uint8_t *V=v;
+    env->atktlo=V[0];
+    env->atkvlo=V[1]/255.0f;
+    env->dectlo=V[2];
+    env->susvlo=V[3]/255.0f;
+    env->rlstlo=V[4]*8;
+  } else {
+    env->atktlo=env->atkthi;
+    env->atkvlo=env->atkvhi;
+    env->dectlo=env->decthi;
+    env->susvlo=env->susvhi;
+    env->rlstlo=env->rlsthi;
+  }
+}
+
+void stdsyn_env_decode_hi(struct stdsyn_env *env,const void *v) {
+  if (v) {
+    const uint8_t *V=v;
+    env->atkthi=V[0];
+    env->atkvhi=V[1]/255.0f;
+    env->decthi=V[2];
+    env->susvhi=V[3]/255.0f;
+    env->rlsthi=V[4]*8;
+  } else {
+    env->atkthi=env->atktlo;
+    env->atkvhi=env->atkvlo;
+    env->decthi=env->dectlo;
+    env->susvhi=env->susvlo;
+    env->rlsthi=env->rlstlo;
+  }
+}
+
+void stdsyn_env_decode_novelocity(struct stdsyn_env *env,const void *v) {
+  if (v) {
+    const uint8_t *V=v;
+    env->atktlo=env->atkthi=V[0];
+    env->atkvlo=env->atkvhi=V[1]/255.0f;
+    env->dectlo=env->decthi=V[2];
+    env->susvlo=env->susvhi=V[3]/255.0f;
+    env->rlstlo=env->rlsthi=V[4]*8;
+  } else {
+    stdsyn_env_default(env);
+  }
+}
+
+void stdsyn_env_default(struct stdsyn_env *env) {
+  stdsyn_env_decode_lo(env,"\x14\x80\x20\x20\x18");
+  stdsyn_env_decode_hi(env,"\x10\xc0\x24\x40\x30");
+}
+
 /* Reset.
  */
  

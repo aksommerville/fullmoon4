@@ -108,3 +108,34 @@ int stdsyn_node_srcv_remove(struct stdsyn_node *parent,struct stdsyn_node *child
   while (i-->0) if (parent->srcv[i]==child) return stdsyn_node_srcv_remove_at(parent,i,1);
   return -1;
 }
+
+/* New node from encoded controller.
+ */
+
+struct stdsyn_node *stdsyn_node_new_controller(
+  struct bigpc_synth_driver *driver,
+  int chanc,int overwrite,
+  const void *src,int srcc
+) {
+  if (!src||(srcc<1)) return 0;
+  const uint8_t *SRC=src;
+  struct stdsyn_node *node=0;
+ 
+  if (!(SRC[0]&0xc0)) { // minsyn
+    node=stdsyn_node_new(driver,&stdsyn_node_type_ctlm,chanc,overwrite,0x40,0x40);
+    if (stdsyn_node_ctlm_decode(node,src,srcc)<0) {
+      stdsyn_node_del(node);
+      return 0;
+    }
+ 
+  } else { // stdsyn-specific formats
+    //TODO
+  }
+  
+  // If we're calling it "controller", it must have the "event" hook. Others are optional.
+  if (!node->event) {
+    stdsyn_node_del(node);
+    return 0;
+  }
+  return node;
+}

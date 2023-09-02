@@ -17,6 +17,12 @@
  */
 #define STDSYN_PCM_SANITY_LIMIT (1<<20)
 
+/* Waves are single-period PCM dumps of a fixed size.
+ */
+#define STDSYN_WAVE_SIZE_BITS 10
+#define STDSYN_WAVE_SIZE_SAMPLES (1<<STDSYN_WAVE_SIZE_BITS)
+#define STDSYN_WAVE_SHIFT (32-STDSYN_WAVE_SIZE_BITS)
+
 #include "opt/bigpc/bigpc_synth.h"
 #include "opt/bigpc/bigpc_audio.h"
 #include "opt/midi/midi.h"
@@ -32,6 +38,8 @@ struct stdsyn_node;
 struct stdsyn_node_type;
 struct stdsyn_pcm;
 struct stdsyn_printer;
+struct stdsyn_wave;
+struct stdsyn_wave_runner;
 struct stdsyn_instrument;
 struct stdsyn_sound; // store unit
 
@@ -92,8 +100,9 @@ struct stdsyn_node {
   
   /* General MIDI events.
    * Only channel controllers need to implement this.
+   * Return nonzero to acknowledge an event, or zero for the caller to continue searching recipients.
    */
-  void (*event)(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
+  int (*event)(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b);
   void (*tempo)(struct stdsyn_node *node,int frames_per_qnote);
   
   /* Sources are managed by the implementation.
@@ -120,6 +129,12 @@ struct stdsyn_node *stdsyn_node_spawn_source(
   uint8_t noteid,uint8_t velocity
 );
 
+struct stdsyn_node *stdsyn_node_new_controller(
+  struct bigpc_synth_driver *driver,
+  int chanc,int overwrite,
+  const void *src,int srcc
+);
+
 int stdsyn_node_srcv_insert(struct stdsyn_node *parent,int p,struct stdsyn_node *child); // (p<0) to append
 int stdsyn_node_srcv_remove_at(struct stdsyn_node *parent,int p,int c);
 int stdsyn_node_srcv_remove(struct stdsyn_node *parent,struct stdsyn_node *child);
@@ -128,6 +143,8 @@ extern const struct stdsyn_node_type stdsyn_node_type_mixer; // Full bus. src ar
 extern const struct stdsyn_node_type stdsyn_node_type_ctl3; // Multi-voice program with shared intro and outro legs.
 extern const struct stdsyn_node_type stdsyn_node_type_ctlv; // Voice controller. Produces 'basic' voices.
 extern const struct stdsyn_node_type stdsyn_node_type_ctlp; // PCM controller, eg drum kit. Each voice is plain PCM.
+extern const struct stdsyn_node_type stdsyn_node_type_ctlm; // Controller for minsyn-format instruments.
+extern const struct stdsyn_node_type stdsyn_node_type_minsyn; // Voice for ctlm.
 extern const struct stdsyn_node_type stdsyn_node_type_basic; // Single voice with just oscillator and envelope.
 extern const struct stdsyn_node_type stdsyn_node_type_pcm; // Single voice dumping verbatim PCM.
 extern const struct stdsyn_node_type stdsyn_node_type_oscillator; // Primitive oscillators.
@@ -138,7 +155,60 @@ extern const struct stdsyn_node_type stdsyn_node_type_gain; // Filter.
 extern const struct stdsyn_node_type stdsyn_node_type_delay; // Filter.
 //TODO FIR? IIR? Detune? Reverb?
 
+int stdsyn_node_mixer_add_voice(struct stdsyn_node *node,struct stdsyn_node *voice);
 int stdsyn_node_pcm_set_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm);
+int stdsyn_node_ctlm_decode(struct stdsyn_node *node,const void *src,int srcc);
+int stdsyn_node_minsyn_setup(
+  struct stdsyn_node *node,
+  struct stdsyn_wave *wave,
+  struct stdsyn_wave *mixwave,
+  const struct stdsyn_env *env,
+  const struct stdsyn_env *mixenv
+);
+
+/* Single-period wave helper.
+ **************************************************************/
+ 
+struct stdsyn_wave {
+  int refc;
+  float v[STDSYN_WAVE_SIZE_SAMPLES];
+};
+
+void stdsyn_wave_del(struct stdsyn_wave *wave);
+int stdsyn_wave_ref(struct stdsyn_wave *wave);
+struct stdsyn_wave *stdsyn_wave_new();
+
+struct stdsyn_wave *stdsyn_wave_from_harmonics(const uint8_t *v,int c);
+
+/* Allocate statically, all zeroes.
+ */
+struct stdsyn_wave_runner {
+  struct stdsyn_wave *wave;
+  uint32_t p;
+  uint32_t dp;
+};
+
+void stdsyn_wave_runner_cleanup(struct stdsyn_wave_runner *runner);
+
+int stdsyn_wave_runner_set_wave(struct stdsyn_wave_runner *runner,struct stdsyn_wave *wave);
+void stdsyn_wave_runner_set_rate_norm(struct stdsyn_wave_runner *runner,float cycles_per_frame); // should be in 0..0.5
+void stdsyn_wave_runner_set_rate_hz(struct stdsyn_wave_runner *runner,float hz,float mainrate); // hz should be <= mainrate/2
+
+/* Update at a flat rate.
+ */
+void stdsyn_wave_runner_update(float *v,int c,struct stdsyn_wave_runner *runner);
+
+/* Multiply rate by (mod) at each step -- must be the same length as (v).
+ */
+void stdsyn_wave_runner_update_mod(float *v,int c,struct stdsyn_wave_runner *runner,const float *mod);
+
+/* Flat rate update, pulling one sample at a time.
+ */
+static inline float stdsyn_wave_runner_step(struct stdsyn_wave_runner *runner) {
+  float v=runner->wave->v[runner->p>>STDSYN_WAVE_SHIFT];
+  runner->p+=runner->dp;
+  return v;
+}
 
 /* PCM printer.
  ****************************************************************/
@@ -196,7 +266,10 @@ void stdsyn_res_store_cleanup(struct stdsyn_res_store *store);
 int stdsyn_res_store_add(struct stdsyn_res_store *store,int id,const void *v,int c);
 void *stdsyn_res_store_get(struct stdsyn_res_store *store,int id);
 
+// Instrument resource is just the serial data straight off the archive, copied.
 struct stdsyn_instrument {
+  int c;
+  uint8_t v[];
 };
 
 void stdsyn_instrument_del(struct stdsyn_instrument *ins);

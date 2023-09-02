@@ -8,6 +8,8 @@ struct stdsyn_node_mixer {
    */
   struct stdsyn_node *chanv[16];
   int fqpidv[16];
+  
+  float buf[STDSYN_BUFFER_SIZE];
 };
 
 #define NODE ((struct stdsyn_node_mixer*)node)
@@ -19,17 +21,33 @@ static void _mixer_del(struct stdsyn_node *node) {
   int i=16; while (i-->0) stdsyn_node_del(NODE->chanv[i]);
 }
 
+/* Update mono-mono for an overwrite source.
+ */
+ 
+static void mixer_update_mono_mono(float *dst,int c,struct stdsyn_node *node,struct stdsyn_node *source) {
+  float *src=NODE->buf;
+  source->update(src,c,source);
+  for (;c-->0;src++,dst++) (*dst)+=*src;
+}
+
 /* Update.
  */
  
+static int srccpv=0;
+ 
 static void _mixer_update_mono(float *v,int c,struct stdsyn_node *node) {
+  if (node->srcc!=srccpv) {
+    fprintf(stderr,"mixer srcc=%d\n",node->srcc);
+    srccpv=node->srcc;
+  }
   memset(v,0,sizeof(float)*c);
   int i=node->srcc;
   struct stdsyn_node **p=node->srcv+i-1;
   for (;i-->0;p--) {
-    // Everything in (srcv) must be mono, non-overwrite, and have an update hook.
+    // Everything in (srcv) must be mono, and have an update hook.
     struct stdsyn_node *child=*p;
-    child->update(v,c,child);
+    if (child->overwrite) mixer_update_mono_mono(v,c,node,child);
+    else child->update(v,c,child);
   }
 }
 
@@ -126,13 +144,24 @@ static void _mixer_change_program(struct stdsyn_node *node,uint8_t chid) {
     stdsyn_node_del(old);
   }
   struct stdsyn_instrument *instrument=stdsyn_res_store_get(&NDRIVER->instruments,NODE->fqpidv[chid]);
-  fprintf(stderr,"!!! %s: Instantiate program 0x%x for channel %d. instrument=%p\n",__func__,NODE->fqpidv[chid],chid,instrument);//TODO
+  fprintf(stderr,"!!! %s: Instantiate program 0x%x for channel %d. instrument=%p(%d)\n",__func__,NODE->fqpidv[chid],chid,instrument,instrument?instrument->c:0);//TODO
+  if (!instrument||(instrument->c<1)) return;
+  struct stdsyn_node *program=stdsyn_node_new_controller(node->driver,node->chanc,0,instrument->v,instrument->c);
+  if (!program) {
+    fprintf(stderr,"!!! Failed to instantiate instrument %d, c=%d\n",NODE->fqpidv[chid],instrument->c);
+    return;
+  }
+  program->chid=chid;
+  NODE->chanv[chid]=program;
+  if (program->update) {
+    stdsyn_node_srcv_insert(node,-1,program);
+  }
 }
 
 /* General event.
  */
  
-static void _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
+static int _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
   //fprintf(stderr,"%s %02x %02x %02x %02x\n",__func__,chid,opcode,a,b);
   
   /* Global events, ie invalid channel.
@@ -141,16 +170,16 @@ static void _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,ui
     switch (opcode) {
       case 0xff: _mixer_reset(node); break;
     }
-    return;
+    return 1;
   }
   
   /* Channel 15 is reserved for sound effects; it never has a program installed.
    */
   if (chid==0x0f) {
-    if ((opcode!=0x90)&&(opcode!=0x98)) return; // Note On or Note Once
+    if ((opcode!=0x90)&&(opcode!=0x98)) return 1; // Note On or Note Once
     struct stdsyn_pcm *pcm=stdsyn_res_store_get(&NDRIVER->sounds,a);
     if (pcm) mixer_begin_pcm(node,pcm);
-    return;
+    return 1;
   }
   
   /* Program Change and Bank Select must be picked off special.
@@ -158,11 +187,11 @@ static void _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,ui
   if (opcode==MIDI_OPCODE_PROGRAM) {
     NODE->fqpidv[chid]=(NODE->fqpidv[chid]&~0x7f)|a;
     _mixer_change_program(node,chid);
-    return;
+    return 1;
   }
   if (opcode==MIDI_OPCODE_CONTROL) switch (a) {
-    case MIDI_CTL_BANK_LSB: NODE->fqpidv[chid]=(NODE->fqpidv[chid]&~0x3f80)|(b<<7); return;
-    case MIDI_CTL_BANK_MSB: NODE->fqpidv[chid]=(NODE->fqpidv[chid]&~0x1fe000)|(b<<14); return;
+    case MIDI_CTL_BANK_LSB: NODE->fqpidv[chid]=(NODE->fqpidv[chid]&~0x3f80)|(b<<7); return 1;
+    case MIDI_CTL_BANK_MSB: NODE->fqpidv[chid]=(NODE->fqpidv[chid]&~0x1fe000)|(b<<14); return 1;
   }
   
   /* If no program was established, drop the event.
@@ -171,11 +200,28 @@ static void _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,ui
    * Also along those lines: There isn't a default program. You can't just fire a Note On to some uninitialized channel (tho MIDI definitely says you can).
    */
   struct stdsyn_node *chan=NODE->chanv[chid];
-  if (!chan) return;
+  if (!chan) return 0;
+  
+  /* Note Off, give controller first look, but then examine attached voices if it declines.
+   */
+  if (opcode==MIDI_OPCODE_NOTE_OFF) {
+    if (chan->event(chan,chid,opcode,a,b)>0) return 1;
+    int i=node->srcc;
+    while (i-->0) {
+      struct stdsyn_node *voice=node->srcv[i];
+      if ((voice->chid==chid)&&(voice->noteid==a)) {
+        if (voice->release) voice->release(voice,0x40);
+        else if (voice->event) voice->event(voice,chid,opcode,a,b);
+        else voice->defunct=1;
+        voice->chid=voice->noteid=0xff;
+      }
+    }
+    return 1;
+  }
   
   /* Everything else is the controller's problem, cheers!
    */
-  chan->event(chan,chid,opcode,a,b);
+  return chan->event(chan,chid,opcode,a,b);
 }
 
 /* Init.
@@ -205,3 +251,24 @@ const struct stdsyn_node_type stdsyn_node_type_mixer={
   .del=_mixer_del,
   .init=_mixer_init,
 };
+
+/* Public. Add a voice node.
+ */
+ 
+int stdsyn_node_mixer_add_voice(struct stdsyn_node *node,struct stdsyn_node *voice) {
+  if (!node||(node->type!=&stdsyn_node_type_mixer)) return -1;
+  if (!voice) return -1;
+  if (!voice->update) return -1;
+  switch (node->chanc) {
+    case 1: {
+        if (voice->chanc!=1) return -1;
+      } break;
+    case 2: {
+        if ((voice->chanc<1)||(voice->chanc>2)) return -1;
+      } break;
+    default: return -1;
+  }
+  if (voice->overwrite) fprintf(stderr,"add voice OVERWRITE\n");
+  else fprintf(stderr,"add voice ADD\n");
+  return stdsyn_node_srcv_insert(node,-1,voice);
+}
