@@ -11,6 +11,7 @@ struct stdsyn_node_ctlv {
   float fmrate;
   struct stdsyn_env fmenv;
   struct stdsyn_env env;
+  float master;
   float trim;
   float pan;
 };
@@ -29,8 +30,8 @@ static void _ctlv_del(struct stdsyn_node *node) {
  
 static void _ctlv_note_on(struct stdsyn_node *node,uint8_t noteid,uint8_t velocity) {
   //fprintf(stderr,"%s %02x %02x ; fmabs=%d fmrate=%f\n",__func__,noteid,velocity,NODE->fmabs,NODE->fmrate);
-  struct stdsyn_node *voice=stdsyn_node_new(node->driver,&stdsyn_node_type_basic,1,1,noteid,velocity);
-  if (stdsyn_node_basic_setup_fm(voice,NODE->carrier,NODE->fmabs,NODE->fmrate,&NODE->fmenv,&NODE->env,NODE->trim,NODE->pan)<0) {
+  struct stdsyn_node *voice=stdsyn_node_new(node->driver,&stdsyn_node_type_basic,1,1,noteid,velocity,0,0);
+  if (stdsyn_node_basic_setup_fm(voice,NODE->carrier,NODE->fmabs,NODE->fmrate,&NODE->fmenv,&NODE->env,NODE->trim*NODE->master,NODE->pan)<0) {
     stdsyn_node_del(voice);
     return;
   }
@@ -60,8 +61,9 @@ static int _ctlv_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint
 /* Init.
  */
  
-static int _ctlv_init(struct stdsyn_node *node,uint8_t velocity) {
+static int _ctlv_init(struct stdsyn_node *node,uint8_t velocity,const void *argv,int argc) {
   node->event=_ctlv_event;
+  NODE->master=1.0f;
   NODE->trim=1.0f;
   NODE->pan=0.0f;
   if (!(NODE->carrier=stdsyn_wave_from_harmonics("\xff",1))) return -1;
@@ -76,6 +78,7 @@ static int _ctlv_apply_instrument(struct stdsyn_node *node,const struct stdsyn_i
   NODE->fmrate=ins->fmrate;
   NODE->fmenv=ins->fmenv;
   NODE->env=ins->env;
+  NODE->master=ins->master;
   return 0;
 }
 

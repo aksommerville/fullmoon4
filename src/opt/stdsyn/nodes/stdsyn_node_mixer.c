@@ -97,8 +97,7 @@ static void _mixer_lfupdate(struct stdsyn_node *node) {
  */
  
 static void mixer_begin_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm) {
-  //return; // works, just muting to focus on tuned notes
-  struct stdsyn_node *child=stdsyn_node_spawn_source(node,&stdsyn_node_type_pcm,node->chanc,0,0x40,0x40);
+  struct stdsyn_node *child=stdsyn_node_spawn_source(node,&stdsyn_node_type_pcm,node->chanc,0,0x40,0x40,0,0);
   if (!child) return;
   if (!child->update) {
     stdsyn_node_srcv_remove(node,child);
@@ -242,7 +241,7 @@ static int _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uin
 /* Init.
  */
  
-static int _mixer_init(struct stdsyn_node *node,uint8_t velocity) {
+static int _mixer_init(struct stdsyn_node *node,uint8_t velocity,const void *argv,int argc) {
 
   switch (node->chanc) {
     case 1: node->update=_mixer_update_mono; break;

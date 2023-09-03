@@ -32,7 +32,8 @@ struct stdsyn_node *stdsyn_node_new(
   struct bigpc_synth_driver *driver,
   const struct stdsyn_node_type *type,
   int chanc,int overwrite,
-  uint8_t noteid,uint8_t velocity
+  uint8_t noteid,uint8_t velocity,
+  const void *argv,int argc
 ) {
   if (!driver||!type) return 0;
   struct stdsyn_node *node=calloc(1,type->objlen);
@@ -44,7 +45,7 @@ struct stdsyn_node *stdsyn_node_new(
   node->overwrite=overwrite;
   node->chid=0xff;
   node->noteid=noteid;
-  if (type->init&&(type->init(node,velocity)<0)) {
+  if (type->init&&(type->init(node,velocity,argv,argc)<0)) {
     stdsyn_node_del(node);
     return 0;
   }
@@ -58,10 +59,11 @@ struct stdsyn_node *stdsyn_node_spawn_source(
   struct stdsyn_node *parent,
   const struct stdsyn_node_type *type,
   int chanc,int overwrite,
-  uint8_t noteid,uint8_t velocity
+  uint8_t noteid,uint8_t velocity,
+  const void *argv,int argc
 ) {
   if (!parent) return 0;
-  struct stdsyn_node *child=stdsyn_node_new(parent->driver,type,chanc,overwrite,noteid,velocity);
+  struct stdsyn_node *child=stdsyn_node_new(parent->driver,type,chanc,overwrite,noteid,velocity,argv,argc);
   if (!child) return 0;
   child->chid=parent->chid;
   int err=stdsyn_node_srcv_insert(parent,-1,child);
@@ -109,6 +111,15 @@ int stdsyn_node_srcv_remove(struct stdsyn_node *parent,struct stdsyn_node *child
   return -1;
 }
 
+/* Buffers.
+ */
+
+float *stdsyn_node_get_buffer(const struct stdsyn_node *node,int p) {
+  if (!node||!node->driver) return 0;
+  if ((p<0)||(p>=STDSYN_BUFFER_COUNT)) return 0;
+  return NDRIVER->buffer+p*STDSYN_BUFFER_SIZE;
+}
+
 /* New node from encoded controller.
  */
 
@@ -118,7 +129,7 @@ struct stdsyn_node *stdsyn_node_new_controller(
   const struct stdsyn_instrument *ins
 ) {
   if (!ins||!ins->type||!ins->type->apply_instrument) return 0;
-  struct stdsyn_node *node=stdsyn_node_new(driver,ins->type,chanc,overwrite,0x40,0x40);
+  struct stdsyn_node *node=stdsyn_node_new(driver,ins->type,chanc,overwrite,0x40,0x40,0,0);
   if (!node) return 0;
   if (node->type->apply_instrument(node,ins)<0) {
     fprintf(stderr,"stdsyn: Failed to apply instrument to '%s' node.\n",node->type->name);

@@ -332,10 +332,30 @@ Stdsyn instruments have the two high bits of their leading byte set. Otherwise i
 
 Text:
 
-| keyword | args
-|---------|------
-| fm      | `RATE RANGE [ENV]`: RATE is absolute Hz, or `*` and multiplier. RANGE is a scalar or parenthesized envelope (level/1000 and time in ms)
-| stdenv  | Envelope. The "std" is to distinguish from minsyn's "env" command.
+| keyword  | args
+|----------|------
+| fm       | `RATE RANGE [ENV]`: RATE is absolute Hz, or `*` and multiplier. RANGE is a scalar or parenthesized envelope (level/1000 and time in ms)
+| stdenv   | Envelope. The "std" is to distinguish from minsyn's "env" command.
+| master   | `MULTIPLIER`
+| prefix   | Begin prefix section, for 3-legged program. Runs before voices. Buffer 0 is cleared, others are undefined.
+| voice    | '' voice section. Runs per voice. Should add to buffer 0.
+| suffix   | '' suffix section. Post-process finished content in buffer 0.
+| *in pipes only* |
+| silence  | `BUFID`
+| noise    | `BUFID`
+| copy     | `DST SRC`
+| penv     | `BUFID ENV`
+| osc      | `BUFID RATE SHAPE`. RATE may be `*N` to multiply against the note's rate, in a voice.
+| pfm      | `BUFID RATE MODRATE RANGE [ENV]`
+| bandpass | `BUFID RATE WIDTH`. RATE and WIDTH in Hz, or `*N` for RATE.
+| lopass   | `BUFID RATE`. RATE in Hz only.
+| hipass   | `BUFID RATE`. RATE in Hz only.
+| gain     | `BUFID GAIN CLIP GATE`
+| delay    | `BUFID INTERVAL DRY WET STORE FEEDBACK`. INTERVAL in ms or `*N` to multiply against one qnote's length.
+| add      | `DST SRC`
+| mlt      | `BUFID MULTIPLIER`
+
+If one of (prefix,voice,suffix) present, most other commands are an error. "master" is still allowed anywhere.
 
 Binary:
 
@@ -346,7 +366,40 @@ Binary:
 | 0x03   | FM_A_E      | (u12.4 rate_hz,u8.8 range,...range_env)
 | 0x04   | FM_R_E      | (u8.8 rate_mlt,u8.8 range,...range_env)
 | 0x05   | STDENV      | (...env)
+| 0x06   | MASTER      | (u4.12 gain)
+| 0x07   | PREFIX      | (u8 len,...pipe)
+| 0x08   | VOICE       | (u8 len,...pipe)
+| 0x09   | SUFFIX      | (u8 len,...pipe)
 | 0xc0   | HELLO       | () Must be first op, to distinguish from minsyn.
+
+Binary Pipe:
+
+```
+u8 opcode
+  0xc0 buffer id 0..3
+  0x3f opcode
+... payload, depends on (opcode)
+
+0x00 SILENCE ()
+0x01 NOISE ()
+0x02 COPY (u8 src)
+0x03 PENV (...env)
+0x04 OSC_A (u16 rate,u8 coefc,...coefv)
+0x05 OSC_R (u8.8 rate,u8 coefc,...coefv)
+0x06 PFM_A_A (u16 rate,u12.4 modrate,u8.8 range,...env)
+0x07 PFM_R_A (u8.8 rate_mlt,u12.4 modrate,u8.8 range,...env)
+0x08 PFM_A_R (u16 rate,u8.8 modrate_mlt,u8.8 range,...env)
+0x09 PFM_R_R (u8.8 rate_mlt,u8.8 modrate_mlt,u8.8 range,...env)
+0x0a BANDPASS_A (u16 rate,u8.8 width)
+0x0b BANDPASS_R (u8.8 rate,u8.8 width)
+0x0c LOPASS (u16 rate)
+0x0d HIPASS (u16 rate)
+0x0e GAIN (u8.8 gain,u0.8 clip,u0.8 gate)
+0x0f DELAY_A (u16 ms,u0.8 dry,u0.8 wet,u0.8 store,u0.8 feedback)
+0x10 DELAY_R (u8.8 qnotes,u0.8 dry,u0.8 web,u0.8 store,u0.8 feedback)
+0x11 ADD (u8 src)
+0x12 MLT (u8.8 multiplier)
+```
 
 Text Envelope:
 

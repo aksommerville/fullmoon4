@@ -18,7 +18,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [x] Also music suspend (check violin) and disable (via settings)
 - - [x] env: Can we do nonzero initial and final levels? Will want this for eg pitch bend, fm range
 - - [x] Generic node.
-- - [ ] Tuned nodes.
+- - [x] Tuned nodes.
 - - [x] Tangled Vine and Toil And Trouble both seem to terminate early, last few notes don't play.
 - - - Snowglobe, too, the last note kind of cuts off.
 - - - Due to misinterpretted Meta events, oops.
@@ -37,7 +37,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [x] Some kind of memory fault on song repeat. Got unexpected behavior twice in a row from Toil and Trouble.
 - - - Reproducible by making a song play for the second time. eg leave area and return. Something about reusing the instrument?
 - - - Assigning 'wave' instead of 'mixwave', oops.
-- - [ ] Master trim per instrument.
+- - [x] Master trim per instrument.
 - - [ ] Fancify all instruments.
 - - - [x] 1-tangled_vine.mid
 - - - [x] 2-seven_circles.mid

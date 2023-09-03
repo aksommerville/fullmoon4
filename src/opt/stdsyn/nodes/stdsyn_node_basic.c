@@ -52,7 +52,7 @@ static void _basic_release(struct stdsyn_node *node,uint8_t velocity) {
 /* Init.
  */
  
-static int _basic_init(struct stdsyn_node *node,uint8_t velocity) {
+static int _basic_init(struct stdsyn_node *node,uint8_t velocity,const void *argv,int argc) {
   if (node->chanc!=1) return -1;
   if (!node->overwrite) return -1;
   node->update=_basic_update_mono_overwrite;

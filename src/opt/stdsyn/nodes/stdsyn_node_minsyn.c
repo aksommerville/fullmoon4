@@ -68,7 +68,7 @@ static void _minsyn_release(struct stdsyn_node *node,uint8_t velocity) {
 /* Init.
  */
  
-static int _minsyn_init(struct stdsyn_node *node,uint8_t velocity) {
+static int _minsyn_init(struct stdsyn_node *node,uint8_t velocity,const void *argv,int argc) {
   if (!node->overwrite) return -1;
   NODE->noteid=node->noteid;
   NODE->velocity=velocity;

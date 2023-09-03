@@ -104,7 +104,7 @@ static void _stdsyn_update_s16n(int16_t *v,int c,struct bigpc_synth_driver *driv
  
 static int _stdsyn_init(struct bigpc_synth_driver *driver) {
 
-  if (!(DRIVER->main=stdsyn_node_new(driver,&stdsyn_node_type_mixer,driver->chanc,1,0xff,0xff))) return -1;
+  if (!(DRIVER->main=stdsyn_node_new(driver,&stdsyn_node_type_mixer,driver->chanc,1,0xff,0xff,0,0))) return -1;
   if (
     !DRIVER->main->update||
     !DRIVER->main->event

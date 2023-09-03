@@ -14,6 +14,7 @@ struct stdsyn_node_ctlm {
   struct stdsyn_env mixenv;
   float trim;
   float pan;
+  float master;
 };
 
 #define NODE ((struct stdsyn_node_ctlm*)node)
@@ -30,9 +31,9 @@ static void _ctlm_del(struct stdsyn_node *node) {
  */
  
 static void _ctlm_note_on(struct stdsyn_node *node,uint8_t noteid,uint8_t velocity) {
-  struct stdsyn_node *voice=stdsyn_node_new(node->driver,&stdsyn_node_type_minsyn,1,1,noteid,velocity);
-  //fprintf(stderr,"%s %02x %02x, voice=%p\n",__func__,noteid,velocity,voice);
-  if (stdsyn_node_minsyn_setup(voice,NODE->wave,NODE->mixwave,&NODE->env,&NODE->mixenv,NODE->trim,NODE->pan)<0) {
+  struct stdsyn_node *voice=stdsyn_node_new(node->driver,&stdsyn_node_type_minsyn,1,1,noteid,velocity,0,0);
+  //fprintf(stderr,"%s %02x %02x, voice=%p trim=%f master=%f\n",__func__,noteid,velocity,voice,NODE->trim,NODE->master);
+  if (stdsyn_node_minsyn_setup(voice,NODE->wave,NODE->mixwave,&NODE->env,&NODE->mixenv,NODE->trim*NODE->master,NODE->pan)<0) {
     fprintf(stderr,"Failed to instantiate minsyn voice.\n");
     stdsyn_node_del(voice);
     return;
@@ -66,8 +67,9 @@ static int _ctlm_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uint
 /* Init.
  */
  
-static int _ctlm_init(struct stdsyn_node *node,uint8_t velocity) {
+static int _ctlm_init(struct stdsyn_node *node,uint8_t velocity,const void *argv,int argc) {
   node->event=_ctlm_event;
+  NODE->master=1.0f;
   NODE->trim=1.0f;
   NODE->pan=0.0f;
   return 0;
@@ -85,6 +87,7 @@ static int _ctlm_apply_instrument(struct stdsyn_node *node,const struct stdsyn_i
   NODE->mixwave=ins->mixwave;
   NODE->env=ins->env;
   NODE->mixenv=ins->mixenv;
+  NODE->master=ins->master;
   return 0;
 }
 

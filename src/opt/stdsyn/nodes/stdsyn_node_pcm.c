@@ -91,7 +91,7 @@ static void _pcm_update_stereo_add(float *v,int c,struct stdsyn_node *node) {
 /* Init.
  */
  
-static int _pcm_init(struct stdsyn_node *node,uint8_t velocity) {
+static int _pcm_init(struct stdsyn_node *node,uint8_t velocity,const void *argv,int argc) {
   if (node->chanc==1) {
     if (node->overwrite) node->update=_pcm_update_mono_overwrite;
     else node->update=_pcm_update_mono_add;

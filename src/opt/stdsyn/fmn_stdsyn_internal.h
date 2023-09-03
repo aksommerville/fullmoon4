@@ -12,6 +12,11 @@
  */
 #define STDSYN_BUFFER_SIZE 512
 
+/* The global context has so many buffers for pipes to use.
+ * Pipes can't be nested. They must live at the channel controller.
+ */
+#define STDSYN_BUFFER_COUNT 4
+
 /* 1 M samples, about 24 seconds at 44.1 kHz. (but it's the limit regardless of rate).
  * We forbid anything longer than this, as a general safety net.
  */
@@ -53,8 +58,9 @@ struct stdsyn_node_type {
   void (*del)(struct stdsyn_node *node);
   
   /* Must fail if (chanc) or (overwrite) disagreeable.
+   * (argv) will be present for nodes created by a pipe. (argc) in bytes.
    */
-  int (*init)(struct stdsyn_node *node,uint8_t velocity);
+  int (*init)(struct stdsyn_node *node,uint8_t velocity,const void *argv,int argc);
   
   /* Channel controllers must implement.
    */
@@ -120,14 +126,16 @@ struct stdsyn_node *stdsyn_node_new(
   struct bigpc_synth_driver *driver,
   const struct stdsyn_node_type *type,
   int chanc,int overwrite,
-  uint8_t noteid,uint8_t velocity
+  uint8_t noteid,uint8_t velocity,
+  const void *argv,int argc
 );
 
 struct stdsyn_node *stdsyn_node_spawn_source(
   struct stdsyn_node *parent,
   const struct stdsyn_node_type *type,
   int chanc,int overwrite,
-  uint8_t noteid,uint8_t velocity
+  uint8_t noteid,uint8_t velocity,
+  const void *argv,int argc
 );
 
 struct stdsyn_node *stdsyn_node_new_controller(
@@ -139,6 +147,9 @@ struct stdsyn_node *stdsyn_node_new_controller(
 int stdsyn_node_srcv_insert(struct stdsyn_node *parent,int p,struct stdsyn_node *child); // (p<0) to append
 int stdsyn_node_srcv_remove_at(struct stdsyn_node *parent,int p,int c);
 int stdsyn_node_srcv_remove(struct stdsyn_node *parent,struct stdsyn_node *child);
+
+// Convenience to fetch one of the global buffers. p in 0..3
+float *stdsyn_node_get_buffer(const struct stdsyn_node *node,int p);
 
 extern const struct stdsyn_node_type stdsyn_node_type_mixer; // Full bus. src are signal nodes.
 extern const struct stdsyn_node_type stdsyn_node_type_ctl3; // Multi-voice program with shared intro and outro legs.
@@ -154,7 +165,9 @@ extern const struct stdsyn_node_type stdsyn_node_type_fm; // FM oscillator.
 extern const struct stdsyn_node_type stdsyn_node_type_env; // Envelope, can accept input.
 extern const struct stdsyn_node_type stdsyn_node_type_gain; // Filter.
 extern const struct stdsyn_node_type stdsyn_node_type_delay; // Filter.
-//TODO FIR? IIR? Detune? Reverb?
+extern const struct stdsyn_node_type stdsyn_node_type_mixbuf; // Mix input with a global buffer. argv[1]: 0=input(noop) 0xff=buffer, or omit for straight add
+extern const struct stdsyn_node_type stdsyn_node_type_filter; // FIR or IIR
+extern const struct stdsyn_node_type stdsyn_node_type_mlt; // gain, but no clip or gate, just math. scalar constant operand
 
 int stdsyn_node_mixer_add_voice(struct stdsyn_node *node,struct stdsyn_node *voice);
 int stdsyn_node_pcm_set_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm);
@@ -286,9 +299,13 @@ struct stdsyn_instrument {
   struct stdsyn_env mixenv;
   
   // stdsyn features:
+  float master;
   int fmabs;
   float fmrate;
   struct stdsyn_env fmenv;
+  struct stdsyn_pipe_config *prefix;
+  struct stdsyn_pipe_config *voice;
+  struct stdsyn_pipe_config *suffix;
 };
 
 void stdsyn_instrument_del(struct stdsyn_instrument *ins);
@@ -312,6 +329,7 @@ struct bigpc_synth_driver_stdsyn {
   struct stdsyn_printer **printerv;
   int printerc,printera;
   int update_pending_framec;
+  float buffer[STDSYN_BUFFER_SIZE*STDSYN_BUFFER_COUNT];
 };
 
 #define DRIVER ((struct bigpc_synth_driver_stdsyn*)driver)

@@ -123,7 +123,9 @@ int stdsyn_env_decode(struct stdsyn_env *env,const void *src,int srcc) {
   if (velocity) len<<=1; // two edges if velocity
   len++; // and also the leading byte
   // sustain and slevel don't impact length
-  if (!src||(len>srcc)) return len;
+  if (!env||(len>srcc)) return len;
+  
+  if (!sustain) env->autorelease=1;
   
   /* To keep things clean, use generic decoder functions for level and time.
    */
