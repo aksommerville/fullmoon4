@@ -77,6 +77,10 @@ int stdsyn_res_store_add(struct stdsyn_res_store *store,int id,const void *v,int
   if (res->v) free(res->v);
   res->v=nv;
   res->c=c;
+  if (res->obj) {
+    if (store->del) store->del(res->obj);
+    res->obj=0;
+  }
   return 0;
 }
 

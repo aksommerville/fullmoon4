@@ -352,6 +352,14 @@ static int _minsyn_get_instrument_by_channel(struct bigpc_synth_driver *driver,u
   return DRIVER->instrument_by_chid[chid];
 }
 
+/* Get song position.
+ */
+ 
+static int _minsyn_get_song_position(const struct bigpc_synth_driver *driver) {
+  if (!DRIVER->song) return 0;
+  return DRIVER->song->position;
+}
+
 /* Type.
  */
  
@@ -369,4 +377,5 @@ const struct bigpc_synth_type bigpc_synth_type_minsyn={
   .pause_song=_minsyn_pause_song,
   .enable_music=_minsyn_enable_music,
   .get_instrument_by_channel=_minsyn_get_instrument_by_channel,
+  .get_song_position=_minsyn_get_song_position,
 };

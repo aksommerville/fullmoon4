@@ -234,6 +234,14 @@ struct stdsyn_printer *stdsyn_begin_print(struct bigpc_synth_driver *driver,int 
   return printer;
 }
 
+/* Get song position.
+ */
+ 
+static int _stdsyn_get_song_position(const struct bigpc_synth_driver *driver) {
+  if (!DRIVER->song) return 0;
+  return DRIVER->song->position;
+}
+
 /* Type.
  */
  
@@ -250,4 +258,5 @@ const struct bigpc_synth_type bigpc_synth_type_stdsyn={
   .pause_song=_stdsyn_pause_song,
   .enable_music=_stdsyn_enable_music,
   .event=_stdsyn_event,
+  .get_song_position=_stdsyn_get_song_position,
 };

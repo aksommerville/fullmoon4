@@ -116,6 +116,7 @@ static void _mixer_release(struct stdsyn_node *node,uint8_t velocity) {
   while (i-->0) {
     struct stdsyn_node *child=node->srcv[i];
     if (child->release) child->release(child,0x40);
+    else if (child->type==&stdsyn_node_type_pcm) ; // ignore; all 'pcm' nodes self-terminate eventually
     else if (child->event) child->event(child,child->chid,MIDI_OPCODE_NOTE_OFF,child->noteid,0x40);
     else child->defunct=1;
   }
@@ -195,7 +196,9 @@ static int _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uin
   if (chid==0x0f) {
     if ((opcode!=0x90)&&(opcode!=0x98)) return 1; // Note On or Note Once
     struct stdsyn_pcm *pcm=stdsyn_res_store_get(&NDRIVER->sounds,a);
-    if (pcm) mixer_begin_pcm(node,pcm);
+    if (pcm) {
+      mixer_begin_pcm(node,pcm);
+    }
     return 1;
   }
   

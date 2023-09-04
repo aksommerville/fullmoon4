@@ -28,6 +28,10 @@ static struct bigpc_image *_soft_init_fb(void *userdata) {
 static int _soft_init(struct bigpc_render_driver *driver,struct bigpc_video_driver *video) {
   //fprintf(stderr,"%s:%d:%s: Initializing soft renderer for video driver '%s'\n",__FILE__,__LINE__,__func__,video->type->name);
   
+  if (video->renderer!=BIGPC_RENDERER_rgb32) {
+    return -1;
+  }
+  
   // Image zero must always exist. We'll create a placeholder.
   if (!fmn_soft_image_get(driver,0,_soft_init_fb,0)) return -1;
   if (bigpc_image_ref(DRIVER->imagev[0].image)<0) return -1;
@@ -324,7 +328,6 @@ static void _soft_begin(struct bigpc_render_driver *driver,struct bigpc_image *f
    */
   if (!DRIVER->mainpixfmt) {
     DRIVER->mainpixfmt=fb->pixfmt;
-    //fprintf(stderr,"Setting mainpixfmt=%d, with %d images already existing.\n",DRIVER->mainpixfmt,DRIVER->imagec);
     struct soft_image *image=DRIVER->imagev;
     int i=DRIVER->imagec;
     for (;i-->0;image++) {
@@ -334,7 +337,6 @@ static void _soft_begin(struct bigpc_render_driver *driver,struct bigpc_image *f
 }
 
 static void _soft_end(struct bigpc_render_driver *driver,uint8_t client_result) {
-  //fprintf(stderr,"%s\n",__func__);
 }
 
 /* Type.

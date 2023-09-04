@@ -96,6 +96,7 @@ struct bigpc_synth_type {
   void (*pause_song)(struct bigpc_synth_driver *driver,int pause);
   void (*enable_music)(struct bigpc_synth_driver *driver,int enable);
   int (*get_instrument_by_channel)(struct bigpc_synth_driver *driver,uint8_t chid);
+  int (*get_song_position)(const struct bigpc_synth_driver *driver); // => roughly, how many frames into the song are we? must reset when song loops.
 };
 
 const struct bigpc_synth_type *bigpc_synth_type_by_index(int p);

@@ -417,6 +417,7 @@ int midi_file_next(struct midi_event *event,struct midi_file *file,int *trackp) 
     if (file->loop_set) {
       midi_file_loop(file);
       file->extra_delay=1;
+      file->position=0;
       return 1;
     }
     return -1;
@@ -449,6 +450,7 @@ static void midi_file_advance_tracks(struct midi_file *file,int tickc) {
 int midi_file_advance(struct midi_file *file,int framec) {
   if (!file) return -1;
   if (framec<1) return 0;
+  file->position+=framec;
   
   framec+=file->extra_delay;
   

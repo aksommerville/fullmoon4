@@ -90,11 +90,14 @@ static void fiddle_vumeter_update() {
 #if FMN_USE_inotify
  
 static int fiddle_inotify_make_complete(int status,const char *log,int logc,void *userdata) {
+  int songid=fiddle.songid;
+  int songposition=0;
 
   // Songs are borrowed by the synthesizer. That's by design and I don't want to change it.
   // But we must stop the music before reloading data.
   // Unfortunately this means we drop the song.
   if (fiddle_drivers_lock()>=0) {
+    if (fiddle.synth&&fiddle.synth->type->get_song_position) songposition=fiddle.synth->type->get_song_position(fiddle.synth);
     if (fiddle.synth&&fiddle.synth->type->play_song) fiddle.synth->type->play_song(fiddle.synth,0,0,1,0);
     fiddle_drivers_unlock();
     fiddle.songid=0;
@@ -105,6 +108,25 @@ static int fiddle_inotify_make_complete(int status,const char *log,int logc,void
     if (fiddle_drivers_lock()>=0) {
       fiddle.synth->type->event(fiddle.synth,0xff,0xff,0,0);
       fiddle_drivers_reload_data();
+      
+      if (fiddle.synth->type->play_song&&songid) {
+        const void *song=0;
+        int songc=fmn_datafile_get_any(&song,fiddle.datafile,FMN_RESTYPE_SONG,songid);
+        if (songc>0) {
+          fiddle.synth->type->play_song(fiddle.synth,song,songc,1,1);
+          fiddle.songid=songid;
+          if (songposition>0) {
+            int trashc=songposition*fiddle.synth->chanc;
+            int16_t buf[1024];
+            while (trashc>=1024) {
+              fiddle.synth->update(buf,1024,fiddle.synth);
+              trashc-=1024;
+            }
+            if (trashc>0) fiddle.synth->update(buf,trashc,fiddle.synth);
+          }
+        }
+      }
+      
       fiddle_drivers_unlock();
     }
   }

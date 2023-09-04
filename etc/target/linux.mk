@@ -49,6 +49,7 @@ ifneq (,$(linux_USE_DRM))
 endif
 ifneq (,$(linux_USE_GLX)$(linux_USE_DRM))
   linux_OPT_ENABLE+=gl2
+  linux_CC+=-DFMN_USE_gl2=1
   linux_LDPOST+=-lGL
 endif
 ifneq (,$(linux_USE_ALSA))

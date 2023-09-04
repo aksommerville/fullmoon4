@@ -13,7 +13,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] MacOS: Must sign executable.
 - [ ] MacOS: Compare iMac to MacBook builds. Are they identical? Can each run on the other machine?
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
-- [ ] stdsyn.
+- [x] stdsyn.
 - - [x] Ensure we implement music repeat (check end credits)
 - - [x] Also music suspend (check violin) and disable (via settings)
 - - [x] env: Can we do nonzero initial and final levels? Will want this for eg pitch bend, fm range
@@ -44,15 +44,15 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - [x] 2-seven_circles.mid
 - - - [x] 3-toil_and_trouble.mid
 - - - [x] 4-eye_of_newt.mid
-- - - - [ ] Tone down the rhythm guitar a little.
+- - - - [x] Tone down the rhythm guitar a little.
 - - - [x] 5-jaws_of_wrath.mid
 - - - [x] 6-truffles_in_forbidden_sauce.mid
 - - - [x] 7-seventh_roots_of_unity.mid
 - - - [x] 8-snowglobe.mid
-- - - - [ ] too loud
+- - - - [x] too loud
 - - - [x] 9-choose_a_door.mid
 - - - [x] 10-blood_for_silver.mid
-- - - - [ ] I love this, but is it too much?
+- - - - [x] I love this, but is it too much? ...toned down a lot
 - - - [x] 11-first_frost.mid
 - - - [x] 12-gloom_for_company.mid
 - - - [x] 13-nearer_the_sky.mid
@@ -62,6 +62,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - [x] It's not the new programs, it's some kind of leak -- in real play, CPU usage climbs steady
 - - - [x] CONFIRMED: ctl3 programs are leaking, but not all of them. Travel between forest and village, the village's ctl3 program leaks.
 - - - - ...because ctl3 is leaking voices. They never disappear. ...seems to be pfm at fault.
+- - [x] Not hearing the kill-werewolf sound. Is it dropping all PCMs when we stop the song?
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.
@@ -88,6 +89,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [ ] Video trailer
 - [ ] Freshen aksommerville.com landing page, link to both Plunder Squad and Full Moon.
 - [ ] Slow motion vs conveyor belts
+- [ ] glx app icon
 
 ### Links
 

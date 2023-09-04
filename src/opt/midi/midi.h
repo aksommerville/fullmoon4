@@ -54,6 +54,7 @@ struct midi_file {
   int loop_set;
   int extra_delay; // frames
   int frames_per_tick;
+  int position; // frames elapsed; resets at loop
 
   uint16_t format;
   uint16_t track_count;
