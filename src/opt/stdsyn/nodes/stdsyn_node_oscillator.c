@@ -1,8 +1,11 @@
 /* stdsyn_node_oscillator.c
  * Overwrites buffer with a tuned wave, noise, or silence.
- *
- * (argv) is a list of 8-bit coefficients.
- * Use a single zero for silence, or empty for noise.
+ * (argv) is an encoded pipe command, one of:
+ *   0x00 SILENCE ()
+ *   0x01 NOISE ()
+ *   0x04 OSC_A (u16 rate,u8 coefc,...coefv)
+ *   0x05 OSC_R (u8.8 rate,u8 coefc,...coefv)
+ *   0x13 OSC_T (u8.8 rate(qnotes),u8 coefc,...coefv)
  */
  
 #include "../fmn_stdsyn_internal.h"
@@ -36,6 +39,11 @@ static void _oscillator_update_noise(float *v,int c,struct stdsyn_node *node) {
 
 static void _oscillator_update_wave(float *v,int c,struct stdsyn_node *node) {
   stdsyn_wave_runner_update(v,c,&NODE->runner);
+  /**
+  float lo=v[0],hi=v[0];
+  for (;c-->0;v++) if (*v<lo) lo=*v; else if (*v>hi) hi=*v;
+  fprintf(stderr,"osc output %f .. %f\n",lo,hi);
+  /**/
 }
 
 /* Init with harmonics.
@@ -48,7 +56,7 @@ static int oscillator_init_harmonics(struct stdsyn_node *node,const void *argv,i
   int err=stdsyn_wave_runner_set_wave(&NODE->runner,wave);
   stdsyn_wave_del(wave);
   if (err<0) return err;
-  stdsyn_wave_runner_set_rate_hz(&NODE->runner,midi_note_frequency[node->noteid&0x7f],node->driver->rate);
+  node->update=_oscillator_update_wave;
   return 0;
 }
 
@@ -59,12 +67,39 @@ static int _oscillator_init(struct stdsyn_node *node,uint8_t velocity,const void
   if (!node->overwrite) return -1;
   if (node->chanc!=1) return -1;
   const uint8_t *ARGV=argv;
-  if (!argc) {
-    node->update=_oscillator_update_noise;
-  } else if ((argc==1)&&!ARGV[0]) {
-    node->update=_oscillator_update_silence;
-  } else {
-    if (oscillator_init_harmonics(node,argv,argc)<0) return -1;
+  if (!argc) return -1;
+  switch (ARGV[0]) {
+    case 0x00: { // SILENCE
+        node->update=_oscillator_update_silence;
+      } break;
+    case 0x01: { // NOISE
+        node->update=_oscillator_update_noise;
+      } break;
+    case 0x04: { // OSC_A
+        if (argc<4) return -1;
+        if (oscillator_init_harmonics(node,ARGV+4,argc-4)<0) return -1;
+        float rate=(ARGV[1]<<8)|ARGV[2];
+        stdsyn_wave_runner_set_rate_hz(&NODE->runner,rate,node->driver->rate);
+      } break;
+    case 0x05: { // OSC_R
+        if (argc<4) return -1;
+        if (oscillator_init_harmonics(node,ARGV+4,argc-4)<0) return -1;
+        float rate=(ARGV[1]<<8)|ARGV[2];
+        rate/=256.0f;
+        rate*=midi_note_frequency[node->noteid&0x7f];
+        stdsyn_wave_runner_set_rate_hz(&NODE->runner,rate,node->driver->rate);
+      } break;
+    case 0x13: { // OSC_T
+        if (argc<4) return -1;
+        if (oscillator_init_harmonics(node,ARGV+4,argc-4)<0) return -1;
+        float rate=(ARGV[1]<<8)|ARGV[2];
+        rate/=256.0f;
+        rate*=NDRIVER->tempo;
+        if (rate>0.0f) rate=node->driver->rate/rate;
+        else rate=0.0f;
+        stdsyn_wave_runner_set_rate_hz(&NODE->runner,rate,node->driver->rate);
+      } break;
+    default: return -1;
   }
   return 0;
 }

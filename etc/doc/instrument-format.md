@@ -345,8 +345,8 @@ Text:
 | noise    | `BUFID`
 | copy     | `DST SRC`
 | penv     | `BUFID ENV`
-| osc      | `BUFID RATE SHAPE`. RATE may be `*N` to multiply against the note's rate, in a voice.
-| pfm      | `BUFID RATE MODRATE RANGE [ENV]`
+| osc      | `BUFID RATE SHAPE`. RATE may be `*N` to multiply against the note's rate, in a voice. Or `qN` to multiply by tempo qnote.
+| pfm      | `BUFID RATE MODRATE RANGE [ENV|BUFFER]`. Final BUFFER is `bN`, a buffer to read as range multiplier.
 | bandpass | `BUFID RATE WIDTH`. RATE and WIDTH in Hz, or `*N` for RATE.
 | lopass   | `BUFID RATE`. RATE in Hz only.
 | hipass   | `BUFID RATE`. RATE in Hz only.
@@ -386,7 +386,7 @@ u8 opcode
 0x03 PENV (...env)
 0x04 OSC_A (u16 rate,u8 coefc,...coefv)
 0x05 OSC_R (u8.8 rate,u8 coefc,...coefv)
-0x06 PFM_A_A (u16 rate,u12.4 modrate,u8.8 range,...env)
+0x06 PFM_A_A (u16 rate,u12.4 modrate,u8.8 range,...env) ; (env) may also be (0xf0|bufid) to source from a buffer
 0x07 PFM_R_A (u8.8 rate_mlt,u12.4 modrate,u8.8 range,...env)
 0x08 PFM_A_R (u16 rate,u8.8 modrate_mlt,u8.8 range,...env)
 0x09 PFM_R_R (u8.8 rate_mlt,u8.8 modrate_mlt,u8.8 range,...env)
@@ -399,6 +399,7 @@ u8 opcode
 0x10 DELAY_R (u8.8 qnotes,u0.8 dry,u0.8 web,u0.8 store,u0.8 feedback)
 0x11 ADD (u8 src)
 0x12 MLT (u8.8 multiplier)
+0x13 OSC_T (u8.8 rate(qnotes),u8 coefc,...coefv)
 ```
 
 Text Envelope:

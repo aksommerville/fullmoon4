@@ -202,6 +202,7 @@ int stdsyn_wave_ref(struct stdsyn_wave *wave);
 struct stdsyn_wave *stdsyn_wave_new();
 
 struct stdsyn_wave *stdsyn_wave_from_harmonics(const uint8_t *v,int c);
+struct stdsyn_wave *stdsyn_wave_get_sine(); // =>STRONG but you'll be sharing it
 
 /* Allocate statically, all zeroes.
  */
@@ -329,6 +330,7 @@ struct bigpc_synth_driver_stdsyn {
   struct stdsyn_printer **printerv;
   int printerc,printera;
   int update_pending_framec;
+  int tempo; // frames/qnote
   float buffer[STDSYN_BUFFER_SIZE*STDSYN_BUFFER_COUNT];
 };
 

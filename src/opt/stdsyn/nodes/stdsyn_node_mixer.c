@@ -9,6 +9,8 @@ struct stdsyn_node_mixer {
   struct stdsyn_node *chanv[16];
   int fqpidv[16];
   
+  int tempo;
+  
   float buf[STDSYN_BUFFER_SIZE];
 };
 
@@ -145,6 +147,7 @@ static void _mixer_reset(struct stdsyn_node *node) {
  
 static void _mixer_tempo(struct stdsyn_node *node,int frames_per_qnote) {
   //fprintf(stderr,"%s %d f/q\n",__func__,frames_per_qnote);
+  NODE->tempo=frames_per_qnote;
 }
 
 /* End program on a given channel, and generate a new one from fqpidv.
@@ -252,6 +255,7 @@ static int _mixer_init(struct stdsyn_node *node,uint8_t velocity,const void *arg
   node->release=_mixer_release;
   node->event=_mixer_event;
   node->tempo=_mixer_tempo;
+  NODE->tempo=NDRIVER->tempo;
 
   return 0;
 }

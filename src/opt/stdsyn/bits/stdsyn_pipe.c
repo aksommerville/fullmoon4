@@ -99,6 +99,7 @@ int stdsyn_pipe_init(
       if (cfgcmd->bufid>=STDSYN_BUFFER_COUNT) return -1;
       cmd->bufid=cfgcmd->bufid;
       if (!(cmd->node=stdsyn_node_new(driver,cfgcmd->type,1,cfgcmd->overwrite,noteid,velocity,cfgcmd->argv,cfgcmd->argc))) return -1;
+      if (!cmd->node->update) return -1;
       
       if (cmd->node->release) pipe->defunct=0;
     }
@@ -110,14 +111,18 @@ int stdsyn_pipe_init(
  */
 
 void stdsyn_pipe_update(struct stdsyn_pipe *pipe,int c) {
+  int pendingc=0,defunctc=0;
   struct stdsyn_pipe_cmd *cmd=pipe->cmdv;
   int i=pipe->cmdc;
   for (;i-->0;cmd++) {
     cmd->node->update(stdsyn_node_get_buffer(cmd->node,cmd->bufid),c,cmd->node);
-    if (cmd->node->release&&cmd->node->defunct) {
-      pipe->defunct=1;
+    if (cmd->node->release) {
+      if (cmd->node->defunct) defunctc++;
+      else pendingc++;
     }
   }
+  if (pendingc) return;
+  if (defunctc) pipe->defunct=1;
 }
 
 /* Release.

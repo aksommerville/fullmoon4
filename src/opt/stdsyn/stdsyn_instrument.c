@@ -20,7 +20,8 @@ void stdsyn_instrument_del(struct stdsyn_instrument *ins) {
 static int stdsyn_pipe_decode_SILENCE(struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
   cmd->overwrite=1;
   cmd->type=&stdsyn_node_type_oscillator;
-  if (!(cmd->argv=calloc(1,1))) return -1; // a single zero means silence (NB empty does not)
+  if (!(cmd->argv=malloc(1))) return -1;
+  ((uint8_t*)cmd->argv)[0]=0x00;
   cmd->argc=1;
   return 0;
 }
@@ -28,7 +29,9 @@ static int stdsyn_pipe_decode_SILENCE(struct stdsyn_pipe_config_cmd *cmd,const u
 static int stdsyn_pipe_decode_NOISE(struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
   cmd->overwrite=1;
   cmd->type=&stdsyn_node_type_oscillator;
-  // leave (argv) empty, that means noise
+  if (!(cmd->argv=malloc(1))) return -1;
+  ((uint8_t*)cmd->argv)[0]=0x01;
+  cmd->argc=1;
   return 0;
 }
  
@@ -55,25 +58,46 @@ static int stdsyn_pipe_decode_PENV(struct stdsyn_pipe_config_cmd *cmd,const uint
   return len;
 }
  
-static int stdsyn_pipe_decode_OSC(int relative,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {//TODO
-  fprintf(stderr,"%s\n",__func__);
+// (relative<0) means relative to tempo in qnotes, (relative>0) is against note.
+static int stdsyn_pipe_decode_OSC(int relative,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
 //0x04 OSC_A (u16 rate,u8 coefc,...coefv)
 //0x05 OSC_R (u8.8 rate,u8 coefc,...coefv)
-  int srcp=-1;
+//0x13 OSC_T (u8.8 rate(qnotes),u8 coefc,...coefv)
   cmd->overwrite=1;
-  //TODO type
-  return srcp;
+  cmd->type=&stdsyn_node_type_oscillator;
+  if (srcc<3) return -1;
+  int coefc=src[2];
+  if (3+coefc>srcc) return -1;
+  cmd->argc=1+3+coefc;
+  if (!(cmd->argv=malloc(cmd->argc))) return -1;
+  memcpy(cmd->argv,src-1,cmd->argc);
+  ((uint8_t*)cmd->argv)[0]&=0x3f;
+  return 3+coefc;
 }
  
-static int stdsyn_pipe_decode_PFM(int rel_car,int rel_mod,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {//TODO
-  fprintf(stderr,"%s\n",__func__);
+static int stdsyn_pipe_decode_PFM(int rel_car,int rel_mod,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
 //0x06 PFM_A_A (u16 rate,u12.4 modrate,u8.8 range,...env)
 //0x07 PFM_R_A (u8.8 rate_mlt,u12.4 modrate,u8.8 range,...env)
 //0x08 PFM_A_R (u16 rate,u8.8 modrate_mlt,u8.8 range,...env)
 //0x09 PFM_R_R (u8.8 rate_mlt,u8.8 modrate_mlt,u8.8 range,...env)
-  int srcp=-1;
+  if (srcc<6) return -1;
+  //int carratei=(src[0]<<8)|src[1];
+  //int modratei=(src[2]<<8)|src[3];
+  //int rangei=(src[4]<<8)|src[5];
+  int srcp=6;
+  int envlen;
+  if ((srcc>=srcp+1)&&((src[srcp]&0xf0)==0xf0)) envlen=1; // buffer source
+  else envlen=stdsyn_env_decode(0,src+srcp,srcc-srcp);
+  if (envlen<0) return -1;
+  srcp+=envlen;
+  
   cmd->overwrite=1;
-  //TODO type
+  cmd->type=&stdsyn_node_type_fm;
+  cmd->argc=1+srcp; // +1 to add the opcode from src[-1]
+  if (!(cmd->argv=malloc(cmd->argc))) return -1;
+  memcpy(cmd->argv,src-1,cmd->argc);
+  (*(uint8_t*)cmd->argv)&=0x3f;
+  
   return srcp;
 }
  
@@ -132,12 +156,13 @@ static int stdsyn_pipe_decode_HIPASS(struct stdsyn_pipe_config_cmd *cmd,const ui
 }
  
 static int stdsyn_pipe_decode_GAIN(struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
-  fprintf(stderr,"%s\n",__func__);
-//0x0e GAIN (u8.8 gain,u0.8 clip,u0.8 gate)
-  int srcp=-1;
+  if (srcc<4) return -1;
   cmd->overwrite=0;
-  //TODO type
-  return srcp;
+  cmd->type=&stdsyn_node_type_gain;
+  if (!(cmd->argv=malloc(4))) return -1;
+  memcpy(cmd->argv,src,4);
+  cmd->argc=4;
+  return 4;
 }
  
 static int stdsyn_pipe_decode_DELAY(int relative,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
@@ -207,6 +232,7 @@ static int stdsyn_pipe_config_decode(struct stdsyn_pipe_config *config,const uin
       case 0x10: err=stdsyn_pipe_decode_DELAY(1,cmd,src+srcp,srcc-srcp); break;
       case 0x11: err=stdsyn_pipe_decode_ADD(cmd,src+srcp,srcc-srcp); break;
       case 0x12: err=stdsyn_pipe_decode_MLT(cmd,src+srcp,srcc-srcp); break;
+      case 0x13: err=stdsyn_pipe_decode_OSC(-1,cmd,src+srcp,srcc-srcp); break;
       default: {
           fprintf(stderr,"%s: opcode 0x%02x not implemented (%d/%d in encoded pipe)\n",__func__,opcode,srcp-1,srcc);
           return -1;

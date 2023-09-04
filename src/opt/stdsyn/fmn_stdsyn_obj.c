@@ -117,6 +117,7 @@ static int _stdsyn_init(struct bigpc_synth_driver *driver) {
   }
   
   DRIVER->qlevel=32000.0f;
+  DRIVER->tempo=driver->rate>>1; // 120 bpm by default
   
   DRIVER->instruments.driver=driver;
   DRIVER->instruments.del=(void*)stdsyn_instrument_del;
@@ -161,8 +162,9 @@ static int _stdsyn_play_song(struct bigpc_synth_driver *driver,const void *src,i
   midi_file_set_output_rate(DRIVER->song,driver->rate);
   if (loop) midi_file_set_loop_point(DRIVER->song);
   
+  DRIVER->tempo=DRIVER->song->frames_per_tick*DRIVER->song->division;
   if (DRIVER->main->tempo) {
-    DRIVER->main->tempo(DRIVER->main,DRIVER->song->frames_per_tick*DRIVER->song->division);
+    DRIVER->main->tempo(DRIVER->main,DRIVER->tempo);
   }
   
   return 0;

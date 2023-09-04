@@ -18,6 +18,12 @@ static int stdsyn_sine_require() {
   return 0;
 }
 
+struct stdsyn_wave *stdsyn_wave_get_sine() {
+  if (stdsyn_sine_require()<0) return 0;
+  if (stdsyn_wave_ref(stdsyn_wave_sine)<0) return 0;
+  return stdsyn_wave_sine;
+}
+
 /* Dumb wave object.
  */
 

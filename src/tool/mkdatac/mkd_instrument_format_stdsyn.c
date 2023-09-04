@@ -500,6 +500,7 @@ static int _instrument_pipecmd_PENV(uint8_t *dst,int dsta,void *instrument,const
  * | osc      | `BUFID RATE SHAPE`. RATE may be `*N` to multiply against the note's rate, in a voice.
  * 0x04 OSC_A (u16 rate,u8 coefc,...coefv)
  * 0x05 OSC_R (u8.8 rate,u8 coefc,...coefv)
+ * 0x13 OSC_T (u8.8 rate(qnotes),u8 coefc,...coefv)
  */
  
 static int _instrument_pipecmd_OSC(uint8_t *dst,int dsta,void *instrument,const char *src,int srcc,const char *path,int lineno) {
@@ -511,10 +512,20 @@ static int _instrument_pipecmd_OSC(uint8_t *dst,int dsta,void *instrument,const 
   int tokenc=0;
   while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
   while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
-  int absolute=1,rate;
+  int rate;
   if (tokenc&&(token[0]=='*')) {
-    dst[-1]=0x05; // OSC_R
-    absolute=0;
+    dst[-1]=0x05|(dst[-1]&0xc0); // OSC_R
+    token++;
+    tokenc--;
+    double ratef;
+    if ((sr_double_eval(&ratef,token,tokenc)<0)||(ratef<0.0f)||(ratef>256.0f)) {
+      fprintf(stderr,"%s:%d: Expected floating-point relative rate in 0..256, found '%.*s'\n",path,lineno,tokenc,token);
+      return -2;
+    }
+    rate=ratef*256.0f;
+    if (rate>0xffff) rate=0xffff;
+  } else if (token&&(token[0]=='q')) {
+    dst[-1]=0x13|(dst[-1]&0xc0); // OSC_T
     token++;
     tokenc--;
     double ratef;
@@ -633,9 +644,30 @@ static int _instrument_pipecmd_PFM(uint8_t *dst,int dsta,void *instrument,const 
     dst[dstc++]=ratei;
   } else dstc+=2;
   
+  // range
+  token=src+srcp;
+  tokenc=0;
+  while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
+  while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
+  float rangef;
+  if ((sr_float_eval(&rangef,token,tokenc)<0)||(rangef<0.0f)||(rangef>256.0f)) {
+    fprintf(stderr,"%s:%d: Expected float range 0..256, found '%.*s'\n",path,lineno,tokenc,token);
+    return -2;
+  }
+  int rangei=rangef*256.0f;
+  if (rangei>0xffff) rangei=0xffff;
+  if (dstc<=dsta-2) {
+    dst[dstc++]=rangei>>8;
+    dst[dstc++]=rangei;
+  } else dstc+=2;
+  
   // env. If absent in source, make up a constant one.
   if (dstc>dsta-29) err=29;
-  else if (srcp<srcc) err=stdsyn_env_compile(dst+dstc,src+srcp,srcc-srcp,path,lineno);
+  else if ((srcp<=srcc-2)&&(src[srcp]=='b')&&(src[srcp+1]>='0')&&(src[srcp+1]<='3')) { // buffer source (LFO range)
+    err=0;
+    if (dstc<dsta) dst[dstc]=0xf0|(src[srcp+1]-'0');
+    dstc++;
+  } else if (srcp<srcc) err=stdsyn_env_compile(dst+dstc,src+srcp,srcc-srcp,path,lineno);
   else err=stdsyn_env_compile(dst+dstc,"( 1.0 1 1.0 1 1.0 1 1.0 )",25,path,lineno);
   if (err<0) return err;
   dstc+=err;
@@ -729,7 +761,7 @@ static int _instrument_pipecmd_GAIN(uint8_t *dst,int dsta,void *instrument,const
   tokenc=0;
   while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
   while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
-  if ((sr_double_eval(&vf,token,tokenc)<1)||(vf<0.0)||(vf>256.0)) {
+  if ((sr_double_eval(&vf,token,tokenc)<0)||(vf<0.0)||(vf>256.0)) {
     fprintf(stderr,"%s:%d: Expected floating-point gain in 0..256, found '%.*s'\n",path,lineno,tokenc,token);
     return -2;
   }
@@ -744,7 +776,7 @@ static int _instrument_pipecmd_GAIN(uint8_t *dst,int dsta,void *instrument,const
     tokenc=0;
     while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
     while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
-    if ((sr_double_eval(&vf,token,tokenc)<1)||(vf<0.0)||(vf>256.0)) {
+    if ((sr_double_eval(&vf,token,tokenc)<0)||(vf<0.0)||(vf>256.0)) {
       fprintf(stderr,"%s:%d: Expected floating-point clip in 0..1, found '%.*s'\n",path,lineno,tokenc,token);
       return -2;
     }
@@ -759,7 +791,7 @@ static int _instrument_pipecmd_GAIN(uint8_t *dst,int dsta,void *instrument,const
     tokenc=0;
     while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
     while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
-    if ((sr_double_eval(&vf,token,tokenc)<1)||(vf<0.0)||(vf>256.0)) {
+    if ((sr_double_eval(&vf,token,tokenc)<0)||(vf<0.0)||(vf>256.0)) {
       fprintf(stderr,"%s:%d: Expected floating-point gate in 0..1, found '%.*s'\n",path,lineno,tokenc,token);
       return -2;
     }
@@ -880,7 +912,7 @@ static uint8_t _instrument_pipe_opcode_eval(const char *src,int srcc) {
   if ((srcc==5)&&!memcmp(src,"noise",5)) return 0x01;
   if ((srcc==4)&&!memcmp(src,"copy",4)) return 0x02;
   if ((srcc==4)&&!memcmp(src,"penv",4)) return 0x03;
-  if ((srcc==3)&&!memcmp(src,"osc",3)) return 0x04; // OSC_A; handler may change to 0x05 OSC_R
+  if ((srcc==3)&&!memcmp(src,"osc",3)) return 0x04; // OSC_A; handler may change to 0x05 OSC_R or 0x13 OSC_T
   if ((srcc==3)&&!memcmp(src,"pfm",3)) return 0x06; // PFM_A_A; handler may change to 0x07..0x09
   if ((srcc==8)&&!memcmp(src,"bandpass",8)) return 0x0a; // BANDPASS_A; handler may change to 0x0b BANDPASS_R
   if ((srcc==6)&&!memcmp(src,"lopass",6)) return 0x0c;
@@ -1018,6 +1050,21 @@ static int _instrument_line(void *instrument,const char *kw,int kwc,const char *
   return 0;
 }
 
+/* Adjust encoded minsyn envelope according to a master level.
+ */
+ 
+static void adjust_env(uint8_t *env,float master) {
+  if (!env) return;
+  float v=env[1]*master;
+  if (v<1.0f) env[1]=0;
+  else if (v>255.0f) env[1]=255;
+  else env[1]=(uint8_t)v;
+  v=env[3]*master;
+  if (v<1.0f) env[3]=0;
+  else if (v>255.0f) env[3]=255;
+  else env[3]=(uint8_t)v;
+}
+
 /* Test features after decode complete.
  */
  
@@ -1063,6 +1110,15 @@ static int _instrument_encode(struct sr_encoder *dst,void *instrument) {
     return 0;
   }
   // No need to check stdsyn_has_minsyn_features(). Empty is a valid minsyn instrument. ...i think?
+  
+  /* If they provided a master level, apply it directly to (loenv,hienv).
+   * Our "ctlm" node does have a working master level, but there's no reasonable way to reach it.
+   */
+  if (INS->masterc==3) {
+    float master=((INS->master[1]<<8)|INS->master[2])/4096.0f;
+    adjust_env(INS->loenv,master);
+    adjust_env(INS->hienv,master);
+  }
 
   uint8_t flags=0;
   if (INS->wave) flags|=0x01;

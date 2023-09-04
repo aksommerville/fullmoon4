@@ -42,8 +42,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - [x] 1-tangled_vine.mid
 - - - [x] 2-seven_circles.mid
 - - - [x] 3-toil_and_trouble.mid
-- - - [ ] 4-eye_of_newt.mid
-- - - [ ] 5-jaws_of_wrath.mid
+- - - [x] 4-eye_of_newt.mid
+- - - [x] 5-jaws_of_wrath.mid
 - - - [ ] 6-truffles_in_forbidden_sauce.mid
 - - - [ ] 7-seventh_roots_of_unity.mid
 - - - [ ] 8-snowglobe.mid
@@ -53,6 +53,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - [ ] 12-gloom_for_company.mid
 - - - [ ] 13-nearer_the_sky.mid
 - - - [ ] 14-sky-gardening.mid
+- - [ ] stdsyn is murder on the CPU. Since adding ctl3, I'm seeing CPU usage >20%. Can we optimize somewhere?
+- - - [ ] Measure performance closely.
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.

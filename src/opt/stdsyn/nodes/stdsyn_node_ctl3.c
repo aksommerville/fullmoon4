@@ -103,20 +103,18 @@ static void ctl3_update_pipes(struct stdsyn_node *node,int c) {
   float *buf0=stdsyn_node_get_buffer(node,0);
   memset(buf0,0,sizeof(float)*c);
   stdsyn_pipe_update(&NODE->prefix,c);
-  //int first=1;
   int i=NODE->voicec;
   struct stdsyn_ctl3_voice *voice=NODE->voicev+i-1;
   for (;i-->0;voice--) {
     if (voice->pipe.defunct) continue;
-    //if (first) { memcpy(NODE->prebuf,buf0,sizeof(float)*c); first=0; }
-    //else memcpy(buf0,NODE->prebuf,sizeof(float)*c);
     stdsyn_pipe_update(&voice->pipe,c);
   }
   stdsyn_pipe_update(&NODE->suffix,c);
   
   // Apply trim.
+  float trim=NODE->trim*NODE->master;
   float *v=buf0;
-  for (i=c;i-->0;v++) (*v)*=NODE->trim;
+  for (i=c;i-->0;v++) (*v)*=trim;
   //TODO pan?
 }
  
