@@ -157,7 +157,7 @@ static void _ctl3_release(struct stdsyn_node *node,uint8_t velocity) {
   for (;i-->0;voice--) {
     stdsyn_pipe_release(&voice->pipe,velocity);
   }
-  NODE->draining=1;
+  if (velocity<0x80) NODE->draining=1; // 0xff is only used for temporary pauses
 }
 
 /* Init.

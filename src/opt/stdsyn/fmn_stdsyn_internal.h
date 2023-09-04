@@ -337,7 +337,7 @@ struct bigpc_synth_driver_stdsyn {
 #define DRIVER ((struct bigpc_synth_driver_stdsyn*)driver)
 #define NDRIVER ((struct bigpc_synth_driver_stdsyn*)(node->driver))
 
-void stdsyn_release_all(struct bigpc_synth_driver *driver);
+void stdsyn_release_all(struct bigpc_synth_driver *driver,uint8_t velocity);
 void stdsyn_silence_all(struct bigpc_synth_driver *driver);
 
 /* Instantiates and installs printer, and pre-runs if an update is in progress.

@@ -155,7 +155,7 @@ static int _stdsyn_play_song(struct bigpc_synth_driver *driver,const void *src,i
     }
     midi_file_del(DRIVER->song);
     DRIVER->song=0;
-    stdsyn_release_all(driver);
+    stdsyn_release_all(driver,0x40);
   }
   if (!srcc) return 0;
   
@@ -179,7 +179,7 @@ static void _stdsyn_pause_song(struct bigpc_synth_driver *driver,int pause) {
   if (pause) {
     if (DRIVER->songpause) return;
     DRIVER->songpause=1;
-    stdsyn_release_all(driver);
+    stdsyn_release_all(driver,0xff);
   } else {
     if (!DRIVER->songpause) return;
     DRIVER->songpause=0;
@@ -193,15 +193,15 @@ static void _stdsyn_enable_music(struct bigpc_synth_driver *driver,int enable) {
   } else {
     if (!driver->music_enable) return;
     driver->music_enable=0;
-    stdsyn_release_all(driver);
+    stdsyn_release_all(driver,0x40);
   }
 }
 
 /* Events.
  */
 
-void stdsyn_release_all(struct bigpc_synth_driver *driver) {
-  if (DRIVER->main->release) DRIVER->main->release(DRIVER->main,0x40);
+void stdsyn_release_all(struct bigpc_synth_driver *driver,uint8_t velocity) {
+  if (DRIVER->main->release) DRIVER->main->release(DRIVER->main,velocity);
   else DRIVER->main->event(DRIVER->main,0xff,0xff,0,0);
 }
 

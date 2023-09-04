@@ -58,6 +58,7 @@ static void _mixer_update_mono(float *v,int c,struct stdsyn_node *node) {
 static void _mixer_update_stereo(float *v,int c,struct stdsyn_node *node) {
   /* TODO We do want full stereo support.
    * For now, just getting mono to work and expanding here.
+   * !!! If you ever do get around to this, check where we create programs -- i'm forcing everything below mixer to mono.
    */
   int framec=c>>1;
   _mixer_update_mono(v,framec,node);
@@ -99,7 +100,7 @@ static void _mixer_lfupdate(struct stdsyn_node *node) {
  */
  
 static void mixer_begin_pcm(struct stdsyn_node *node,struct stdsyn_pcm *pcm) {
-  struct stdsyn_node *child=stdsyn_node_spawn_source(node,&stdsyn_node_type_pcm,node->chanc,0,0x40,0x40,0,0);
+  struct stdsyn_node *child=stdsyn_node_spawn_source(node,&stdsyn_node_type_pcm,1/*node->chanc*/,0,0x40,0x40,0,0);
   if (!child) return;
   if (!child->update) {
     stdsyn_node_srcv_remove(node,child);
@@ -115,7 +116,7 @@ static void _mixer_release(struct stdsyn_node *node,uint8_t velocity) {
   int i=node->srcc;
   while (i-->0) {
     struct stdsyn_node *child=node->srcv[i];
-    if (child->release) child->release(child,0x40);
+    if (child->release) child->release(child,velocity);
     else if (child->type==&stdsyn_node_type_pcm) ; // ignore; all 'pcm' nodes self-terminate eventually
     else if (child->event) child->event(child,child->chid,MIDI_OPCODE_NOTE_OFF,child->noteid,0x40);
     else child->defunct=1;
@@ -123,7 +124,7 @@ static void _mixer_release(struct stdsyn_node *node,uint8_t velocity) {
   for (i=0x10;i-->0;) {
     struct stdsyn_node *child=NODE->chanv[i];
     if (!child) continue;
-    if (child->release) child->release(child,0x40);
+    if (child->release) child->release(child,velocity);
     else if (child->event) child->event(child,child->chid,MIDI_OPCODE_NOTE_OFF,child->noteid,0x40);
     else child->defunct=1;
   }
@@ -164,7 +165,7 @@ static void _mixer_change_program(struct stdsyn_node *node,uint8_t chid) {
   }
   struct stdsyn_instrument *instrument=stdsyn_res_store_get(&NDRIVER->instruments,NODE->fqpidv[chid]);
   //fprintf(stderr,"!!! %s: Instantiate program 0x%x for channel %d. instrument=%p(%d)\n",__func__,NODE->fqpidv[chid],chid,instrument,instrument?instrument->c:0);//TODO
-  struct stdsyn_node *program=stdsyn_node_new_controller(node->driver,node->chanc,0,instrument);
+  struct stdsyn_node *program=stdsyn_node_new_controller(node->driver,1/*node->chanc*/,0,instrument);
   if (!program) {
     fprintf(stderr,"!!! Failed to instantiate instrument %d\n",NODE->fqpidv[chid]);
     return;
@@ -230,7 +231,7 @@ static int _mixer_event(struct stdsyn_node *node,uint8_t chid,uint8_t opcode,uin
     while (i-->0) {
       struct stdsyn_node *voice=node->srcv[i];
       if ((voice->chid==chid)&&(voice->noteid==a)) {
-        if (voice->release) voice->release(voice,0x40);
+        if (voice->release) voice->release(voice,b);
         else if (voice->event) voice->event(voice,chid,opcode,a,b);
         else voice->defunct=1;
         voice->chid=voice->noteid=0xff;
