@@ -35,15 +35,7 @@ static void mixer_update_mono_mono(float *dst,int c,struct stdsyn_node *node,str
 /* Update.
  */
  
-static int srccpv=0;
- 
 static void _mixer_update_mono(float *v,int c,struct stdsyn_node *node) {
-  /**
-  if (node->srcc!=srccpv) {
-    fprintf(stderr," mixer srcc %d\n",node->srcc);
-    srccpv=node->srcc;
-  }
-  /**/
   memset(v,0,sizeof(float)*c);
   int i=node->srcc;
   struct stdsyn_node **p=node->srcv+i-1;

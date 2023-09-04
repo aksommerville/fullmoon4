@@ -56,7 +56,7 @@ static void _stdsyn_update_f32n(float *v,int c,struct bigpc_synth_driver *driver
         if (updframec>songframec) {
           updframec=songframec;
           updc=updframec;
-          if (driver->chanc==2) c<<=1;
+          if (driver->chanc==2) updc<<=1;
         }
       } else {
         if (event.opcode<0xf0) { // midi_file emits Meta and Sysex as events, opcode>=0xf0. Ignore them. (0xff would be interpretted as System Reset)
@@ -210,7 +210,6 @@ void stdsyn_silence_all(struct bigpc_synth_driver *driver) {
 }
  
 static void _stdsyn_event(struct bigpc_synth_driver *driver,uint8_t chid,uint8_t opcode,uint8_t a,uint8_t b) {
-  //fprintf(stderr,"%s %02x %02x %02x %02x\n",__func__,chid,opcode,a,b);
   DRIVER->main->event(DRIVER->main,chid,opcode,a,b);
 }
 

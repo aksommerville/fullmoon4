@@ -51,10 +51,6 @@ begin 9 # arpeggio and decoration
   mixwave 0xc0 0x10 0x08 0x05 0x02
   mixenv 20 0xff 20 0x80 300 .. 10 0xff 10 0x80 500
 end
-begin 10 # not actually used; reporting error
-  wave 0
-  env 0 0 0 0 0
-end
 
 #--- Toil and Trouble ---
 begin 11 # bass
@@ -209,7 +205,7 @@ begin 39 # bass
 end
 
 #--- Nearer the Sky ---
-begin 39 # lead
+begin 10 # lead
   wave 0x60 0x20 0x10 0x08
   mixwave 0x10 0x40 0x20 0x20
   mixenv 30 0xff 100 0x80 200

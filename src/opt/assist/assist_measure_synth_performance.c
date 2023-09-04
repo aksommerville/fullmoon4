@@ -77,7 +77,7 @@ static int msp_play_song_cb(uint16_t type,uint16_t qualifier,uint32_t id,const v
   double rms=sqrt(sqsum/framec);
   
   fprintf(stderr,
-    "%s song:%02d framec=%07d elapsed=%.03f peak=%05d..%05d rms=%.06f cost=%.06f\n",
+    "%s song:%02d framec=%08d elapsed=%.03f peak=%05d..%05d rms=%.06f cost=%.06f\n",
     ctx->driver->type->name,id,framec,elapsed,lo,hi,rms,elapsed/generated
   );
   

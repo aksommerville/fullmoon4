@@ -39,11 +39,6 @@ static void _oscillator_update_noise(float *v,int c,struct stdsyn_node *node) {
 
 static void _oscillator_update_wave(float *v,int c,struct stdsyn_node *node) {
   stdsyn_wave_runner_update(v,c,&NODE->runner);
-  /**
-  float lo=v[0],hi=v[0];
-  for (;c-->0;v++) if (*v<lo) lo=*v; else if (*v>hi) hi=*v;
-  fprintf(stderr,"osc output %f .. %f\n",lo,hi);
-  /**/
 }
 
 /* Init with harmonics.

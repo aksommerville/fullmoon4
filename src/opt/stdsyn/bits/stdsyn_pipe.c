@@ -122,7 +122,9 @@ void stdsyn_pipe_update(struct stdsyn_pipe *pipe,int c) {
     }
   }
   if (pendingc) return;
-  if (defunctc) pipe->defunct=1;
+  if (defunctc) {
+    pipe->defunct=1;
+  }
 }
 
 /* Release.

@@ -59,10 +59,6 @@ begin 9 # arpeggio and decoration
   mixwave 0xc0 0x10 0x08 0x05 0x02
   mixenv 20 0xff 20 0x80 300 .. 10 0xff 10 0x80 500
 end
-begin 10 # not actually used; reporting error
-  wave 0
-  env 0 0 0 0 0
-end
 
 #--- Toil and Trouble ---
 begin 11 # bass
@@ -285,13 +281,13 @@ begin 38 # lead
   master 0.150
 end
 begin 39 # bass
-  fm *0.33 5 ( 0.2 50 0.45 50 0.30* 200 0.1 .. 0.1 25 1.0 30 0.45* 400 0.0 )
+  fm *0.5 3 ( 0.2 50 0.45 50 0.30* 200 0.1 .. 0.1 25 1.0 30 0.45* 400 0.0 )
   stdenv ( 50 0.400 50 0.300* 200 .. 25 1.0 30 0.350* 400 )
   master 0.200
 end
 
 #--- Nearer the Sky ---
-begin 39 # lead
+begin 10 # lead
   prefix
     noise 2
   voice
