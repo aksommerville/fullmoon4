@@ -65,6 +65,9 @@ void fmn_render_world(uint8_t include_hero) {
  
 uint8_t fmn_render() {
   fmn_render_global.framec++;
+  if (fmn_global.slowmo_time>0.0f) fmn_render_global.animframec=fmn_render_global.framec/5;
+  else fmn_render_global.animframec=fmn_render_global.framec;
+  
   if (!fmn_render_global.fbw) {
     fmn_video_get_framebuffer_size(&fmn_render_global.fbw,&fmn_render_global.fbh);
     fmn_render_global.tilesize=fmn_render_global.fbw/FMN_COLC;

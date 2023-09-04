@@ -1,7 +1,5 @@
 #include "fmn_render_internal.h"
 
-//TODO verify
-
 /* Context.
  * There's a ton of temporary data during the render.
  * Easier to keep it here than passing around to every function.

@@ -52,7 +52,7 @@ static void fmn_render_sprite_SCARYDOOR(struct fmn_sprite *sprite) {
 static void fmn_render_sprite_SLIDESHOW(struct fmn_sprite *sprite) {
   const int16_t tilesize=fmn_render_global.tilesize;
   // Flicker between tileid and tileid0 (bv[2])
-  uint8_t tileid=(fmn_render_global.framec%3)?sprite->tileid:sprite->bv[2];
+  uint8_t tileid=(fmn_render_global.animframec%3)?sprite->tileid:sprite->bv[2];
   int16_t dstx=sprite->x*tilesize-((tilesize*3)/2);
   int16_t dsty=sprite->y*tilesize-(tilesize/2);
   int16_t srcx=(tileid&0x0f)*tilesize;
@@ -117,7 +117,7 @@ static int fmn_render_sprite_FIRENOZZLE(struct fmn_draw_mintile *vtxv,int vtxa,s
           case FMN_XFORM_SWAP|FMN_XFORM_XREV: dy=-fmn_render_global.tilesize; break;
         }
         fmn_mintile_screen(vtxv+0,dstx,dsty,sprite->tileid+2,sprite->xform);
-        uint8_t flamebase=sprite->tileid+((fmn_render_global.framec&8)?3:6);
+        uint8_t flamebase=sprite->tileid+((fmn_render_global.animframec&8)?3:6);
         dstx+=dx;
         dsty+=dy;
         fmn_mintile_screen(vtxv+1,dstx,dsty,flamebase,sprite->xform);
@@ -143,7 +143,7 @@ static int fmn_render_sprite_FIREWALL_1(
   int16_t x,int16_t y,int16_t w,int16_t h,uint8_t dir
 ) {
   int16_t tilesize=fmn_render_global.tilesize;
-  uint8_t tileid=sprite->tileid+((fmn_render_global.framec&16)?0x20:0);
+  uint8_t tileid=sprite->tileid+((fmn_render_global.animframec&16)?0x20:0);
   int16_t dxminor=0,dyminor=0,dxmajor=0,dymajor=0;
   uint8_t xform=0;
   switch (dir) {
@@ -352,7 +352,7 @@ static int fmn_render_sprite_PANDA(struct fmn_draw_mintile *vtxv,int vtxa,struct
   if (sprite->fv[1]>0.0f) {
     vtxv[0].tileid+=2;
     vtxv[1].tileid+=2;
-    if (fmn_render_global.framec&8) {
+    if (fmn_render_global.animframec&8) {
       vtxv[4].tileid+=2;
       vtxv[5].tileid+=2;
     }
@@ -384,15 +384,15 @@ static void fmn_render_sprite_TILE(struct fmn_draw_mintile *vtx,struct fmn_sprit
 }
  
 static void fmn_render_sprite_TWOFRAME(struct fmn_draw_mintile *vtx,struct fmn_sprite *sprite) {
-  fmn_mintile_world(vtx,sprite->x,sprite->y,sprite->tileid+((fmn_render_global.framec>>3)&1),sprite->xform);
+  fmn_mintile_world(vtx,sprite->x,sprite->y,sprite->tileid+((fmn_render_global.animframec>>3)&1),sprite->xform);
 }
  
 static void fmn_render_sprite_FOURFRAME(struct fmn_draw_mintile *vtx,struct fmn_sprite *sprite) {
-  fmn_mintile_world(vtx,sprite->x,sprite->y,sprite->tileid+((fmn_render_global.framec>>3)&3),sprite->xform);
+  fmn_mintile_world(vtx,sprite->x,sprite->y,sprite->tileid+((fmn_render_global.animframec>>3)&3),sprite->xform);
 }
  
 static void fmn_render_sprite_EIGHTFRAME(struct fmn_draw_mintile *vtx,struct fmn_sprite *sprite) {
-  fmn_mintile_world(vtx,sprite->x,sprite->y,sprite->tileid+((fmn_render_global.framec>>1)&7),sprite->xform);
+  fmn_mintile_world(vtx,sprite->x,sprite->y,sprite->tileid+((fmn_render_global.animframec>>1)&7),sprite->xform);
 }
 
 /* Render one sprite with one of the mintile styles.

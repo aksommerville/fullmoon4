@@ -9,8 +9,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO
 
-- [ ] Slow motion vs conveyor belts
-- [ ] glx app icon
+- [x] Slow motion vs conveyor belts: This is two separate problems: Animation and physical motion.
+- [x] glx app icon
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.
@@ -27,10 +27,12 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### Links
 
-- (Itch, Full)[https://aksommerville.itch.io/full-moon]
-- (Itch, Demo)[https://aksommerville.itch.io/full-moon-demo]
+- Itch, Full: https://aksommerville.itch.io/full-moon
+- Itch, Demo: https://aksommerville.itch.io/full-moon-demo
 - Steam: TODO
-- (My page)[https://aksommerville.com/fullmoon]
+- My page: https://aksommerville.com/fullmoon
+- Github: https://github.com/aksommerville/fullmoon4
+- ("fullmoon4"? It's not a sequel, it's the fourth attempt :P )
 
 ### Disambiguation
 

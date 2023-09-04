@@ -1,6 +1,8 @@
 #include "fmn_render_internal.h"
 #include "app/hero/fmn_hero.h"
 
+// Note that we use (framec) instead of (animframec) for animation -- Slow Motion doesn't affect the hero.
+
 /* Local context.
  * fmn_render_sprite_HERO() is non-re-entrant.
  */

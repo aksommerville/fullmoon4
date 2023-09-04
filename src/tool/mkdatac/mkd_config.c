@@ -30,8 +30,9 @@ static void mkd_config_print_help(struct mkd_config *config,const char *topic,in
     "Usage: %s --single -oOUTPUT INPUT\n"
     "   Or: %s --archive -oOUTPUT [INPUT...] [--qfilter=TYPE:QUALIFIER...]\n"
     "   Or: %s --showtoc --in=ARCHIVE [--type=TYPE] [--qualifier=QUALIFIER] [--summary] [--quiet] [--numeric]\n"
-    "   Or: %s --extract -oOUTPUT --in=ARCHIVE --type=TYPE --qualifier=QUALIFIER --id=INT\n",
-    config->exename,config->exename,config->exename,config->exename
+    "   Or: %s --extract -oOUTPUT --in=ARCHIVE --type=TYPE --qualifier=QUALIFIER --id=INT\n"
+    "   Or: %s --appicon -oOUTPUT.c INPUT.png\n",
+    config->exename,config->exename,config->exename,config->exename,config->exename
   );
   fprintf(stderr,
     "\n"

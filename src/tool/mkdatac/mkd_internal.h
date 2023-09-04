@@ -14,12 +14,14 @@
 #define MKD_CMD_archive 2
 #define MKD_CMD_showtoc 3
 #define MKD_CMD_extract 4
+#define MKD_CMD_appicon 5
 
 #define MKD_FOR_EACH_CMD \
   _(single) \
   _(archive) \
   _(showtoc) \
-  _(extract)
+  _(extract) \
+  _(appicon)
   
 #define FMN_RESTYPE_KNOWN_UNKNOWN -1
 

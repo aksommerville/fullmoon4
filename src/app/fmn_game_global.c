@@ -533,7 +533,7 @@ void fmn_game_update(float elapsed) {
   fmn_sprites_update(weather_adjusted_time,elapsed);
   fmn_hero_update(elapsed);
   fmn_sprites_sort_partial();
-  fmn_game_update_map_singletons(elapsed);
+  fmn_game_update_map_singletons(weather_adjusted_time);
 
   int8_t x,y;
   if (fmn_hero_get_quantized_position(&x,&y)) {

@@ -21,6 +21,11 @@ static int bigpc_next_comma_token(void *dstpp,int *dstcp,const char *src,int src
 /* Try initializing video with a given driver type.
  */
  
+// Generated from appicon.png
+extern const int fmn_appicon_w;
+extern const int fmn_appicon_h;
+extern const unsigned char fmn_appicon[];
+ 
 static int bigpc_video_try_init(const struct bigpc_video_type *type) {
   struct bigpc_video_delegate delegate={
     .userdata=0,
@@ -41,9 +46,9 @@ static int bigpc_video_try_init(const struct bigpc_video_type *type) {
     .h=0,
     .fullscreen=bigpc.config.video_fullscreen,
     .title="Full Moon",
-    .iconrgba=0,//TODO app icon
-    .iconw=0,
-    .iconh=0,
+    .iconrgba=fmn_appicon,
+    .iconw=fmn_appicon_w,
+    .iconh=fmn_appicon_h,
   };
   if (!(bigpc.video=bigpc_video_driver_new(type,&delegate,&config))) {
     fprintf(stderr,"%s: Error starting up video driver '%s'.\n",bigpc.exename,type->name);

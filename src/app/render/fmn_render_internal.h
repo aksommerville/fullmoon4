@@ -39,6 +39,7 @@ extern struct fmn_render_global {
   int16_t fbw,fbh;
   int16_t tilesize;
   int framec;
+  int animframec; // Same as (framec) usually, but runs slower when the Spell of Slow Motion is in effect.
   
   int map_dirty;
   
