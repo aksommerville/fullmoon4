@@ -16,6 +16,7 @@ struct assist_timestamp {
 void assist_now(struct assist_timestamp *t);
 
 // Returns exit status.
+int assist_measure_synth_performance(const char *path);
 int assist_analyze_data(const char *path);
 
 /* From source files.

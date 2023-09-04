@@ -10,7 +10,7 @@ tools_LDPOST:=-lz -lm -lpthread $(tools_LDPOST_EXTRA)
 tools_MIDDIR:=mid/tools
 tools_OUTDIR:=out/tools
 
-tools_OPT_ENABLE:=datafile png assist pcmprint http minsyn midi $(tools_OPT_EXTRA)
+tools_OPT_ENABLE:=datafile png assist pcmprint http minsyn stdsyn midi $(tools_OPT_EXTRA)
 
 tools_CC+=$(patsubst %,-DFMN_USE_%=1,$(tools_OPT_ENABLE))
 tools_OPT_PATTERN:=$(foreach U,$(tools_OPT_ENABLE),src/opt/$U/%.c)

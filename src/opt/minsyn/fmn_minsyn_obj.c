@@ -88,9 +88,9 @@ static void _minsyn_update_mono(int16_t *v,int c,struct bigpc_synth_driver *driv
         struct midi_event event={0};
         updc=midi_file_next(&event,DRIVER->song,0);
         if (updc<0) {
-          fprintf(stderr,"minsyn: song end or error\n");
           midi_file_del(DRIVER->song);
           DRIVER->song=0;
+          driver->song_finished=1;
           continue;
         }
         if (updc) { // no song event; proceed with signal
@@ -196,6 +196,7 @@ void minsyn_silence_all(struct bigpc_synth_driver *driver) {
  
 static int _minsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force,int loop) {
   if (srcc<0) return -1;
+  driver->song_finished=1;
   if (!srcc) {
     if (!DRIVER->song) return 0;
   }
@@ -209,6 +210,7 @@ static int _minsyn_play_song(struct bigpc_synth_driver *driver,const void *src,i
   }
   if (!srcc) return 0;
   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
+  driver->song_finished=0;
   midi_file_set_output_rate(DRIVER->song,driver->rate);
   if (loop) midi_file_set_loop_point(DRIVER->song);
   return 0;

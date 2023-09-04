@@ -47,9 +47,9 @@ static void _stdsyn_update_f32n(float *v,int c,struct bigpc_synth_driver *driver
       struct midi_event event={0};
       int songframec=midi_file_next(&event,DRIVER->song,0);
       if (songframec<0) {
-        fprintf(stderr,"stdsyn: song end or error\n");
         midi_file_del(DRIVER->song);
         DRIVER->song=0;
+        driver->song_finished=1;
         continue;
       }
       if (songframec) { // no song event; proceed with signal
@@ -145,6 +145,7 @@ static int _stdsyn_set_sound(struct bigpc_synth_driver *driver,int id,const void
  
 static int _stdsyn_play_song(struct bigpc_synth_driver *driver,const void *src,int srcc,int force,int loop) {
   if (srcc<0) return -1;
+  driver->song_finished=1;
   if (!srcc) {
     if (!DRIVER->song) return 0;
   }
@@ -159,6 +160,7 @@ static int _stdsyn_play_song(struct bigpc_synth_driver *driver,const void *src,i
   if (!srcc) return 0;
   
   if (!(DRIVER->song=midi_file_new_borrow(src,srcc))) return -1;
+  driver->song_finished=0;
   midi_file_set_output_rate(DRIVER->song,driver->rate);
   if (loop) midi_file_set_loop_point(DRIVER->song);
   

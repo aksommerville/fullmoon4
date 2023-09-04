@@ -3,6 +3,7 @@
 extern const struct bigpc_audio_type bigpc_audio_type_alsa;
 extern const struct bigpc_audio_type bigpc_audio_type_pulse;
 extern const struct bigpc_synth_type bigpc_synth_type_minsyn;
+extern const struct bigpc_synth_type bigpc_synth_type_stdsyn;
 
 /* Drop all drivers.
  */
@@ -82,6 +83,7 @@ static int fiddle_pcm_init() {
  */
  
 static int fiddle_minsyn_init() {
+  #if FMN_USE_minsyn
   if (!fiddle.audio) return -1;
   if (!(fiddle.synth=calloc(1,bigpc_synth_type_minsyn.objlen))) return -1;
   fiddle.synth->type=&bigpc_synth_type_minsyn;
@@ -96,14 +98,33 @@ static int fiddle_minsyn_init() {
     return -1;
   }
   return 0;
+  #else
+  return -1;
+  #endif
 }
 
-/* Initialize stdsyn (not implemented)
+/* Initialize stdsyn.
  */
  
 static int fiddle_stdsyn_init() {
-  fprintf(stderr,"TODO %s %s:%d\n",__func__,__FILE__,__LINE__);
+  #if FMN_USE_stdsyn
+  if (!fiddle.audio) return -1;
+  if (!(fiddle.synth=calloc(1,bigpc_synth_type_stdsyn.objlen))) return -1;
+  fiddle.synth->type=&bigpc_synth_type_stdsyn;
+  fiddle.synth->refc=1;
+  fiddle.synth->rate=fiddle.audio->rate;
+  fiddle.synth->chanc=fiddle.audio->chanc;
+  fiddle.synth->format=fiddle.audio->format;
+  if (fiddle.synth->type->init&&(fiddle.synth->type->init(fiddle.synth)<0)) {
+    if (fiddle.synth->type->del) fiddle.synth->type->del(fiddle.synth);
+    free(fiddle.synth);
+    fiddle.synth=0;
+    return -1;
+  }
+  return 0;
+  #else
   return -1;
+  #endif
 }
 
 /* Load content to synth.

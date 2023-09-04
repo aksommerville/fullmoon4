@@ -32,6 +32,7 @@ struct bigpc_synth_driver {
   int chanc;
   int format;
   int music_enable;
+  int song_finished;
   
   /* Generate PCM.
    * (v) is an array of the type named by (config.format) at construction.

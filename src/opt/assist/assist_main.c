@@ -21,7 +21,8 @@ int main(int argc,char **argv) {
   }
   
   // What are we being asked to assist with?
-  if (datapath) return assist_analyze_data(datapath);
+  if (1) return assist_measure_synth_performance(datapath);
+  else if (datapath) return assist_analyze_data(datapath);
   
   fprintf(stderr,"%s: No command\n",argv[0]);
   return 1;
