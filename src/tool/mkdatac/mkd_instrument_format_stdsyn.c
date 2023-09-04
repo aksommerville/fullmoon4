@@ -825,7 +825,7 @@ static int _instrument_pipecmd_DELAY(uint8_t *dst,int dsta,void *instrument,cons
   tokenc=0;
   while ((srcp<srcc)&&((unsigned char)src[srcp++]>0x20)) tokenc++;
   while ((srcp<srcc)&&((unsigned char)src[srcp]<=0x20)) srcp++;
-  if (tokenc&&(token[0]=='*')) {
+  if (tokenc&&((token[0]=='*')||(token[0]=='q'))) {
     dst[-1]++; // DELAY_A=>DELAY_R
     token++;
     tokenc--;

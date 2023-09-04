@@ -58,11 +58,7 @@ static int stdsyn_pipe_decode_PENV(struct stdsyn_pipe_config_cmd *cmd,const uint
   return len;
 }
  
-// (relative<0) means relative to tempo in qnotes, (relative>0) is against note.
 static int stdsyn_pipe_decode_OSC(int relative,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
-//0x04 OSC_A (u16 rate,u8 coefc,...coefv)
-//0x05 OSC_R (u8.8 rate,u8 coefc,...coefv)
-//0x13 OSC_T (u8.8 rate(qnotes),u8 coefc,...coefv)
   cmd->overwrite=1;
   cmd->type=&stdsyn_node_type_oscillator;
   if (srcc<3) return -1;
@@ -76,14 +72,7 @@ static int stdsyn_pipe_decode_OSC(int relative,struct stdsyn_pipe_config_cmd *cm
 }
  
 static int stdsyn_pipe_decode_PFM(int rel_car,int rel_mod,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
-//0x06 PFM_A_A (u16 rate,u12.4 modrate,u8.8 range,...env)
-//0x07 PFM_R_A (u8.8 rate_mlt,u12.4 modrate,u8.8 range,...env)
-//0x08 PFM_A_R (u16 rate,u8.8 modrate_mlt,u8.8 range,...env)
-//0x09 PFM_R_R (u8.8 rate_mlt,u8.8 modrate_mlt,u8.8 range,...env)
   if (srcc<6) return -1;
-  //int carratei=(src[0]<<8)|src[1];
-  //int modratei=(src[2]<<8)|src[3];
-  //int rangei=(src[4]<<8)|src[5];
   int srcp=6;
   int envlen;
   if ((srcc>=srcp+1)&&((src[srcp]&0xf0)==0xf0)) envlen=1; // buffer source
@@ -166,13 +155,14 @@ static int stdsyn_pipe_decode_GAIN(struct stdsyn_pipe_config_cmd *cmd,const uint
 }
  
 static int stdsyn_pipe_decode_DELAY(int relative,struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {
-  fprintf(stderr,"%s\n",__func__);
-//0x0f DELAY_A (u16 ms,u0.8 dry,u0.8 wet,u0.8 store,u0.8 feedback)
-//0x10 DELAY_R (u8.8 qnotes,u0.8 dry,u0.8 web,u0.8 store,u0.8 feedback)
-  int srcp=-1;
+  if (srcc<6) return -1;
   cmd->overwrite=0;
-  //TODO type
-  return srcp;
+  cmd->type=&stdsyn_node_type_delay;
+  if (!(cmd->argv=malloc(7))) return -1;
+  memcpy(cmd->argv,src-1,7);
+  ((uint8_t*)cmd->argv)[0]&=0x3f;
+  cmd->argc=7;
+  return 6;
 }
  
 static int stdsyn_pipe_decode_ADD(struct stdsyn_pipe_config_cmd *cmd,const uint8_t *src,int srcc) {

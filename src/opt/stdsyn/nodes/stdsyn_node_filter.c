@@ -59,7 +59,30 @@ static int filter_init_lopass(struct stdsyn_node *node,const uint8_t *argv,int a
   if (argc<3) return -1;
   int hz=(argv[1]<<8)|argv[2];
   float norm=(float)hz/(float)node->driver->rate;
-  fprintf(stderr,"TODO hipass %s:%d\n",__FILE__,__LINE__);//TODO See Blue Book p 340: Calculating Chebyshev IIR Coefficients
+  if (norm<0.0f) norm=0.0f; else if (norm>0.5f) norm=0.5f;
+  
+  /* Chebyshev low-pass filter, copied from the blue book without really understanding.
+   * _The Scientist and Engineer's Guide to Digital Signal Processing_ by Steven W Smith, p 341.
+   */
+  float rp=-cosf(M_PI/2.0f);
+  float ip=sinf(M_PI/2.0f);
+  float t=2.0f*tanf(0.5f);
+  float w=2.0f*M_PI*norm;
+  float m=rp*rp+ip*ip;
+  float d=4.0f-4.0f*rp*t+m*t*t;
+  float x0=(t*t)/d;
+  float x1=(2.0f*t*t)/d;
+  float x2=(t*t)/d;
+  float y1=(8.0f-2.0f*m*t*t)/d;
+  float y2=(-4.0f-4.0f*rp*t-m*t*t)/d;
+  float k=sinf(0.5f-w/2.0f)/sinf(0.5f+w/2.0f);
+   
+  NODE->coefv[0]=(x0-x1*k+x2*k*k)/d;
+  NODE->coefv[1]=(-2.0f*x0*k+x1+x1*k*k-2.0f*x2*k)/d;
+  NODE->coefv[2]=(x0*k*k-x1*k+x2)/d;
+  NODE->coefv[3]=(2.0f*k+y1+y1*k*k-2.0f*y2*k)/d;
+  NODE->coefv[4]=(-k*k-y1*k+y2)/d;
+  
   node->update=_filter_update_iir;
   return 0;
 }
@@ -71,7 +94,31 @@ static int filter_init_hipass(struct stdsyn_node *node,const uint8_t *argv,int a
   if (argc<3) return -1;
   int hz=(argv[1]<<8)|argv[2];
   float norm=(float)hz/(float)node->driver->rate;
-  fprintf(stderr,"TODO hipass %s:%d\n",__FILE__,__LINE__);//TODO See Blue Book p 340: Calculating Chebyshev IIR Coefficients
+  if (norm<0.0f) norm=0.0f; else if (norm>0.5f) norm=0.5f;
+  
+  /* Chebyshev high-pass filter, copied from the blue book without really understanding.
+   * Basically the same as low-pass, just (k) is different and the two leading coefficients are negative.
+   * _The Scientist and Engineer's Guide to Digital Signal Processing_ by Steven W Smith, p 341.
+   */
+  float rp=-cosf(M_PI/2.0f);
+  float ip=sinf(M_PI/2.0f);
+  float t=2.0f*tanf(0.5f);
+  float w=2.0f*M_PI*norm;
+  float m=rp*rp+ip*ip;
+  float d=4.0f-4.0f*rp*t+m*t*t;
+  float x0=(t*t)/d;
+  float x1=(2.0f*t*t)/d;
+  float x2=(t*t)/d;
+  float y1=(8.0f-2.0f*m*t*t)/d;
+  float y2=(-4.0f-4.0f*rp*t-m*t*t)/d;
+  float k=-cosf(w/2.0f+0.5f)/cosf(w/2.0f-0.5f);
+   
+  NODE->coefv[0]=-(x0-x1*k+x2*k*k)/d;
+  NODE->coefv[1]=(-2.0f*x0*k+x1+x1*k*k-2.0f*x2*k)/d;
+  NODE->coefv[2]=(x0*k*k-x1*k+x2)/d;
+  NODE->coefv[3]=-(2.0f*k+y1+y1*k*k-2.0f*y2*k)/d;
+  NODE->coefv[4]=(-k*k-y1*k+y2)/d;
+  
   node->update=_filter_update_iir;
   return 0;
 }

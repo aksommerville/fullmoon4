@@ -370,5 +370,5 @@ void fmn_menu_init_HELLO(struct fmn_menu *menu) {
   if (fmn_can_quit()) {
     opt_available|=0x08;
   }
-  fmn_play_song(5,1);//1,1);
+  fmn_play_song(1,1);
 }

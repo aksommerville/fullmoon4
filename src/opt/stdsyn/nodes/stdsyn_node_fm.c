@@ -65,6 +65,9 @@ static int _fm_init(struct stdsyn_node *node,uint8_t velocity,const void *argv,i
   if (node->chanc!=1) return -1;
   if (argc<8) return -1;
   
+  // We must call ourselves defunct immediately because we never actually terminate, but we do implement 'release'. (for FM env transition)
+  node->defunct=1;
+  
   struct stdsyn_wave *wave=stdsyn_wave_get_sine();
   if (!wave) return -1;
   if (

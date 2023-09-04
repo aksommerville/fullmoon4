@@ -38,23 +38,30 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - - Reproducible by making a song play for the second time. eg leave area and return. Something about reusing the instrument?
 - - - Assigning 'wave' instead of 'mixwave', oops.
 - - [x] Master trim per instrument.
-- - [ ] Fancify all instruments.
+- - [x] Finish all pipe stages.
+- - [x] Fancify all instruments.
 - - - [x] 1-tangled_vine.mid
 - - - [x] 2-seven_circles.mid
 - - - [x] 3-toil_and_trouble.mid
 - - - [x] 4-eye_of_newt.mid
+- - - - [ ] Tone down the rhythm guitar a little.
 - - - [x] 5-jaws_of_wrath.mid
-- - - [ ] 6-truffles_in_forbidden_sauce.mid
-- - - [ ] 7-seventh_roots_of_unity.mid
-- - - [ ] 8-snowglobe.mid
-- - - [ ] 9-choose_a_door.mid
-- - - [ ] 10-blood_for_silver.mid
-- - - [ ] 11-first_frost.mid
-- - - [ ] 12-gloom_for_company.mid
-- - - [ ] 13-nearer_the_sky.mid
-- - - [ ] 14-sky-gardening.mid
-- - [ ] stdsyn is murder on the CPU. Since adding ctl3, I'm seeing CPU usage >20%. Can we optimize somewhere?
-- - - [ ] Measure performance closely.
+- - - [x] 6-truffles_in_forbidden_sauce.mid
+- - - [x] 7-seventh_roots_of_unity.mid
+- - - [x] 8-snowglobe.mid
+- - - - [ ] too loud
+- - - [x] 9-choose_a_door.mid
+- - - [x] 10-blood_for_silver.mid
+- - - - [ ] I love this, but is it too much?
+- - - [x] 11-first_frost.mid
+- - - [x] 12-gloom_for_company.mid
+- - - [x] 13-nearer_the_sky.mid
+- - - [x] 14-sky-gardening.mid
+- - [x] stdsyn is murder on the CPU. Since adding ctl3, I'm seeing CPU usage >20%. Can we optimize somewhere?
+- - - [x] Measure performance closely.
+- - - [x] It's not the new programs, it's some kind of leak -- in real play, CPU usage climbs steady
+- - - [x] CONFIRMED: ctl3 programs are leaking, but not all of them. Travel between forest and village, the village's ctl3 program leaks.
+- - - - ...because ctl3 is leaking voices. They never disappear. ...seems to be pfm at fault.
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.
