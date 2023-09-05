@@ -11,6 +11,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [x] Slow motion vs conveyor belts: This is two separate problems: Animation and physical motion.
 - [x] glx app icon
+- [ ] iMac: Still getting an error at quit. Both cmd-Q and selecting from Hello menu.
+- [x] iMac: Avg frame rate 710.198 Hz. (it looked normal during play) ...needed to clear framec at bigpc_clock_reset, no worries.
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] Windows: Must sign executable.
 - [ ] MacOS: Must sign executable.

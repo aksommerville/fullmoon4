@@ -381,7 +381,7 @@ static int stdsyn_instrument_decode_minsyn(struct stdsyn_instrument *ins,const u
     if (!(ins->wave=stdsyn_wave_from_harmonics(src+srcp,coefc))) return -1;
     srcp+=coefc;
   } else {
-    if (!(ins->wave=stdsyn_wave_from_harmonics("\xff",1))) return -1;
+    if (!(ins->wave=stdsyn_wave_from_harmonics((void*)"\xff",1))) return -1;
   }
   
   switch (features&0x06) { // env

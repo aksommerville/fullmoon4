@@ -168,11 +168,17 @@ struct machid *machid_new(const struct machid_delegate *delegate) {
   IOHIDManagerSetDeviceMatching(machid->hidmgr,0); // match every HID
 
   IOHIDManagerScheduleWithRunLoop(machid->hidmgr,CFRunLoopGetCurrent(),MACHID_RUNLOOP_MODE);
-    
-  if (IOHIDManagerOpen(machid->hidmgr,0)<0) {
+  
+  /* This fails -536870174 on my iMac, but it works fine if we just don't call.
+   * Confirm it works on the MacBook without this.
+   *
+  int err=IOHIDManagerOpen(machid->hidmgr,0);
+  if (err<0) {
+    fprintf(stderr,"IOHIDManagerOpen: %d\n",err);
     machid_del(machid);
     return 0;
   }
+  /**/
 
   return machid;
 }

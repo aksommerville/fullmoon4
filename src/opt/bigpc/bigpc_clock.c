@@ -1,10 +1,10 @@
 #include "bigpc_clock.h"
 #include <sys/time.h>
 #include <time.h>
+#include <stdio.h>
 
 #if FMN_USE_mswin
   #include <windows.h>
-  #include <stdio.h>
 #endif
 
 // This is more about preventing 64-to-32-bit overflow than about timekeeping.
@@ -71,6 +71,7 @@ void bigpc_clock_reset(struct bigpc_clock *clock) {
   clock->skew_us=0;
   clock->underflowc=0;
   clock->overflowc=0;
+  clock->framec=0;
 }
 
 /* Start time. Should only be called once.

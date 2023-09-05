@@ -1,4 +1,4 @@
-#include "machid.h"
+#include "machid_internal.h"
 #include "opt/bigpc/bigpc_input.h"
 #include <stdio.h>
 
@@ -85,6 +85,18 @@ static int _machid_for_each_button(
   return machid_enumerate(DRIVER->machid,devid,cb,userdata);
 }
 
+static int _machid_for_each_device(
+  struct bigpc_input_driver *driver,
+  int (*cb)(struct bigpc_input_driver *driver,int devid,void *userdata),
+  void *userdata
+) {
+  int i=0,err;
+  for (;i<DRIVER->machid->devc;i++) {
+    if (err=cb(driver,DRIVER->machid->devv[i].devid,userdata)) return err;
+  }
+  return 0;
+}
+
 /* Type definition.
  */
 
@@ -97,4 +109,5 @@ const struct bigpc_input_type bigpc_input_type_machid={
   .update=_machid_update,
   .get_ids=_machid_get_ids,
   .for_each_button=_machid_for_each_button,
+  .for_each_device=_machid_for_each_device,
 };

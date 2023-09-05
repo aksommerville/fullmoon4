@@ -66,7 +66,7 @@ static int _ctlv_init(struct stdsyn_node *node,uint8_t velocity,const void *argv
   NODE->master=1.0f;
   NODE->trim=1.0f;
   NODE->pan=0.0f;
-  if (!(NODE->carrier=stdsyn_wave_from_harmonics("\xff",1))) return -1;
+  if (!(NODE->carrier=stdsyn_wave_from_harmonics((void*)"\xff",1))) return -1;
   return 0;
 }
 

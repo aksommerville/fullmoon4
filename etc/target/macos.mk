@@ -4,7 +4,7 @@
 macos_MIDDIR:=mid/macos
 macos_OUTDIR:=out/macos
 
-macos_OPT_ENABLE:=soft minsyn bigpc macos datafile png fmstore inmgr midi pcmprint macaudio machid macioc macwm gl2
+macos_OPT_ENABLE:=soft minsyn stdsyn bigpc macos datafile png fmstore inmgr midi pcmprint macaudio machid macioc macwm gl2
 
 # TODO I guess the easier thing would be to make separate app bundles for Full and Demo.
 macos_ICONS_DIR:=src/opt/macos/appicon.iconset
