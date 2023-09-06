@@ -15,8 +15,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] iMac: Avg frame rate 710.198 Hz. (it looked normal during play) ...needed to clear framec at bigpc_clock_reset, no worries.
 - [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
 - [ ] Windows: Must sign executable.
-- [ ] MacOS: Must sign executable.
-- [ ] MacOS: Compare iMac to MacBook builds. Are they identical? Can each run on the other machine?
+- [x] MacOS: Must sign executable.
+- [x] MacOS: Compare iMac to MacBook builds. Are they identical? Can each run on the other machine?
+- - Build on iMac, it claims to require MacOS 13.0. MacBook is on 10.13.
+- - whatever
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.

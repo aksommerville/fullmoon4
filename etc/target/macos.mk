@@ -35,9 +35,17 @@ $(macos_PLIST_DEMO):$(macos_PLIST_FULL);$(call PRECMD,macos) cp $< $@
 $(macos_ICON_DEMO):$(macos_ICON_FULL);$(call PRECMD,macos) cp $< $@
 $(macos_EXE_DEMO):$(macos_EXE_FULL);$(call PRECMD,macos) cp $< $@
 
-macos-all:$(macos_EXE_FULL) $(macos_DATA_FULL) $(macos_ICON_FULL) $(macos_NIB_FULL) $(macos_PLIST_FULL)
-macos-all:$(macos_EXE_DEMO) $(macos_DATA_DEMO) $(macos_ICON_DEMO) $(macos_NIB_DEMO) $(macos_PLIST_DEMO)
+macos-full-outputs:$(macos_EXE_FULL) $(macos_DATA_FULL) $(macos_ICON_FULL) $(macos_NIB_FULL) $(macos_PLIST_FULL)
+macos-demo-outputs:$(macos_EXE_DEMO) $(macos_DATA_DEMO) $(macos_ICON_DEMO) $(macos_NIB_DEMO) $(macos_PLIST_DEMO)
+macos-all:macos-full-outputs macos-demo-outputs
 macos_EXE:=$(macos_EXE_FULL)
+
+ifneq (,$(strip $(macos_CODESIGN_NAME)))
+  macos-all:macos-codesign
+  macos-codesign:macos-full-outputs macos-demo-outputs;$(call PRECMD,macos) \
+    codesign -s '$(macos_CODESIGN_NAME)' -f $(macos_BUNDLE_FULL) && \
+    codesign -s '$(macos_CODESIGN_NAME)' -f $(macos_BUNDLE_DEMO)
+endif
 
 macos_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses \
   $(macos_CC_EXTRA) \

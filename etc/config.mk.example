@@ -53,3 +53,6 @@ linux_RUN_ARGS:=
 mswin_TOOLCHAIN:=i686-w64-mingw32-
 mswin_CC_EXTRA:=
 mswin_RUN_ARGS:=
+
+# Some identifier from your keychain that we can pass to `codesign -s`, blank to leave unsigned.
+macos_CODESIGN_NAME:=

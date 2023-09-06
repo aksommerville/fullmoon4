@@ -171,9 +171,12 @@ struct machid *machid_new(const struct machid_delegate *delegate) {
   
   /* This fails -536870174 on my iMac, but it works fine if we just don't call.
    * Confirm it works on the MacBook without this.
-   *
+   * ...it does not; the MacBook needs this bit.
+   */
   int err=IOHIDManagerOpen(machid->hidmgr,0);
-  if (err<0) {
+  if (err==-536870174) {
+    fprintf(stderr,"IOHIDManagerOpen failed but proceeding anyway.\n");
+  } else if (err<0) {
     fprintf(stderr,"IOHIDManagerOpen: %d\n",err);
     machid_del(machid);
     return 0;
