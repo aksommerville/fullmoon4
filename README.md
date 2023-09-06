@@ -10,7 +10,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 ### TODO
 
 - [ ] Firewall top row can disappear, on mac at least. (point culling?) Happens on iMac, not MacBook.
-- [ ] MacOS: Hat is mapping its EAST button (1) as "btn":
+- [x] MacOS: Hat is mapping its EAST button (1) as "btn":
     device 0e8f 0003 MY-POWER CO.,LTD. 2In1 USB Joystick
       00000008 btn button USE
       00000009 btn button MENU
@@ -18,6 +18,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
       00000018 n button UP
       00000018 s button DOWN
       00000018 w button LEFT
+    - [x] Separate but nearby: Device name has an extra random character at the end, prevents re-detection. ...oops space instead of nul
 - [x] MacOS: Framebuffer is drawing a few pixels high in the window? Happens on both Macs.
 - [ ] Windows: Must sign executable.
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).

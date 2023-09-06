@@ -50,7 +50,7 @@ static void machid_dev_compose_name(struct machid_dev *dev,const char *a,const c
     memcpy(dst,a,ac);
     dst[ac]=' ';
     memcpy(dst+ac+1,b,bc);
-    dst[dstc]=' ';
+    dst[dstc]=0;
     dev->name=dst;
     return;
   }
