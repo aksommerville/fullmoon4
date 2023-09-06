@@ -41,8 +41,9 @@
 -(void)applicationWillTerminate:(NSNotification*)notification {
   macioc.terminate=1;
   if (macioc.delegate.quit) {
-    macioc.delegate.quit(macioc.delegate.userdata);
+    void (*fn)(void*)=macioc.delegate.quit;
     macioc.delegate.quit=0; // guarantee not to call more than once
+    fn(macioc.delegate.userdata);
   }
 }
 

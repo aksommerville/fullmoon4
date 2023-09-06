@@ -9,16 +9,17 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO
 
-- [x] Slow motion vs conveyor belts: This is two separate problems: Animation and physical motion.
-- [x] glx app icon
-- [ ] iMac: Still getting an error at quit. Both cmd-Q and selecting from Hello menu.
-- [x] iMac: Avg frame rate 710.198 Hz. (it looked normal during play) ...needed to clear framec at bigpc_clock_reset, no worries.
-- [ ] web incfg with hats: Coded but not tested. Validate on a Mac.
+- [ ] Firewall top row can disappear, on mac at least. (point culling?)
+- [ ] MacOS: Hat is mapping its EAST button (1) as "btn":
+device 0e8f 0003 MY-POWER CO.,LTD. 2In1 USB Joystick
+  00000008 btn button USE
+  00000009 btn button MENU
+  00000018 btn button RIGHT
+  00000018 n button UP
+  00000018 s button DOWN
+  00000018 w button LEFT
+- [ ] MacOS: Framebuffer is drawing a few pixels high in the window?
 - [ ] Windows: Must sign executable.
-- [x] MacOS: Must sign executable.
-- [x] MacOS: Compare iMac to MacBook builds. Are they identical? Can each run on the other machine?
-- - Build on iMac, it claims to require MacOS 13.0. MacBook is on 10.13.
-- - whatever
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.

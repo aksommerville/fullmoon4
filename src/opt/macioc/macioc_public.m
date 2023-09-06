@@ -42,14 +42,13 @@ int macioc_main(int argc,char **argv,const struct macioc_delegate *delegate) {
     }
   }
 
-  return NSApplicationMain(argc,(void*)argv);
+  return NSApplicationMain(argc,(void*)argv); // This never returns.
 }
 
 /* Terminate.
  */
 
 void macioc_terminate(int status) {
-  //fprintf(stderr,"%s(%d)\n",__func__,status);
   macioc.terminate=1;
   [NSApplication.sharedApplication terminate:0];
 }

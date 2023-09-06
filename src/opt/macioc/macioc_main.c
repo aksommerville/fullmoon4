@@ -54,5 +54,5 @@ int main(int argc,char **argv) {
     .quit=cb_quit,
     .update=cb_update,
   };
-  return macioc_main(argc,argv,&delegate);
+  return macioc_main(argc,argv,&delegate); // This never returns.
 }

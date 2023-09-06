@@ -306,7 +306,7 @@ export class InputManager {
     for (let i=gamepad.axes.length; i-->0; ) {
     
       if (gamepad.axes[i] === "hat") {
-        const state = this._normalizeHat(v);
+        const state = this._normalizeHat(src.axes[i]);
         if (state === gamepad.axesState) continue;
         gamepad.axesState[i] = state;
         let qualifier = "";
