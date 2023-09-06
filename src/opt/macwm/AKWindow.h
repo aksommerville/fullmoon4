@@ -6,6 +6,7 @@
 struct macwm;
 
 @interface AKWindow : NSWindow<NSWindowDelegate> {
+  CGFloat framew,frameh;
 }
 
 -(id)initWithOwner:(struct macwm*)macwm title:(const char*)title;

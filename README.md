@@ -9,16 +9,16 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO
 
-- [ ] Firewall top row can disappear, on mac at least. (point culling?)
+- [ ] Firewall top row can disappear, on mac at least. (point culling?) Happens on iMac, not MacBook.
 - [ ] MacOS: Hat is mapping its EAST button (1) as "btn":
-device 0e8f 0003 MY-POWER CO.,LTD. 2In1 USB Joystick
-  00000008 btn button USE
-  00000009 btn button MENU
-  00000018 btn button RIGHT
-  00000018 n button UP
-  00000018 s button DOWN
-  00000018 w button LEFT
-- [ ] MacOS: Framebuffer is drawing a few pixels high in the window?
+    device 0e8f 0003 MY-POWER CO.,LTD. 2In1 USB Joystick
+      00000008 btn button USE
+      00000009 btn button MENU
+      00000018 btn button RIGHT
+      00000018 n button UP
+      00000018 s button DOWN
+      00000018 w button LEFT
+- [x] MacOS: Framebuffer is drawing a few pixels high in the window? Happens on both Macs.
 - [ ] Windows: Must sign executable.
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.

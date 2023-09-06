@@ -55,6 +55,10 @@
 
   [self makeKeyAndOrderFront:0];
 
+  CGRect cr=[self contentRectForFrameRect:NSMakeRect(0.0f,0.0f,100.0f,100.0f)];
+  framew=100.0f-cr.size.width;
+  frameh=100.0f-cr.size.height;
+
   return self;
 }
 
@@ -62,9 +66,15 @@
  */
 
 -(NSSize)windowWillResize:(NSWindow*)window toSize:(NSSize)size {
-  macwm->w=size.width;
-  macwm->h=size.height;
-  if (macwm->delegate.resize) macwm->delegate.resize(macwm->delegate.userdata,(int)size.width,(int)size.height);
+  CGFloat w=size.width,h=size.height;
+  if (!macwm->fullscreen) {
+    w-=framew;
+    h-=frameh;
+  }
+  self.contentView.bounds=NSMakeRect(0,0,w,h);
+  macwm->w=w;
+  macwm->h=h;
+  if (macwm->delegate.resize) macwm->delegate.resize(macwm->delegate.userdata,(int)w,(int)h);
   return size;
 }
 
@@ -76,13 +86,19 @@
   macwm_release_keys(macwm);
 }
 
--(void)windowDidEnterFullScreen:(NSNotification*)note {
+-(void)windowWillEnterFullScreen:(id)any {
   macwm->fullscreen=1;
+}
+
+-(void)windowWillExitFullScreen:(id)any {
+  macwm->fullscreen=0;
+}
+
+-(void)windowDidEnterFullScreen:(NSNotification*)note {
   macwm_release_keys(macwm);
 }
 
 -(void)windowDidExitFullScreen:(NSNotification*)note {
-  macwm->fullscreen=0;
   macwm_release_keys(macwm);
 }
 
