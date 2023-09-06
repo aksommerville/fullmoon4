@@ -34,10 +34,12 @@ static int _gl2_init(struct bigpc_render_driver *driver,struct bigpc_video_drive
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_POINT_SPRITE);
   
+  const int fbborder=16;
   if (
-    (fmn_gl2_texture_init_rgb(&DRIVER->mainfb,video->fbw,video->fbh,0)<0)||
+    (fmn_gl2_texture_init_rgb(&DRIVER->mainfb,video->fbw+(fbborder<<1),video->fbh+(fbborder<<1),0)<0)||
     (fmn_gl2_texture_require_framebuffer(&DRIVER->mainfb)<0)
   ) return -1;
+  DRIVER->mainfb.border=fbborder;
   
   return 0;
 }
@@ -70,8 +72,8 @@ static void fmn_gl2_set_main_filter(struct bigpc_render_driver *driver,int filte
  
 static void fmn_gl2_require_output_bounds(struct bigpc_render_driver *driver) {
   if ((DRIVER->pvw==driver->w)&&(DRIVER->pvh==driver->h)) return;
-  int fbw=DRIVER->mainfb.w;
-  int fbh=DRIVER->mainfb.h;
+  int fbw=DRIVER->mainfb.w-(DRIVER->mainfb.border<<1);
+  int fbh=DRIVER->mainfb.h-(DRIVER->mainfb.border<<1);
   
   // Initial guess. Take the largest box in window that preserve's framebuffer's aspect ratio.
   int wforh=(fbw*driver->h)/fbh;
@@ -114,7 +116,9 @@ static void _gl2_end(struct bigpc_render_driver *driver,uint8_t client_result) {
   fmn_gl2_draw_decal(
     driver,
     DRIVER->dstx,DRIVER->dsty,DRIVER->dstw,DRIVER->dsth,
-    0,DRIVER->mainfb.h,DRIVER->mainfb.w,-DRIVER->mainfb.h
+    DRIVER->mainfb.border,DRIVER->mainfb.h-DRIVER->mainfb.border,
+    DRIVER->mainfb.w-(DRIVER->mainfb.border<<1),
+    -DRIVER->mainfb.h+(DRIVER->mainfb.border<<1)
   );
   
   // When the projected framebuffer is smaller than the screen, we letterbox or pillarbox.
@@ -149,8 +153,10 @@ static int8_t _gl2_video_init(
   if (hmin>192) fbh=hmin;
   else if (hmax<192) fbh=hmax;
   else fbh=192;
-  int err=fmn_gl2_texture_init_rgb(&DRIVER->mainfb,fbw,fbh,0);
+  const int fbborder=16;
+  int err=fmn_gl2_texture_init_rgb(&DRIVER->mainfb,fbw+(fbborder<<1),fbh+(fbborder<<1),0);
   if (err<0) return err;
+  DRIVER->mainfb.border=fbborder;
   
   // Force reconsideration of output bounds.
   DRIVER->pvw=DRIVER->pvh=0;
@@ -172,8 +178,8 @@ static int8_t _gl2_video_init(
  */
 
 static void _gl2_video_get_framebuffer_size(int16_t *w,int16_t *h,struct bigpc_render_driver *driver) {
-  *w=DRIVER->mainfb.w;
-  *h=DRIVER->mainfb.h;
+  *w=DRIVER->mainfb.w-(DRIVER->mainfb.border<<1);
+  *h=DRIVER->mainfb.h-(DRIVER->mainfb.border<<1);
 }
 
 static uint8_t _gl2_video_get_pixfmt(struct bigpc_render_driver *driver) {
@@ -266,7 +272,8 @@ static void _gl2_draw_decal(struct bigpc_render_driver *driver,const struct fmn_
   for (;c-->0;v++) {
     fmn_gl2_draw_decal(driver,
       v->dstx,v->dsty,v->dstw,v->dsth,
-      v->srcx,v->srcy,v->srcw,v->srch
+      v->srcx+DRIVER->texture->border,v->srcy+DRIVER->texture->border,
+      v->srcw,v->srch
     );
   }
 }
@@ -281,7 +288,8 @@ static void _gl2_draw_decal_swap(struct bigpc_render_driver *driver,const struct
   for (;c-->0;v++) {
     fmn_gl2_draw_decal_swap(driver,
       v->dstx,v->dsty,v->dstw,v->dsth,
-      v->srcx,v->srcy,v->srcw,v->srch
+      v->srcx+DRIVER->texture->border,v->srcy+DRIVER->texture->border,
+      v->srcw,v->srch
     );
   }
 }
@@ -298,7 +306,8 @@ static void _gl2_draw_recal(struct bigpc_render_driver *driver,const struct fmn_
       driver,
       &DRIVER->program_recal,
       v->dstx,v->dsty,v->dstw,v->dsth,
-      v->srcx,v->srcy,v->srcw,v->srch,
+      v->srcx+DRIVER->texture->border,v->srcy+DRIVER->texture->border,
+      v->srcw,v->srch,
       v->pixel
     );
   }
@@ -316,7 +325,8 @@ static void _gl2_draw_recal_swap(struct bigpc_render_driver *driver,const struct
       driver,
       &DRIVER->program_recal,
       v->dstx,v->dsty,v->dstw,v->dsth,
-      v->srcx,v->srcy,v->srcw,v->srch,
+      v->srcx+DRIVER->texture->border,v->srcy+DRIVER->texture->border,
+      v->srcw,v->srch,
       v->pixel
     );
   }
@@ -330,6 +340,7 @@ static void _gl2_begin(struct bigpc_render_driver *driver,struct bigpc_image *al
  */
  
 static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_driver *driver) {
+  //TODO This is going to include the border. If we're actually using this, we'll want to crop that off.
   #if FMN_USE_bcm
     // glGetTexImage not found on the Pi. This is only for taking screencaps, so not bothering to investigate.
     return -1;

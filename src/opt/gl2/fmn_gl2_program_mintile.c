@@ -5,6 +5,7 @@
  
 static const char fmn_gl2_vsrc_mintile[]=
 "uniform vec2 screensize;\n"
+"uniform vec2 screenoffset;\n"
 "uniform vec2 texsize;\n"
 "attribute vec2 apos;\n"
 "attribute float atileid;\n"
@@ -13,7 +14,8 @@ static const char fmn_gl2_vsrc_mintile[]=
 "varying vec2 vxformx;\n"
 "varying vec2 vxformy;\n"
 "void main() {\n"
-"  gl_Position=vec4((apos.x*2.0)/screensize.x-1.0,1.0-(apos.y*2.0)/screensize.y,0.0,1.0);\n"
+"  vec2 pos=apos+screenoffset;\n"
+"  gl_Position=vec4((pos.x*2.0)/screensize.x-1.0,1.0-(pos.y*2.0)/screensize.y,0.0,1.0);\n"
 "  gl_PointSize=texsize.x/16.0;\n"
 "  vtexcoord.x=floor(mod(atileid+0.5,16.0))/16.0;\n"
 "  vtexcoord.y=floor((atileid+0.5)/16.0)/16.0;\n"

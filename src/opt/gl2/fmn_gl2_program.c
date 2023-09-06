@@ -156,6 +156,7 @@ int fmn_gl2_program_init(
   if ((err=fmn_gl2_program_link(program,name))<0) return err;
   
   program->loc_screensize=glGetUniformLocation(program->programid,"screensize");
+  program->loc_screenoffset=glGetUniformLocation(program->programid,"screenoffset");
   program->loc_texsize=glGetUniformLocation(program->programid,"texsize");
   program->loc_sampler=glGetUniformLocation(program->programid,"sampler");
   

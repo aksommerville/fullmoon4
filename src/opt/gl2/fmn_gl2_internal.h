@@ -43,12 +43,14 @@ struct fmn_gl2_texture {
   GLuint texid;
   GLuint fbid; // nonzero if writeable
   int w,h;
+  int border; // Nonzero for mainfb. Included in (w,h).
 };
 
 struct fmn_gl2_program {
   GLuint programid;
   int attrc;
   GLuint loc_screensize;
+  GLuint loc_screenoffset;
   GLuint loc_texsize;
   GLuint loc_sampler;
   GLuint locv[8]; // for program-specific uniforms
@@ -70,7 +72,7 @@ void fmn_gl2_program_cleanup(struct fmn_gl2_program *program);
 
 /* (vsrc) must declare its attributes one per line, no leading space.
  * We will bind them in the order they appear, zero first.
- * All programs should have "uniform vec2 screensize;", in pixels.
+ * All programs should have "uniform vec2 screensize,screenoffset;", in pixels.
  */
 int fmn_gl2_program_init(
   struct fmn_gl2_program *program,

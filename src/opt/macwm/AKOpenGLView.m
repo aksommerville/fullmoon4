@@ -43,4 +43,8 @@
   [self.openGLContext flushBuffer];
 }
 
+-(BOOL)opaque {
+  return 1;
+}
+
 @end

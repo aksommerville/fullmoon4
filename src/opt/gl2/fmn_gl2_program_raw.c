@@ -5,11 +5,13 @@
  
 static const char fmn_gl2_raw_vsrc[]=
 "uniform vec2 screensize;\n"
+"uniform vec2 screenoffset;\n"
 "attribute vec2 apos;\n"
 "attribute vec4 acolor;\n"
 "varying vec4 vcolor;\n"
 "void main() {\n"
-"  gl_Position=vec4((apos.x*2.0)/screensize.x-1.0,1.0-(apos.y*2.0)/screensize.y,0.0,1.0);\n"
+"  vec2 pos=apos+screenoffset;\n"
+"  gl_Position=vec4((pos.x*2.0)/screensize.x-1.0,1.0-(pos.y*2.0)/screensize.y,0.0,1.0);\n"
 "  vcolor=acolor;\n"
 "}\n";
 

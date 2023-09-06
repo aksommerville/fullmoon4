@@ -16,8 +16,10 @@ void fmn_gl2_program_use(struct bigpc_render_driver *driver,struct fmn_gl2_progr
     while (i-->0) glEnableVertexAttribArray(i);
     if (DRIVER->framebuffer) {
       glUniform2f(program->loc_screensize,DRIVER->framebuffer->w,DRIVER->framebuffer->h);
+      glUniform2f(program->loc_screenoffset,DRIVER->framebuffer->border,DRIVER->framebuffer->border);
     } else {
       glUniform2f(program->loc_screensize,driver->w,driver->h);
+      glUniform2f(program->loc_screenoffset,0.0f,0.0f);
     }
     if (DRIVER->texture) {
       glUniform2f(program->loc_texsize,DRIVER->texture->w,DRIVER->texture->h);
@@ -195,12 +197,14 @@ int fmn_gl2_framebuffer_use_object(struct bigpc_render_driver *driver,struct fmn
     glBindFramebuffer(GL_FRAMEBUFFER,framebuffer->fbid);
     if (DRIVER->program) {
       glUniform2f(DRIVER->program->loc_screensize,framebuffer->w,framebuffer->h);
+      glUniform2f(DRIVER->program->loc_screenoffset,framebuffer->border,framebuffer->border);
     }
     glViewport(0,0,framebuffer->w,framebuffer->h);
   } else {
     glBindFramebuffer(GL_FRAMEBUFFER,0);
     if (DRIVER->program) {
       glUniform2f(DRIVER->program->loc_screensize,driver->w,driver->h);
+      glUniform2f(DRIVER->program->loc_screenoffset,0.0f,0.0f);
     }
     glViewport(0,0,driver->w*DRIVER->viewscale,driver->h*DRIVER->viewscale);
   }
@@ -225,14 +229,17 @@ int fmn_gl2_framebuffer_use_imageid(struct bigpc_render_driver *driver,int image
     p=-p-1;
     // If there is an image resource, load it just like other textures.
     // The client is probably going to overwrite that content, but it's still a sensible place to start.
-    // If it does not exist -- more likely -- then create it, with the main framebuffer bounds.
+    // If it does not exist -- more likely -- then create it, with the main framebuffer bounds and border.
     const void *serial=0;
     int serialc=fmn_gl2_fetch_image(&serial,driver,imageid);
     struct fmn_gl2_texture *texture=fmn_gl2_add_texture(driver,p,imageid);
     if (!texture) return -1;
     int err;
     if (serialc>0) err=fmn_gl2_texture_init(texture,serial,serialc);
-    else err=fmn_gl2_texture_init_rgba(texture,DRIVER->mainfb.w,DRIVER->mainfb.h,0);
+    else {
+      err=fmn_gl2_texture_init_rgba(texture,DRIVER->mainfb.w,DRIVER->mainfb.h,0);
+      texture->border=DRIVER->mainfb.border;
+    }
     if (err<0) {
       fmn_gl2_texture_remove(driver,p);
       return -1;
