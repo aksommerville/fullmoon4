@@ -81,17 +81,7 @@
 -(void)windowDidResize:(id)dummy {
   // What we set at windowWillResize might get fudged by the WM after. It is important that macwm->(w,h) be at least as large as the contentView.
   int changed=0;
-  if (self.contentView.bounds.size.width>macwm->w) {
-    macwm->w=self.contentView.bounds.size.width+0.9999f;
-    changed=1;
-  }
-  if (self.contentView.bounds.size.height>macwm->h) {
-    macwm->h=self.contentView.bounds.size.height+0.9999f;
-    changed=1;
-  }
-  if (macwm->delegate.resize&&changed) {
-    macwm->delegate.resize(macwm->delegate.userdata,macwm->w,macwm->h);
-  }
+  self.contentView.frame=NSMakeRect(0.0f,0.0f,macwm->w,macwm->h);
 }
 
 -(void)windowWillClose:(NSWindow*)window {
