@@ -9,6 +9,14 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO
 
+- [ ] I believe gameplay, graphics, and audio are complete, at v0.30. Confirm with a thorough playthrough on all devices, Demo and Full.
+- - [ ] iMac
+- - [ ] MacBook
+- - [ ] Pi
+- - [ ] VCS
+- - [ ] Nuc
+- - [ ] Dell
+- - [ ] Asus
 - [x] Windows: Must sign executable. ...don't bother, it's a scam
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
@@ -17,8 +25,8 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] Steam
 - - [ ] Must reach "Coming Soon" two weeks ahead of release -- 2023-09-15
 - - [ ] Can only accept Zip uploads. Update pack script.
-- [ ] PDF manual. Any point doing that?
-- [ ] Video trailer
+- [x] PDF manual. Any point doing that? ...no
+- [x] Video trailer ...i give up
 - [ ] Freshen aksommerville.com landing page, link to both Plunder Squad and Full Moon.
 
 ### Links
