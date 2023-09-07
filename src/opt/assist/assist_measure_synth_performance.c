@@ -32,9 +32,13 @@ static void msp_context_cleanup(struct msp_context *ctx) {
  */
  
 static double msp_now() {
-  struct timespec tv={0};
-  clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tv);
-  return (double)tv.tv_sec+(double)tv.tv_nsec/1000000000.0;
+  #if FMN_USE_mswin
+    return 0.0;
+  #else
+    struct timespec tv={0};
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&tv);
+    return (double)tv.tv_sec+(double)tv.tv_nsec/1000000000.0;
+  #endif
 }
 
 /* Play a song and record how long it takes, redlining the CPU.

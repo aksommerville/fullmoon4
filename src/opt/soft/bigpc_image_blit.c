@@ -150,19 +150,30 @@ static void bigpc_image_blit_noscale(
     case BIGPC_IMAGE_PIXFMT_ABGR: case BIGPC_IMAGE_PIXFMT_XBGR: alphashift=24; break;
   }
   int16_t srcdxx=1,srcdyx=0,srcdxy=0,srcdyy=1;
-  if (xform&FMN_XFORM_XREV) {
-    srcdxx=-1;
-    srcx+=w-1;
-  }
-  if (xform&FMN_XFORM_YREV) {
-    srcdyy=-1;
-    srcy+=h-1;
-  }
-  if (xform&FMN_XFORM_SWAP) {
-    srcdyx=srcdyy;
-    srcdxy=srcdxx;
-    srcdyy=0;
-    srcdxx=0;
+  switch (xform) {
+    case FMN_XFORM_XREV: srcdxx=-1; srcx+=w-1; break;
+    case FMN_XFORM_YREV: srcdyy=-1; srcy+=h-1; break;
+    case FMN_XFORM_XREV|FMN_XFORM_YREV: srcdxx=-1; srcx+=w-1; srcdyy=-1; srcy+=h-1; break;
+    case FMN_XFORM_SWAP: srcdyx=srcdyy; srcdxy=srcdxx; srcdxx=0; srcdyy=0; break;
+    case FMN_XFORM_SWAP|FMN_XFORM_XREV: {
+        srcdxx=srcdyy=0;
+        srcdxy=1;
+        srcdyx=-1;
+        srcx+=w-1;
+      } break;
+    case FMN_XFORM_SWAP|FMN_XFORM_YREV: {
+        srcdxx=srcdyy=0;
+        srcdxy=-1;
+        srcdyx=1;
+        srcy+=h-1;
+      } break;
+    case FMN_XFORM_SWAP|FMN_XFORM_XREV|FMN_XFORM_YREV: {
+        srcdxx=srcdyy=0;
+        srcdxy=-1;
+        srcdyx=-1;
+        srcx+=w-1;
+        srcy+=h-1;
+      } break;
   }
   if (alphashift<0) {
     int16_t yi=0; for (;yi<h;yi++) {

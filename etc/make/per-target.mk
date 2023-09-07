@@ -43,7 +43,10 @@ endif
 
 ifneq (,$(strip $($1_EXE)))
   $1-all:$($1_EXE)
-  $($1_EXE):$$($1_OFILES);$$(call PRECMD,$1) $$($1_LD) -o$$@ $$^ $$($1_LDPOST)
+  $1_LDCMD_FILE:=$($1_MIDDIR)/ldcmd
+  $$(file > $$($1_LDCMD_FILE),$$($1_OFILES))
+  $($1_EXE):$$($1_OFILES);$$(call PRECMD,$1) $$($1_LD) -o$$@ @$$($1_LDCMD_FILE) $$($1_LDPOST)
+  #$($1_EXE):$$($1_OFILES);$$(call PRECMD,$1) $$($1_LD) -o$$@ $$^ $$($1_LDPOST)
 endif
 
 endef

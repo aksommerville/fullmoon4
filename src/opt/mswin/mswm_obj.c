@@ -1,4 +1,5 @@
 #include "mswm_internal.h"
+#include "app/fmn_platform.h"
 
 struct bigpc_video_driver *mswm_global_driver=0;
 
@@ -274,7 +275,7 @@ static void _mswm_set_fullscreen(struct bigpc_video_driver *driver,int fullscree
  
 static void _mswm_set_scaler(struct bigpc_video_driver *driver,int scaler) {
   glBindTexture(GL_TEXTURE_2D,DRIVER->texid);
-  int v=linear_filter?GL_LINEAR:GL_NEAREST;
+  int v=(scaler==FMN_SCALER_BLURRY)?GL_LINEAR:GL_NEAREST;
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,v);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,v);
 }

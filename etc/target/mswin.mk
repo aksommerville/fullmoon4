@@ -10,7 +10,7 @@ mswin_OUTDIR:=out/mswin
 
 # Can add stdsyn here, if I ever write it.
 # Would like to have gl2 but will need mingw support.
-mswin_OPT_ENABLE:=soft minsyn bigpc genioc mswin datafile png fmstore inmgr midi pcmprint
+mswin_OPT_ENABLE:=soft minsyn stdsyn bigpc genioc mswin datafile png fmstore inmgr midi pcmprint
 
 mswin_EXE:=$(mswin_OUTDIR)/fullmoon.exe
 mswin_DATA_FULL:=$(mswin_OUTDIR)/data-full
