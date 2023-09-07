@@ -9,9 +9,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO
 
-- [x] Soft render: Clipped and transformed tiles screwy. See clipping edge of west-facing firewall, eg castle basement.
-- - All (YREV|SWAP). bigpc_image_blit.c:bigpc_image_blit_noscale
-- [ ] Windows: Must sign executable.
+- [x] Windows: Must sign executable. ...don't bother, it's a scam
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [x] Msys seems to have a command line length limit and I think our link command just breached it.

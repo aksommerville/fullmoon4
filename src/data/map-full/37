@@ -16,11 +16,11 @@ neighbore 18
 neighborn 38
 neighborw 42
 neighbors 89
-door 1 2 39 -1 -1
-door 3 2 39 -1 -1
-door 8 2 39 -1 -1
-door 10 2 39 -1 -1
-door 15 2 39 -1 -1
-door 17 2 39 -1 -1
+door 1 1 39 -1 -1
+door 4 1 39 -1 -1
+door 8 1 39 -1 -1
+door 10 1 39 -1 -1
+door 14 1 39 -1 -1
+door 17 1 39 -1 -1
 song gloom_for_company
 callback ev:LOADED cb:swamp_maze gs:swamp_maze_3bit
