@@ -69,11 +69,15 @@ static void eatwq_explode(int16_t x,int16_t y) {
   fmn_sound_effect(FMN_SFX_BREAK_BONES);
   
   // Kill plants.
+  int poisoned=0;
   const int16_t radius=6;
   int i=eatwq.plantc;
   struct eatwq_plant *plant=eatwq.plantv+i-1;
   for (;i-->0;plant--) {
-    if (plant->tileid==0xe2) continue; // poison; not explodable
+    if (plant->tileid==0xe2) { // poison; not explodable
+      poisoned=1;
+      continue;
+    }
     if (plant->x<x-radius) continue;
     if (plant->x>x+radius) continue;
     if (plant->y<y-radius) continue;
@@ -93,7 +97,7 @@ static void eatwq_explode(int16_t x,int16_t y) {
   }
   
   // Poison earth?
-  if (y>=EATWQ_FB_H-12) {
+  if ((y>=EATWQ_FB_H-12)&&(x>=0)&&(x<EATWQ_FB_W)&&!poisoned) {
     if (eatwq.plantc<EATWQ_PLANT_LIMIT) {
       plant=eatwq.plantv+eatwq.plantc++;
       plant->x=x;

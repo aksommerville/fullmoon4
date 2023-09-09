@@ -8,7 +8,7 @@
 #define EATWQ_FB_H 96
 
 #define EATWQ_DROP_LIMIT 32
-#define EATWQ_PLANT_LIMIT 16
+#define EATWQ_PLANT_LIMIT 32
 #define EATWQ_BOOM_LIMIT 8
 
 extern struct eatwq {
