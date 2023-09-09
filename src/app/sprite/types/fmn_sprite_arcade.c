@@ -76,7 +76,8 @@ static int16_t _arcade_interact(struct fmn_sprite *sprite,uint8_t itemid,uint8_t
 /* Hero collision.
  */
  
-static void _arcade_pressure(struct fmn_sprite *sprite,struct fmn_sprite *pressure,uint8_t dir) {
+static void _arcade_pressure(struct fmn_sprite *sprite,struct fmn_sprite *presser,uint8_t dir) {
+  if (!presser||(presser->controller!=FMN_SPRCTL_hero)) return;
   if (blackout>0.0f) return;
   arcade_context.creditc=fmn_gs_get_word(gsbit_coinc,3);
   if (!arcade_context.creditc) return;
@@ -91,6 +92,13 @@ static void _arcade_pressure(struct fmn_sprite *sprite,struct fmn_sprite *pressu
  
 static void _arcade_init(struct fmn_sprite *sprite) {
   sprite->x+=0.5f; // cabinet is 2 columns wide; we should be placed on the left.
+  sprite->radius=0.0f;
+  sprite->hbw=1.0f;
+  sprite->hbe=1.0f;
+  sprite->hbn=0.5f;
+  sprite->hbs=0.5f;
+  sprite->physics=FMN_PHYSICS_SPRITES;
+  sprite->invmass=1.0f;
   int coinc=fmn_gs_get_word(gsbit_coinc,3);
   if (coinc) arcade_power_on(sprite);
 }

@@ -13,7 +13,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [ ] I believe gameplay, graphics, and audio are complete, at v0.30. Confirm with a thorough playthrough on all devices, Demo and Full.
 - - [x] iMac 3:15.498 9:46.619
 - - [x] MacBook 3:05.121 8:33.225
-- - [ ] Pi
+- - [x] Pi 3:06.276 8:54.414
 - - [ ] VCS
 - - [ ] Nuc
 - - [ ] Dell
