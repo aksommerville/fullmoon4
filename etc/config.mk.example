@@ -8,6 +8,11 @@
 # Who are we building for? There must be `etc/target/{}.mk` for each.
 TARGETS:=web generic
 
+# We prefer to compose the `ld` command line in a temp file, here in make.
+# That is required for Windows; otherwise the command is too long.
+# But on Macs, apparently `$(file > PATH,CONTENT)` doesn't work. So skip it.
+MAKE_FILE_COMMAND_BROKEN:=
+
 # npm install -g http-server
 HTTP_SERVER_CMD:=http-server -a localhost -p 8080 -c-1
 
