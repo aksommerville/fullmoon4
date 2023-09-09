@@ -15,7 +15,7 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - - [x] MacBook 3:05.121 8:33.225
 - - [x] Pi 3:06.276 8:54.414
 - - [ ] VCS
-- - [ ] Nuc
+- - [x] Nuc 3:02.859 8:46.005
 - - [ ] Dell
 - - [ ] Asus
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
