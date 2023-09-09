@@ -12,14 +12,15 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 - [x] The new ldcmd that I assumed was broken on Mac; it's only failing on clean builds due to MIDDIR not created yet. etc/make/per-target.mk
 - - Make MIDDIR and OUTDIR at the top level, from Makefile, before anything else. Easy!
 - [ ] Re-test on iMac; I changed some macwm window resizing logic.
-- [ ] I believe gameplay, graphics, and audio are complete, at v0.3.0. Confirm with a thorough playthrough on all devices, Demo and Full.
+- [x] I believe gameplay, graphics, and audio are complete, at v0.3.0. Confirm with a thorough playthrough on all devices, Demo and Full.
 - - [x] iMac 3:15.498 9:46.619
 - - [x] MacBook 3:05.121 8:33.225
 - - [x] Pi 3:06.276 8:54.414
 - - [x] VCS 3:21.450 9:03.565
 - - [x] Nuc 3:02.859 8:46.005
-- - [ ] Dell
-- - [ ] Asus
+- - [x] Dell 3:02.793 8:12.546
+- - [x] Asus 2:58.524 8:29.773
+- - [x] Web 2:54.989 8:01.584
 - [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
 - [ ] Art and music for info site.
@@ -47,3 +48,10 @@ There are other things called Full Moon, which are not this game.
 - Claude Leroy's nice-looking card game: https://boardgamegeek.com/boardgame/136523/full-moon
 - Many other google hits containing "Full Moon". But hey, it's a reasonably common phrase.
 - I think we're OK step-on-toes-wise.
+
+### World Records
+
+- Demo Any%
+- Demo 100%: 2:54.989 AK Web
+- Full Any%
+- Full 100%: 8:01.584 AK Web
