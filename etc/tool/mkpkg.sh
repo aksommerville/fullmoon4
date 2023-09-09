@@ -92,7 +92,7 @@ single_target() { # $1=TARGET
     assist) ;; # don't do anything for 'assist'
   
     generic) linuxy $1 ;;
-    linux) linuxy $1 ;;
+    linux) linuxy $1 "" .zip ;;
     raspi) linuxy $1 ;;
     mswin) linuxy $1 .exe .zip ;;
   

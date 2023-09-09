@@ -14,9 +14,9 @@
 - [ ] Build artifacts. `make pkg`, then upload to S3.
 - - [ ] Web - Nuc
 - - [ ] Linux - Nuc
-- - [ ] Windows
-- - [ ] MacOS - either machine?
-- - [ ] Pi
+- - [ ] Windows - Dell
+- - [ ] MacOS - iMac. MacBook can't sign.
+- - [ ] Pi - ssh from Nuc, and scp artifacts back to Nuc.
 - [ ] Confirm all builds present on aksommerville.com
 - [ ] Deploy info site: `make deploy` from Nuc.
 - [ ] Update Itch Demo
