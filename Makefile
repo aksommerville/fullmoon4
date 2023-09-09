@@ -19,6 +19,7 @@ include etc/make/tools.mk
 
 include etc/make/per-target.mk
 $(foreach T,$(TARGETS), \
+  $(shell mkdir -p mid/$T out/$T) \
   $(eval include etc/target/$T.mk) \
   $(eval $(call TARGET_RULES,$T)) \
 )
