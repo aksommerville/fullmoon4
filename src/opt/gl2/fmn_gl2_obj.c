@@ -334,6 +334,8 @@ static void _gl2_draw_recal_swap(struct bigpc_render_driver *driver,const struct
 
 static void _gl2_begin(struct bigpc_render_driver *driver,struct bigpc_image *always_null) {
   fmn_gl2_framebuffer_use_object(driver,&DRIVER->mainfb);
+  glClearColor(0.0f,0.0f,0.0f,1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
 /* Read framebuffer.

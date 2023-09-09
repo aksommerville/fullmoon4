@@ -71,7 +71,7 @@
     w-=framew;
     h-=frameh;
   }
-  self.contentView.bounds=NSMakeRect(0,0,w,h);
+  self.contentView.frame=NSMakeRect(0,0,w,h);
   macwm->w=w;
   macwm->h=h;
   if (macwm->delegate.resize) macwm->delegate.resize(macwm->delegate.userdata,(int)w,(int)h);

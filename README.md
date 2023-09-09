@@ -11,7 +11,10 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 - [x] The new ldcmd that I assumed was broken on Mac; it's only failing on clean builds due to MIDDIR not created yet. etc/make/per-target.mk
 - - Make MIDDIR and OUTDIR at the top level, from Makefile, before anything else. Easy!
-- [ ] Re-test on iMac; I changed some macwm window resizing logic.
+- - ...god damn it, no it seems it actually is broken on the iMac. `$$(file > PATH,CONTENT)` doesn't create a file.
+- [x] Re-test on iMac; I changed some macwm window resizing logic.
+- - ...of course it's fucking broken again
+- [ ] Re-test on MacBook; smash both Macs with baseball bat if it doesn't render right.
 - [x] I believe gameplay, graphics, and audio are complete, at v0.3.0. Confirm with a thorough playthrough on all devices, Demo and Full.
 - - [x] iMac 3:15.498 9:46.619
 - - [x] MacBook 3:05.121 8:33.225
