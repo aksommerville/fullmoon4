@@ -178,6 +178,13 @@ footer {
   padding: 0.5em;
 }
 
-.LinksUi .packages {
+.LinksUi .filterRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+
+.LinksUi .mainTable {
   width: 100%;
 }

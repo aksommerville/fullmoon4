@@ -19,7 +19,7 @@ export class HintsUi {
     this.element.innerHTML = "";
     
     this.dom.spawn(this.element, "H2", "General Advice");
-    this.dom.spawn(this.element, "DIV", ["advice"], "Pencil and paper are recommended. For the demo version, it shouldn't matter so much.");
+    this.dom.spawn(this.element, "DIV", ["advice"], "Pencil and paper are recommended.");
     this.dom.spawn(this.element, "DIV", ["advice"], "Remember the Home Spell; you might need it if you get trapped.");
     this.dom.spawn(this.element, "DIV", ["advice"], "It's also always safe to End Game and then Continue -- you'll start at the nearest teleport point.");
     this.dom.spawn(this.element, "DIV", ["advice"], "Lost? Throw seeds on the ground and a bird will show you where to go.");
@@ -34,7 +34,7 @@ export class HintsUi {
     this.dom.spawn(this.element, "H2", "Do I actually need to do all the things?");
     this.dom.spawn(this.element, "DIV", ["advice"], "No.");
     this.dom.spawn(this.element, "DIV", ["advice"], "The demo can technically be completed with just two items.");
-    this.dom.spawn(this.element, "DIV", ["advice"], "Full version, it's more like ten. (Haven't finalized that yet...)");
+    this.dom.spawn(this.element, "DIV", ["advice"], "Full version, it's more like ten.");
     
     this.dom.spawn(this.element, "H2", "How many spells and songs are there?");
     this.dom.spawn(this.element, "DIV", ["advice"], "Three songs, seven teleport spells, and six other spells.");

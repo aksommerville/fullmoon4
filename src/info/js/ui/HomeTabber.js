@@ -40,6 +40,7 @@ export class HomeTabber {
     const panel = this.dom.spawnController(panelContainer, clazz);
     panel.element.classList.add("panel");
     panel.element.setAttribute("data-name", name);
+    return panel;
   }
   
   selectTab(name) {

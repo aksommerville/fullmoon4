@@ -9,9 +9,9 @@ Tentatively aiming for full release 29 September 2023, the first full moon of au
 
 ### TODO
 
-- [ ] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
+- [x] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
 - - Maybe hide old versions? Just a UI thing, you click and they appear.
-- [ ] Art and music for info site.
+- [x] Art and music for info site. ...i think we're good
 - [ ] Steam
 - - [ ] Must reach "Coming Soon" two weeks ahead of release -- 2023-09-15
 - - [x] Can only accept Zip uploads. Update pack script.
