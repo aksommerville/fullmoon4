@@ -5,23 +5,13 @@ Non-violent adventure game where the witch has to find and kill the werewolf.
 I mean "non-violent" in a pretty loose sense.
 Because there is definitely a werewolf-slaying involved.
 
-Tentatively aiming for full release 29 September 2023, the first full moon of autumn.
-
-### TODO
-
-- [x] Info site downloads: Emphasize most recent version and inferred platform. (sorting isn't enough).
-- - Maybe hide old versions? Just a UI thing, you click and they appear.
-- [x] Art and music for info site. ...i think we're good
-- [ ] Steam
-- - [ ] Must reach "Coming Soon" two weeks ahead of release -- 2023-09-15
-- - [x] Can only accept Zip uploads. Update pack script.
-- [ ] Freshen aksommerville.com landing page, link to both Plunder Squad and Full Moon.
+Full release 29 September 2023, the first full moon of autumn.
 
 ### Links
 
 - Itch, Full: https://aksommerville.itch.io/full-moon
 - Itch, Demo: https://aksommerville.itch.io/full-moon-demo
-- Steam: TODO
+- Steam: https://store.steampowered.com/app/2578750/Full_Moon/
 - My page: https://aksommerville.com/fullmoon
 - Github: https://github.com/aksommerville/fullmoon4
 - ("fullmoon4"? It's not a sequel, it's the fourth attempt :P )
@@ -39,7 +29,8 @@ There are other things called Full Moon, which are not this game.
 
 ### World Records
 
-- Demo Any%
+- Demo Any%: 0:46.808 AK Linux, 2 items
 - Demo 100%: 2:54.989 AK Web
-- Full Any%
+- Full Any%: 7:53.123 AK Linux, 10 items
 - Full 100%: 8:01.584 AK Web
+- Full 9 items: 8:21.494
