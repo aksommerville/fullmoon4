@@ -31,6 +31,6 @@ There are other things called Full Moon, which are not this game.
 
 - Demo Any%: 0:46.808 AK Linux, 2 items
 - Demo 100%: 2:54.989 AK Web
-- Full Any%: 7:53.123 AK Linux, 10 items
+- Full Any%: 7:27.202 AK MacOS, 11 items
 - Full 100%: 8:01.584 AK Web
 - Full 9 items: 8:21.494
