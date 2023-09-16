@@ -4,8 +4,12 @@ html {
   font-family: sans-serif;
 }
 
+a {
+  color: #70a0ff;
+}
+
 a:visited {
-  color: #4060ff;
+  color: #70a0ff;
 }
 
 body {

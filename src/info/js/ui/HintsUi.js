@@ -34,7 +34,8 @@ export class HintsUi {
     this.dom.spawn(this.element, "H2", "Do I actually need to do all the things?");
     this.dom.spawn(this.element, "DIV", ["advice"], "No.");
     this.dom.spawn(this.element, "DIV", ["advice"], "The demo can technically be completed with just two items.");
-    this.dom.spawn(this.element, "DIV", ["advice"], "Full version, it's more like ten.");
+    this.dom.spawn(this.element, "DIV", ["advice"], "Full version, you need at least eight.");
+    this.dom.spawn(this.element, "DIV", ["advice"], "Full Moon's puzzles tend to be leaky -- there's almost always more than one way to do it.");
     
     this.dom.spawn(this.element, "H2", "How many spells and songs are there?");
     this.dom.spawn(this.element, "DIV", ["advice"], "Three songs, seven teleport spells, and six other spells.");

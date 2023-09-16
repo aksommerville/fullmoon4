@@ -34,6 +34,7 @@ static void _crow_init(struct fmn_sprite *sprite) {
   sprite->imageid=3;
   sprite->tileid=0x54;
   sprite->layer=130;
+  sprite->physics=FMN_PHYSICS_BLOWABLE;
   tileid0=sprite->tileid;
   stage=CROW_STAGE_ENTER;
   stagelen=999.999f; // ENTER ends explicitly, during update.
