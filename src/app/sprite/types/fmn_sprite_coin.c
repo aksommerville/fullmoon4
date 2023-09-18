@@ -23,6 +23,7 @@ static void _coin_init(struct fmn_sprite *sprite) {
     FMN_PHYSICS_MOTION|
     FMN_PHYSICS_SPRITES|
     FMN_PHYSICS_SOLID|
+    FMN_PHYSICS_BLOWABLE|
   0;
 }
 
