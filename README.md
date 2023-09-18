@@ -30,6 +30,6 @@ There are other things called Full Moon, which are not this game.
 ### World Records
 
 - Demo Any%: 0:46.808 AK Linux, 2 items
-- Demo 100%: 2:54.989 AK Web
+- Demo 100%: 2:47.778 AK Linux
 - Full Any%: 2:26.392 AK Linux, 6 items
 - Full 100%: 3:59.392 AK Linux
