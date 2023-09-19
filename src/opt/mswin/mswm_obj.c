@@ -167,14 +167,6 @@ static void mswm_require_output_bounds(struct bigpc_video_driver *driver) {
   }
   DRIVER->dstl=-DRIVER->dstr;
   DRIVER->dstb=-DRIVER->dstt;
-  glBindTexture(GL_TEXTURE_2D,DRIVER->texid);
-  if (scale<4) {
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  } else {
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-  }
 }
 
 /* Frame control.

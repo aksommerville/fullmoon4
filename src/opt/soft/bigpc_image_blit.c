@@ -239,16 +239,18 @@ static void bigpc_image_blit_noscale(
  
 static void bigpc_image_scale2x_32(void *dst,int dststride,const void *src,int srcstride,int w,int h) {
   int dstrowlen=w<<3;
-  dststride<<=1;
-  for (;h-->0;src=(char*)src+srcstride,dst=(char*)dst+dststride) {
+  int longstride=dststride<<1;
+  for (;h-->0;src=(char*)src+srcstride,dst=(char*)dst+longstride) {
     uint32_t *dstp=(uint32_t*)dst;
-    const uint8_t *srcp=(uint8_t*)src;
+    const uint32_t *srcp=(uint32_t*)src;
     int xi=w;
     for (;xi-->0;srcp++) {
-      *(dstp++)=*srcp;
-      *(dstp++)=*srcp;
+      if ((*srcp)&0xff000000) {
+        *(dstp++)=*srcp;
+        *(dstp++)=*srcp;
+      } else dstp+=2;
     }
-    memcpy(dstp,dst,dstrowlen);
+    memcpy((char*)dst+dststride,dst,dstrowlen);
   }
 }
 

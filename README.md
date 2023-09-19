@@ -29,9 +29,9 @@ There are other things called Full Moon, which are not this game.
 
 ### World Records
 
-- Demo Any%: 0:46.808 AK Linux, 2 items
+- Demo Any%: 0:45.910 AK MS Win, 2 items
 - Demo 100%: 2:47.778 AK Linux
-- Full Any%: 2:26.392 AK Linux, 6 items
+- Full Any%: 2:24.006 AK MS Win, 6 items
 - Full 100%: 3:59.392 AK Linux
 
 ### Known Issues
