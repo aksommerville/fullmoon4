@@ -232,6 +232,26 @@ static void bigpc_image_blit_noscale(
   }
 }
 
+/* Scale up 2x, 32-bit pixels, no xform, pre-clipped.
+ * (w,h) are the input size; output is double that.
+ * Strides are in bytes.
+ */
+ 
+static void bigpc_image_scale2x_32(void *dst,int dststride,const void *src,int srcstride,int w,int h) {
+  int dstrowlen=w<<3;
+  dststride<<=1;
+  for (;h-->0;src=(char*)src+srcstride,dst=(char*)dst+dststride) {
+    uint32_t *dstp=(uint32_t*)dst;
+    const uint8_t *srcp=(uint8_t*)src;
+    int xi=w;
+    for (;xi-->0;srcp++) {
+      *(dstp++)=*srcp;
+      *(dstp++)=*srcp;
+    }
+    memcpy(dstp,dst,dstrowlen);
+  }
+}
+
 /* Scaling, so we might as well do all the other checks per-pixel too.
  */
  
@@ -240,7 +260,22 @@ static void bigpc_image_blit_sample(
   struct bigpc_image *src,int16_t srcx,int16_t srcy,int16_t srcw,int16_t srch,
   uint8_t xform
 ) {
-  //TODO ...I'm pretty sure this case never happens.
+  if (
+    (dstw==srcw<<1)&&(dsth==srch<<1)&&!xform
+    &&(dst->storage==BIGPC_IMAGE_STORAGE_32)&&(src->storage==BIGPC_IMAGE_STORAGE_32)&&
+    (dstx>=0)&&(dsty>=0)&&(dstx<=dst->w-dstw)&&(dsty<=dst->h-dsth)&&
+    (srcx>=0)&&(srcy>=0)&&(srcx<=src->w-srcw)&&(srcy<=src->h-srch)
+  ) {
+    bigpc_image_scale2x_32(
+      (char*)dst->v+dsty*dst->stride+(dstx<<2),dst->stride,
+      (char*)src->v+srcy*src->stride+(srcx<<2),src->stride,
+      srcw,srch
+    );
+  } else {
+    // The only use case we currently have for scaled blitting is the two splash images in the arcade game.
+    // Those are both exactly 2x scale with no xform.
+    // Not going to bother with the correct general solution, because it's complicated and wouldn't be used.
+  }
 }
 
 /* Blit, public entry point.

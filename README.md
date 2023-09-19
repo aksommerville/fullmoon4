@@ -33,3 +33,7 @@ There are other things called Full Moon, which are not this game.
 - Demo 100%: 2:47.778 AK Linux
 - Full Any%: 2:26.392 AK Linux, 6 items
 - Full 100%: 3:59.392 AK Linux
+
+### Known Issues
+
+Raspberry Pi Model 1: Must allocate at least 128 MB to GPU. With 64, graphics will crap out towards end of game. (use raspi-config under Advanced Settings)

@@ -14,8 +14,8 @@ static struct fmn_eatwq_context arcade_context={0};
  */
  
 static void arcade_power_on(struct fmn_sprite *sprite) {
-  struct fmn_sprite *l=fmn_sprite_generate_noparam(FMN_SPRCTL_dummy,sprite->x-0.5f,sprite->y-1.0f);
-  struct fmn_sprite *r=fmn_sprite_generate_noparam(FMN_SPRCTL_dummy,sprite->x+0.5f,sprite->y-1.0f);
+  struct fmn_sprite *l=fmn_sprite_generate_noparam(FMN_SPRCTL_dummy,sprite->x-0.5f,(int)(sprite->y-1.0f)+0.5f);
+  struct fmn_sprite *r=fmn_sprite_generate_noparam(FMN_SPRCTL_dummy,sprite->x+0.5f,(int)(sprite->y-1.0f)+0.5f);
   if (!l||!r) {
     fmn_sprite_kill(l);
     fmn_sprite_kill(r);
