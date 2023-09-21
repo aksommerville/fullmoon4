@@ -74,6 +74,22 @@ struct macwm *macwm_new(
     return 0;
   }
 
+  if (delegate&&delegate->key&&FMN_CREATE_MONITOR_WINDOW) {
+    // +32 here because the main framebuffer has a 16-pixel border on all sides. We don't bother stripping that.
+    struct macwm_setup monitor_setup={
+      .w=setup->fbw+32,
+      .h=setup->fbh+32,
+      .fullscreen=0,
+      .rendermode=MACWM_RENDERMODE_FRAMEBUFFER,
+      .fbw=setup->fbw+32,
+      .fbh=setup->fbh+32,
+      .title="Full Moon Monitor",
+    };
+    if (macwm->monitor=macwm_new(0,&monitor_setup)) {
+      macwm->monitorfb=malloc(monitor_setup.fbw*monitor_setup.fbh*4);
+    }
+  }
+
   return macwm;
 }
 
@@ -185,10 +201,19 @@ int macwm_render_begin(struct macwm *macwm) {
 void macwm_render_end(struct macwm *macwm) {
   if (!macwm) return;
   switch (macwm->rendermode) {
+  
     case MACWM_RENDERMODE_OPENGL: {
         [(AKOpenGLView*)macwm->window.contentView endFrame];
+        if (macwm->monitor&&macwm->monitorfb) {
+          if (--(macwm->monitorclock)<=0) {
+            macwm->monitorclock=6; // Don't draw the monitor every frame. I think 10 Hz should be just fine. It's expensive.
+            [(AKOpenGLView*)macwm->window.contentView readFrame:macwm->monitorfb];
+            macwm_send_framebuffer(macwm->monitor,macwm->monitorfb);
+          }
+        }
         break;
       }
+      
     case MACWM_RENDERMODE_METAL: {
         break;//TODO
       }

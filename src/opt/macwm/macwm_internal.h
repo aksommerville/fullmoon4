@@ -11,6 +11,10 @@
 
 #define MACWM_KEY_LIMIT 16
 
+#ifndef FMN_CREATE_MONITOR_WINDOW
+  #define FMN_CREATE_MONITOR_WINDOW 0
+#endif
+
 struct macwm {
   struct macwm_delegate delegate;
   int w,h;
@@ -22,6 +26,9 @@ struct macwm {
   int rendermode;
   int fbw,fbh; // MACWM_RENDERMODE_FRAMEBUFFER only
   int mouse_in_bounds;
+  struct macwm *monitor; // experimental second view, for kiosk
+  void *monitorfb;
+  int monitorclock;
 };
 
 void macwm_register_key(struct macwm *macwm,int keycode);
@@ -39,6 +46,7 @@ void macwm_unregister_key(struct macwm *macwm,int keycode);
 -(id)initWithWidth:(int)width height:(int)height;
 -(void)beginFrame;
 -(void)endFrame;
+-(void)readFrame:(void*)dst;
 @end
 
 #if 0

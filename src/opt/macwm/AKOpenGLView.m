@@ -47,4 +47,35 @@
   return 1;
 }
 
+/* Hacky support for monitor window.
+ */
+
+#if FMN_CREATE_MONITOR_WINDOW
+
+static int monitortexid=0;
+
+void fmn_set_monitortexid(int texid) {
+  monitortexid=texid;
+}
+
+-(void)readFrame:(void*)dst {
+  if (!monitortexid) return;
+  glBindTexture(GL_TEXTURE_2D,monitortexid);
+  glGetTexImage(GL_TEXTURE_2D,0,GL_RGBA,GL_UNSIGNED_BYTE,dst);
+  // And of course it's upside down.
+  #define stride ((320+32)*4)
+  uint8_t rowbuf[stride];
+  int i=(192+32)>>1;
+  uint8_t *rowa=dst;
+  uint8_t *rowz=rowa+(192+32-1)*stride;
+  for (;i-->0;rowa+=stride,rowz-=stride) {
+    memcpy(rowbuf,rowa,stride);
+    memcpy(rowa,rowz,stride);
+    memcpy(rowz,rowbuf,stride);
+  }
+  #undef stride
+}
+
+#endif
+
 @end

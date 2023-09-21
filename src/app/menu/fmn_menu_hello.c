@@ -15,6 +15,10 @@
 #define FMN_IMAGEID_LABEL_QUIT 310
 #define FMN_IMAGEID_LABEL_END_GAME 311 /* we don't use this one, but we prep for pause menu */
 
+#ifndef FMN_DISABLE_QUIT
+  #define FMN_DISABLE_QUIT 0
+#endif
+
 static uint32_t color_selected=0,color_enabled=0,color_disabled=0;
 
 /* Dismiss.
@@ -367,8 +371,12 @@ void fmn_menu_init_HELLO(struct fmn_menu *menu) {
   if (fmn_game_has_saved_game()) {
     opt_available|=0x01;
   }
-  if (fmn_can_quit()) {
+  
+  // fmn_can_quit() is what's technically possible (false for web, true elsewhere).
+  // FMN_DISABLE_QUIT is an extra cudgel you can add to etc/config.mk, to hide the "Quit" option, eg for convention kiosks
+  if (fmn_can_quit()&&!FMN_DISABLE_QUIT) {
     opt_available|=0x08;
   }
+  
   fmn_play_song(1,1);
 }

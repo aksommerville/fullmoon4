@@ -1,5 +1,7 @@
 #include "fmn_gl2_internal.h"
 
+void fmn_set_monitortexid(int texid);
+
 /* Cleanup.
  */
  
@@ -40,6 +42,10 @@ static int _gl2_init(struct bigpc_render_driver *driver,struct bigpc_video_drive
     (fmn_gl2_texture_require_framebuffer(&DRIVER->mainfb)<0)
   ) return -1;
   DRIVER->mainfb.border=fbborder;
+
+  #if FMN_CREATE_MONITOR_WINDOW
+    fmn_set_monitortexid(DRIVER->mainfb.texid);
+  #endif
   
   return 0;
 }
