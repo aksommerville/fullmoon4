@@ -48,7 +48,6 @@ export class LinksUi {
     
     //TODO Steam widget, once I set it up.
     //...this might not be an option. Steam says "For any game with a visible purchase option..." but this one is free.
-    // Once the Steam page is live, at least a link to it?
     
     // Steam, plain link.
     this.dom.spawn(this.dom.spawn(this.element, "DIV"), "A",
@@ -64,7 +63,5 @@ export class LinksUi {
     
     // Packages
     this.downloadsUi = this.dom.spawnController(this.element, DownloadsUi);
-    //this.dom.spawn(this.element, "H2", "Download");
-    //this.dom.spawn(this.element, "TABLE", ["packages"]);
   }
 }

@@ -39,6 +39,11 @@ export class DownloadsUi {
     
     this.dom.spawn(this.element, "H2", "Direct Downloads");
     
+    this.dom.spawn(this.element, "DIV",
+      ["tech-warning", "hidden", "raspiWarning"],
+      "On a v1 Raspberry Pi, you must set VRAM to at least 128 MB. Use raspi-config, under Advanced Settings."
+    );
+    
     const filterRow = this.dom.spawn(this.element, "DIV", ["filterRow"]);
     const explanation = this.dom.spawn(filterRow, "DIV", ["explanation"], "Showing 0 of 0 packages.");
     this.spawnFilterMenu(filterRow, "platform", "Platform");
@@ -165,10 +170,10 @@ export class DownloadsUi {
   }
   
   rebuildPackagesUi(toc) {
-  try {
     const table = this.element.querySelector(".mainTable");
     table.innerHTML = "";
     let visibleCount = 0, availableCount = 0;
+    let showRaspiWarning = false;
     if (toc.length) {
       const selectedPlatform = this.element.querySelector("select.filter[name='platform']").value;
       const selectedVersion = this.element.querySelector("select.filter[name='version']").value;
@@ -188,6 +193,8 @@ export class DownloadsUi {
         
         if (selectedDataSet === "all") ;
         else if (selectedDataSet !== dataSet) continue;
+        
+        if (platform === "raspi") showRaspiWarning = true;
       
         const tr = this.dom.spawn(table, "TR");
         this.dom.spawn(tr, "TD", platform);
@@ -204,7 +211,8 @@ export class DownloadsUi {
       this.dom.spawn(this.dom.spawn(table, "TR"), "TD", "No packages available.");
     }
     this.element.querySelector(".explanation").innerText = `Showing ${visibleCount} of ${availableCount} packages.`;
-    } catch (e) { console.error(e); }
+    if (showRaspiWarning) this.element.querySelector(".raspiWarning").classList.remove("hidden");
+    else this.element.querySelector(".raspiWarning").classList.add("hidden");
   }
   
   reprSize(size) {

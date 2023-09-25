@@ -192,3 +192,14 @@ footer {
 .LinksUi .mainTable {
   width: 100%;
 }
+
+.tech-warning {
+  background-color: #fc0;
+  color: #000;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.hidden {
+  display: none;
+}

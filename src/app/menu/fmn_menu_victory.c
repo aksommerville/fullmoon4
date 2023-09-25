@@ -91,8 +91,8 @@ static void victory_bits_prepare(struct fmn_menu *menu) {
     EOL
     for (message="THANKS FOR PLAYING FULL MOON! ";*message;message++) CHR(*message) EOL
     for (message="THIS WAS JUST A TASTE...      ";*message;message++) CHR(*message) EOL
-    for (message="REAL THING WILL BE AVAILABLE  ";*message;message++) CHR(*message) EOL
-    for (message="29 SEPTEMBER 2023 ON ITCH.IO. ";*message;message++) CHR(*message) EOL
+    for (message="DOWNLOAD THE FULL VERSION     ";*message;message++) CHR(*message) EOL
+    for (message="FROM ITCH.IO OR STEAM.        ";*message;message++) CHR(*message) EOL
     for (message="               -AK SOMMERVILLE";*message;message++) CHR(*message) EOL
     
     #undef CHR

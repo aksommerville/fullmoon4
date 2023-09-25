@@ -17,8 +17,8 @@ export class NewsUi {
   
   buildUi() {
     this.element.innerHTML = "";
-    //TODO Probly not the best presentation. Can we pretty this up a little?
     this.addStory("2023-09-29", "Planned release date.");
+    this.addStory("2023-09-25", "Presented at the Cleveland Gaming Classic, and got a great reception. Thanks all!");
     this.addStory("2023-09-09", "Everything is finishedish! Working on the Steam and Itch pages, and I fully expect to go live on 29 September as planned.");
     this.addStory("2023-08-11 .. 2023-08-13", "Presented at Matsuricon in Columbus. Big thanks to everyone who dropped by, we really had a blast!");
     this.addStory("2023-06-22 .. 2023-06-25", `Come see us at <a href="https://thegdex.com/">GDEX</a>!`);
