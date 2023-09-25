@@ -229,6 +229,7 @@ int mkd_archive_shake_tree(struct mkd_ar *ar,const char *path) {
   if ((err=mkd_treeshake_reachable(&ts,FMN_RESTYPE_IMAGE,18))<0) goto _done_; // logo
   if ((err=mkd_treeshake_reachable(&ts,FMN_RESTYPE_IMAGE,19))<0) goto _done_; // logo overlay
   if ((err=mkd_treeshake_reachable(&ts,FMN_RESTYPE_IMAGE,20))<0) goto _done_; // font
+  if ((err=mkd_treeshake_reachable(&ts,FMN_RESTYPE_IMAGE,24))<0) goto _done_; // moresprites (for soilballs)
   
   if ((err=mkd_treeshake_reachable(&ts,FMN_RESTYPE_SONG,1))<0) goto _done_; // tangled_vine (hello menu)
   if ((err=mkd_treeshake_reachable(&ts,FMN_RESTYPE_SONG,6))<0) goto _done_; // truffles_in_forbidden_sauce (gameover menu)

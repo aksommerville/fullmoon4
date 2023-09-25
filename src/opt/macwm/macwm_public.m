@@ -204,6 +204,7 @@ void macwm_render_end(struct macwm *macwm) {
   
     case MACWM_RENDERMODE_OPENGL: {
         [(AKOpenGLView*)macwm->window.contentView endFrame];
+        #if FMN_CREATE_MONITOR_WINDOW
         if (macwm->monitor&&macwm->monitorfb) {
           if (--(macwm->monitorclock)<=0) {
             macwm->monitorclock=6; // Don't draw the monitor every frame. I think 10 Hz should be just fine. It's expensive.
@@ -211,6 +212,7 @@ void macwm_render_end(struct macwm *macwm) {
             macwm_send_framebuffer(macwm->monitor,macwm->monitorfb);
           }
         }
+        #endif
         break;
       }
       

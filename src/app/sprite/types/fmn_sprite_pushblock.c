@@ -152,6 +152,32 @@ static void pushblock_move_charm(struct fmn_sprite *sprite,float elapsed) {
   }
 }
 
+/* Nudge toward grid alignment on the minor axis, while experiencing pressure on the other.
+ */
+
+static void pushblock_nudge_minor_axis(struct fmn_sprite *sprite,float elapsed) {
+  float dx=0.0f,dy=0.0f,sub,dummy;
+  switch (pressdir) {
+    case FMN_DIR_N:
+    case FMN_DIR_S: {
+        dx=1.0f;
+        sub=sprite->x;
+      } break;
+    case FMN_DIR_W:
+    case FMN_DIR_E: {
+        dy=1.0f;
+        sub=sprite->y;
+      } break;
+    default: return;
+  }
+  sub=modff(sub,&dummy)-0.5f;
+  const float near=0.125f;
+  if ((sub>=-near)&&(sub<=near)) {
+    sprite->x+=dx*-sub;
+    sprite->y+=dy*-sub;
+  }
+}
+
 /* Update.
  */
  
@@ -171,6 +197,8 @@ static void _pushblock_update(struct fmn_sprite *sprite,float elapsed) {
     presstime+=elapsed;
     if (presstime>=FMN_PUSHBLOCK_PRESS_TIME) {
       pushblock_push(sprite);
+    } else {
+      pushblock_nudge_minor_axis(sprite,elapsed);
     }
   }
 

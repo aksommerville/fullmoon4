@@ -179,6 +179,7 @@ static void werewolf_die(struct fmn_sprite *sprite) {
 
 static void werewolf_feather(struct fmn_sprite *sprite) {
   if (punked) {
+    punked=0;
     fmn_sprite_force_unpumpkin(sprite);
     werewolf_die(sprite);
     return;

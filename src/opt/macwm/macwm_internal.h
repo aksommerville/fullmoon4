@@ -46,7 +46,9 @@ void macwm_unregister_key(struct macwm *macwm,int keycode);
 -(id)initWithWidth:(int)width height:(int)height;
 -(void)beginFrame;
 -(void)endFrame;
+#if FMN_CREATE_MONITOR_WINDOW
 -(void)readFrame:(void*)dst;
+#endif
 @end
 
 #if 0
