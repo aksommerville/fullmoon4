@@ -46,14 +46,13 @@ export class LinksUi {
     });
     this.dom.spawn(itchFullIframe, "A", { href: "https://aksommerville.itch.io/full-moon" }, "Full Moon by aksommerville");
     
-    //TODO Steam widget, once I set it up.
-    //...this might not be an option. Steam says "For any game with a visible purchase option..." but this one is free.
-    
-    // Steam, plain link.
-    this.dom.spawn(this.dom.spawn(this.element, "DIV"), "A",
-      { href: "https://store.steampowered.com/app/2578750/Full_Moon/" },
-      "Steam"
-    );
+    // Steam.
+    this.dom.spawn(this.element, "IFRAME", {
+      src: "https://store.steampowered.com/widget/2578750/",
+      frameborder: "0",
+      width: "646",
+      height: "190",
+    });
     
     // GitHub
     this.dom.spawn(this.dom.spawn(this.element, "DIV"), "A",
