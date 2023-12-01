@@ -14,6 +14,8 @@ void bigpc_config_cleanup(struct bigpc_config *config) {
   if (config->savedgame_path) free(config->savedgame_path);
   if (config->input_path) free(config->input_path);
   if (config->settings_path) free(config->settings_path);
+  if (config->video_device) free(config->video_device);
+  if (config->audio_device) free(config->audio_device);
 }
 
 /* Evaluate primitives.
@@ -168,12 +170,14 @@ static void bigpc_print_help(const char *topic,int topicc) {
     "  --video=LIST          Use first available video driver (see below).\n"
     "  --fullscreen=0|1      [0] Start in fullscreen.\n"
     "  --video-renderer=?    Don't use.\n"
+    "  --video-device=PATH   [/dev/dri/card0] DRM only.\n"
     "  --tilesize=1..64      [16] Best not to touch.\n"
     "  --input=LIST          Use all specified input drivers (see below).\n"
     "  --audio=LIST          Use first available audio driver (see below).\n"
     "  --audio-rate=HZ       [44100] Audio output rate.\n"
     "  --audio-chanc=INT     [1] Audio channel count, typically 1 or 2.\n"
     "  --audio-format=?      [s16n] Audio sample format: s16n,f32n\n"
+    "  --audio-device=NAME   [default] ALSA only.\n"
     "  --synth=LIST          Use first available synthesizer (see below).\n"
     "  --render=LIST         Use first available renderer (see below).\n"
     "  --data=PATH           [EXE/data] Path to data archive.\n"
@@ -267,6 +271,7 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   BOOLOPT("fullscreen",video_fullscreen)
   ENUMOPT("video-renderer",video_renderer,bigpc_video_renderer_eval)
   INTOPT("tilesize",tilesize,1,64)
+  STRINGOPT("video-device",video_device)
   
   STRINGOPT("input",input_drivers)
   
@@ -274,6 +279,7 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   INTOPT("audio-rate",audio_rate,200,200000)
   INTOPT("audio-chanc",audio_chanc,1,8)
   ENUMOPT("audio-format",audio_format,bigpc_audio_format_eval)
+  STRINGOPT("audio-device",audio_device)
   
   STRINGOPT("synth",synth_drivers)
   

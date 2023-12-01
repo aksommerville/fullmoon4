@@ -3,22 +3,18 @@
 /* Open device file.
  */
  
-int drm_open_file() {
+int drm_open_file(const char *device) {
+  if (!device||!device[0]) device="/dev/dri/card0";
 
-  //TODO we now may have a poller -- fmn_drm.delegate.poller. Register the file there, and don't poll on our own.
-
-  //TODO allow user to configure, somehow
-  const char *device_path="/dev/dri/card0";
-  
-  if ((fmn_drm.fd=open(device_path,O_RDWR))<0) {
-    fprintf(stderr,"%s: %m\n",device_path);
+  if ((fmn_drm.fd=open(device,O_RDWR))<0) {
+    fprintf(stderr,"%s: %m\n",device);
     return -1;
   }
   
   // I get "0.0.0" here, but the important thing is the ioctl doesn't report an error.
   struct drm_version version={0};
   if (ioctl(fmn_drm.fd,DRM_IOCTL_VERSION,&version)<0) {
-    fprintf(stderr,"%s:DRM_IOCTL_VERSION: %m\n",device_path);
+    fprintf(stderr,"%s:DRM_IOCTL_VERSION: %m\n",device);
     return -1;
   }
   

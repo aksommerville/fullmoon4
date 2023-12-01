@@ -49,7 +49,7 @@ void fmn_drm_quit() {
 /* Init.
  */
  
-int fmn_drm_init() {
+int fmn_drm_init(const char *device) {
 
   fmn_drm.fd=-1;
   fmn_drm.crtcunset=1;
@@ -60,7 +60,7 @@ int fmn_drm_init() {
   }
   
   if (
-    (drm_open_file()<0)||
+    (drm_open_file(device)<0)||
     (drm_configure()<0)||
     (drm_init_gx()<0)||
   0) return -1;

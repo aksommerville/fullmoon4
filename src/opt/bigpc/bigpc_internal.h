@@ -47,6 +47,7 @@ struct bigpc_config {
   int video_fullscreen;
   int video_renderer;
   int tilesize;
+  char *video_device;
   
   char *input_drivers;
   
@@ -54,6 +55,7 @@ struct bigpc_config {
   int audio_rate;
   int audio_chanc;
   int audio_format;
+  char *audio_device;
   
   char *synth_drivers;
   

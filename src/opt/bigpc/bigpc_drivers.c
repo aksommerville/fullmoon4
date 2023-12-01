@@ -49,6 +49,7 @@ static int bigpc_video_try_init(const struct bigpc_video_type *type) {
     .iconrgba=fmn_appicon,
     .iconw=fmn_appicon_w,
     .iconh=fmn_appicon_h,
+    .device=bigpc.config.video_device,
   };
   if (!(bigpc.video=bigpc_video_driver_new(type,&delegate,&config))) {
     fprintf(stderr,"%s: Error starting up video driver '%s'.\n",bigpc.exename,type->name);
@@ -145,7 +146,7 @@ static int bigpc_audio_try_init(const struct bigpc_audio_type *type) {
     .rate=bigpc.config.audio_rate,
     .chanc=bigpc.config.audio_chanc,
     .format=bigpc.config.audio_format,
-    .device=0,//TODO configurable
+    .device=bigpc.config.audio_device,
   };
   if (!(bigpc.audio=bigpc_audio_driver_new(type,&delegate,&config))) {
     fprintf(stderr,"%s: Failed to initialize audio driver '%s'\n",bigpc.exename,type->name);

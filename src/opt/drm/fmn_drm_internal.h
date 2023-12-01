@@ -51,7 +51,7 @@ extern struct fmn_drm_driver {
   
 } fmn_drm;
 
-int drm_open_file();
+int drm_open_file(const char *device);
 int drm_configure();
 int drm_init_gx();
 

@@ -68,6 +68,7 @@ struct bigpc_video_config {
   const char *title;
   const void *iconrgba;
   int iconw,iconh;
+  const char *device;
 };
 
 /* Driver instance.

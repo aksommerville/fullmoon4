@@ -19,7 +19,7 @@ static void _drm_del(struct bigpc_video_driver *driver) {
 
 static int _drm_init(struct bigpc_video_driver *driver,const struct bigpc_video_config *config) {
 
-  if (fmn_drm_init()<0) {
+  if (fmn_drm_init(config->device)<0) {
     fprintf(stderr,"fmn_drm_init failed\n");
     return -1;
   }
