@@ -135,6 +135,6 @@ void stdsyn_wave_runner_update(float *v,int c,struct stdsyn_wave_runner *runner)
 void stdsyn_wave_runner_update_mod(float *v,int c,struct stdsyn_wave_runner *runner,const float *mod) {
   for (;c-->0;v++,mod++) {
     *v=runner->wave->v[runner->p>>STDSYN_WAVE_SHIFT];
-    runner->p+=runner->dp+runner->dp*(*mod);
+    runner->p+=(int32_t)runner->dp+(int32_t)runner->dp*(*mod);
   }
 }

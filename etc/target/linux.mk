@@ -16,7 +16,7 @@ linux_MIDDIR:=mid/linux
 linux_OUTDIR:=out/linux
 
 # Optional units that I didn't bother exposing with "linux_USE_" flags.
-linux_OPT_ENABLE:=evdev soft minsyn stdsyn
+linux_OPT_ENABLE:=evdev soft minsyn
 
 # The rest are mandatory, no alternatives:
 linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr midi pcmprint
@@ -32,6 +32,9 @@ linux_CC:=gcc -c -MMD -O3 -Isrc -Werror -Wimplicit -Wno-comment -Wno-parentheses
 linux_LD:=gcc
 linux_LDPOST:=-lm -lz
 
+ifneq (,$(linux_USE_STDSYN))
+  linux_OPT_ENABLE+=stdsyn
+endif
 ifneq (,$(linux_USE_GLX))
   linux_OPT_ENABLE+=glx
   linux_CC+=-DFMN_USE_glx=1
