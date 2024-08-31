@@ -706,6 +706,62 @@ static void fmn_toggle_hat() {
   }
 }
 
+/* Cast the rain spell backward.
+ * Not important for gameplay.
+ * My promotional minicomic has Moon suggesting to cast the rain spell backward to make it stop raining.
+ * In the comic, it accidentally summons a terrible eldritch horror from beyond the grave.
+ * In the game, for those that have read the comic, something funny or horrible has to happen.
+ * Added in a hurry during Matsuricon 2024. Probly breaks things in all kinds of ways.
+ */
+ 
+static void fmn_cast_rain_backward() {
+  if (fmn_global.spritec>12) return; // Don't let too many things spawn.
+  float x,y;
+  fmn_hero_get_position(&x,&y);
+  y-=0.25f;
+  switch (fmn_global.facedir) {
+    case FMN_DIR_W: x-=1.5f; break;
+    case FMN_DIR_E: x+=1.5f; break;
+    case FMN_DIR_N: y-=1.5f; break;
+    case FMN_DIR_S: y+=1.5f; break;
+  }
+  if ((x<0.0f)||(y<0.0f)||(x>=FMN_COLC)||(y>=FMN_ROWC)) return;
+  int cellp=((int)y)*FMN_COLC+(int)x;
+  if ((cellp<0)||(cellp>=FMN_COLC*FMN_ROWC)) return;
+  switch (fmn_global.cellphysics[fmn_global.map[cellp]]) {
+    case FMN_CELLPHYSICS_SOLID:
+    case FMN_CELLPHYSICS_HOLE:
+    case FMN_CELLPHYSICS_UNCHALKABLE:
+    case FMN_CELLPHYSICS_SAP:
+    case FMN_CELLPHYSICS_SAP_NOCHALK:
+    case FMN_CELLPHYSICS_WATER:
+    case FMN_CELLPHYSICS_REVELABLE:
+      return;
+  }
+  int i=fmn_global.spritec;
+  while (i-->0) {
+    const struct fmn_sprite *other=(struct fmn_sprite*)(fmn_global.spritev[i]);
+    if (!(other->physics&FMN_PHYSICS_SPRITES)) continue;
+    float dx=other->x-x;
+    float dy=other->y-y;
+    float manhat=((dx<0.0f)?-dx:dx)+((dy<0.0f)?-dy:dy);
+    if (manhat<1.0f) return;
+  }
+  const uint8_t cmdv[]={
+    0x20,24, // image
+    0x21,0x89, // tileid
+    0x23,2, // style: TILE
+    0x24,0x74, // physics: SPRITE SOLID HOLE BLOWABLE
+    0x25,40, // invmass
+    0x41,0x00,0x80, // radius
+    0x42,0,71, // controller: anim2
+  };
+  struct fmn_sprite *sprite=fmn_sprite_spawn(x,y,0,cmdv,sizeof(cmdv),0,0);
+  if (!sprite) return;
+  fmn_sound_effect(FMN_SFX_CURSE);
+  fmn_sprite_generate_soulballs(x,y,5,0);
+}
+
 /* Cast spell or song.
  */
  
@@ -738,6 +794,7 @@ void fmn_spell_cast(uint8_t spellid) {
     case FMN_SPELLID_TELE5:
     case FMN_SPELLID_TELE6: fmn_teleport(spellid); break;
     case FMN_SPELLID_KONAMI: fmn_toggle_hat(); break;
+    case FMN_SPELLID_REVRAIN: fmn_cast_rain_backward(); break;
   }
 }
 

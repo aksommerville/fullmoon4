@@ -16,7 +16,7 @@ linux_MIDDIR:=mid/linux
 linux_OUTDIR:=out/linux
 
 # Optional units that I didn't bother exposing with "linux_USE_" flags.
-linux_OPT_ENABLE:=evdev soft minsyn
+linux_OPT_ENABLE:=evdev soft minsyn stdsyn
 
 # The rest are mandatory, no alternatives:
 linux_OPT_ENABLE+=bigpc genioc linux datafile png fmstore inmgr midi pcmprint

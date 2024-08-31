@@ -259,6 +259,7 @@
 #define FMN_SPELLID_TELE5 18 /* desert */
 #define FMN_SPELLID_TELE6 19 /* steppe */
 #define FMN_SPELLID_KONAMI 20
+#define FMN_SPELLID_REVRAIN 21
 
 #define FMN_MAPFLAG_DARK 0x01
 #define FMN_MAPFLAG_INDOORS 0x02

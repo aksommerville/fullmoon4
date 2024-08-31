@@ -232,6 +232,7 @@ static const struct fmn_spell {
   SPELL(INVISIBLE,W,N,S,E,W,W,E,E)
   SPELL(PUMPKIN,N,S,N,S,W,W,E)
   SPELL(KONAMI,N,N,S,S,W,E,W,E)
+  SPELL(REVRAIN,S,E,N,S,W,N)
   
   SPELL(HOME,S,S,S)
   SPELL(TELE1,W,S,E,W,S,E) /* beach (demo:Church) */

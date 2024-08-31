@@ -13,4 +13,5 @@
 tilesheet caves
 flags indoors
 door 10 9 10 2 1
+sprite 7 7 treasure item:CHALK 0 0
 song seven_circles
