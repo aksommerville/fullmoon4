@@ -348,7 +348,6 @@ static void _gl2_begin(struct bigpc_render_driver *driver,struct bigpc_image *al
  */
  
 static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_driver *driver) {
-  //TODO This is going to include the border. If we're actually using this, we'll want to crop that off.
   #if FMN_USE_bcm
     // glGetTexImage not found on the Pi. This is only for taking screencaps, so not bothering to investigate.
     return -1;
@@ -374,6 +373,31 @@ static int _gl2_read_framebuffer(void *dstpp,int *w,int *h,struct bigpc_render_d
       memcpy(b,rowbuf,rowlen);
     }
     free(rowbuf);
+  }
+  
+  // And crop out the border if there is one.
+  if (DRIVER->mainfb.border>0) {
+    int dstw=(*w)-(DRIVER->mainfb.border<<1);
+    int dsth=(*h)-(DRIVER->mainfb.border<<1);
+    if ((dstw>0)&&(dsth>0)) {
+      void *nv=malloc(dstw*dsth*4);
+      if (nv) {
+        const uint8_t *srcrow=v;
+        srcrow+=DRIVER->mainfb.border*(*w)*4+DRIVER->mainfb.border*4;
+        int srcstride=(*w)*4;
+        uint8_t *dstrow=nv;
+        int dststride=dstw*4;
+        int yi=dsth;
+        for (;yi-->0;srcrow+=srcstride,dstrow+=dststride) {
+          memcpy(dstrow,srcrow,dststride);
+        }
+        free(v);
+        v=nv;
+        *(void**)dstpp=v;
+        *w=dstw;
+        *h=dsth;
+      }
+    }
   }
   #endif
   return 0;

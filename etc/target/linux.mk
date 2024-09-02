@@ -67,6 +67,11 @@ endif
 ifneq (,$(linux_USE_ALSA)$(linux_USE_PULSE))
   linux_LDPOST+=-lpthread
 endif
+ifneq (,$(strip $(GAMEMON)))
+  linux_OPT_ENABLE+=gamemon
+  linux_CC+=-DFMN_USE_gamemon=1 -I$(GAMEMON)/src/lib
+  linux_LDPOST+=$(GAMEMON)/out/lib/libgamemon.a
+endif
 
 # Always filter instrument and sound (0 means no resources produced, if no synthesizers enabled; these resources always have a qualifier).
 linux_QFILTER:=instrument:0 sound:0

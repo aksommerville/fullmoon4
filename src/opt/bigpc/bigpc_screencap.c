@@ -38,3 +38,59 @@ void bigpc_cap_screen() {
   
   free(serial);
 }
+
+/* Send framebuffer to gamemon.
+ */
+#if FMN_USE_gamemon
+
+static void bigpc_fb_downsample(
+  uint8_t *dst,int dstw,int dsth, // bgr332
+  const uint8_t *src,int srcw,int srch // rgba
+) {
+  int yscale=srch/dsth; if (yscale<1) yscale=1;
+  int xscale=srcw/dstw; if (xscale<1) xscale=1;
+  int srcstride=srcw*4*yscale;
+  int srcstep=xscale*4;
+  int yi=dsth,srcy=0;
+  for (;yi-->0;dst+=dstw,src+=srcstride,srcy+=yscale) {
+    if (srcy>=srch) {
+      memset(dst,0,dstw);
+    } else {
+      uint8_t *dstp=dst;
+      const uint8_t *srcp=src;
+      int xi=dstw,srcx=0;
+      for (;xi-->0;dstp++,srcp+=srcstep,srcx+=xscale) {
+        if (srcx>=srcw) {
+          *dstp=0;
+        } else {
+          uint8_t r=srcp[0],g=srcp[1],b=srcp[2];
+          *dstp=(b&0xe0)|((g>>3)&0x1c)|(r>>6);
+        }
+      }
+    }
+  }
+}
+
+void bigpc_gamemon_send_framebuffer() {
+  int pixfmt,w=0,h=0;
+  pixfmt=gamemon_get_fb_format(&w,&h,bigpc.gamemon);
+  if ((w<1)||(h<1)) return;
+  if ((w!=bigpc.gamemon_fbw)||(h!=bigpc.gamemon_fbh)) {
+    void *nv=malloc(w*h);
+    if (!nv) return;
+    if (bigpc.gamemon_fb) free(bigpc.gamemon_fb);
+    bigpc.gamemon_fb=nv;
+    bigpc.gamemon_fbw=w;
+    bigpc.gamemon_fbh=h;
+  }
+  if (!bigpc.render->type->read_framebuffer) return;
+  void *rgba=0;
+  int srcw=0,srch=0;
+  if (bigpc.render->type->read_framebuffer(&rgba,&srcw,&srch,bigpc.render)<0) return;
+  if (!rgba) return;
+  bigpc_fb_downsample(bigpc.gamemon_fb,w,h,rgba,srcw,srch);
+  free(rgba);
+  gamemon_send_framebuffer(bigpc.gamemon,bigpc.gamemon_fbw,bigpc.gamemon_fbh,GAMEMON_PIXFMT_BGR332,bigpc.gamemon_fb,w*h);
+}
+
+#endif

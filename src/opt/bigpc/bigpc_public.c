@@ -20,6 +20,9 @@ void bigpc_quit() {
     bigpc.clock.framec/elapsed_real_f
   );
   
+  #if FMN_USE_gamemon
+    gamemon_del(bigpc.gamemon);
+  #endif
   bigpc_video_driver_del(bigpc.video);
   bigpc_audio_driver_del(bigpc.audio);
   if (bigpc.inputv) {
@@ -126,6 +129,17 @@ int bigpc_update() {
   }
   
   // Update drivers.
+  #if FMN_USE_gamemon
+    if (bigpc.gamemon) {
+      gamemon_update(bigpc.gamemon);
+      if (bigpc.gamemon_ready) {
+        if (bigpc.gamemon_clock--<=0) {
+          bigpc.gamemon_clock=6; // Aim for about 10 Hz, completely arbitrary.
+          bigpc_gamemon_send_framebuffer();
+        }
+      }
+    }
+  #endif
   if (bigpc_video_driver_update(bigpc.video)<0) return -1;
   if (bigpc_audio_update(bigpc.audio)<0) return -1;
   int i=bigpc.inputc;

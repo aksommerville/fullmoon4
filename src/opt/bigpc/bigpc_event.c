@@ -115,3 +115,38 @@ void bigpc_ignore_next_button() {
   inmgr_force_state(bigpc.inmgr,bigpc.input_state|(FMN_INPUT_USE|FMN_INPUT_MENU));
   bigpc.input_state=0;
 }
+
+/* Gamemon callbacks.
+ */
+#if FMN_USE_gamemon
+
+void bigpc_cb_gamemon_connected(void *dummy) {
+  if (!bigpc.gamemon) return;
+}
+
+void bigpc_cb_gamemon_disconnected(void *dummy) {
+  if (!bigpc.gamemon) return;
+  bigpc.gamemon_ready=0;
+}
+
+void bigpc_cb_gamemon_fb_format(int w,int h,int pixfmt,void *dummy) {
+  if (!bigpc.gamemon) return;
+  bigpc.gamemon_ready=1;
+  bigpc.gamemon_clock=0;
+}
+
+void bigpc_cb_gamemon_input(int state,int pv,void *dummy) {
+  if (!bigpc.gamemon) return;
+  #define BTN(gm,fm) \
+    if ((state&GAMEMON_INPUT_##gm)&&!(pv&GAMEMON_INPUT_##gm)) bigpc.input_state|=FMN_INPUT_##fm; \
+    else if (!(state&GAMEMON_INPUT_##gm)&&(pv&GAMEMON_INPUT_##gm)) bigpc.input_state&=~FMN_INPUT_##fm;
+  BTN(LEFT,LEFT)
+  BTN(RIGHT,RIGHT)
+  BTN(UP,UP)
+  BTN(DOWN,DOWN)
+  BTN(A,USE)
+  BTN(B,MENU)
+  #undef BTN
+}
+
+#endif

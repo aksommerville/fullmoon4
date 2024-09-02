@@ -15,6 +15,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#if FMN_USE_gamemon
+  #include "gamemon.h"
+#endif
+
 #define BIGPC_ACTIONID_quit             1
 #define BIGPC_ACTIONID_fullscreen       2
 #define BIGPC_ACTIONID_pause            3
@@ -67,6 +71,8 @@ struct bigpc_config {
   char *input_path;
   char *settings_path;
   int lang;
+  char *gamemon_path;
+  int gamemon_baud_rate;
 };
 
 extern struct bigpc {
@@ -127,6 +133,14 @@ extern struct bigpc {
   int64_t savedgame_update_time; // timeout after setting dirty before committing. compare to bigpc.clock.last_real_time_us
   int savedgame_suppress; // nonzero after a reset, eg manually return to menu. to prevent unintentionally saving a wiped state.
   
+  #if FMN_USE_gamemon
+    struct gamemon *gamemon;
+    int gamemon_clock;
+    int gamemon_ready;
+    uint8_t *gamemon_fb; // Always bgr332.
+    int gamemon_fbw,gamemon_fbh;
+  #endif
+  
 } bigpc;
 
 void bigpc_config_cleanup(struct bigpc_config *config);
@@ -173,8 +187,13 @@ void bigpc_cb_disconnect(struct bigpc_input_driver *driver,int devid);
 void bigpc_cb_event(struct bigpc_input_driver *driver,int devid,int btnid,int value);
 void bigpc_cb_state_change(struct inmgr *inmgr,uint16_t btnid,uint8_t value,uint16_t state);
 void bigpc_cb_action(struct inmgr *inmgr,uint16_t actionid);
+void bigpc_cb_gamemon_connected(void *dummy);
+void bigpc_cb_gamemon_disconnected(void *dummy);
+void bigpc_cb_gamemon_fb_format(int w,int h,int pixfmt,void *dummy);
+void bigpc_cb_gamemon_input(int state,int pv,void *dummy);
 
 void bigpc_cap_screen();
+void bigpc_gamemon_send_framebuffer(); // Also lives in bigpc_screencap.c, it's kind of similar.
 
 void bigpc_savedgame_init();
 void bigpc_savedgame_delete();

@@ -186,6 +186,10 @@ static void bigpc_print_help(const char *topic,int topicc) {
     "  --lang=iso631         Two-character language code. Prefer LANG env var.\n"
     "  --input-config=PATH   [EXE/input] Mappings for input devices.\n"
     "  --settings=PATH       [EXE/settings] Persistent settings.\n"
+    #if FMN_USE_gamemon
+      "  --gamemon=PATH        Serial device to dump framebuffers to.\n"
+      "  --baud-rate=HZ        If nonzero, run 'stty' on gamemon device first.\n"
+    #endif
     "\n"
   );
   
@@ -292,6 +296,9 @@ int bigpc_configure_kv(const char *k,int kc,const char *v,int vc) {
   STRINGOPT("settings",settings_path)
   
   ENUMOPT("lang",lang,bigpc_lang_eval)
+  
+  STRINGOPT("gamemon",gamemon_path)
+  INTOPT("baud-rate",gamemon_baud_rate,0,1000000)
   
   // Remember to update bigpc_print_help (just above) if you change anything.
   
@@ -543,6 +550,18 @@ int bigpc_config_ready() {
   }
   
   if (!bigpc.config.lang) bigpc.config.lang=bigpc_guess_language();
+  
+  #if FMN_USE_gamemon
+    if (bigpc.config.gamemon_path) {
+      struct gamemon_delegate delegate={
+        .connected=bigpc_cb_gamemon_connected,
+        .disconnected=bigpc_cb_gamemon_disconnected,
+        .fb_format=bigpc_cb_gamemon_fb_format,
+        .input=bigpc_cb_gamemon_input,
+      };
+      bigpc.gamemon=gamemon_new(&delegate,bigpc.config.gamemon_path,bigpc.config.gamemon_baud_rate);
+    }
+  #endif
   
   return 0;
 }
