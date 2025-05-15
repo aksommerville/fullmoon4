@@ -559,7 +559,9 @@ int bigpc_config_ready() {
         .fb_format=bigpc_cb_gamemon_fb_format,
         .input=bigpc_cb_gamemon_input,
       };
-      bigpc.gamemon=gamemon_new(&delegate,bigpc.config.gamemon_path,bigpc.config.gamemon_baud_rate);
+      if (bigpc.gamemon=gamemon_new(&delegate,bigpc.config.gamemon_path,bigpc.config.gamemon_baud_rate)) {
+        fprintf(stderr,"%s: Initialized gamemon on device '%s' at rate %d.\n",bigpc.exename,bigpc.config.gamemon_path,bigpc.config.gamemon_baud_rate);
+      }
     }
   #endif
   

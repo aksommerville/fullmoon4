@@ -134,7 +134,7 @@ int bigpc_update() {
       gamemon_update(bigpc.gamemon);
       if (bigpc.gamemon_ready) {
         if (bigpc.gamemon_clock--<=0) {
-          bigpc.gamemon_clock=6; // Aim for about 10 Hz, completely arbitrary.
+          bigpc.gamemon_clock=30; // Aim for about 2 Hz. The Tiny can handle considerably faster, but PicoSystem chokes.
           bigpc_gamemon_send_framebuffer();
         }
       }

@@ -357,7 +357,7 @@ static void fmn_glx_set_icon(struct fmn_glx *fmn_glx,const void *rgba,int w,int 
   pixels[0]=w;
   pixels[1]=h;
   fmn_glx_copy_icon_pixels(pixels+2,rgba,w*h);
-  XChangeProperty(fmn_glx->dpy,fmn_glx->win,fmn_glx->atom__NET_WM_ICON,XA_CARDINAL,32,PropModeReplace,(unsigned char*)pixels,length);
+  int result=XChangeProperty(fmn_glx->dpy,fmn_glx->win,fmn_glx->atom__NET_WM_ICON,XA_CARDINAL,32,PropModeReplace,(unsigned char*)pixels,length);
   free(pixels);
 }
 

@@ -121,21 +121,25 @@ void bigpc_ignore_next_button() {
 #if FMN_USE_gamemon
 
 void bigpc_cb_gamemon_connected(void *dummy) {
+  fprintf(stderr,"%s\n",__func__);
   if (!bigpc.gamemon) return;
 }
 
 void bigpc_cb_gamemon_disconnected(void *dummy) {
+  fprintf(stderr,"%s\n",__func__);
   if (!bigpc.gamemon) return;
   bigpc.gamemon_ready=0;
 }
 
 void bigpc_cb_gamemon_fb_format(int w,int h,int pixfmt,void *dummy) {
+  fprintf(stderr,"%s %dx%d 0x%02x\n",__func__,w,h,pixfmt);
   if (!bigpc.gamemon) return;
   bigpc.gamemon_ready=1;
   bigpc.gamemon_clock=0;
 }
 
 void bigpc_cb_gamemon_input(int state,int pv,void *dummy) {
+  //fprintf(stderr,"%s 0x%02x\n",__func__,state);
   if (!bigpc.gamemon) return;
   #define BTN(gm,fm) \
     if ((state&GAMEMON_INPUT_##gm)&&!(pv&GAMEMON_INPUT_##gm)) bigpc.input_state|=FMN_INPUT_##fm; \
